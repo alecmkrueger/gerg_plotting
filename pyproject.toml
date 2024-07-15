@@ -13,6 +13,8 @@ pandas = "^2.2.2"
 matplotlib = "^3.9.1"
 xarray = "^2024.6.0"
 attrs = "^23.2.0"
+notebook = "^7.2.1"
+ipykernel = "^6.29.5"
 
 
 [tool.poetry.group.dev.dependencies]

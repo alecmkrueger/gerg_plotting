@@ -1,1 +1,5 @@
-import numpy as np
+from plotter_classes import Glider,WaveGlider,CTD,Buoy
+
+def plot_glider(Glider):
+    ''''''
+
