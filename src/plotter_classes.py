@@ -26,6 +26,10 @@ class Bounds:
         self.lon_min = self.lon_min-360
         self.lon_max = self.lon_max-360
 
+    def absoloute_longitude(self):
+        self.lon_min = self.lon_min+360
+        self.lon_max = self.lon_max+360
+
     def __repr__(self):
         '''Pretty printing'''
         return pformat(asdict(self), indent=1,width=2,compact=True,depth=1)
@@ -84,9 +88,9 @@ class WaveGlider:
     salinity:np.ndarray 
     def __getitem__(self, key:str):
         return asdict(self)[key]
-
+    
 @define
-class SurfacePlot:
+class Plotter:
     instrument:Glider|Buoy|CTD|WaveGlider
     bounds:Bounds|None = field(default= None)
 
@@ -99,6 +103,9 @@ class SurfacePlot:
         elif fig is not None and ax is not None:
             self.fig = fig
             self.ax = ax
+
+@define
+class SurfacePlot(Plotter):
 
     def map(self,var:str|None=None,fig=None,ax=None):
         self.init_figure(fig,ax)
@@ -116,19 +123,7 @@ class SurfacePlot:
 
 
 @define
-class DepthPlot:
-    instrument:Glider|Buoy|CTD|WaveGlider
-    bounds:Bounds|None = field(default= None)
-
-    fig:matplotlib.figure.Figure|None = field(default=None)
-    ax:matplotlib.axes.Axes|None = field(default=None)
-
-    def init_figure(self,fig=None,ax=None):
-        if fig is None and ax is None:
-            self.fig,self.ax = matplotlib.pyplot.subplots()
-        elif fig is not None and ax is not None:
-            self.fig = fig
-            self.ax = ax
+class DepthPlot(Plotter):
 
     def time_series(self,var:str,fig=None,ax=None):
         self.init_figure(fig,ax)
@@ -149,3 +144,16 @@ class DepthPlot:
         elif color_var is None:
             self.ax.scatter(self.instrument[var1],self.instrument[var2])
 
+@define
+class Histogram(Plotter):
+
+    def plot(self,var:str,fig=None,ax=None):
+        ''''''
+        self.init_figure(fig,ax)
+        self.ax.hist(self.instrument[var])
+
+
+    def plot2d(self,var1:str,var2:str,fig=None,ax=None):
+        ''''''
+        self.init_figure(fig,ax,)
+        self.ax.hist2d(self.instrument[var1],self.instrument[var2])
