@@ -1,6 +1,6 @@
 import numpy as np
 from attrs import define, field
-from utils.class_utils import check_lat,check_lon
+from src.utils.class_utils import check_lat,check_lon
 
 @define
 class Glider:
