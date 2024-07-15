@@ -65,7 +65,7 @@ class Bathy:
         bounds (Bounds): contains attributes of lat_min,lon_min,lat_max,lon_max,depth_max,depth_min
         resolution_level (float|int): how much to coarsen the dataset by in units of degrees
         '''
-        seafloor_path = Path(rf'seafloor_data\gebco_2023_n31.0_s7.0_w-100.0_e-66.5.nc')
+        seafloor_path = Path('seafloor_data\gebco_2023_n31.0_s7.0_w-100.0_e-66.5.nc')
         ds = xr.open_dataset(seafloor_path) #read in seafloor data
 
         if self.resolution_level is not None:
@@ -213,7 +213,6 @@ class Histogram(Plotter):
     def plot(self,var:str,fig=None,ax=None):
         self.init_figure(fig,ax)
         self.ax.hist(self.instrument[var])
-
 
     def plot2d(self,x:str,y:str,fig=None,ax=None,**kwargs):
         self.init_figure(fig,ax,)
