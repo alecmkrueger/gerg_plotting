@@ -7,8 +7,10 @@ import numpy as np
 import pandas as pd
 from attrs import define, field, asdict,validators
 from pprint import pformat
+from pathlib import Path
+import xarray as xr
 
-from utils.class_utils import lat_min_smaller_than_max,lon_min_smaller_than_max
+from utils.class_utils import lat_min_smaller_than_max,lon_min_smaller_than_max,get_center_of_mass
 
 
 @define
@@ -33,7 +35,65 @@ class Bounds:
     def __repr__(self):
         '''Pretty printing'''
         return pformat(asdict(self), indent=1,width=2,compact=True,depth=1)
+    def __getitem__(self, key:str):
+        return asdict(self)[key]
     
+
+@define
+class Bathy:
+    '''
+    cmap: colormap object
+    vertical_scalar: value to multiply the depth by
+    '''
+    bounds:Bounds
+    resolution_level:float|int|None = field(default=None)
+    cmap:None = field(default=None)
+    vertical_scaler:int|float = field(default=None)
+    vertical_units:str = field(default='')
+    center_of_mass:tuple = field(init=False)
+    lon:np.ndarray = field(init=False)
+    lat:np.ndarray = field(init=False)
+    depth:np.ndarray = field(init=False)
+
+    def __attrs_post_init__(self):
+        if self.vertical_scaler is not None:
+            self.depth = self.depth*self.vertical_scaler
+        self.center_of_mass = get_center_of_mass(self.lon,self.lat,self.depth)
+
+    def get_bathy(self):
+        '''
+        bounds (Bounds): contains attributes of lat_min,lon_min,lat_max,lon_max,depth_max,depth_min
+        resolution_level (float|int): how much to coarsen the dataset by in units of degrees
+        '''
+        seafloor_path = Path(rf'seafloor_data\gebco_2023_n31.0_s7.0_w-100.0_e-66.5.nc')
+        ds = xr.open_dataset(seafloor_path) #read in seafloor data
+
+        if self.resolution_level is not None:
+            ds = ds.coarsen(lat=self.resolution_level,boundary='trim').mean().coarsen(lon=self.resolution_level,boundary='trim').mean() #coarsen the seafloor data (speed up figure drawing) #type:ignore
+
+        ds = ds.sel(lat=slice(self.bounds["lat_min"],self.bounds["lat_max"])).sel(lon=slice(self.bounds["lon_min"],self.bounds["lon_max"])) #slice to the focus area
+
+        self.depth = ds.elevation.values #extract the depth values
+        # self.depth[np.isnan(self.depth)] = 0 #set all nan depth values to zero, makes land zero and flat to focus on bathymetry
+
+        if self.bounds["depth_top"] is not None:
+            self.depth = np.where(self.depth<self.bounds["depth_top"],self.depth,self.bounds["depth_top"]) #set all depth values less than the depth_top to the same value as depth_top for visuals
+        if self.bounds["depth_bottom"] is not None:
+            self.depth = np.where(self.depth>self.bounds["depth_bottom"],self.depth,self.bounds["depth_bottom"]) #set all depth values less than the depth_bottom to the same value as depth_bottom for visuals
+
+        self.lon = ds.coords['lat'].values #extract the latitude values
+        self.lat = ds.coords['lon'].values #extract the longitude values
+        self.lon, self.lat = np.meshgrid(self.lat, self.lon) #create meshgrid for plotting
+
+
+    def __repr__(self):
+        '''
+        Pretty printing
+        '''
+        return pformat(asdict(self), indent=1,width=2,compact=True,depth=1)
+    def __getitem__(self, key:str):
+        return asdict(self)[key]
+
 
 @define
 class Glider:
@@ -137,23 +197,24 @@ class DepthPlot(Plotter):
         matplotlib.pyplot.xticks(rotation=60, fontsize='small')
 
 
-    def var_var(self,var1:str,var2:str,color_var:str|None=None,fig=None,ax=None):
+    def var_var(self,x:str,y:str,color_var:str|None=None,fig=None,ax=None):
         self.init_figure(fig,ax)
         if color_var is not None:
-            self.ax.scatter(self.instrument[var1],self.instrument[var2],c=self.instrument[color_var])
+            self.ax.scatter(self.instrument[x],self.instrument[y],c=self.instrument[color_var])
         elif color_var is None:
-            self.ax.scatter(self.instrument[var1],self.instrument[var2])
+            self.ax.scatter(self.instrument[x],self.instrument[y])
+
+    def cross_section(self,longitude,latitude):
+        raise NotImplementedError('Need to add method to plot cross sections')
 
 @define
 class Histogram(Plotter):
 
     def plot(self,var:str,fig=None,ax=None):
-        ''''''
         self.init_figure(fig,ax)
         self.ax.hist(self.instrument[var])
 
 
-    def plot2d(self,var1:str,var2:str,fig=None,ax=None):
-        ''''''
+    def plot2d(self,x:str,y:str,fig=None,ax=None,**kwargs):
         self.init_figure(fig,ax,)
-        self.ax.hist2d(self.instrument[var1],self.instrument[var2])
+        self.ax.hist2d(self.instrument[x],self.instrument[y],**kwargs)
