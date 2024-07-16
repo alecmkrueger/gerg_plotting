@@ -25,12 +25,14 @@ class Bounds:
     depth_top:float|int|None = field(default=None)
 
     def relative_longitude(self):
-        self.lon_min = self.lon_min-360
-        self.lon_max = self.lon_max-360
+        if self.lon_min is not None and self.lon_max is not None:
+            self.lon_min = self.lon_min-360
+            self.lon_max = self.lon_max-360
 
     def absoloute_longitude(self):
-        self.lon_min = self.lon_min+360
-        self.lon_max = self.lon_max+360
+        if self.lon_min is not None and self.lon_max is not None:
+            self.lon_min = self.lon_min+360
+            self.lon_max = self.lon_max+360
 
     def __repr__(self):
         '''Pretty printing'''
@@ -65,7 +67,7 @@ class Bathy:
         bounds (Bounds): contains attributes of lat_min,lon_min,lat_max,lon_max,depth_max,depth_min
         resolution_level (float|int): how much to coarsen the dataset by in units of degrees
         '''
-        seafloor_path = Path('seafloor_data\gebco_2023_n31.0_s7.0_w-100.0_e-66.5.nc')
+        seafloor_path = Path('seafloor_data/gebco_2023_n31.0_s7.0_w-100.0_e-66.5.nc')
         ds = xr.open_dataset(seafloor_path) #read in seafloor data
 
         if self.resolution_level is not None:
@@ -154,8 +156,8 @@ class Plotter:
     instrument:Glider|Buoy|CTD|WaveGlider
     bounds:Bounds|None = field(default= None)
 
-    fig:matplotlib.figure.Figure|None = field(default=None)
-    ax:matplotlib.axes.Axes|None = field(default=None)
+    fig:matplotlib.figure.Figure = field(default=None)
+    ax:matplotlib.axes.Axes = field(default=None)
 
     def init_figure(self,fig=None,ax=None):
         if fig is None and ax is None:
