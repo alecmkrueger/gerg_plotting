@@ -4,7 +4,7 @@ import datetime
 import xarray as xr
 import matplotlib.pyplot as plt
 from plotter_classes import SurfacePlot,Glider,DepthPlot,Bounds,Histogram
-from utils.plotter_utils import interp_data,filter_var,get_bathy
+from utils.plotter_utils import interp_data,filter_var
 
 ds = xr.open_dataset('../test_data/2024_mission_44.nc')
 
@@ -40,8 +40,8 @@ glider = Glider(lat = latitude,
 #                 depth_bottom=1000,
 #                 depth_top=None)
 
-bounds = Bounds(lat_max=None)
-x,y,z = get_bathy(map_bounds=bounds)
+# bounds = Bounds(lat_max=None)
+# x,y,z = get_bathy(map_bounds=bounds)
 
 # fig,axes = plt.subplots(nrows=7,figsize = (10,35))
 # surfaces = SurfacePlot(instrument=glider,bounds=bounds)
