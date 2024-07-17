@@ -5,7 +5,6 @@ import xarray as xr
 import matplotlib.pyplot as plt
 from plotter_classes import SurfacePlot,Glider,DepthPlot,Bounds,Histogram
 from utils.plotter_utils import interp_data,filter_var
-from utils.plotter_utils import interp_data,filter_var
 
 ds = xr.open_dataset('../test_data/2024_mission_44.nc')
 
@@ -41,22 +40,23 @@ bounds = Bounds(lat_min=18,
                 depth_bottom=1000,
                 depth_top=None)
 
-fig,axes = plt.subplots(nrows=7,figsize = (10,35))
+# fig,axes = plt.subplots(nrows=7,figsize = (10,35))
 surfaces = SurfacePlot(instrument=glider,bounds=bounds)
-surfaces.map(fig=fig,ax=axes[0],var='time')
+surfaces.map()
+# surfaces.map(fig=fig,ax=axes[0],var='time')
 
-depth_plot = DepthPlot(instrument=glider,bounds=bounds)
+# depth_plot = DepthPlot(instrument=glider,bounds=bounds)
 
-depth_plot.time_series(fig=fig,ax=axes[1],var='temperature')
-depth_plot.var_var(fig=fig,ax=axes[2],x='salinity',y='temperature',color_var='salinity')
-depth_plot.var_var(fig=fig,ax=axes[3],x='temperature',y='depth',color_var='salinity')
-axes[3].invert_yaxis()
+# depth_plot.time_series(fig=fig,ax=axes[1],var='temperature')
+# depth_plot.var_var(fig=fig,ax=axes[2],x='salinity',y='temperature',color_var='salinity')
+# depth_plot.var_var(fig=fig,ax=axes[3],x='temperature',y='depth',color_var='salinity')
+# axes[3].invert_yaxis()
 
-hist = Histogram(instrument=glider,bounds=bounds)
-hist.plot(fig=fig,ax=axes[4],var='temperature')
-hist.plot(fig=fig,ax=axes[5],var='salinity')
-hist.plot2d(fig=fig,ax=axes[6],x='temperature',y='depth',range=[[0, 35], [0, 1000]],bins=100,norm='log')
-hist.ax.invert_yaxis()
+# hist = Histogram(instrument=glider,bounds=bounds)
+# hist.plot(fig=fig,ax=axes[4],var='temperature')
+# hist.plot(fig=fig,ax=axes[5],var='salinity')
+# hist.plot2d(fig=fig,ax=axes[6],x='temperature',y='depth',range=[[0, 35], [0, 1000]],bins=100,norm='log')
+# hist.ax.invert_yaxis()
 
 
 plt.show()
