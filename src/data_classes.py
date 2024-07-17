@@ -34,7 +34,7 @@ class Bathy(Data):
     cmap: colormap object
     vertical_scalar: value to multiply the depth by
     '''
-    bounds:Bounds = field(factory=Bounds)
+    bounds:Bounds = field(default=None)
     resolution_level:float|int|None = field(default=5)
     cmap:Colormap = field(default=matplotlib.cm.get_cmap('Blues'))
     vertical_scaler:int|float = field(default=None)
@@ -75,24 +75,24 @@ class Bathy(Data):
 @define
 class Glider(Data):
     # Vars
-    temperature:np.ndarray = field(factory=np.ndarray)
-    salinity:np.ndarray = field(factory=np.ndarray)
+    temperature:np.ndarray = field(default=None)
+    salinity:np.ndarray = field(default=None)
 
 @define
 class Buoy(Data):
     # Vars
-    u_current:np.ndarray = field(factory=np.ndarray)
-    v_current:np.ndarray = field(factory=np.ndarray)
+    u_current:np.ndarray = field(default=None)
+    v_current:np.ndarray = field(default=None)
 
 @define
 class CTD(Data):
     # Vars
-    temperature:np.ndarray = field(factory=np.ndarray)
-    salinity:np.ndarray = field(factory=np.ndarray)
+    temperature:np.ndarray = field(default=None)
+    salinity:np.ndarray = field(default=None)
 
 @define
 class WaveGlider(Data):
     # Vars
-    temperature:np.ndarray = field(factory=np.ndarray)
-    salinity:np.ndarray  = field(factory=np.ndarray)
+    temperature:np.ndarray = field(default=None)
+    salinity:np.ndarray  = field(default=None)
     
