@@ -50,7 +50,7 @@ depth_plot = DepthPlot(instrument=glider,bounds=bounds)
 depth_plot.time_series(fig=fig,ax=axes[2],var='temperature')
 depth_plot.var_var(fig=fig,ax=axes[3],x='salinity',y='temperature',color_var='salinity')
 depth_plot.var_var(fig=fig,ax=axes[4],x='temperature',y='depth',color_var='salinity')
-axes[3].invert_yaxis()
+axes[4].invert_yaxis()
 
 hist = Histogram(instrument=glider,bounds=bounds)
 hist.plot(fig=fig,ax=axes[5],var='temperature')

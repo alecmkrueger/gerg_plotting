@@ -147,34 +147,34 @@ class Data:
 @define
 class Glider(Data):
     # Vars
-    temperature:np.ndarray = field(factory=np.ndarray)
-    salinity:np.ndarray = field(factory=np.ndarray)
+    temperature:np.ndarray = field(factory=np.ndarray,validator=validate_array_lengths)
+    salinity:np.ndarray = field(factory=np.ndarray,validator=validate_array_lengths)
     def __getitem__(self, key:str):
         return asdict(self)[key]
 
 @define
 class Buoy(Data):
     # Vars
-    temperature:np.ndarray = field(factory=np.ndarray)
-    salinity:np.ndarray = field(factory=np.ndarray)
-    u_current:np.ndarray = field(factory=np.ndarray)
-    v_current:np.ndarray = field(factory=np.ndarray)
+    temperature:np.ndarray = field(factory=np.ndarray,validator=validate_array_lengths)
+    salinity:np.ndarray = field(factory=np.ndarray,validator=validate_array_lengths)
+    u_current:np.ndarray = field(factory=np.ndarray,validator=validate_array_lengths)
+    v_current:np.ndarray = field(factory=np.ndarray,validator=validate_array_lengths)
     def __getitem__(self, key:str):
         return asdict(self)[key]
 
 @define
 class CTD(Data):
     # Vars
-    temperature:np.ndarray = field(factory=np.ndarray)
-    salinity:np.ndarray = field(factory=np.ndarray)
+    temperature:np.ndarray = field(factory=np.ndarray,validator=validate_array_lengths)
+    salinity:np.ndarray = field(factory=np.ndarray,validator=validate_array_lengths)
     def __getitem__(self, key:str):
         return asdict(self)[key]
 
 @define
 class WaveGlider(Data):
     # Vars
-    temperature:np.ndarray = field(factory=np.ndarray)
-    salinity:np.ndarray  = field(factory=np.ndarray)
+    temperature:np.ndarray = field(factory=np.ndarray,validator=validate_array_lengths)
+    salinity:np.ndarray  = field(factory=np.ndarray,validator=validate_array_lengths)
     def __getitem__(self, key:str):
         return asdict(self)[key]
     

@@ -11,8 +11,8 @@ def lon_min_smaller_than_max(instance, attribute, value):
             raise ValueError("'lon_min' must to be smaller than 'lon_max'")
         
 def validate_array_lengths(instance,attribute,value):
-    lengths = [len(getattr(instance,attr.name)) for attr in instance.__attrs_attrs__ if isinstance(getattr(instance,attr.name),np.ndarray)]
-    if len(set(lengths))>1:
+    lengths = {attr.name:len(getattr(instance,attr.name)) for attr in instance.__attrs_attrs__ if isinstance(getattr(instance,attr.name),np.ndarray)}
+    if len(set(lengths.values()))>1:
         raise ValueError(f'All Dims and Vars must be the same length, got lengths of {lengths}')
 
         
