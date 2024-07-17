@@ -26,3 +26,5 @@ def filter_var(var:pd.Series,min_value,max_value):
     var = var.where(var>min_value)
     var = var.where(var<max_value)
     return var
+
+

@@ -7,17 +7,17 @@ from pprint import pformat
 import xarray as xr
 from pathlib import Path
 
-from utils.class_utils import validate_array_lengths,get_center_of_mass
+from utils.class_utils import get_center_of_mass
 from bounds import Bounds
 
 
 @define
 class Data:
     # Dims
-    lat:np.ndarray = field(factory=np.ndarray,validator=validate_array_lengths)
-    lon:np.ndarray = field(factory=np.ndarray,validator=validate_array_lengths)
-    depth:np.ndarray = field(factory=np.ndarray,validator=validate_array_lengths)
-    time:np.ndarray = field(factory=np.ndarray,validator=validate_array_lengths)
+    lat:np.ndarray = field(default=None)
+    lon:np.ndarray = field(default=None)
+    depth:np.ndarray = field(default=None)
+    time:np.ndarray = field(default=None)
     # Cmaps
     temperature_cmap:Colormap = field(default=cmocean.cm.thermal)
     salinity_cmap:Colormap = field(default=cmocean.cm.haline)
@@ -34,7 +34,7 @@ class Bathy(Data):
     cmap: colormap object
     vertical_scalar: value to multiply the depth by
     '''
-    bounds:Bounds
+    bounds:Bounds = field(factory=Bounds)
     resolution_level:float|int|None = field(default=5)
     cmap:Colormap = field(default=matplotlib.cm.get_cmap('Blues'))
     vertical_scaler:int|float = field(default=None)
@@ -60,7 +60,7 @@ class Bathy(Data):
 
         ds = ds.sel(lat=slice(self.bounds["lat_min"],self.bounds["lat_max"])).sel(lon=slice(self.bounds["lon_min"],self.bounds["lon_max"])) #slice to the focus area
 
-        self.depth = ds.elevation.values*-1 #extract the depth values and flip them
+        self.depth = ds['elevation'].values*-1 #extract the depth values and flip them
 
         if self.bounds["depth_top"] is not None:
             self.depth = np.where(self.depth>self.bounds["depth_top"],self.depth,self.bounds["depth_top"]) #set all depth values less than the depth_top to the same value as depth_top for visuals
@@ -75,26 +75,24 @@ class Bathy(Data):
 @define
 class Glider(Data):
     # Vars
-    temperature:np.ndarray = field(factory=np.ndarray,validator=validate_array_lengths)
-    salinity:np.ndarray = field(factory=np.ndarray,validator=validate_array_lengths)
+    temperature:np.ndarray = field(factory=np.ndarray)
+    salinity:np.ndarray = field(factory=np.ndarray)
 
 @define
 class Buoy(Data):
     # Vars
-    temperature:np.ndarray = field(factory=np.ndarray,validator=validate_array_lengths)
-    salinity:np.ndarray = field(factory=np.ndarray,validator=validate_array_lengths)
-    u_current:np.ndarray = field(factory=np.ndarray,validator=validate_array_lengths)
-    v_current:np.ndarray = field(factory=np.ndarray,validator=validate_array_lengths)
+    u_current:np.ndarray = field(factory=np.ndarray)
+    v_current:np.ndarray = field(factory=np.ndarray)
 
 @define
 class CTD(Data):
     # Vars
-    temperature:np.ndarray = field(factory=np.ndarray,validator=validate_array_lengths)
-    salinity:np.ndarray = field(factory=np.ndarray,validator=validate_array_lengths)
+    temperature:np.ndarray = field(factory=np.ndarray)
+    salinity:np.ndarray = field(factory=np.ndarray)
 
 @define
 class WaveGlider(Data):
     # Vars
-    temperature:np.ndarray = field(factory=np.ndarray,validator=validate_array_lengths)
-    salinity:np.ndarray  = field(factory=np.ndarray,validator=validate_array_lengths)
+    temperature:np.ndarray = field(factory=np.ndarray)
+    salinity:np.ndarray  = field(factory=np.ndarray)
     

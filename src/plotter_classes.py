@@ -66,6 +66,10 @@ class SurfacePlot(Plotter):
             self.ax.contourf(self.bathy.lon,self.bathy.lat,self.bathy.depth,levels=50,cmap=self.bathy.cmap,vmin=0)
 
         self.ax.scatter(self.instrument.lon,self.instrument.lat,c=color,cmap=cmap,s=2)
+    
+    def quiver(self):
+        self.init_figure()
+        raise NotImplementedError('Need to add Quiver')
 
 
 @define
