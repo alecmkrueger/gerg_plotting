@@ -1,9 +1,11 @@
+from warnings import warn
 import matplotlib
 import matplotlib.axes
 import matplotlib.cm
 import matplotlib.figure
 import matplotlib.pyplot
 import matplotlib.dates as mdates
+from matplotlib.colors import Colormap
 import numpy as np
 import pandas as pd
 from attrs import define, field, asdict,validators
@@ -12,7 +14,7 @@ from pathlib import Path
 import xarray as xr
 import cmocean
 
-from utils.class_utils import lat_min_smaller_than_max,lon_min_smaller_than_max,get_center_of_mass
+from utils.class_utils import lat_min_smaller_than_max,lon_min_smaller_than_max,get_center_of_mass,validate_array_lengths
 
 
 @define
@@ -26,23 +28,43 @@ class Bounds:
     depth_bottom:float|int|None = field(default=None)
     depth_top:float|int|None = field(default=None)
 
-    longitude_state:str = field(init=False)
+    # If the longitude is -180 to 180 then the state is relative
+    # If the longitude is 0 to 360 then the state is absolute
+    longitude_state:str|None = field(default=None)
 
+    def __attrs_post_init__(self):
+        if self.longitude_state is None:
+            self.determine_longitude_state()
+
+    def determine_longitude_state(self):
+        if self.lon_min > 0 or self.lon_max>0:
+            warn('The longitude state might be incorrect, please verify or pass the state')
+        elif self.lon_min<0 or self.lon_max<0:
+            self.longitude_state = 'relative'
+        elif (0 <= self.lon_min <= 360) or (0 <= self.lon_max <= 360):
+            self.longitude_state = 'absolute'
 
     def relative_longitude(self):
-        
-        if self.lon_min is not None:
-            self.lon_min = self.lon_min-360
-        if self.lon_max is not None:
-            self.lon_max = self.lon_max-360
-        self.longitude_state = 'relative'
+        # Convert the longitude to relative i.e. from 0-360 to -180-180
+        if self.longitude_state == 'absolute':
+            if self.lon_min is not None:
+                self.lon_min = self.lon_min-180
+            if self.lon_max is not None:
+                self.lon_max = self.lon_max-180
+            self.longitude_state = 'relative'
+        else:
+            raise ValueError('longitude must be absolute before converting to relative')
 
     def absoloute_longitude(self):
-        if self.lon_min is not None:
-            self.lon_min = self.lon_min+360
-        if self.lon_max is not None:
-            self.lon_max = self.lon_max+360
-        self.longitude_state = 'absolute'
+        # Convert the longitude to absolute i.e. from -180-180 to 0-360 
+        if self.longitude_state == 'relative': 
+            if self.lon_min is not None:
+                self.lon_min = self.lon_min+180
+            if self.lon_max is not None:
+                self.lon_max = self.lon_max+180
+            self.longitude_state = 'absolute'
+        else:
+            raise ValueError('longitude must be relative before converting to relative')
 
     def __repr__(self):
         '''Pretty printing'''
@@ -59,7 +81,7 @@ class Bathy:
     '''
     bounds:Bounds
     resolution_level:float|int|None = field(default=5)
-    cmap:None = field(default=None)
+    cmap:Colormap = field(default=matplotlib.cm.get_cmap('Blues'))
     vertical_scaler:int|float = field(default=None)
     vertical_units:str = field(default='')
     center_of_mass:tuple = field(init=False)
@@ -107,58 +129,52 @@ class Bathy:
     def __getitem__(self, key:str):
         return asdict(self)[key]
 
-
 @define
-class Glider:
+class Data:
     # Dims
-    lat:np.ndarray
-    lon:np.ndarray
-    depth:np.ndarray
-    time:np.ndarray
+    lat:np.ndarray = field(factory=np.ndarray,validator=validate_array_lengths)
+    lon:np.ndarray = field(factory=np.ndarray,validator=validate_array_lengths)
+    depth:np.ndarray = field(factory=np.ndarray,validator=validate_array_lengths)
+    time:np.ndarray = field(factory=np.ndarray,validator=validate_array_lengths)
+    # Cmaps
+    temperature_cmap:Colormap = field(default=cmocean.cm.thermal)
+    salinity_cmap:Colormap = field(default=cmocean.cm.haline)
+
+    def __getitem__(self, key:str):
+        return asdict(self)[key]
+
+
+@define
+class Glider(Data):
     # Vars
-    temperature:np.ndarray
-    salinity:np.ndarray
+    temperature:np.ndarray = field(factory=np.ndarray)
+    salinity:np.ndarray = field(factory=np.ndarray)
     def __getitem__(self, key:str):
         return asdict(self)[key]
 
 @define
-class Buoy:
-    #Dims
-    lat:np.ndarray
-    lon:np.ndarray
-    depth:np.ndarray
-    time:np.ndarray
+class Buoy(Data):
     # Vars
-    temperature:np.ndarray
-    salinity:np.ndarray
-    u_current:np.ndarray
-    v_current:np.ndarray
+    temperature:np.ndarray = field(factory=np.ndarray)
+    salinity:np.ndarray = field(factory=np.ndarray)
+    u_current:np.ndarray = field(factory=np.ndarray)
+    v_current:np.ndarray = field(factory=np.ndarray)
     def __getitem__(self, key:str):
         return asdict(self)[key]
 
 @define
-class CTD:
-    #Dims
-    lat:np.ndarray
-    lon:np.ndarray
-    depth:np.ndarray
-    time:np.ndarray
+class CTD(Data):
     # Vars
-    temperature:np.ndarray
-    salinity:np.ndarray
+    temperature:np.ndarray = field(factory=np.ndarray)
+    salinity:np.ndarray = field(factory=np.ndarray)
     def __getitem__(self, key:str):
         return asdict(self)[key]
 
 @define
-class WaveGlider:
-    #Dims
-    lat:np.ndarray
-    lon:np.ndarray
-    depth:np.ndarray
-    time:np.ndarray
+class WaveGlider(Data):
     # Vars
-    temperature:np.ndarray
-    salinity:np.ndarray 
+    temperature:np.ndarray = field(factory=np.ndarray)
+    salinity:np.ndarray  = field(factory=np.ndarray)
     def __getitem__(self, key:str):
         return asdict(self)[key]
     
@@ -182,17 +198,21 @@ class SurfacePlot(Plotter):
     bathy:Bathy = field(init=False)
 
     def init_bathy(self):
-        self.bathy = Bathy(self.bounds,resolution_level=5,cmap=matplotlib.cm.get_cmap('Blues'))
+        self.bathy = Bathy(self.bounds,resolution_level=5)
 
-    def map(self,var:str|None=None,fig=None,ax=None,seafloor=True):
+    def map(self,var:str|None=None,surface_values:bool=False,fig=None,ax=None,seafloor=True):
         self.init_figure(fig,ax)
 
         if var is None:
-            color = 'k'            
+            color = 'k'
+            cmap = None
         else:
-            color = self.instrument[var]
+            color_var_values = self.instrument[var].copy()
+            if surface_values:
+                color_var_values[self.instrument.depth>2] = np.nan
+            color = color_var_values
+            cmap = self.instrument[f'{var}_cmap']
         if self.bounds is not None:
-            self.bounds.relative_longitude()
             self.ax.set_ylim(self.bounds.lat_min,self.bounds.lat_max)
             self.ax.set_xlim(self.bounds.lon_min,self.bounds.lon_max)
         if seafloor:
@@ -203,7 +223,8 @@ class SurfacePlot(Plotter):
             land_color = [231/255,194/255,139/255,1]
             self.bathy.cmap.set_under(land_color)
             self.ax.contourf(self.bathy.lon,self.bathy.lat,self.bathy.depth,levels=50,cmap=self.bathy.cmap,vmin=0)
-        self.ax.scatter(self.instrument.lon,self.instrument.lat,c=color)
+
+        self.ax.scatter(self.instrument.lon,self.instrument.lat,c=color,cmap=cmap,s=2)
 
 
 @define

@@ -35,28 +35,28 @@ glider = Glider(lat = latitude,
 
 bounds = Bounds(lat_min=18,
                 lat_max=24,
-                lon_max=278,
-                lon_min=271,
+                lon_max=-82,
+                lon_min=-89,
                 depth_bottom=1000,
                 depth_top=None)
 
-# fig,axes = plt.subplots(nrows=7,figsize = (10,35))
+fig,axes = plt.subplots(nrows=8,figsize = (10,35))
 surfaces = SurfacePlot(instrument=glider,bounds=bounds)
-surfaces.map()
-# surfaces.map(fig=fig,ax=axes[0],var='time')
+surfaces.map(fig=fig,ax=axes[0])
+surfaces.map(fig=fig,ax=axes[1],var='temperature',surface_values=True)
 
-# depth_plot = DepthPlot(instrument=glider,bounds=bounds)
+depth_plot = DepthPlot(instrument=glider,bounds=bounds)
 
-# depth_plot.time_series(fig=fig,ax=axes[1],var='temperature')
-# depth_plot.var_var(fig=fig,ax=axes[2],x='salinity',y='temperature',color_var='salinity')
-# depth_plot.var_var(fig=fig,ax=axes[3],x='temperature',y='depth',color_var='salinity')
-# axes[3].invert_yaxis()
+depth_plot.time_series(fig=fig,ax=axes[2],var='temperature')
+depth_plot.var_var(fig=fig,ax=axes[3],x='salinity',y='temperature',color_var='salinity')
+depth_plot.var_var(fig=fig,ax=axes[4],x='temperature',y='depth',color_var='salinity')
+axes[3].invert_yaxis()
 
-# hist = Histogram(instrument=glider,bounds=bounds)
-# hist.plot(fig=fig,ax=axes[4],var='temperature')
-# hist.plot(fig=fig,ax=axes[5],var='salinity')
-# hist.plot2d(fig=fig,ax=axes[6],x='temperature',y='depth',range=[[0, 35], [0, 1000]],bins=100,norm='log')
-# hist.ax.invert_yaxis()
+hist = Histogram(instrument=glider,bounds=bounds)
+hist.plot(fig=fig,ax=axes[5],var='temperature')
+hist.plot(fig=fig,ax=axes[6],var='salinity')
+hist.plot2d(fig=fig,ax=axes[7],x='temperature',y='depth',range=[[0, 35], [0, 1000]],bins=100,norm='log')
+hist.ax.invert_yaxis()
 
 
 plt.show()
