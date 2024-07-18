@@ -10,10 +10,11 @@ from bounds import Bounds
 from utils.plotter_utils import interp_data,filter_var
 
 ds = xr.open_dataset('../test_data/m07_full.nc')
-ds = ds.sel(date=slice('2021',None))
+ds = ds.sel(date=slice('2020-12-15',None))
 df = ds[['u','v']].to_dataframe().reset_index()
-df['u'] = filter_var(df['u'],min_value=-100,max_value=100)
-df['v'] = filter_var(df['v'],min_value=-100,max_value=100)
+cutoff_value=75
+df['u'] = filter_var(df['u'],min_value=-cutoff_value,max_value=cutoff_value)
+df['v'] = filter_var(df['v'],min_value=-cutoff_value,max_value=cutoff_value)
 
 buoy = Buoy(lat = np.array([21]),
             lon = np.array([-85]),
@@ -35,18 +36,20 @@ bounds = Bounds(lat_min=18,
 # surfaces.map(fig=fig,ax=axes[1],var='u_current',surface_values=False)
 # surfaces.map(fig=fig,ax=axes[2],var='v_current',surface_values=False)
 
-depth_plot = DepthPlot(instrument=buoy,bounds=bounds)
+# depth_plot = DepthPlot(instrument=buoy,bounds=bounds)
 
-depth_plot.time_series(var='u_current')
-plt.show()
-depth_plot.time_series(var='v_current')
-plt.show()
+# depth_plot.time_series(var='u_current')
+# plt.show()
+# depth_plot.time_series(var='v_current')
+# plt.show()
 
 hist = Histogram(instrument=buoy,bounds=bounds)
-hist.plot(var='u_current')
-plt.show()
-hist.plot(var='v_current')
-plt.show()
-hist.plot2d(x='u_current',y='v_current',bins=100,range=[[-100, 100], [-100, 100]],norm='log')
-hist.ax.invert_yaxis()
+# hist.plot(var='u_current')
+# plt.show()
+# hist.plot(var='v_current')
+# plt.show()
+# hist.plot2d(x='u_current',y='v_current',bins=150,range=[[-cutoff_value, cutoff_value], [-cutoff_value, cutoff_value]],norm='log')
+# hist.ax.invert_yaxis()
+# plt.show()
+hist.plot3d(x='u_current',y='v_current',bins=150,range=[[-cutoff_value, cutoff_value], [-cutoff_value, cutoff_value]])
 plt.show()

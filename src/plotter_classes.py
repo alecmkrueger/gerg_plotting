@@ -21,9 +21,14 @@ class Plotter:
     fig:matplotlib.figure.Figure = field(default=None)
     ax:matplotlib.axes.Axes = field(default=None)
 
-    def init_figure(self,fig=None,ax=None):
+    def init_figure(self,fig=None,ax=None,three_d=False):
+        if not three_d:
+            projection = None
+        elif three_d:
+            projection = '3d'
+
         if fig is None and ax is None:
-            self.fig,self.ax = matplotlib.pyplot.subplots()
+            self.fig,self.ax = matplotlib.pyplot.subplots(subplot_kw={'projection':projection})
         elif fig is not None and ax is not None:
             self.fig = fig
             self.ax = ax
@@ -105,5 +110,14 @@ class Histogram(Plotter):
         self.ax.hist(self.instrument[var])
 
     def plot2d(self,x:str,y:str,fig=None,ax=None,**kwargs):
-        self.init_figure(fig,ax,)
+        self.init_figure(fig,ax)
         self.ax.hist2d(self.instrument[x],self.instrument[y],**kwargs)
+
+    def plot3d(self,x:str,y:str,fig=None,ax=None,**kwargs):
+        from matplotlib import cm
+
+        self.init_figure(fig,ax,three_d=True)
+        h,xedges,yedges = np.histogram2d(self.instrument[x],self.instrument[y],**kwargs)
+        X,Y = np.meshgrid(xedges[1:],yedges[1:])
+        self.ax.plot_surface(X,Y,h, rstride=1, cstride=1, cmap=cm.coolwarm,
+                       linewidth=0, antialiased=False)
