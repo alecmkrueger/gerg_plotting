@@ -1,7 +1,5 @@
 import numpy as np
 import pandas as pd
-import datetime
-import xarray as xr
 import matplotlib.pyplot as plt
 from plotter_classes import SurfacePlot,DepthPlot,Histogram
 from data_classes import Radar
@@ -40,15 +38,6 @@ surfaces.map(fig=fig,ax=axes[0])
 surfaces.map(fig=fig,ax=axes[1],var='u_current',surface_values=False)
 surfaces.map(fig=fig,ax=axes[2],var='v_current',surface_values=False)
 plt.show()
-
-# depth_plot = DepthPlot(instrument=radar,bounds=bounds)
-
-# depth_plot.time_series(var='u_current')
-# plt.show()
-# depth_plot.time_series(var='v_current')
-# plt.show()
-# depth_plot.var_var(x='v_current',y='u_current',color_var='time')
-# plt.show()
 
 fig,axes = plt.subplots(nrows=4,figsize = (5,20))
 hist = Histogram(instrument=radar,bounds=bounds)

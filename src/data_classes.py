@@ -21,6 +21,8 @@ class Data:
     # Cmaps
     temperature_cmap:Colormap = field(default=cmocean.cm.thermal)
     salinity_cmap:Colormap = field(default=cmocean.cm.haline)
+    u_current_cmap:Colormap = field(default=cmocean.cm.speed)
+    v_current_cmap:Colormap = field(default=cmocean.cm.speed)
 
     def __getitem__(self, key:str):
         return asdict(self)[key]
