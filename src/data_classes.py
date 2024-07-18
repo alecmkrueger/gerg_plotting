@@ -10,9 +10,20 @@ from pathlib import Path
 from utils.class_utils import get_center_of_mass
 from bounds import Bounds
 
+@define
+class NonSpatialData:
+    def __getitem__(self, key:str):
+        return asdict(self)[key]
+    def __repr__(self):
+        '''Pretty printing'''
+        return pformat(asdict(self), indent=1,width=2,compact=True,depth=1)
 
 @define
-class Data:
+class Lab(NonSpatialData):
+    any_var:np.ndarray = field(default=None)    
+
+@define
+class SpatialData:
     # Dims
     lat:np.ndarray = field(default=None)
     lon:np.ndarray = field(default=None)
@@ -31,11 +42,8 @@ class Data:
         return pformat(asdict(self), indent=1,width=2,compact=True,depth=1)
 
 @define
-class Bathy(Data):
-    '''
-    cmap: colormap object
-    vertical_scalar: value to multiply the depth by
-    '''
+class Bathy(SpatialData):
+    # Vars
     bounds:Bounds = field(default=None)
     resolution_level:float|int|None = field(default=5)
     cmap:Colormap = field(default=matplotlib.cm.get_cmap('Blues'))
@@ -75,19 +83,19 @@ class Bathy(Data):
 
 
 @define
-class Glider(Data):
+class Glider(SpatialData):
     # Vars
     temperature:np.ndarray = field(default=None)
     salinity:np.ndarray = field(default=None)
 
 @define
-class Buoy(Data):
+class Buoy(SpatialData):
     # Vars
     u_current:np.ndarray = field(default=None)
     v_current:np.ndarray = field(default=None)
 
 @define
-class CTD(Data):
+class CTD(SpatialData):
     # Dim
     stations:np.ndarray = field(default=None)
     # Vars
@@ -95,12 +103,12 @@ class CTD(Data):
     salinity:np.ndarray = field(default=None)
 
 @define
-class WaveGlider(Data):
+class WaveGlider(SpatialData):
     # Vars
     temperature:np.ndarray = field(default=None)
     salinity:np.ndarray  = field(default=None)
     
 @define
-class Radar(Data):
+class Radar(SpatialData):
     u_current:np.ndarray = field(default=None)
     v_current:np.ndarray = field(default=None)

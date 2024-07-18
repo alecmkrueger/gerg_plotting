@@ -10,13 +10,13 @@ from attrs import define, field, asdict
 from pprint import pformat
 import cmocean
 
-from data_classes import Glider,WaveGlider,CTD,Buoy,Bathy
+from data_classes import Glider,WaveGlider,CTD,Buoy,Bathy,NonSpatialData,SpatialData
 from bounds import Bounds
 from utils.plotter_utils import calculate_range
 
 @define
 class Plotter:
-    instrument:Glider|Buoy|CTD|WaveGlider
+    instrument:SpatialData|NonSpatialData
     bounds:Bounds|None = field(default= None)
 
     fig:matplotlib.figure.Figure = field(default=None)
