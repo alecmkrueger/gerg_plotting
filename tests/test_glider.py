@@ -9,7 +9,7 @@ from data_classes import Buoy, Glider,CTD
 from bounds import Bounds
 from utils.plotter_utils import interp_data,filter_var
 
-ds = xr.open_dataset('../test_data/2024_mission_44.nc')
+ds = xr.open_dataset('../test_data/glider.nc')
 
 df = interp_data(ds)
 

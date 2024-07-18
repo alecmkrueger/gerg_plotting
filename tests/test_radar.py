@@ -6,7 +6,7 @@ from data_classes import Radar
 from bounds import Bounds
 from utils.plotter_utils import interp_data,filter_var,calculate_range
 
-df = pd.read_csv('../test_data/radials_uasa_ideal_2494_5c69_153a.csv',
+df = pd.read_csv('../test_data/radar.csv',
                  parse_dates=['time'],date_format='%Y-%m-%dT%H:%M:%SZ',skiprows=[1])
 
 times = list(set(df.time))
