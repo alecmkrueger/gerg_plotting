@@ -44,11 +44,10 @@ class SurfacePlot(Plotter):
     bathy:Bathy = field(init=False)
 
     def init_bathy(self):
-        self.bathy = Bathy(self.bounds,resolution_level=5)
+        self.bathy = Bathy(bounds=self.bounds,resolution_level=5)
 
     def map(self,var:str|None=None,surface_values:bool=False,fig=None,ax=None,seafloor=True):
         self.init_figure(fig,ax)
-
         if var is None:
             color = 'k'
             cmap = None
@@ -71,7 +70,6 @@ class SurfacePlot(Plotter):
             self.ax.contourf(self.bathy.lon,self.bathy.lat,self.bathy.depth,levels=50,cmap=self.bathy.cmap,vmin=0)
 
         self.ax.scatter(self.instrument.lon,self.instrument.lat,c=color,cmap=cmap,s=2)
-    
     def quiver(self):
         self.init_figure()
         raise NotImplementedError('Need to add Quiver')

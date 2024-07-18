@@ -19,39 +19,40 @@ class Bounds:
     # If the longitude is 0 to 360 then the state is absolute
     longitude_state:str|None = field(default=None)
 
-    def __attrs_post_init__(self):
-        if self.longitude_state is None:
-            self.determine_longitude_state()
+    # def __attrs_post_init__(self):
+    #     if self.longitude_state is None:
+    #         self.determine_longitude_state()
 
-    def determine_longitude_state(self):
-        if self.lon_min > 0 or self.lon_max>0:
-            warn('The longitude state might be incorrect, please verify or pass the state')
-        elif self.lon_min<0 or self.lon_max<0:
-            self.longitude_state = 'relative'
-        elif (0 <= self.lon_min <= 360) or (0 <= self.lon_max <= 360):
-            self.longitude_state = 'absolute'
+    # def determine_longitude_state(self):
+    #     if self.lon_max is not None and self.lon_min is not None:
+    #         if self.lon_min > 0 or self.lon_max>0:
+    #             warn('The longitude state might be incorrect, please verify or pass the state')
+    #         elif self.lon_min<0 or self.lon_max<0:
+    #             self.longitude_state = 'relative'
+    #         elif (0 <= self.lon_min <= 360) or (0 <= self.lon_max <= 360):
+    #             self.longitude_state = 'absolute'
 
-    def relative_longitude(self):
-        # Convert the longitude to relative i.e. from 0-360 to -180-180
-        if self.longitude_state == 'absolute':
-            if self.lon_min is not None:
-                self.lon_min = self.lon_min-180
-            if self.lon_max is not None:
-                self.lon_max = self.lon_max-180
-            self.longitude_state = 'relative'
-        else:
-            raise ValueError('longitude must be absolute before converting to relative')
+    # def relative_longitude(self):
+    #     # Convert the longitude to relative i.e. from 0-360 to -180-180
+    #     if self.longitude_state == 'absolute':
+    #         if self.lon_min is not None:
+    #             self.lon_min = self.lon_min-180
+    #         if self.lon_max is not None:
+    #             self.lon_max = self.lon_max-180
+    #         self.longitude_state = 'relative'
+    #     else:
+    #         raise ValueError('longitude must be absolute before converting to relative')
 
-    def absoloute_longitude(self):
-        # Convert the longitude to absolute i.e. from -180-180 to 0-360 
-        if self.longitude_state == 'relative': 
-            if self.lon_min is not None:
-                self.lon_min = self.lon_min+180
-            if self.lon_max is not None:
-                self.lon_max = self.lon_max+180
-            self.longitude_state = 'absolute'
-        else:
-            raise ValueError('longitude must be relative before converting to relative')
+    # def absoloute_longitude(self):
+    #     # Convert the longitude to absolute i.e. from -180-180 to 0-360 
+    #     if self.longitude_state == 'relative': 
+    #         if self.lon_min is not None:
+    #             self.lon_min = self.lon_min+180
+    #         if self.lon_max is not None:
+    #             self.lon_max = self.lon_max+180
+    #         self.longitude_state = 'absolute'
+    #     else:
+    #         raise ValueError('longitude must be relative before converting to relative')
 
     def __repr__(self):
         '''Pretty printing'''
