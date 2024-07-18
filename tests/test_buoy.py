@@ -1,9 +1,6 @@
 import numpy as np
-import pandas as pd
-import datetime
 import xarray as xr
 import matplotlib.pyplot as plt
-# from plotter_classes import SurfacePlot,Glider,DepthPlot,Bounds,Histogram
 from plotter_classes import SurfacePlot,DepthPlot,Histogram
 from data_classes import Buoy, Glider,CTD
 from bounds import Bounds
@@ -29,19 +26,6 @@ bounds = Bounds(lat_min=18,
                 lon_min=-89,
                 depth_bottom=1000,
                 depth_top=None)
-
-# fig,axes = plt.subplots(nrows=8,figsize = (10,35))
-# surfaces = SurfacePlot(instrument=buoy,bounds=bounds)
-# surfaces.map(fig=fig,ax=axes[0])
-# surfaces.map(fig=fig,ax=axes[1],var='u_current',surface_values=False)
-# surfaces.map(fig=fig,ax=axes[2],var='v_current',surface_values=False)
-
-# depth_plot = DepthPlot(instrument=buoy,bounds=bounds)
-
-# depth_plot.time_series(var='u_current')
-# plt.show()
-# depth_plot.time_series(var='v_current')
-# plt.show()
 
 fig,axes = plt.subplots(nrows=4,figsize = (5,20))
 hist = Histogram(instrument=buoy,bounds=bounds)

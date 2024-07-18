@@ -96,3 +96,7 @@ class WaveGlider(Data):
     temperature:np.ndarray = field(default=None)
     salinity:np.ndarray  = field(default=None)
     
+@define
+class Radar(Data):
+    u_current:np.ndarray = field(default=None)
+    v_current:np.ndarray = field(default=None)
