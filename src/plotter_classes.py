@@ -28,11 +28,8 @@ class Plotter:
             self.fig = fig
             self.ax = ax
             if three_d:
-                print(self.fig.axes)
                 index = [idx for idx,ax in enumerate(self.fig.axes) if ax is self.ax][0]+1
-                print(index)
                 self.ax.remove()
-                # print('here')
                 gs = self.ax.get_gridspec()
                 self.ax = fig.add_subplot(gs.nrows,gs.ncols,index, projection='3d')
 
