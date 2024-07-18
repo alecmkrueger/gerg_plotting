@@ -18,9 +18,19 @@ class NonSpatialData:
         '''Pretty printing'''
         return pformat(asdict(self), indent=1,width=2,compact=True,depth=1)
 
-@define
+# @define
 class Lab(NonSpatialData):
-    any_var:np.ndarray = field(default=None)    
+    def __init__(self,vars):
+        for key,value in vars.items():
+            setattr(self,key,value)
+    def __getitem__(self, key:str):
+        return getattr(self,key)
+    def __setitem__(self,key,value):
+        return setattr(self,key,value)
+    def __repr__(self):
+        '''Pretty printing'''
+        return pformat(self.__dict__, indent=1,width=2,compact=True,depth=1)
+
 
 @define
 class SpatialData:
@@ -32,8 +42,8 @@ class SpatialData:
     # Cmaps
     temperature_cmap:Colormap = field(default=cmocean.cm.thermal)
     salinity_cmap:Colormap = field(default=cmocean.cm.haline)
-    u_current_cmap:Colormap = field(default=cmocean.cm.speed)
-    v_current_cmap:Colormap = field(default=cmocean.cm.speed)
+    u_current_cmap:Colormap = field(default=cmocean.cm.delta)
+    v_current_cmap:Colormap = field(default=cmocean.cm.delta)
 
     def __getitem__(self, key:str):
         return asdict(self)[key]

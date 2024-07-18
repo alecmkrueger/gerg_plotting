@@ -10,7 +10,7 @@ from attrs import define, field, asdict
 from pprint import pformat
 import cmocean
 
-from data_classes import Glider,WaveGlider,CTD,Buoy,Bathy,NonSpatialData,SpatialData
+from data_classes import Bathy,NonSpatialData,SpatialData
 from bounds import Bounds
 from utils.plotter_utils import calculate_range
 
@@ -89,7 +89,6 @@ class DepthPlot(Plotter):
         self.ax.xaxis.set_major_locator(locator)
         self.ax.xaxis.set_major_formatter(formatter)
         matplotlib.pyplot.xticks(rotation=60, fontsize='small')
-
 
     def var_var(self,x:str,y:str,color_var:str|None=None,fig=None,ax=None):
         self.init_figure(fig,ax)
