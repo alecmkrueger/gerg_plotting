@@ -5,18 +5,11 @@ import xarray as xr
 import matplotlib.pyplot as plt
 # from plotter_classes import SurfacePlot,Glider,DepthPlot,Bounds,Histogram
 from plotter_classes import SurfacePlot,DepthPlot,Histogram
-from data_classes import Buoy, Glider, CTD, Radar
+from data_classes import Radar
 from bounds import Bounds
 from utils.plotter_utils import interp_data,filter_var
 
-df = pd.read_csv('../test_data/ctd.csv')
-
-ctd = CTD(lat = df['Latitude'],
-          lon=df['Longitude'],
-          depth=df['CTD BinDepth (m)'],
-          time=df['Time'],
-          temperature=df['Temp (deg C)'],
-          salinity=df['Salinity (PSU)'])
+radar = Radar()
 
 bounds = Bounds(lat_min=27,
                 lat_max=31,
@@ -26,27 +19,29 @@ bounds = Bounds(lat_min=27,
                 depth_top=None)
 
 fig,axes = plt.subplots(nrows=3,figsize = (10,10))
-surfaces = SurfacePlot(instrument=ctd,bounds=bounds)
+surfaces = SurfacePlot(instrument=radar,bounds=bounds)
 surfaces.map(fig=fig,ax=axes[0])
 surfaces.map(fig=fig,ax=axes[1],var='temperature',surface_values=False)
 surfaces.map(fig=fig,ax=axes[2],var='salinity',surface_values=False)
 plt.show()
 
-# # depth_plot = DepthPlot(instrument=buoy,bounds=bounds)
+depth_plot = DepthPlot(instrument=radar,bounds=bounds)
 
-# # depth_plot.time_series(var='u_current')
-# # plt.show()
-# # depth_plot.time_series(var='v_current')
-# # plt.show()
+depth_plot.time_series(var='temperature')
+plt.show()
+depth_plot.time_series(var='salinity')
+plt.show()
+depth_plot.var_var(x='salinity',y='temperature',color_var='depth')
+plt.show()
 
-# fig,axes = plt.subplots(nrows=4,figsize = (5,20))
-# hist = Histogram(instrument=buoy,bounds=bounds)
-# hist.plot(fig=fig,ax=axes[0],var='u_current')
-# # plt.show()
-# hist.plot(fig=fig,ax=axes[1],var='v_current')
-# # plt.show()
-# hist.plot2d(fig=fig,ax=axes[2],x='u_current',y='v_current',bins=150,range=[[-cutoff_value, cutoff_value], [-cutoff_value, cutoff_value]],norm='log')
-# hist.ax.invert_yaxis()
-# # plt.show()
-# hist.plot3d(fig=fig,ax=axes[3],x='u_current',y='v_current',bins=150,range=[[-cutoff_value, cutoff_value], [-cutoff_value, cutoff_value]])
+fig,axes = plt.subplots(nrows=4,figsize = (5,20))
+hist = Histogram(instrument=radar,bounds=bounds)
+hist.plot(fig=fig,ax=axes[0],var='temperature')
 # plt.show()
+hist.plot(fig=fig,ax=axes[1],var='salinity')
+# plt.show()
+hist.plot2d(fig=fig,ax=axes[2],x='temperature',y='salinity',bins=150,norm='log')
+hist.ax.invert_yaxis()
+# plt.show()
+hist.plot3d(fig=fig,ax=axes[3],x='temperature',y='salinity',bins=150)
+plt.show()

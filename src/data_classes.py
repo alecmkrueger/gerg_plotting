@@ -86,6 +86,8 @@ class Buoy(Data):
 
 @define
 class CTD(Data):
+    # Dim
+    stations:np.ndarray = field(default=None)
     # Vars
     temperature:np.ndarray = field(default=None)
     salinity:np.ndarray = field(default=None)

@@ -12,6 +12,7 @@ import cmocean
 
 from data_classes import Glider,WaveGlider,CTD,Buoy,Bathy
 from bounds import Bounds
+from utils.plotter_utils import calculate_range
 
 @define
 class Plotter:
@@ -80,7 +81,7 @@ class DepthPlot(Plotter):
 
     def time_series(self,var:str,fig=None,ax=None):
         self.init_figure(fig,ax)
-        self.ax.scatter(self.instrument.time,self.instrument.depth,c=self.instrument[var])
+        self.ax.scatter(self.instrument.time,self.instrument.depth,c=self.instrument[var],cmap=self.instrument[f'{var}_cmap'])
         self.ax.invert_yaxis()
         locator = mdates.AutoDateLocator()
         formatter = mdates.AutoDateFormatter(locator)
@@ -109,12 +110,14 @@ class Histogram(Plotter):
 
     def plot2d(self,x:str,y:str,fig=None,ax=None,**kwargs):
         self.init_figure(fig,ax)
-        self.ax.hist2d(self.instrument[x],self.instrument[y],**kwargs)
+        range = [calculate_range(self.instrument[x]),calculate_range(self.instrument[y])]
+        self.ax.hist2d(self.instrument[x],self.instrument[y],range=range,**kwargs)
 
     def plot3d(self,x:str,y:str,fig=None,ax=None,**kwargs):
         from matplotlib import cm
         self.init_figure(fig,ax,three_d=True)
-        h,xedges,yedges = np.histogram2d(self.instrument[x],self.instrument[y],**kwargs)
+        range = [calculate_range(self.instrument[x]),calculate_range(self.instrument[y])]
+        h,xedges,yedges = np.histogram2d(self.instrument[x],self.instrument[y],range=range,**kwargs)
         X,Y = np.meshgrid(xedges[1:],yedges[1:])
         self.ax.plot_surface(X,Y,h, rstride=1, cstride=1, cmap=cm.coolwarm,
                        linewidth=0, antialiased=False)

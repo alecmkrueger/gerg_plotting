@@ -27,4 +27,5 @@ def filter_var(var:pd.Series,min_value,max_value):
     var = var.where(var<max_value)
     return var
 
-
+def calculate_range(var:np.ndarray):
+    return [np.nanmin(var),np.nanmax(var)]
