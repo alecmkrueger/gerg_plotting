@@ -22,16 +22,19 @@ class Plotter:
     ax:matplotlib.axes.Axes = field(default=None)
 
     def init_figure(self,fig=None,ax=None,three_d=False):
-        if not three_d:
-            projection = None
-        elif three_d:
-            projection = '3d'
-
         if fig is None and ax is None:
-            self.fig,self.ax = matplotlib.pyplot.subplots(subplot_kw={'projection':projection})
+            self.fig,self.ax = matplotlib.pyplot.subplots(subplot_kw={'projection':('3d' if three_d else None)})
         elif fig is not None and ax is not None:
             self.fig = fig
             self.ax = ax
+            if three_d:
+                print(self.fig.axes)
+                index = [idx for idx,ax in enumerate(self.fig.axes) if ax is self.ax][0]+1
+                print(index)
+                self.ax.remove()
+                # print('here')
+                gs = self.ax.get_gridspec()
+                self.ax = fig.add_subplot(gs.nrows,gs.ncols,index, projection='3d')
 
     def __getitem__(self, key:str):
         return asdict(self)[key]
@@ -115,7 +118,6 @@ class Histogram(Plotter):
 
     def plot3d(self,x:str,y:str,fig=None,ax=None,**kwargs):
         from matplotlib import cm
-
         self.init_figure(fig,ax,three_d=True)
         h,xedges,yedges = np.histogram2d(self.instrument[x],self.instrument[y],**kwargs)
         X,Y = np.meshgrid(xedges[1:],yedges[1:])

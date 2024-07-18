@@ -22,9 +22,3 @@ def get_center_of_mass(lon,lat,pressure) -> tuple:
     centroid = tuple([np.nanmean(lon), np.nanmean(lat), np.nanmean(pressure)])
     return centroid
 
-def get_2d_hist_data(x,y,**kwargs):
-
-    fig,ax = matplotlib.pyplot.subplots()
-    xedges,yedges,h,img = ax.hist2d(x,y,**kwargs)
-    fig.clear()
-    return xedges,yedges,h
