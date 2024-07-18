@@ -9,17 +9,17 @@ from data_classes import Buoy, Glider,CTD
 from bounds import Bounds
 from utils.plotter_utils import interp_data,filter_var
 
-ds = xr.open_dataset('../test_data/tabs225m01_K.nc')
+ds = xr.open_dataset('../test_data/m07_full.nc')
 ds = ds.sel(date=slice('2021',None))
-df = ds[['e','v']].to_dataframe().reset_index()
-df['e'] = filter_var(df['e'],min_value=-50,max_value=50)
-df['v'] = filter_var(df['v'],min_value=-50,max_value=50)
+df = ds[['u','v']].to_dataframe().reset_index()
+df['u'] = filter_var(df['u'],min_value=-100,max_value=100)
+df['v'] = filter_var(df['v'],min_value=-100,max_value=100)
 
 buoy = Buoy(lat = np.array([21]),
             lon = np.array([-85]),
-            depth= df['depth'].to_numpy(),
+            depth= df['bin'].to_numpy(),
             time = df['date'].to_numpy(),
-            u_current=df['e'].to_numpy(),
+            u_current=df['u'].to_numpy(),
             v_current=df['v'].to_numpy())
 
 bounds = Bounds(lat_min=18,
