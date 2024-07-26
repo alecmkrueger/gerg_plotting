@@ -5,6 +5,7 @@ description = ""
 authors = ["Alec Krueger <alecmkrueger@tamu.edu>"]
 readme = "README.md"
 packages = [{include = "plotting", from = "src"}]
+include = ["seafloor_data/gebco_2023_n31.0_s7.0_w-100.0_e-66.5.nc"]
 
 [tool.poetry.dependencies]
 python = "^3.12"
