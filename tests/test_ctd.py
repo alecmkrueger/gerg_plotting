@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from plotter_classes import SurfacePlot,DepthPlot,Histogram
 from data_classes import CTD, Radar
 from bounds import Bounds
-from utils.plotter_utils import interp_data,filter_var
+from plotter_utils import interp_data,filter_var
 
 df = pd.read_csv('../test_data/ctd.csv',parse_dates=['Date_Time'])
 

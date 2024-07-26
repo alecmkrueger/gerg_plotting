@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from plotter_classes import SurfacePlot,DepthPlot,Histogram
 from data_classes import Buoy, Glider,CTD
 from bounds import Bounds
-from utils.plotter_utils import interp_data,filter_var
+from plotter_utils import interp_data,filter_var
 
 ds = xr.open_dataset('../test_data/buoy.nc')
 ds = ds.sel(date=slice('2020-12-15',None))

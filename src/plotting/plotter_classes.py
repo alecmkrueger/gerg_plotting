@@ -10,9 +10,9 @@ from attrs import define, field, asdict
 from pprint import pformat
 import cmocean
 
-from data_classes import Bathy,NonSpatialData,SpatialData
-from bounds import Bounds
-from utils.plotter_utils import calculate_range
+from plotting.data_classes import Bathy,NonSpatialData,SpatialData
+from plotting.bounds import Bounds
+from plotting.plotter_utils import calculate_range
 
 @define
 class Plotter:

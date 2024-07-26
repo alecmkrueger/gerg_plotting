@@ -7,8 +7,8 @@ from pprint import pformat
 import xarray as xr
 from pathlib import Path
 
-from utils.class_utils import get_center_of_mass
-from bounds import Bounds
+from plotting.class_utils import get_center_of_mass
+from plotting.bounds import Bounds
 
 @define
 class NonSpatialData:

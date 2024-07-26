@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from plotter_classes import SurfacePlot,DepthPlot,Histogram
 from data_classes import Buoy, Glider,CTD
 from bounds import Bounds
-from utils.plotter_utils import interp_data,filter_var
+from plotter_utils import interp_data,filter_var
 
 ds = xr.open_dataset('../test_data/glider.nc')
 

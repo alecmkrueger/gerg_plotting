@@ -2,7 +2,7 @@ from attrs import define,field,asdict,validators
 from warnings import warn
 from pprint import pformat
 
-from utils.class_utils import lat_min_smaller_than_max,lon_min_smaller_than_max
+from plotting.class_utils import lat_min_smaller_than_max,lon_min_smaller_than_max
 
 @define
 class Bounds:
