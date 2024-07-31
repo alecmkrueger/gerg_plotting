@@ -1,6 +1,6 @@
 from attrs import define
 import numpy as np
-from classes_data import SpatialData
+from gerg_plotting.classes_data import SpatialData
 
 
 @define
