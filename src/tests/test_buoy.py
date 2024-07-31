@@ -1,7 +1,7 @@
 import numpy as np
 import xarray as xr
 import matplotlib.pyplot as plt
-from plotting.plotter_classes2d import SurfacePlot,DepthPlot,Histogram
+from plotting.classes_plotter2d import SurfacePlot,DepthPlot,Histogram
 from plotting.classes_data import Buoy, Glider,CTD,Bounds
 from plotting.utils_plotter2d import filter_var
 

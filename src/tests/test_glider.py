@@ -4,12 +4,11 @@ import pandas as pd
 import datetime
 import xarray as xr
 import matplotlib.pyplot as plt
-from plotter_classes import SurfacePlot,DepthPlot,Histogram
-from data_classes import Buoy, Glider,CTD
-from bounds import Bounds
-from plotter_utils import interp_data,filter_var
+from plotting.classes_plotter2d import SurfacePlot,DepthPlot,Histogram
+from plotting.classes_data import Buoy, Glider,CTD,Bounds
+from plotting.utils_plotter2d import interp_data,filter_var
 
-ds = xr.open_dataset('../test_data/glider.nc')
+ds = xr.open_dataset('../test_data/glider_sample.nc')
 
 df = interp_data(ds)
 
