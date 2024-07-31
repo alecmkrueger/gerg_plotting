@@ -81,8 +81,6 @@ class Bathy(SpatialData):
         bounds (Bounds): contains attributes of lat_min,lon_min,lat_max,lon_max,depth_max,depth_min
         resolution_level (float|int): how much to coarsen the dataset by in units of degrees
         '''
-
-        # seafloor_path = Path('seafloor_data/gebco_2023_n31.0_s7.0_w-100.0_e-66.5.nc')
         self_path = Path(__file__)
         seafloor_path = self_path.joinpath('seafloor_data/gebco_2023_n31.0_s7.0_w-100.0_e-66.5.nc')
         ds = xr.open_dataset(seafloor_path) #read in seafloor data
