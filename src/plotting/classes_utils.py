@@ -1,6 +1,4 @@
-import matplotlib.pyplot
 import numpy as np
-import matplotlib
 
 def lat_min_smaller_than_max(instance, attribute, value):
     if value is not None:

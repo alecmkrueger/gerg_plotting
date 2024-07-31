@@ -7,7 +7,7 @@ from pprint import pformat
 import xarray as xr
 from pathlib import Path
 
-from plotting.class_utils import get_center_of_mass,lat_min_smaller_than_max,lon_min_smaller_than_max
+from plotting.classes_utils import get_center_of_mass,lat_min_smaller_than_max,lon_min_smaller_than_max
 
 @define
 class NonSpatialData:

@@ -1,4 +1,3 @@
-from warnings import warn
 import matplotlib
 import matplotlib.axes
 import matplotlib.cm
@@ -119,8 +118,3 @@ class Histogram(Plotter):
         X,Y = np.meshgrid(xedges[1:],yedges[1:])
         self.ax.plot_surface(X,Y,h, rstride=1, cstride=1, cmap=cm.coolwarm,
                        linewidth=0, antialiased=False)
-
-
-@define
-class Plotter3D:
-    x:np.ndarray
