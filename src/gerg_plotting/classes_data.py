@@ -7,7 +7,7 @@ from pprint import pformat
 import xarray as xr
 from pathlib import Path
 
-from classes_utils import get_center_of_mass,lat_min_smaller_than_max,lon_min_smaller_than_max
+from gerg_plotting.classes_utils import get_center_of_mass,lat_min_smaller_than_max,lon_min_smaller_than_max
 
 @define
 class NonSpatialData:
@@ -81,7 +81,10 @@ class Bathy(SpatialData):
         bounds (Bounds): contains attributes of lat_min,lon_min,lat_max,lon_max,depth_max,depth_min
         resolution_level (float|int): how much to coarsen the dataset by in units of degrees
         '''
-        seafloor_path = Path('seafloor_data/gebco_2023_n31.0_s7.0_w-100.0_e-66.5.nc')
+
+        # seafloor_path = Path('seafloor_data/gebco_2023_n31.0_s7.0_w-100.0_e-66.5.nc')
+        self_path = Path(__file__)
+        seafloor_path = self_path.parent.parent.joinpath('seafloor_data/gebco_2023_n31.0_s7.0_w-100.0_e-66.5.nc')
         ds = xr.open_dataset(seafloor_path) #read in seafloor data
 
         if self.resolution_level is not None:
