@@ -4,8 +4,8 @@ import datetime
 import xarray as xr
 import matplotlib.pyplot as plt
 from gerg_plotting.classes_plotter2d import SurfacePlot,DepthPlot,Histogram
-from classes_data import Radar,Bounds
-from utils_plotter2d import interp_data,filter_var,calculate_range
+from gerg_plotting.classes_data import Radar,Bounds
+from gerg_plotting.utils import interp_data,filter_var,calculate_range
 
 df = pd.read_csv('../../test_data/radar.csv',
                  parse_dates=['time'],date_format='%Y-%m-%dT%H:%M:%SZ',skiprows=[1])

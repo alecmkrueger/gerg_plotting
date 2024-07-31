@@ -9,8 +9,8 @@ from attrs import define, field, asdict
 from pprint import pformat
 import cmocean
 
-from classes_data import Bathy,NonSpatialData,SpatialData,Bounds
-from utils_plotter2d import calculate_range
+from gerg_plotting.classes_data import Bathy,NonSpatialData,SpatialData,Bounds
+from gerg_plotting.utils import calculate_range
 
 @define
 class Plotter:
