@@ -101,19 +101,27 @@ class DepthPlot(Plotter):
 @define
 class Histogram(Plotter):
 
+    def get_2d_range(self,x,y,**kwargs):
+        if 'range' not in kwargs.keys():
+            range = [calculate_range(self.instrument[x]),calculate_range(self.instrument[y])]
+        else:
+            range = kwargs['range']
+            kwargs.pop('range')
+        return range,kwargs
+
     def plot(self,var:str,fig=None,ax=None):
         self.init_figure(fig,ax)
         self.ax.hist(self.instrument[var])
 
     def plot2d(self,x:str,y:str,fig=None,ax=None,**kwargs):
         self.init_figure(fig,ax)
-        range = [calculate_range(self.instrument[x]),calculate_range(self.instrument[y])]
+        range,kwargs = self.get_2d_range(x,y,**kwargs)
         self.ax.hist2d(self.instrument[x],self.instrument[y],range=range,**kwargs)
 
     def plot3d(self,x:str,y:str,fig=None,ax=None,**kwargs):
         from matplotlib import cm
         self.init_figure(fig,ax,three_d=True)
-        range = [calculate_range(self.instrument[x]),calculate_range(self.instrument[y])]
+        range,kwargs = self.get_2d_range(x,y,**kwargs)
         h,xedges,yedges = np.histogram2d(self.instrument[x],self.instrument[y],range=range,**kwargs)
         X,Y = np.meshgrid(xedges[1:],yedges[1:])
         self.ax.plot_surface(X,Y,h, rstride=1, cstride=1, cmap=cm.coolwarm,
