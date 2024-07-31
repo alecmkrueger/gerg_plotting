@@ -1,3 +1,3 @@
 '''
-Package for standarized plotting at GERG
+Thin wrapper on matplotlib for standarized plotting at GERG
 '''
