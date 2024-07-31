@@ -7,7 +7,7 @@ from pprint import pformat
 import xarray as xr
 from pathlib import Path
 
-from plotting.classes_utils import get_center_of_mass,lat_min_smaller_than_max,lon_min_smaller_than_max
+from classes_utils import get_center_of_mass,lat_min_smaller_than_max,lon_min_smaller_than_max
 
 @define
 class NonSpatialData:
@@ -17,7 +17,6 @@ class NonSpatialData:
         '''Pretty printing'''
         return pformat(asdict(self), indent=1,width=2,compact=True,depth=1)
 
-# @define
 class Lab(NonSpatialData):
     def __init__(self,vars):
         for key,value in vars.items():

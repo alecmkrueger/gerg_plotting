@@ -3,11 +3,11 @@ import pandas as pd
 import datetime
 import xarray as xr
 import matplotlib.pyplot as plt
-from plotting.plotter_classes2d import SurfacePlot,DepthPlot,Histogram
-from plotting.classes_data import Radar,Bounds
-from plotting.utils_plotter2d import interp_data,filter_var,calculate_range
+from plotter_classes2d import SurfacePlot,DepthPlot,Histogram
+from classes_data import Radar,Bounds
+from utils_plotter2d import interp_data,filter_var,calculate_range
 
-df = pd.read_csv('../test_data/radar.csv',
+df = pd.read_csv('../../test_data/radar.csv',
                  parse_dates=['time'],date_format='%Y-%m-%dT%H:%M:%SZ',skiprows=[1])
 
 times = list(set(df.time))

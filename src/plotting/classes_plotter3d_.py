@@ -1,9 +1,8 @@
 from attrs import define
 import numpy as np
+from classes_data import SpatialData
 
 
 @define
 class Plotter3D:
-    x:np.ndarray
-    y:np.ndarray
-    z:np.ndarray
+    instrument: SpatialData
