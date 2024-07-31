@@ -3,7 +3,7 @@ import pandas as pd
 import datetime
 import xarray as xr
 import matplotlib.pyplot as plt
-from plotting.classes_plotter2d import SurfacePlot,DepthPlot,Histogram
+from gerg_plotting.classes_plotter2d import SurfacePlot,DepthPlot,Histogram
 from classes_data import Radar,Bounds
 from utils_plotter2d import interp_data,filter_var,calculate_range
 

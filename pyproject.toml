@@ -1,10 +1,10 @@
 [tool.poetry]
-name = "plotting"
+name = "gerg_plotting"
 version = "0.0.01"
 description = ""
 authors = ["Alec Krueger <alecmkrueger@tamu.edu>"]
 readme = "README.md"
-packages = [{include = "plotting", from = "src"}]
+packages = [{include = "gerg_plotting", from = "src"}]
 include = ["seafloor_data/gebco_2023_n31.0_s7.0_w-100.0_e-66.5.nc"]
 
 [tool.poetry.dependencies]
