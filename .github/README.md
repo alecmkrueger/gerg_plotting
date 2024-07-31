@@ -7,10 +7,10 @@
     <img src="https://raw.githubusercontent.com/alecmkrueger/project_images/9af2f8f58c93e183ac5473a4474619407aee08d3/gerg_logo.svg" alt="Logo" width="500" height="272">
   </a>
 
-<h3 align="center">GERG Glider Ingest</h3>
+<h3 align="center">GERG Plotting</h3>
 
   <p align="center">
-    Convert raw data from GERG gliders into netcdf using python
+    Data plotting package for GERG
     <br />
     <a href="https://github.com/alecmkrueger/gerg_plotting"><strong>Explore the docs »</strong></a>
     <br />
@@ -53,8 +53,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-This project was created to streamline the process of converting the raw data from the gliders after missions into NetCDF files, 
-as well as ensuring the code can be easily maintained, understood, and used by others.
+This project was created to streamline and standardize the process of generating plots at GERG.
 
 
 
@@ -117,30 +116,7 @@ I have provided some commands to install the dependencies using conda but you ca
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-Process raw data from gliders using python. 
-
-Function inputs:
-* raw_data_source (Path|str): Raw data source, from the glider SD card
-* working_directory (Path|str): Where you want the raw copy and processed data to be
-* glider_number (str): The number of the glider, for NetCDF metadata
-* mission_title (str): The mission title, for NetCDF metadata
-* extensions (list): The extensions you wish to process
-* output_nc_filename (str): The name of the output NetCDF file
-* return_ds (bool): If you would like the output dataset to be returned. Default = False
-
-Example:
-
-```sh
-from glider_ingest.ingest import process
-
-ds = process(glider_number = 'Glider_Number',
-             mission_title = 'Mission_Title',
-             extensions = ['DBD','EBD'],
-             raw_data_source = 'path/to/raw_data',
-             working_directory = 'path/to/working_directory',
-             output_nc_filename = 'Mission_Title_Glider_Number.nc',
-             return_ds = True)
-```
+Plot data at GERG using Python.
 
 
 
@@ -181,8 +157,6 @@ Project Link: [https://github.com/alecmkrueger/gerg_plotting](https://github.com
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
 
-* Sakib Mahmud, Texas A&M University, Geochemical and Environmental Research Group, sakib@tamu.edu
-* Xiao Ge, Texas A&M University, Geochemical and Environmental Research Group, gexiao@tamu.edu
 * Alec Krueger, Texas A&M University, Geochemical and Environmental Research Group, alecmkrueger@tamu.edu
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
