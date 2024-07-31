@@ -1,5 +1,5 @@
 import numpy as np
-from attrs import define,field,asdict
+from attrs import define,field,asdict,validators
 import matplotlib
 from matplotlib.colors import Colormap
 import cmocean
@@ -7,8 +7,7 @@ from pprint import pformat
 import xarray as xr
 from pathlib import Path
 
-from plotting.class_utils import get_center_of_mass
-from plotting.bounds import Bounds
+from plotting.class_utils import get_center_of_mass,lat_min_smaller_than_max,lon_min_smaller_than_max
 
 @define
 class NonSpatialData:
@@ -30,6 +29,17 @@ class Lab(NonSpatialData):
     def __repr__(self):
         '''Pretty printing'''
         return pformat(self.__dict__, indent=1,width=2,compact=True,depth=1)
+
+@define
+class Bounds(NonSpatialData):
+    lat_min:float|int|None = field(default=None,validator=[validators.instance_of(float|int|None),lat_min_smaller_than_max])
+    lat_max:float|int = field(default=None)
+    
+    lon_min:float|int|None = field(default=None,validator=[validators.instance_of(float|int|None),lon_min_smaller_than_max])
+    lon_max:float|int|None = field(default=None)
+
+    depth_bottom:float|int|None = field(default=None)
+    depth_top:float|int|None = field(default=None)
 
 
 @define

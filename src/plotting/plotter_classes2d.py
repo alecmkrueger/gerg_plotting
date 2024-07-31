@@ -10,9 +10,8 @@ from attrs import define, field, asdict
 from pprint import pformat
 import cmocean
 
-from plotting.data_classes import Bathy,NonSpatialData,SpatialData
-from plotting.bounds import Bounds
-from plotting.plotter_utils import calculate_range
+from plotting.classes_data import Bathy,NonSpatialData,SpatialData,Bounds
+from plotting.utils_plotter2d import calculate_range
 
 @define
 class Plotter:
@@ -120,3 +119,8 @@ class Histogram(Plotter):
         X,Y = np.meshgrid(xedges[1:],yedges[1:])
         self.ax.plot_surface(X,Y,h, rstride=1, cstride=1, cmap=cm.coolwarm,
                        linewidth=0, antialiased=False)
+
+
+@define
+class Plotter3D:
+    x:np.ndarray
