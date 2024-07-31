@@ -75,19 +75,31 @@ There are three ways to get started
 ### Dependencies
 I have provided some commands to install the dependencies using conda but you can use any package manager
 
+List of dependencies:
+* python = 3.12
+* numpy = 2.0.0
+* pandas = 2.2.2
+* matplotlib = 3.9.1
+* xarray = 2024.6.0
+* attrs = 23.2.0
+* netcdf4 = 1.7.1.post1
+* cmocean = 4.0.3
+* scipy = 1.14.0
+* mayavi = 4.8.2
+
 1. #### Creating your own virtual environment then installing dependencies
-    You can change "glider_ingest" to your desired environment name 
+    You can change "gerg_plotting" to your desired environment name 
 
     ```sh
-    conda create -n glider_ingest python=3.12
+    conda create -n gerg_plotting python=3.12
     ```
     
     ```sh
-    conda activate glider_ingest
+    conda activate gerg_plotting
     ```
 
     ```sh
-    pip install numpy pandas xarray gsw attrs
+    pip install numpy pandas xarray matplotlib attrs notebook
     ```
 
 2. #### Using an already established virtual environment
