@@ -1,7 +1,7 @@
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import xarray as xr
+import gsw
 
 def interp_data(ds:xr.Dataset) -> pd.DataFrame:
     new_time_values = ds['time'].values.astype('datetime64[s]').astype('float64')
@@ -21,7 +21,6 @@ def interp_data(ds:xr.Dataset) -> pd.DataFrame:
 
     return df
 
-
 def filter_var(var:pd.Series,min_value,max_value):
     var = var.where(var>min_value)
     var = var.where(var<max_value)
@@ -29,3 +28,39 @@ def filter_var(var:pd.Series,min_value,max_value):
 
 def calculate_range(var:np.ndarray):
     return [np.nanmin(var),np.nanmax(var)]
+
+def get_sigma_theta(salinity,temperature,cnt=False):
+    # Subsample the data 
+    salinity = salinity[::1000]
+    temperature = temperature[::1000]
+
+    # Remove nan values
+    salinity = salinity[~np.isnan(salinity)]
+    temperature = temperature[~np.isnan(temperature)]
+
+    mint=np.min(temperature)
+    maxt=np.max(temperature)
+
+    mins=np.min(salinity)
+    maxs=np.max(salinity)
+
+    num_points = len(temperature)
+
+    tempL=np.linspace(mint-1,maxt+1,num_points)
+
+    salL=np.linspace(mins-1,maxs+1,num_points)
+
+    Tg, Sg = np.meshgrid(tempL,salL)
+    sigma_theta = gsw.sigma0(Sg, Tg)
+
+    if cnt:
+        num_points = len(temperature)
+        cnt = np.linspace(sigma_theta.min(), sigma_theta.max(),num_points)
+        return Sg, Tg, sigma_theta, cnt
+    else:
+        return Sg, Tg, sigma_theta
+
+def get_density(salinity,temperature):
+    sigma_theta = gsw.sigma0(salinity, temperature)
+
+    return sigma_theta
