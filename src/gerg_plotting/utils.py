@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 import gsw
+import datetime
 
 def interp_data(ds:xr.Dataset) -> pd.DataFrame:
     new_time_values = ds['time'].values.astype('datetime64[s]').astype('float64')
@@ -69,6 +70,43 @@ def get_sigma_theta(salinity,temperature,cnt=False):
         return Sg, Tg, sigma_theta
 
 def get_density(salinity,temperature):
-    sigma_theta = gsw.sigma0(salinity, temperature)
+    return gsw.sigma0(salinity, temperature)
 
-    return sigma_theta
+def print_time(value: int = None, intervals: list = [10,50,100,500,1000]):
+    """
+    Prints the current time if the value matches any of the intervals specified.
+
+    Args:
+    - value (int): The value value.
+    - intervals (list): A list of integers representing intervals.
+
+    Returns:
+    - None
+    """
+
+    current_time = datetime.datetime.now().strftime("%H:%M:%S")
+
+    if value is None:
+        print(current_time)
+        return
+
+    # Check if intervals is at least 2 values long
+    if not len(intervals) >= 2:
+        raise ValueError(f'Not enough intervals, need at least 2 values, you passed {len(intervals)}')
+
+
+    if value <= intervals[0]:
+        print(f'{value = }, {current_time}')
+        return
+    elif value <= intervals[-2]:
+        for idx,interval in enumerate(intervals[0:-1]):
+            if value >= interval:
+                if value < intervals[idx+1]:
+                    if value % interval==0:
+                        print(f'{value = }, {current_time}')
+                        return
+                    break
+    elif value >= intervals[-1]:
+        if value % intervals[-1]==0:
+            print(f'{value = }, {current_time}')
+            return

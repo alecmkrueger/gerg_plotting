@@ -18,6 +18,7 @@ cmocean = "^4.0.3"
 scipy = "^1.14.0"
 mayavi = "^4.8.2"
 gsw = "^3.6.19"
+imageio = "^2.34.2"
 
 
 [tool.poetry.group.dev.dependencies]

@@ -58,6 +58,7 @@ class Plotter:
             cmap = matplotlib.pyplot.get_cmap('viridis')
         return cmap
 
+
     def __getitem__(self, key:str):
         return asdict(self)[key]
     def __repr__(self):
