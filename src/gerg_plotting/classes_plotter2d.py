@@ -5,22 +5,25 @@ import matplotlib.figure
 import matplotlib.pyplot
 import matplotlib.dates as mdates
 from matplotlib.ticker import MaxNLocator
-import matplotlib.colors
+from matplotlib.colors import Colormap
 import numpy as np
 from attrs import define, field, asdict
 from pprint import pformat
 import cmocean
 
-from gerg_plotting.classes_data import Bathy,NonSpatialData,SpatialData,Bounds
-from gerg_plotting.utils import calculate_range,get_sigma_theta
-
+from gerg_plotting.classes_data import Bathy,NonSpatialInstrument,SpatialInstrument,Bounds
+from gerg_plotting.utils import calculate_range,get_sigma_theta,calculate_pad
 @define
 class Plotter:
-    instrument:SpatialData|NonSpatialData
-    bounds:Bounds|None = field(default= None)
+    instrument:NonSpatialInstrument|SpatialInstrument
+    bounds:Bounds|None = field(default=None)
+    bounds_padding:float = field(default=0.3)
 
     fig:matplotlib.figure.Figure = field(default=None)
     ax:matplotlib.axes.Axes = field(default=None)
+
+    def __attrs_post_init__(self):
+        self.detect_bounds()
 
     def init_figure(self,fig=None,ax=None,three_d=False):
         if fig is None and ax is None:
@@ -33,6 +36,27 @@ class Plotter:
                 self.ax.remove()
                 gs = self.ax.get_gridspec()
                 self.ax = fig.add_subplot(gs.nrows,gs.ncols,index, projection='3d')
+
+    def detect_bounds(self):
+        if self.bounds is None:
+            lat_min,lat_max = calculate_pad(self.instrument.lat,pad=self.bounds_padding)
+            lon_min,lon_max = calculate_pad(self.instrument.lon,pad=self.bounds_padding)
+            _,depth_max = calculate_range(self.instrument.depth)
+            self.bounds = Bounds(lat_min=lat_min,
+                                 lat_max=lat_max,
+                                 lon_min=lon_min,
+                                 lon_max=lon_max,
+                                 depth_bottom=depth_max,
+                                 depth_top=None)
+
+    def get_cmap(self,color_var:str):
+        # If there is a colormap for the provided color_var
+        if self.instrument.cmaps.has_var(color_var):
+            cmap = self.instrument.cmaps[color_var]
+        # If there is no colormap for the provided color_var
+        else:
+            cmap = matplotlib.pyplot.get_cmap('viridis')
+        return cmap
 
     def __getitem__(self, key:str):
         return asdict(self)[key]
@@ -57,7 +81,7 @@ class SurfacePlot(Plotter):
             if surface_values:
                 color_var_values[self.instrument.depth>2] = np.nan
             color = color_var_values
-            cmap = self.instrument.cmaps[var]
+            cmap = self.get_cmap(var)
         if self.bounds is not None:
             self.ax.set_ylim(self.bounds.lat_min,self.bounds.lat_max)
             self.ax.set_xlim(self.bounds.lon_min,self.bounds.lon_max)
@@ -70,7 +94,7 @@ class SurfacePlot(Plotter):
             self.bathy.cmap.set_under(land_color)
             self.ax.contourf(self.bathy.lon,self.bathy.lat,self.bathy.depth,levels=50,cmap=self.bathy.cmap,vmin=0)
 
-        self.ax.scatter(self.instrument.lon,self.instrument.lat,c=color,cmap=cmap,s=2)
+        self.ax.scatter(self.instrument.lon,self.instrument.lat,c=color,cmap=cmap,s=3)
     def quiver(self):
         self.init_figure()
         raise NotImplementedError('Need to add Quiver')
@@ -79,7 +103,7 @@ class SurfacePlot(Plotter):
 @define
 class VarPlot(Plotter):
 
-    def time_series(self,var:str,fig=None,ax=None):
+    def depth_time_series(self,var:str,fig=None,ax=None):
         self.init_figure(fig,ax)
         self.ax.scatter(self.instrument.time,self.instrument.depth,c=self.instrument[var],cmap=self.instrument.cmaps[var])
         self.ax.invert_yaxis()
@@ -90,7 +114,7 @@ class VarPlot(Plotter):
         self.ax.xaxis.set_major_formatter(formatter)
         matplotlib.pyplot.xticks(rotation=60, fontsize='small')
 
-    def TS(self,color_var:str|None=None,cmap:matplotlib.colors.Colormap|matplotlib.colors.LinearSegmentedColormap|None=None,fig=None,ax=None):
+    def check_ts(self,color_var:str=None):
         if not self.instrument.has_var('salinity'):
             raise ValueError('Instrument has no salinity attribute')
         if not self.instrument.has_var('temperature'):
@@ -98,7 +122,9 @@ class VarPlot(Plotter):
         if color_var is not None:
             if not self.instrument.has_var(color_var):
                 raise ValueError(f'Instrument has no {color_var} attribute')
-
+ 
+    def format_ts(self,fig,ax):
+        self.check_ts()
         self.init_figure(fig,ax)
         Sg, Tg, sigma_theta = get_sigma_theta(salinity=self.instrument.salinity,temperature=self.instrument.temperature)
         cs = self.ax.contour(Sg, Tg, sigma_theta, colors='grey', zorder=1,linestyles='dashed')
@@ -108,28 +134,34 @@ class VarPlot(Plotter):
         # self.ax.set_title(f'T-S Diagram: {glider}',fontsize=14, fontweight='bold')
         self.ax.xaxis.set_major_locator(MaxNLocator(nbins=6))
         self.ax.xaxis.set_major_locator(MaxNLocator(nbins=8))
-        matplotlib.pyplot.tight_layout()
-        # Plot scatter plot
-        if cmap is None:
-            if color_var is not None:
-                cmap = self.instrument.cmaps[color_var]
-            else:
-                print('Using Default Color Map Viridis')
-                cmap = matplotlib.pyplot.get_cmap('viridis')
 
+    def TS(self,fig=None,ax=None):
+        self.format_ts(fig,ax)
+        self.ax.scatter(self.instrument.salinity,self.instrument.temperature,s=1,marker='.')
+
+    def get_density_color_data(self,color_var:str):
+        # If there is no density data in the instrument
         if color_var == 'density':
-            from gerg_plotting.utils import get_density
-            color_data = get_density(self.instrument.salinity,self.instrument.temperature)
+            if self.instrument['density'] is None:
+            # raise ValueError(f'Instrument has no {color_var} data')
+                from gerg_plotting.utils import get_density
+                color_data = get_density(self.instrument.salinity,self.instrument.temperature)
+            else:
+                color_data = self.instrument[color_var]
         else:
             color_data = self.instrument[color_var]
+        return color_data
 
+    def TS_with_color_var(self,color_var:str,fig=None,ax=None):
+        self.format_ts(fig,ax)
+        cmap = self.get_cmap(color_var)
+        color_data = self.get_density_color_data(color_var)
 
-        self.instrument.has_var(color_var)
-        sc = self.ax.scatter(self.instrument.salinity,self.instrument.temperature,c=color_data,s=0.5,marker='.',cmap=cmap)
-        if color_var is not None:
-            cbar = matplotlib.pyplot.colorbar(sc,ax=self.ax,label=color_var)
-            cbar.ax.locator_params(nbins=5)
-            cbar.ax.invert_yaxis()
+        sc = self.ax.scatter(self.instrument.salinity,self.instrument.temperature,c=color_data,s=1,marker='.',cmap=cmap)
+
+        cbar = matplotlib.pyplot.colorbar(sc,ax=self.ax,label=color_var)
+        cbar.ax.locator_params(nbins=5)
+        cbar.ax.invert_yaxis()
 
     def var_var(self,x:str,y:str,color_var:str|None=None,fig=None,ax=None):
         self.init_figure(fig,ax)
