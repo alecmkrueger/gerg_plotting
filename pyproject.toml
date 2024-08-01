@@ -17,6 +17,7 @@ netcdf4 = "^1.7.1.post1"
 cmocean = "^4.0.3"
 scipy = "^1.14.0"
 mayavi = "^4.8.2"
+gsw = "^3.6.19"
 
 
 [tool.poetry.group.dev.dependencies]
