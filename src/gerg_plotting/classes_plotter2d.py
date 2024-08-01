@@ -4,13 +4,15 @@ import matplotlib.cm
 import matplotlib.figure
 import matplotlib.pyplot
 import matplotlib.dates as mdates
+from matplotlib.ticker import MaxNLocator
+import matplotlib.colors
 import numpy as np
 from attrs import define, field, asdict
 from pprint import pformat
 import cmocean
 
 from gerg_plotting.classes_data import Bathy,NonSpatialData,SpatialData,Bounds
-from gerg_plotting.utils import calculate_range
+from gerg_plotting.utils import calculate_range,get_sigma_theta
 
 @define
 class Plotter:
@@ -55,7 +57,7 @@ class SurfacePlot(Plotter):
             if surface_values:
                 color_var_values[self.instrument.depth>2] = np.nan
             color = color_var_values
-            cmap = self.instrument[f'{var}_cmap']
+            cmap = self.instrument.cmaps[var]
         if self.bounds is not None:
             self.ax.set_ylim(self.bounds.lat_min,self.bounds.lat_max)
             self.ax.set_xlim(self.bounds.lon_min,self.bounds.lon_max)
@@ -75,11 +77,11 @@ class SurfacePlot(Plotter):
 
 
 @define
-class DepthPlot(Plotter):
+class VarPlot(Plotter):
 
     def time_series(self,var:str,fig=None,ax=None):
         self.init_figure(fig,ax)
-        self.ax.scatter(self.instrument.time,self.instrument.depth,c=self.instrument[var],cmap=self.instrument[f'{var}_cmap'])
+        self.ax.scatter(self.instrument.time,self.instrument.depth,c=self.instrument[var],cmap=self.instrument.cmaps[var])
         self.ax.invert_yaxis()
         locator = mdates.AutoDateLocator()
         formatter = mdates.AutoDateFormatter(locator)
@@ -87,6 +89,47 @@ class DepthPlot(Plotter):
         self.ax.xaxis.set_major_locator(locator)
         self.ax.xaxis.set_major_formatter(formatter)
         matplotlib.pyplot.xticks(rotation=60, fontsize='small')
+
+    def TS(self,color_var:str|None=None,cmap:matplotlib.colors.Colormap|matplotlib.colors.LinearSegmentedColormap|None=None,fig=None,ax=None):
+        if not self.instrument.has_var('salinity'):
+            raise ValueError('Instrument has no salinity attribute')
+        if not self.instrument.has_var('temperature'):
+            raise ValueError('Instrument has no temperature attribute')
+        if color_var is not None:
+            if not self.instrument.has_var(color_var):
+                raise ValueError(f'Instrument has no {color_var} attribute')
+
+        self.init_figure(fig,ax)
+        Sg, Tg, sigma_theta = get_sigma_theta(salinity=self.instrument.salinity,temperature=self.instrument.temperature)
+        cs = self.ax.contour(Sg, Tg, sigma_theta, colors='grey', zorder=1,linestyles='dashed')
+        matplotlib.pyplot.clabel(cs,fontsize=10,inline=True,fmt='%.1f')
+        self.ax.set_xlabel('Salinity')
+        self.ax.set_ylabel('Temperature (°C)')
+        # self.ax.set_title(f'T-S Diagram: {glider}',fontsize=14, fontweight='bold')
+        self.ax.xaxis.set_major_locator(MaxNLocator(nbins=6))
+        self.ax.xaxis.set_major_locator(MaxNLocator(nbins=8))
+        matplotlib.pyplot.tight_layout()
+        # Plot scatter plot
+        if cmap is None:
+            if color_var is not None:
+                cmap = self.instrument.cmaps[color_var]
+            else:
+                print('Using Default Color Map Viridis')
+                cmap = matplotlib.pyplot.get_cmap('viridis')
+
+        if color_var == 'density':
+            from gerg_plotting.utils import get_density
+            color_data = get_density(self.instrument.salinity,self.instrument.temperature)
+        else:
+            color_data = self.instrument[color_var]
+
+
+        self.instrument.has_var(color_var)
+        sc = self.ax.scatter(self.instrument.salinity,self.instrument.temperature,c=color_data,s=0.5,marker='.',cmap=cmap)
+        if color_var is not None:
+            cbar = matplotlib.pyplot.colorbar(sc,ax=self.ax,label=color_var)
+            cbar.ax.locator_params(nbins=5)
+            cbar.ax.invert_yaxis()
 
     def var_var(self,x:str,y:str,color_var:str|None=None,fig=None,ax=None):
         self.init_figure(fig,ax)
