@@ -1,7 +1,9 @@
 from attrs import define,field
-from gerg_plotting.Plotter import Plotter
-from gerg_plotting.NonSpatialInstruments import Bathy
 import cmocean
+
+from gerg_plotting.Plotter import Plotter
+from gerg_plotting.SpatialInstruments import Bathy
+
 
 @define
 class SurfacePlot(Plotter):

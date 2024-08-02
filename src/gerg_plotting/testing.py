@@ -3,9 +3,11 @@ import pandas as pd
 import datetime
 import xarray as xr
 import matplotlib.pyplot as plt
-from gerg_plotting.Plotter import SurfacePlot,DepthPlot,Histogram
-from gerg_plotting.NonSpatialInstruments import Radar,Bounds
-from gerg_plotting.utils import interp_data,filter_var,calculate_range
+from gerg_plotting.Histogram import Histogram
+from gerg_plotting.SurfacePlot import SurfacePlot
+from gerg_plotting.VarPlot import VarPlot
+from gerg_plotting.SpatialInstruments import Radar,Bounds
+from gerg_plotting.utils import calculate_range
 
 df = pd.read_csv('../../test_data/radar.csv',
                  parse_dates=['time'],date_format='%Y-%m-%dT%H:%M:%SZ',skiprows=[1])
@@ -40,7 +42,7 @@ surfaces.map(fig=fig,ax=axes[1],var='u_current',surface_values=False)
 surfaces.map(fig=fig,ax=axes[2],var='v_current',surface_values=False)
 plt.show()
 
-# depth_plot = DepthPlot(instrument=radar,bounds=bounds)
+# depth_plot = VarPlot(instrument=radar,bounds=bounds)
 
 # depth_plot.time_series(var='u_current')
 # plt.show()

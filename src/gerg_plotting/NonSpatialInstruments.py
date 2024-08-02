@@ -1,30 +1,11 @@
-import numpy as np
 from attrs import define,field,asdict,validators
-import matplotlib
 from matplotlib.colors import Colormap
 import cmocean
 from pprint import pformat
-import xarray as xr
-from pathlib import Path
 
 from gerg_plotting.classes_utils import lat_min_smaller_than_max,lon_min_smaller_than_max
+from gerg_plotting.NonSpatialInstrument import NonSpatialInstrument
 
-@define
-class NonSpatialInstrument:
-    def has_var(self, key):
-        return key in asdict(self).keys()
-    def __getitem__(self, key):
-        if self.has_var(key):
-            return getattr(self, key)
-        raise KeyError(f"Attribute '{key}' not found")
-    def __setitem__(self, key, value):
-        if self.has_var(key):
-            setattr(self, key, value)
-        else:
-            raise KeyError(f"Attribute '{key}' not found")
-    def __repr__(self):
-        '''Pretty printing'''
-        return pformat(asdict(self), indent=1,width=2,compact=True,depth=1)
     
 @define
 class CMaps(NonSpatialInstrument):
