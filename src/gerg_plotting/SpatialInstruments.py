@@ -5,7 +5,7 @@ from matplotlib.colors import Colormap
 import xarray as xr
 from pathlib import Path
 
-from gerg_plotting.classes_utils import get_center_of_mass
+from gerg_plotting.utils import get_center_of_mass
 from gerg_plotting.SpatialInstrument import SpatialInstrument
 from gerg_plotting.NonSpatialInstruments import Bounds
 

@@ -8,6 +8,7 @@ from matplotlib.ticker import MaxNLocator
 import numpy as np
 from attrs import define, field
 from gerg_plotting.Plotter import Plotter
+from gerg_plotting.utils import get_sigma_theta
 
 @define
 class VarPlot(Plotter):

@@ -1,4 +1,5 @@
 from attrs import define
+import numpy as np
 from gerg_plotting.Plotter import Plotter
 from gerg_plotting.utils import calculate_range
 
