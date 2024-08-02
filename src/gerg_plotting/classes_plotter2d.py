@@ -26,6 +26,7 @@ class Plotter:
         self.detect_bounds()
 
     def init_figure(self,fig=None,ax=None,three_d=False):
+        '''Initalize the figure and axes if they are not provided'''
         if fig is None and ax is None:
             self.fig,self.ax = matplotlib.pyplot.subplots(subplot_kw={'projection':('3d' if three_d else None)})
         elif fig is not None and ax is not None:
@@ -72,15 +73,13 @@ class SurfacePlot(Plotter):
     def init_bathy(self):
         self.bathy = Bathy(bounds=self.bounds,resolution_level=5)
 
-    def map(self,var:str|None=None,surface_values:bool=False,fig=None,ax=None,seafloor=True):
+    def map(self,var:str|None=None,fig=None,ax=None,seafloor=True):
         self.init_figure(fig,ax)
         if var is None:
             color = 'k'
             cmap = None
         else:
             color_var_values = self.instrument[var].copy()
-            if surface_values:
-                color_var_values[self.instrument.depth>2] = np.nan
             color = color_var_values
             cmap = self.get_cmap(var)
         if self.bounds is not None:
@@ -103,10 +102,13 @@ class SurfacePlot(Plotter):
 
 @define
 class VarPlot(Plotter):
+    markersize:int|float = field(default=10)
 
     def depth_time_series(self,var:str,fig=None,ax=None):
         self.init_figure(fig,ax)
-        self.ax.scatter(self.instrument.time,self.instrument.depth,c=self.instrument[var],cmap=self.instrument.cmaps[var])
+        self.ax.scatter(self.instrument.time,self.instrument.depth,
+                        c=self.instrument[var],cmap=self.instrument.cmaps[var],
+                        s=self.markersize)
         self.ax.invert_yaxis()
         locator = mdates.AutoDateLocator()
         formatter = mdates.AutoDateFormatter(locator)
@@ -124,21 +126,22 @@ class VarPlot(Plotter):
             if not self.instrument.has_var(color_var):
                 raise ValueError(f'Instrument has no {color_var} attribute')
  
-    def format_ts(self,fig,ax):
+    def format_ts(self,fig,ax,contours:bool=True):
         self.check_ts()
         self.init_figure(fig,ax)
-        Sg, Tg, sigma_theta = get_sigma_theta(salinity=self.instrument.salinity,temperature=self.instrument.temperature)
-        cs = self.ax.contour(Sg, Tg, sigma_theta, colors='grey', zorder=1,linestyles='dashed')
-        matplotlib.pyplot.clabel(cs,fontsize=10,inline=True,fmt='%.1f')
+        if contours:
+            Sg, Tg, sigma_theta = get_sigma_theta(salinity=self.instrument.salinity,temperature=self.instrument.temperature)
+            cs = self.ax.contour(Sg, Tg, sigma_theta, colors='grey', zorder=1,linestyles='dashed')
+            matplotlib.pyplot.clabel(cs,fontsize=10,inline=True,fmt='%.1f')
         self.ax.set_xlabel('Salinity')
         self.ax.set_ylabel('Temperature (°C)')
         # self.ax.set_title(f'T-S Diagram: {glider}',fontsize=14, fontweight='bold')
         self.ax.xaxis.set_major_locator(MaxNLocator(nbins=6))
         self.ax.xaxis.set_major_locator(MaxNLocator(nbins=8))
 
-    def TS(self,fig=None,ax=None):
-        self.format_ts(fig,ax)
-        self.ax.scatter(self.instrument.salinity,self.instrument.temperature,s=1,marker='.')
+    def TS(self,fig=None,ax=None,contours:bool=True):
+        self.format_ts(fig,ax,contours)
+        self.ax.scatter(self.instrument.salinity,self.instrument.temperature,s=self.markersize,marker='.')
 
     def get_density_color_data(self,color_var:str):
         # If there is no density data in the instrument
@@ -153,12 +156,12 @@ class VarPlot(Plotter):
             color_data = self.instrument[color_var]
         return color_data
 
-    def TS_with_color_var(self,color_var:str,fig=None,ax=None):
-        self.format_ts(fig,ax)
+    def TS_with_color_var(self,color_var:str,fig=None,ax=None,contours:bool=True):
+        self.format_ts(fig,ax,contours)
         cmap = self.get_cmap(color_var)
         color_data = self.get_density_color_data(color_var)
 
-        sc = self.ax.scatter(self.instrument.salinity,self.instrument.temperature,c=color_data,s=1,marker='.',cmap=cmap)
+        sc = self.ax.scatter(self.instrument.salinity,self.instrument.temperature,c=color_data,s=self.markersize,marker='.',cmap=cmap)
 
         cbar = matplotlib.pyplot.colorbar(sc,ax=self.ax,label=color_var)
         cbar.ax.locator_params(nbins=5)
@@ -178,16 +181,19 @@ class VarPlot(Plotter):
 class Histogram(Plotter):
 
     def get_2d_range(self,x,y,**kwargs):
+        # If the range was not passed then caclulate it and return it
         if 'range' not in kwargs.keys():
             range = [calculate_range(self.instrument[x]),calculate_range(self.instrument[y])]
+        # Check if range was passed with **kwargs and if so, remove it from the kwargs and return it
         else:
             range = kwargs['range']
             kwargs.pop('range')
+        # Return both the range and the kwargs with the range kwarg removed
         return range,kwargs
 
-    def plot(self,var:str,fig=None,ax=None):
+    def plot(self,var:str,fig=None,ax=None,bins=30):
         self.init_figure(fig,ax)
-        self.ax.hist(self.instrument[var])
+        self.ax.hist(self.instrument[var],bins=bins)
 
     def plot2d(self,x:str,y:str,fig=None,ax=None,**kwargs):
         self.init_figure(fig,ax)
