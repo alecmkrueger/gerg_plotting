@@ -39,9 +39,14 @@ def calculate_pad(var,pad=0.15):
     return start,stop
 
 def get_sigma_theta(salinity,temperature,cnt=False):
-    # Subsample the data 
-    salinity = salinity[::100]
-    temperature = temperature[::100]
+    # Subsample the data
+    num_points = len(temperature)
+    if num_points>300_000 and num_points<1_000_000:
+        salinity = salinity[::250]
+        temperature = temperature[::250]
+    elif num_points>=1_000_000:
+        salinity = salinity[::1000]
+        temperature = temperature[::1000]        
 
     # Remove nan values
     salinity = salinity[~np.isnan(salinity)]
@@ -68,6 +73,7 @@ def get_sigma_theta(salinity,temperature,cnt=False):
         return Sg, Tg, sigma_theta, cnt
     else:
         return Sg, Tg, sigma_theta
+
 
 def get_density(salinity,temperature):
     return gsw.sigma0(salinity, temperature)
