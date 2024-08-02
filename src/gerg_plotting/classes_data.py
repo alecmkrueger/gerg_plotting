@@ -11,7 +11,7 @@ from gerg_plotting.classes_utils import get_center_of_mass,lat_min_smaller_than_
 
 @define
 class NonSpatialInstrument:
-    def has_var(self,key):
+    def has_var(self, key):
         return key in asdict(self).keys()
     def __getitem__(self, key):
         if self.has_var(key):
@@ -76,22 +76,20 @@ class SpatialInstrument:
     cmaps:CMaps = field(factory=CMaps)
     units:Units = field(factory=Units)
 
-    def has_var(self,var):
-        return var in asdict(self).keys()
+    def has_var(self, key):
+        return key in asdict(self).keys()
     def __getitem__(self, key):
-        if key in asdict(self).keys():
+        if self.has_var(key):
             return getattr(self, key)
         raise KeyError(f"Attribute '{key}' not found")
-    
     def __setitem__(self, key, value):
-        if key in asdict(self).keys():
+        if self.has_var(key):
             setattr(self, key, value)
         else:
             raise KeyError(f"Attribute '{key}' not found")
     def __repr__(self):
         '''Pretty printing'''
         return pformat(asdict(self), indent=1,width=2,compact=True,depth=1)
-
 @define
 class Bathy(SpatialInstrument):
     # Vars
