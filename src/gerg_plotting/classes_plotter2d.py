@@ -25,7 +25,7 @@ class Plotter:
     def __attrs_post_init__(self):
         self.detect_bounds()
 
-    def init_figure(self,fig=None,ax=None,three_d=False):
+    def init_figure(self,fig=None,ax=None,three_d=False) -> None:
         '''Initalize the figure and axes if they are not provided'''
         if fig is None and ax is None:
             self.fig,self.ax = matplotlib.pyplot.subplots(subplot_kw={'projection':('3d' if three_d else None)})
@@ -38,7 +38,7 @@ class Plotter:
                 gs = self.ax.get_gridspec()
                 self.ax = fig.add_subplot(gs.nrows,gs.ncols,index, projection='3d')
 
-    def detect_bounds(self):
+    def detect_bounds(self) -> None:
         if self.bounds is None:
             lat_min,lat_max = calculate_pad(self.instrument.lat,pad=self.bounds_padding)
             lon_min,lon_max = calculate_pad(self.instrument.lon,pad=self.bounds_padding)
@@ -50,7 +50,7 @@ class Plotter:
                                  depth_bottom=depth_max,
                                  depth_top=None)
 
-    def get_cmap(self,color_var:str):
+    def get_cmap(self,color_var:str) -> Colormap:
         # If there is a colormap for the provided color_var
         if self.instrument.cmaps.has_var(color_var):
             cmap = self.instrument.cmaps[color_var]
@@ -59,12 +59,13 @@ class Plotter:
             cmap = matplotlib.pyplot.get_cmap('viridis')
         return cmap
     
-    def add_colorbar(self,mappable:matplotlib.axes.Axes,var:str):
-        units = self.instrument.units[var]
-        cbar_label = f"{var.capitalize()}{f' ({units})' if len(units)>0 else ""}"
-        cbar = matplotlib.pyplot.colorbar(mappable,ax=self.ax,label=cbar_label)
-        cbar.ax.locator_params(nbins=5)
-        cbar.ax.invert_yaxis()
+    def add_colorbar(self,mappable:matplotlib.axes.Axes,var:str|None) -> None:
+        if var is not None:
+            units = self.instrument.units[var]
+            cbar_label = f"{var.capitalize()}{f' ({units})' if len(units)>0 else ""}"
+            cbar = matplotlib.pyplot.colorbar(mappable,ax=self.ax,label=cbar_label)
+            cbar.ax.locator_params(nbins=5)
+            cbar.ax.invert_yaxis()
 
     def __getitem__(self, key:str):
         return asdict(self)[key]
@@ -79,7 +80,7 @@ class SurfacePlot(Plotter):
     def init_bathy(self):
         self.bathy = Bathy(bounds=self.bounds,resolution_level=5)
 
-    def map(self,var:str|None=None,fig=None,ax=None,seafloor=True):
+    def map(self,var:str|None=None,fig=None,ax=None,seafloor=True) -> None:
         self.init_figure(fig,ax)
         if var is None:
             color = 'k'
@@ -100,9 +101,11 @@ class SurfacePlot(Plotter):
             self.bathy.cmap.set_under(land_color)
             self.ax.contourf(self.bathy.lon,self.bathy.lat,self.bathy.depth,levels=50,cmap=self.bathy.cmap,vmin=0)
 
-        self.ax.scatter(self.instrument.lon,self.instrument.lat,c=color,cmap=cmap,s=3)
-    def quiver(self):
-        self.init_figure()
+        sc = self.ax.scatter(self.instrument.lon,self.instrument.lat,c=color,cmap=cmap,s=3)
+        self.add_colorbar(sc,var)
+
+    def quiver(self) -> None:
+        # self.init_figure()
         raise NotImplementedError('Need to add Quiver')
 
 
@@ -110,7 +113,7 @@ class SurfacePlot(Plotter):
 class VarPlot(Plotter):
     markersize:int|float = field(default=10)
 
-    def depth_time_series(self,var:str,fig=None,ax=None):
+    def depth_time_series(self,var:str,fig=None,ax=None) -> None:
         self.init_figure(fig,ax)
         sc = self.ax.scatter(self.instrument.time,self.instrument.depth,
                         c=self.instrument[var],cmap=self.instrument.cmaps[var],
@@ -124,7 +127,7 @@ class VarPlot(Plotter):
         matplotlib.pyplot.xticks(rotation=60, fontsize='small')
         self.add_colorbar(sc,var=var)
 
-    def check_ts(self,color_var:str=None):
+    def check_ts(self,color_var:str=None) -> None:
         if not self.instrument.has_var('salinity'):
             raise ValueError('Instrument has no salinity attribute')
         if not self.instrument.has_var('temperature'):
@@ -133,7 +136,7 @@ class VarPlot(Plotter):
             if not self.instrument.has_var(color_var):
                 raise ValueError(f'Instrument has no {color_var} attribute')
  
-    def format_ts(self,fig,ax,contours:bool=True):
+    def format_ts(self,fig,ax,contours:bool=True) -> None:
         self.check_ts()
         self.init_figure(fig,ax)
         if contours:
@@ -146,11 +149,11 @@ class VarPlot(Plotter):
         self.ax.xaxis.set_major_locator(MaxNLocator(nbins=6))
         self.ax.xaxis.set_major_locator(MaxNLocator(nbins=8))
 
-    def TS(self,fig=None,ax=None,contours:bool=True):
+    def TS(self,fig=None,ax=None,contours:bool=True) -> None:
         self.format_ts(fig,ax,contours)
         self.ax.scatter(self.instrument.salinity,self.instrument.temperature,s=self.markersize,marker='.')
 
-    def get_density_color_data(self,color_var:str):
+    def get_density_color_data(self,color_var:str) -> np.ndarray:
         # If there is no density data in the instrument
         if color_var == 'density':
             if self.instrument['density'] is None:
@@ -163,7 +166,7 @@ class VarPlot(Plotter):
             color_data = self.instrument[color_var]
         return color_data
 
-    def TS_with_color_var(self,color_var:str,fig=None,ax=None,contours:bool=True):
+    def TS_with_color_var(self,color_var:str,fig=None,ax=None,contours:bool=True) -> None:
         self.format_ts(fig,ax,contours)
         cmap = self.get_cmap(color_var)
         color_data = self.get_density_color_data(color_var)
@@ -171,14 +174,14 @@ class VarPlot(Plotter):
         sc = self.ax.scatter(self.instrument.salinity,self.instrument.temperature,c=color_data,s=self.markersize,marker='.',cmap=cmap)
         self.add_colorbar(sc,color_var)
 
-    def var_var(self,x:str,y:str,color_var:str|None=None,fig=None,ax=None):
+    def var_var(self,x:str,y:str,color_var:str|None=None,fig=None,ax=None) -> None:
         self.init_figure(fig,ax)
         if color_var is not None:
             self.ax.scatter(self.instrument[x],self.instrument[y],c=self.instrument[color_var])
         elif color_var is None:
             self.ax.scatter(self.instrument[x],self.instrument[y])
 
-    def cross_section(self,longitude,latitude):
+    def cross_section(self,longitude,latitude) -> None:
         raise NotImplementedError('Need to add method to plot cross sections')
 
 @define
