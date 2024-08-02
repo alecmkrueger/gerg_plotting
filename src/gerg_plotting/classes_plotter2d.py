@@ -58,7 +58,13 @@ class Plotter:
         else:
             cmap = matplotlib.pyplot.get_cmap('viridis')
         return cmap
-
+    
+    def add_colorbar(self,mappable:matplotlib.axes.Axes,var:str):
+        units = self.instrument.units[var]
+        cbar_label = f"{var.capitalize()}{f' ({units})' if len(units)>0 else ""}"
+        cbar = matplotlib.pyplot.colorbar(mappable,ax=self.ax,label=cbar_label)
+        cbar.ax.locator_params(nbins=5)
+        cbar.ax.invert_yaxis()
 
     def __getitem__(self, key:str):
         return asdict(self)[key]
@@ -106,7 +112,7 @@ class VarPlot(Plotter):
 
     def depth_time_series(self,var:str,fig=None,ax=None):
         self.init_figure(fig,ax)
-        self.ax.scatter(self.instrument.time,self.instrument.depth,
+        sc = self.ax.scatter(self.instrument.time,self.instrument.depth,
                         c=self.instrument[var],cmap=self.instrument.cmaps[var],
                         s=self.markersize)
         self.ax.invert_yaxis()
@@ -116,6 +122,7 @@ class VarPlot(Plotter):
         self.ax.xaxis.set_major_locator(locator)
         self.ax.xaxis.set_major_formatter(formatter)
         matplotlib.pyplot.xticks(rotation=60, fontsize='small')
+        self.add_colorbar(sc,var=var)
 
     def check_ts(self,color_var:str=None):
         if not self.instrument.has_var('salinity'):
@@ -135,7 +142,7 @@ class VarPlot(Plotter):
             matplotlib.pyplot.clabel(cs,fontsize=10,inline=True,fmt='%.1f')
         self.ax.set_xlabel('Salinity')
         self.ax.set_ylabel('Temperature (°C)')
-        # self.ax.set_title(f'T-S Diagram: {glider}',fontsize=14, fontweight='bold')
+        self.ax.set_title(f'T-S Diagram',fontsize=14, fontweight='bold')
         self.ax.xaxis.set_major_locator(MaxNLocator(nbins=6))
         self.ax.xaxis.set_major_locator(MaxNLocator(nbins=8))
 
@@ -162,10 +169,7 @@ class VarPlot(Plotter):
         color_data = self.get_density_color_data(color_var)
 
         sc = self.ax.scatter(self.instrument.salinity,self.instrument.temperature,c=color_data,s=self.markersize,marker='.',cmap=cmap)
-
-        cbar = matplotlib.pyplot.colorbar(sc,ax=self.ax,label=color_var)
-        cbar.ax.locator_params(nbins=5)
-        cbar.ax.invert_yaxis()
+        self.add_colorbar(sc,color_var)
 
     def var_var(self,x:str,y:str,color_var:str|None=None,fig=None,ax=None):
         self.init_figure(fig,ax)
