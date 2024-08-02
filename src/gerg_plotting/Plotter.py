@@ -7,7 +7,7 @@ from matplotlib.colors import Colormap
 from attrs import define, field, asdict
 from pprint import pformat
 
-from gerg_plotting.classes_data import NonSpatialInstrument,SpatialInstrument,Bounds
+from gerg_plotting.NonSpatialInstruments import NonSpatialInstrument,SpatialInstrument,Bounds
 from gerg_plotting.utils import calculate_range,calculate_pad
 
 @define

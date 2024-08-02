@@ -4,7 +4,7 @@ import datetime
 import xarray as xr
 import matplotlib.pyplot as plt
 from gerg_plotting.Plotter import SurfacePlot,DepthPlot,Histogram
-from gerg_plotting.classes_data import Radar,Bounds
+from gerg_plotting.NonSpatialInstruments import Radar,Bounds
 from gerg_plotting.utils import interp_data,filter_var,calculate_range
 
 df = pd.read_csv('../../test_data/radar.csv',

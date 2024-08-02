@@ -1,6 +1,6 @@
 from attrs import define,field
 from gerg_plotting.Plotter import Plotter
-from gerg_plotting.classes_data import Bathy
+from gerg_plotting.NonSpatialInstruments import Bathy
 import cmocean
 
 @define
