@@ -64,6 +64,7 @@ class Buoy(SpatialInstrument):
     # Vars
     u_current:np.ndarray = field(default=None)
     v_current:np.ndarray = field(default=None)
+    s_current:np.ndarray = field(default=None)
 
 @define
 class CTD(SpatialInstrument):
@@ -83,3 +84,4 @@ class WaveGlider(SpatialInstrument):
 class Radar(SpatialInstrument):
     u_current:np.ndarray = field(default=None)
     v_current:np.ndarray = field(default=None)
+    s_current:np.ndarray = field(default=None)

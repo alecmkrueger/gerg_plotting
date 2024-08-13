@@ -1,5 +1,6 @@
 from attrs import define
 import numpy as np
+import matplotlib.pyplot as plt
 from gerg_plotting.Plotter import Plotter
 from gerg_plotting.utils import calculate_range
 
@@ -20,11 +21,18 @@ class Histogram(Plotter):
     def plot(self,var:str,fig=None,ax=None,bins=30):
         self.init_figure(fig,ax)
         self.ax.hist(self.instrument[var],bins=bins)
+        self.ax.set_ylabel('Count')
+        self.ax.set_xlabel(f'{var} ({self.instrument.units[var]})')
 
     def plot2d(self,x:str,y:str,fig=None,ax=None,**kwargs):
         self.init_figure(fig,ax)
         range,kwargs = self.get_2d_range(x,y,**kwargs)
-        self.ax.hist2d(self.instrument[x],self.instrument[y],range=range,**kwargs)
+        hist = self.ax.hist2d(self.instrument[x],self.instrument[y],range=range,**kwargs)
+        self.ax.set_xlabel(self.instrument.vars_with_units[x])
+        self.ax.set_ylabel(self.instrument.vars_with_units[y])
+        cbar = plt.colorbar(hist[3],ax=self.ax,label='Count',orientation='horizontal')
+        # cbar.ax.tick_params(rotation=90)
+
 
     def plot3d(self,x:str,y:str,fig=None,ax=None,**kwargs):
         from matplotlib import cm
@@ -34,3 +42,8 @@ class Histogram(Plotter):
         X,Y = np.meshgrid(xedges[1:],yedges[1:])
         self.ax.plot_surface(X,Y,h, rstride=1, cstride=1, cmap=cm.coolwarm,
                        linewidth=0, antialiased=False)
+        self.ax.zaxis.set_rotate_label(False) 
+        self.ax.set_zlabel('Count', rotation = 90)
+        self.ax.set_xlabel(self.instrument.vars_with_units[x])
+        self.ax.set_ylabel(self.instrument.vars_with_units[y])
+        self.ax.view_init(elev=30, azim=45)

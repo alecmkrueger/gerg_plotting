@@ -24,6 +24,7 @@ class Units(NonSpatialInstrument):
     depth:str = field(default='m')
     u_current:str = field(default='cm/s')
     v_current:str = field(default='cm/s')
+    s_current:str = field(default='cm/s')
 
 
 class Lab(NonSpatialInstrument):
