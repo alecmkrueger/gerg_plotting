@@ -35,6 +35,8 @@ class SurfacePlot(Plotter):
 
         sc = self.ax.scatter(self.instrument.lon,self.instrument.lat,c=color,cmap=cmap,s=3)
         self.add_colorbar(sc,var)
+        self.ax.set_ylabel('Latitude')
+        self.ax.set_xlabel('Longitude')
 
     def quiver(self) -> None:
         # self.init_figure()

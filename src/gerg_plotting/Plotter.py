@@ -62,7 +62,7 @@ class Plotter:
     
     def add_colorbar(self,mappable:matplotlib.axes.Axes,var:str|None) -> None:
         if var is not None:
-            cbar_label = self.instrument.vars_with_units
+            cbar_label = self.instrument.vars_with_units[var]
             cbar = matplotlib.pyplot.colorbar(mappable,ax=self.ax,label=cbar_label)
             cbar.ax.locator_params(nbins=5)
             cbar.ax.invert_yaxis()

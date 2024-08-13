@@ -38,10 +38,11 @@ class SpatialInstrument:
             if key in asdict(self.units).keys():
                 unit = self.units[key]
                 if unit is not None:
-                    var_with_units = f"{key} ({unit})"
-                    self.vars_with_units[key] = var_with_units
-                elif unit == '':
-                    self.vars_with_units[key] = f'{key}'
+                    if unit != '':
+                        var_with_units = f"{key} ({unit})"
+                        self.vars_with_units[key] = var_with_units
+                    elif unit == '':
+                        self.vars_with_units[key] = f'{key}'
                 else:
                     continue
 
