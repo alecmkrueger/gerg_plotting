@@ -38,16 +38,18 @@ class Plotter:
                 self.ax = fig.add_subplot(gs.nrows,gs.ncols,index, projection='3d')
 
     def detect_bounds(self) -> None:
-        if self.bounds is None:
-            lat_min,lat_max = calculate_pad(self.instrument.lat,pad=self.bounds_padding)
-            lon_min,lon_max = calculate_pad(self.instrument.lon,pad=self.bounds_padding)
-            _,depth_max = calculate_range(self.instrument.depth)
-            self.bounds = Bounds(lat_min=lat_min,
-                                 lat_max=lat_max,
-                                 lon_min=lon_min,
-                                 lon_max=lon_max,
-                                 depth_bottom=depth_max,
-                                 depth_top=None)
+        if isinstance(self.instrument,SpatialInstrument):
+            if self.bounds is None:
+                if (self.instrument.lat is not None) | (self.instrument.lon is not None):
+                    lat_min,lat_max = calculate_pad(self.instrument.lat,pad=self.bounds_padding)
+                    lon_min,lon_max = calculate_pad(self.instrument.lon,pad=self.bounds_padding)
+                    _,depth_max = calculate_range(self.instrument.depth)
+                    self.bounds = Bounds(lat_min=lat_min,
+                                        lat_max=lat_max,
+                                        lon_min=lon_min,
+                                        lon_max=lon_max,
+                                        depth_bottom=depth_max,
+                                        depth_top=None)
 
     def get_cmap(self,color_var:str) -> Colormap:
         # If there is a colormap for the provided color_var
