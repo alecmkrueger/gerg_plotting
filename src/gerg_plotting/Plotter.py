@@ -5,7 +5,6 @@ import matplotlib.colorbar
 import matplotlib.figure
 import matplotlib.pyplot
 from matplotlib.colors import Colormap
-from matplotlib.dates import DateFormatter, DayLocator
 from attrs import define, field, asdict
 from pprint import pformat
 
@@ -22,10 +21,7 @@ class Plotter:
 
     fig:matplotlib.figure.Figure = field(default=None)
     ax:matplotlib.axes.Axes = field(default=None)
-
     cbar:matplotlib.colorbar.Colorbar = field(init=False)
-    colorbar_day_interval:int = field(default=5)
-    colorbar_bins:int = field(default=5)
 
     def __attrs_post_init__(self):
         self.detect_bounds()
@@ -69,12 +65,9 @@ class Plotter:
     def add_colorbar(self,mappable:matplotlib.axes.Axes,var:str|None) -> None:
         if var is not None:
             cbar_label = self.instrument.vars_with_units[var]
-            if var == 'time':
-                self.cbar = matplotlib.pyplot.colorbar(mappable,ax=self.ax,label=cbar_label,ticks=DayLocator(interval=self.colorbar_day_interval))
-            else:
-                self.cbar = matplotlib.pyplot.colorbar(mappable,ax=self.ax,label=cbar_label)
-                self.cbar.ax.locator_params(nbins=self.colorbar_bins)
-            # self.cbar.ax.invert_yaxis()
+            self.cbar = matplotlib.pyplot.colorbar(mappable,ax=self.ax,label=cbar_label)
+            self.cbar.ax.locator_params(nbins=5)
+            self.cbar.ax.invert_yaxis()
 
     def __getitem__(self, key:str):
         return asdict(self)[key]
