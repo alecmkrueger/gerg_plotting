@@ -41,8 +41,10 @@ class SpatialInstrument:
                     if unit != '':
                         var_with_units = f"{key} ({unit})"
                         self.vars_with_units[key] = var_with_units
-                    elif unit == '':
+                    else:
                         self.vars_with_units[key] = f'{key}'
                 else:
-                    continue
+                    self.vars_with_units[key] = f'{key}'
+            else:
+                self.vars_with_units[key] = f'{key}'
 

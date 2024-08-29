@@ -58,6 +58,7 @@ class Glider(SpatialInstrument):
     temperature:np.ndarray = field(default=None)
     salinity:np.ndarray = field(default=None)
     density:np.ndarray = field(default=None)
+    mission:np.ndarray = field(default=None)
 
 @define
 class Buoy(SpatialInstrument):
