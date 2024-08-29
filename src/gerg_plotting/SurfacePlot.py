@@ -9,10 +9,13 @@ from gerg_plotting.SpatialInstruments import Bathy
 class SurfacePlot(Plotter):
     bathy:Bathy = field(init=False)
 
-    def init_bathy(self):
-        self.bathy = Bathy(bounds=self.bounds,resolution_level=5)
+    def __attrs_post_init__(self):
+        self.init_bathy()
 
-    def map(self,var:str|None=None,fig=None,ax=None,seafloor=True) -> None:
+    def init_bathy(self):
+        self.bathy = Bathy(bounds=self.bounds)
+
+    def map(self,var:str|None=None,pointsize=3,fig=None,ax=None) -> None:
         self.init_figure(fig,ax)
         if var is None:
             color = 'k'
@@ -24,17 +27,12 @@ class SurfacePlot(Plotter):
         if self.bounds is not None:
             self.ax.set_ylim(self.bounds.lat_min,self.bounds.lat_max)
             self.ax.set_xlim(self.bounds.lon_min,self.bounds.lon_max)
-        if seafloor:
-            self.init_bathy()
-            # Remove the white most but of the colormap
-            self.bathy.cmap = cmocean.tools.crop_by_percent(self.bathy.cmap,20,'min')
-            # Add land color to the colormap
-            land_color = [231/255,194/255,139/255,1]
-            self.bathy.cmap.set_under(land_color)
-            self.ax.contourf(self.bathy.lon,self.bathy.lat,self.bathy.depth,levels=50,cmap=self.bathy.cmap,vmin=0)
 
-        sc = self.ax.scatter(self.instrument.lon,self.instrument.lat,c=color,cmap=cmap,s=3)
-        self.add_colorbar(sc,var)
+        # Add Bathymetry
+        self.ax.contourf(self.bathy.lon,self.bathy.lat,self.bathy.depth,levels=self.bathy.contour_levels,cmap=self.bathy.cmap,vmin=self.bathy.vmin)
+        # Add Scatter points
+        self.sc = self.ax.scatter(self.instrument.lon,self.instrument.lat,c=color,cmap=cmap,s=pointsize)
+        self.add_colorbar(self.sc,var)
         self.ax.set_ylabel('Latitude')
         self.ax.set_xlabel('Longitude')
 

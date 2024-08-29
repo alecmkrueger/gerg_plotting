@@ -4,6 +4,7 @@ import matplotlib
 from matplotlib.colors import Colormap
 import xarray as xr
 from pathlib import Path
+import cmocean
 
 from gerg_plotting.utils import get_center_of_mass
 from gerg_plotting.SpatialInstrument import SpatialInstrument
@@ -14,6 +15,9 @@ class Bathy(SpatialInstrument):
     # Vars
     bounds:Bounds = field(default=None)
     resolution_level:float|int|None = field(default=5)
+    contour_levels:int = field(default=50)
+    land_color:list = field(default=[231/255,194/255,139/255,1])
+    vmin:int|float = field(default=0)
     cmap:Colormap = field(default=matplotlib.cm.get_cmap('Blues'))
     vertical_scaler:int|float = field(default=None)
     vertical_units:str = field(default='')
@@ -24,6 +28,13 @@ class Bathy(SpatialInstrument):
         if self.vertical_scaler is not None:
             self.depth = self.depth*self.vertical_scaler
         self.center_of_mass = get_center_of_mass(self.lon,self.lat,self.depth)
+        self.adjust_cmap()
+        
+    def adjust_cmap(self):
+        # Remove the white most but of the colormap
+        self.cmap = cmocean.tools.crop_by_percent(self.bathy.cmap,20,'min')
+        # Add land color to the colormap
+        self.cmap.set_under(self.bathy.land_color)
 
     def get_bathy(self):
         '''
@@ -36,7 +47,6 @@ class Bathy(SpatialInstrument):
 
         if self.resolution_level is not None:
             ds = ds.coarsen(lat=self.resolution_level,boundary='trim').mean().coarsen(lon=self.resolution_level,boundary='trim').mean() #coarsen the seafloor data (speed up figure drawing) #type:ignore
-
 
         ds = ds.sel(lat=slice(self.bounds["lat_min"],self.bounds["lat_max"])).sel(lon=slice(self.bounds["lon_min"],self.bounds["lon_max"])) #slice to the focus area
 
