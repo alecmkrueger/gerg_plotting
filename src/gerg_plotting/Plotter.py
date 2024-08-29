@@ -7,6 +7,7 @@ import matplotlib.pyplot
 from matplotlib.colors import Colormap
 from attrs import define, field, asdict
 from pprint import pformat
+import cartopy.crs as ccrs
 
 from gerg_plotting.NonSpatialInstruments import NonSpatialInstrument
 from gerg_plotting.SpatialInstrument import SpatialInstrument
@@ -27,10 +28,16 @@ class Plotter:
     def __attrs_post_init__(self):
         self.detect_bounds()
 
-    def init_figure(self,fig=None,ax=None,three_d=False) -> None:
+    def init_figure(self,fig=None,ax=None,three_d=False,geography=False) -> None:
         '''Initalize the figure and axes if they are not provided'''
         if fig is None and ax is None:
-            self.fig,self.ax = matplotlib.pyplot.subplots(subplot_kw={'projection':('3d' if three_d else None)})
+            if three_d:
+                self.fig,self.ax = matplotlib.pyplot.subplots(subplot_kw={'projection':'3d'})
+            elif geography:
+                self.fig,self.ax = matplotlib.pyplot.subplots(subplot_kw={'projection':ccrs.PlateCarree()})
+            else:
+                self.fig,self.ax = matplotlib.pyplot.subplots()
+
         elif fig is not None and ax is not None:
             self.fig = fig
             self.ax = ax
@@ -68,7 +75,6 @@ class Plotter:
             cbar_label = self.instrument.vars_with_units[var]
             self.cbar = matplotlib.pyplot.colorbar(mappable,ax=self.ax,label=cbar_label)
             self.cbar.ax.locator_params(nbins=self.n_cbar_bins)
-            self.cbar.ax.invert_yaxis()
 
     def __getitem__(self, key:str):
         return asdict(self)[key]

@@ -15,6 +15,7 @@ class CMaps(NonSpatialInstrument):
     depth:Colormap = field(default=cmocean.tools.crop_by_percent(cmocean.cm.deep,7,'both'))
     u_current:Colormap = field(default=cmocean.cm.delta)
     v_current:Colormap = field(default=cmocean.cm.delta)
+    time:Colormap = field(default=cmocean.cm.thermal)
 
 @define
 class Units(NonSpatialInstrument):

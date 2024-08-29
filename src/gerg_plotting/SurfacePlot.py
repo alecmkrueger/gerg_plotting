@@ -33,7 +33,6 @@ class SurfacePlot(Plotter):
         self.ax.contourf(self.bathy.lon,self.bathy.lat,self.bathy.depth,levels=self.bathy.contour_levels,cmap=self.bathy.cmap,vmin=self.bathy.vmin)
         # Add Scatter points
         self.sc = self.ax.scatter(self.instrument.lon,self.instrument.lat,c=color,cmap=cmap,s=pointsize)
-        print(var)
         self.add_colorbar(self.sc,var)
         self.ax.set_ylabel('Latitude')
         self.ax.set_xlabel('Longitude')
