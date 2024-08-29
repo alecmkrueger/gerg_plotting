@@ -1,5 +1,5 @@
 from attrs import define,field
-import cmocean
+import matplotlib.collections
 
 from gerg_plotting.Plotter import Plotter
 from gerg_plotting.SpatialInstruments import Bathy
@@ -8,6 +8,7 @@ from gerg_plotting.SpatialInstruments import Bathy
 @define
 class SurfacePlot(Plotter):
     bathy:Bathy = field(init=False)
+    sc:matplotlib.collections.PathCollection = field(init=False)
 
     def __attrs_post_init__(self):
         self.init_bathy()

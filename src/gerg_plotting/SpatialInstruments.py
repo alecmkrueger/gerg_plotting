@@ -32,9 +32,9 @@ class Bathy(SpatialInstrument):
         
     def adjust_cmap(self):
         # Remove the white most but of the colormap
-        self.cmap = cmocean.tools.crop_by_percent(self.bathy.cmap,20,'min')
+        self.cmap = cmocean.tools.crop_by_percent(self.cmap,20,'min')
         # Add land color to the colormap
-        self.cmap.set_under(self.bathy.land_color)
+        self.cmap.set_under(self.land_color)
 
     def get_bathy(self):
         '''
