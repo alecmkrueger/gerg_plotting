@@ -22,6 +22,7 @@ class Plotter:
     fig:matplotlib.figure.Figure = field(default=None)
     ax:matplotlib.axes.Axes = field(default=None)
     cbar:matplotlib.colorbar.Colorbar = field(init=False)
+    n_cbar_bins:int = field(default=5)
 
     def __attrs_post_init__(self):
         self.detect_bounds()
@@ -66,7 +67,7 @@ class Plotter:
         if var is not None:
             cbar_label = self.instrument.vars_with_units[var]
             self.cbar = matplotlib.pyplot.colorbar(mappable,ax=self.ax,label=cbar_label)
-            self.cbar.ax.locator_params(nbins=5)
+            self.cbar.ax.locator_params(nbins=self.n_cbar_bins)
             self.cbar.ax.invert_yaxis()
 
     def __getitem__(self, key:str):
