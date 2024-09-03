@@ -105,3 +105,4 @@ class Animator:
             self.generate_frames_on_disk()
             self.save_gif_from_disk()
             self.delete_images()
+
