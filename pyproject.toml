@@ -19,6 +19,7 @@ scipy = "^1.14.0"
 mayavi = "^4.8.2"
 gsw = "^3.6.19"
 imageio = "^2.34.2"
+cartopy = "^0.23.0"
 
 
 [tool.poetry.group.dev.dependencies]
