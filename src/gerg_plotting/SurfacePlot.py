@@ -23,6 +23,7 @@ class SurfacePlot(Plotter):
 
     def init_bathy(self):
         self.bathy = Bathy(bounds=self.bounds)
+        self.bathy = Bathy(bounds=self.bounds)
 
     def map(self,var:str|None=None,pointsize=3,grid=True,fig=None,ax=None) -> None:
         self.init_figure(fig=fig,ax=ax,geography=True)

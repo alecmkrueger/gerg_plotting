@@ -2,11 +2,13 @@ import matplotlib
 import matplotlib.axes
 import matplotlib.cm
 import matplotlib.colorbar
+import matplotlib.colorbar
 import matplotlib.figure
 import matplotlib.pyplot
 from matplotlib.colors import Colormap
 from attrs import define, field, asdict
 from pprint import pformat
+import cartopy.crs as ccrs
 import cartopy.crs as ccrs
 
 from gerg_plotting.NonSpatialInstruments import NonSpatialInstrument
@@ -22,24 +24,14 @@ class Plotter:
 
     fig:matplotlib.figure.Figure = field(default=None)
     ax:matplotlib.axes.Axes = field(default=None)
-    cbar:matplotlib.colorbar.Colorbar = field(init=False)
-    cbar_nbins:int = field(default=5)
-    cbar_shrink:int = field(default=1)
-    cbar_pad:float = field(default=0.05)
+
     def __attrs_post_init__(self):
         self.detect_bounds()
 
     def init_figure(self,fig=None,ax=None,three_d=False,geography=False) -> None:
         '''Initalize the figure and axes if they are not provided'''
         if fig is None and ax is None:
-            print('Re init ')
-            if three_d:
-                self.fig,self.ax = matplotlib.pyplot.subplots(subplot_kw={'projection':'3d'})
-            elif geography:
-                self.fig,self.ax = matplotlib.pyplot.subplots(subplot_kw={'projection':ccrs.PlateCarree()})
-            else:
-                self.fig,self.ax = matplotlib.pyplot.subplots()
-
+            self.fig,self.ax = matplotlib.pyplot.subplots(subplot_kw={'projection':('3d' if three_d else None)})
         elif fig is not None and ax is not None:
             self.fig = fig
             self.ax = ax
@@ -75,12 +67,9 @@ class Plotter:
     def add_colorbar(self,mappable:matplotlib.axes.Axes,var:str|None) -> None:
         if var is not None:
             cbar_label = self.instrument.vars_with_units[var]
-            self.cbar = matplotlib.pyplot.colorbar(mappable,ax=self.ax,
-                                              label=cbar_label,
-                                              shrink=self.cbar_shrink,
-                                              pad=self.cbar_pad)
-            self.cbar.ax.locator_params(nbins=self.cbar_nbins)
-        return self.cbar
+            cbar = matplotlib.pyplot.colorbar(mappable,ax=self.ax,label=cbar_label)
+            cbar.ax.locator_params(nbins=5)
+            cbar.ax.invert_yaxis()
 
     def __getitem__(self, key:str):
         return asdict(self)[key]
