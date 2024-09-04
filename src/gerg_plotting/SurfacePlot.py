@@ -41,7 +41,7 @@ class SurfacePlot(Plotter):
         # Add Bathymetry
         bathy_contourf = self.ax.contourf(self.bathy.lon,self.bathy.lat,self.bathy.depth,
                                          levels=self.bathy.contour_levels,cmap=self.bathy.cmap,
-                                         vmin=self.bathy.vmin,transform=ccrs.PlateCarree())
+                                         vmin=self.bathy.vmin,transform=ccrs.PlateCarree(),extend='both')
         self.cbar_bathy = self.bathy.add_colorbar(mappable=bathy_contourf,ax=self.ax)
         # Add Scatter points
         self.sc = self.ax.scatter(self.instrument.lon,self.instrument.lat, linewidths=linewidths,
