@@ -25,7 +25,7 @@ class SurfacePlot(Plotter):
         self.bathy = Bathy(bounds=self.bounds)
         self.bathy = Bathy(bounds=self.bounds)
 
-    def map(self,var:str|None=None,pointsize=3,grid=True,fig=None,ax=None) -> None:
+    def map(self,var:str|None=None,pointsize=3,linewidths=0,grid=True,fig=None,ax=None) -> None:
         self.init_figure(fig=fig,ax=ax,geography=True)
         if var is None:
             color = 'k'
@@ -44,7 +44,7 @@ class SurfacePlot(Plotter):
                                          vmin=self.bathy.vmin,transform=ccrs.PlateCarree())
         self.cbar_bathy = self.bathy.add_colorbar(mappable=bathy_contourf,ax=self.ax)
         # Add Scatter points
-        self.sc = self.ax.scatter(self.instrument.lon,self.instrument.lat,
+        self.sc = self.ax.scatter(self.instrument.lon,self.instrument.lat, linewidths=linewidths,
                                   c=color,cmap=cmap,s=pointsize,transform=ccrs.PlateCarree())
         self.cbar_var = self.add_colorbar(self.sc,var)
         if grid:
