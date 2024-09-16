@@ -4,6 +4,8 @@ import matplotlib.collections
 import matplotlib.ticker as mticker
 import cartopy.crs as ccrs
 from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
+from matplotlib.ticker import MultipleLocator
+
 import numpy as np
 
 from gerg_plotting.Plotter import Plotter
@@ -54,6 +56,8 @@ class SurfacePlot(Plotter):
             gl.right_labels = False
             gl.xformatter = LONGITUDE_FORMATTER
             gl.yformatter = LATITUDE_FORMATTER
+            gl.xlocator = MultipleLocator(self.grid_spacing)
+            gl.ylocator = MultipleLocator(self.grid_spacing)
 
 
     def quiver(self) -> None:
