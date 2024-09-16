@@ -25,6 +25,8 @@ class Plotter:
     fig:matplotlib.figure.Figure = field(default=None)
     ax:matplotlib.axes.Axes = field(default=None)
 
+    cbar_show:bool = field(default=True)
+    cbar:matplotlib.colorbar.Colorbar = field(init=False)
     cbar_shrink:float = field(default=1)
     cbar_nbins:int = field(default=5)
     cbar_pad:float = field(default=0.05)
@@ -69,15 +71,16 @@ class Plotter:
         return cmap
     
     def add_colorbar(self,mappable:matplotlib.axes.Axes,var:str|None) -> None:
-        if var is not None:
-            cbar_label = self.instrument.vars_with_units[var]
-            cbar = matplotlib.pyplot.colorbar(mappable,ax=self.ax,
-                                              label=cbar_label,
-                                              pad=self.cbar_pad,
-                                              shrink=self.cbar_shrink)
-            cbar.ax.locator_params(nbins=self.cbar_nbins)
-            cbar.ax.invert_yaxis()
-            return cbar
+        if self.cbar_show:
+            if var is not None:
+                cbar_label = self.instrument.vars_with_units[var]
+                cbar = matplotlib.pyplot.colorbar(mappable,ax=self.ax,
+                                                label=cbar_label,
+                                                pad=self.cbar_pad,
+                                                shrink=self.cbar_shrink)
+                cbar.ax.locator_params(nbins=self.cbar_nbins)
+                cbar.ax.invert_yaxis()
+                return cbar
 
     def __getitem__(self, key:str):
         return asdict(self)[key]

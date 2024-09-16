@@ -22,6 +22,7 @@ class Bathy(SpatialInstrument):
     land_color:list = field(default=[231/255,194/255,139/255,1])
     vmin:int|float = field(default=0)
     cmap:Colormap = field(default=matplotlib.cm.get_cmap('Blues'))
+    cbar_show:bool = field(default=True)
     cbar:matplotlib.colorbar.Colorbar = field(init=False)
     cbar_shrink:float = field(default=1)
     cbar_pad:float = field(default=0.05)
@@ -69,14 +70,15 @@ class Bathy(SpatialInstrument):
         self.lon, self.lat = np.meshgrid(self.lat, self.lon) #create meshgrid for plotting
     
     def add_colorbar(self,ax:matplotlib.axes.Axes,mappable:matplotlib.axes.Axes) -> None:
-        self.cbar = matplotlib.pyplot.colorbar(mappable,ax=ax,
-                                                label='Bathymetry (m)',
-                                                shrink=self.cbar_shrink,
-                                                pad=self.cbar_pad,
-                                                extend='both')
-        self.cbar.ax.locator_params(nbins=self.cbar_nbins)
-        self.cbar.ax.invert_yaxis()
-        return self.cbar
+        if self.cbar_show:
+            self.cbar = matplotlib.pyplot.colorbar(mappable,ax=ax,
+                                                    label='Bathymetry (m)',
+                                                    shrink=self.cbar_shrink,
+                                                    pad=self.cbar_pad,
+                                                    extend='both')
+            self.cbar.ax.locator_params(nbins=self.cbar_nbins)
+            self.cbar.ax.invert_yaxis()
+            return self.cbar
 
 
 
