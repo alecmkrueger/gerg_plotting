@@ -24,9 +24,10 @@ class Bathy(SpatialInstrument):
     cmap:Colormap = field(default=matplotlib.cm.get_cmap('Blues'))
     cbar_show:bool = field(default=True)
     cbar:matplotlib.colorbar.Colorbar = field(init=False)
-    cbar_shrink:float = field(default=1)
-    cbar_pad:float = field(default=0.05)
+    # cbar_shrink:float = field(default=1)
+    # cbar_pad:float = field(default=0.05)
     cbar_nbins:int = field(default=5)
+    cbar_kwargs:dict = field(default=None)
     vertical_scaler:int|float = field(default=None)
     vertical_units:str = field(default='')
     center_of_mass:tuple = field(init=False)
@@ -73,9 +74,8 @@ class Bathy(SpatialInstrument):
         if self.cbar_show:
             self.cbar = matplotlib.pyplot.colorbar(mappable,ax=ax,
                                                     label='Bathymetry (m)',
-                                                    shrink=self.cbar_shrink,
-                                                    pad=self.cbar_pad,
-                                                    extend='both')
+                                                    extend='both',
+                                                    **self.cbar_kwargs)
             self.cbar.ax.locator_params(nbins=self.cbar_nbins)
             self.cbar.ax.invert_yaxis()
             return self.cbar

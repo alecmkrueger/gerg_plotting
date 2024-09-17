@@ -27,9 +27,10 @@ class Plotter:
 
     cbar_show:bool = field(default=True)
     cbar:matplotlib.colorbar.Colorbar = field(init=False)
-    cbar_shrink:float = field(default=1)
+    # cbar_shrink:float = field(default=1)
     cbar_nbins:int = field(default=5)
-    cbar_pad:float = field(default=0.05)
+    # cbar_pad:float = field(default=0.05)
+    cbar_kwargs:dict = field(default=None)
 
     def __attrs_post_init__(self):
         self.detect_bounds()
@@ -74,13 +75,11 @@ class Plotter:
         if self.cbar_show:
             if var is not None:
                 cbar_label = self.instrument.vars_with_units[var]
-                cbar = matplotlib.pyplot.colorbar(mappable,ax=self.ax,
-                                                label=cbar_label,
-                                                pad=self.cbar_pad,
-                                                shrink=self.cbar_shrink)
-                cbar.ax.locator_params(nbins=self.cbar_nbins)
-                cbar.ax.invert_yaxis()
-                return cbar
+                self.cbar = matplotlib.pyplot.colorbar(mappable,ax=self.ax,
+                                                label=cbar_label,**self.cbar_kwargs)
+                self.cbar.ax.locator_params(nbins=self.cbar_nbins)
+                self.cbar.ax.invert_yaxis()
+                return self.cbar
 
     def __getitem__(self, key:str):
         return asdict(self)[key]
