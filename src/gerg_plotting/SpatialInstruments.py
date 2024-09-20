@@ -80,8 +80,6 @@ class Bathy(SpatialInstrument):
             self.cbar.ax.invert_yaxis()
             return self.cbar
 
-
-
 @define
 class Glider(SpatialInstrument):
     # Vars

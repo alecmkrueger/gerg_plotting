@@ -1,10 +1,10 @@
 from attrs import define,field
 import matplotlib.colorbar
 import matplotlib.collections
-import matplotlib.ticker as mticker
+from matplotlib.ticker import MultipleLocator
 import cartopy.crs as ccrs
 from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
-from matplotlib.ticker import MultipleLocator
+import cartopy.mpl.gridliner
 
 import numpy as np
 
@@ -16,6 +16,7 @@ from gerg_plotting.SpatialInstruments import Bathy
 class SurfacePlot(Plotter):
     bathy:Bathy = field(init=False)
     sc:matplotlib.collections.PathCollection = field(init=False)
+    gl:cartopy.mpl.gridliner.Gridliner = field(init=False)
     cbar_var:matplotlib.colorbar.Colorbar = field(init=False)
     cbar_bathy:matplotlib.colorbar.Colorbar = field(init=False)
     grid_spacing:int = field(default=1)
@@ -50,14 +51,14 @@ class SurfacePlot(Plotter):
                                   c=color,cmap=cmap,s=pointsize,transform=ccrs.PlateCarree())
         self.cbar_var = self.add_colorbar(self.sc,var)
         if grid:
-            gl = self.ax.gridlines(draw_labels=True,linewidth=1, color='gray', 
+            self.gl = self.ax.gridlines(draw_labels=True,linewidth=1, color='gray', 
                                 alpha=0.4, linestyle='--')
-            gl.top_labels = False
-            gl.right_labels = False
-            gl.xformatter = LONGITUDE_FORMATTER
-            gl.yformatter = LATITUDE_FORMATTER
-            gl.xlocator = MultipleLocator(self.grid_spacing)
-            gl.ylocator = MultipleLocator(self.grid_spacing)
+            self.gl.top_labels = False
+            self.gl.right_labels = False
+            self.gl.xformatter = LONGITUDE_FORMATTER
+            self.gl.yformatter = LATITUDE_FORMATTER
+            self.gl.xlocator = MultipleLocator(self.grid_spacing)
+            self.gl.ylocator = MultipleLocator(self.grid_spacing)
 
 
     def quiver(self) -> None:
