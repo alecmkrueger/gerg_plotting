@@ -6,6 +6,14 @@ from pprint import pformat
 from gerg_plotting.utils import lat_min_smaller_than_max,lon_min_smaller_than_max
 from gerg_plotting.NonSpatialInstrument import NonSpatialInstrument
 
+
+@define
+class Variable:
+    cmap:Colormap
+    units:str
+    vmin:float
+    vmax:float
+
     
 @define
 class CMaps(NonSpatialInstrument):
