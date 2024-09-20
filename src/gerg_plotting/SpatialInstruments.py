@@ -11,7 +11,7 @@ import cmocean
 
 from gerg_plotting.utils import get_center_of_mass
 from gerg_plotting.SpatialInstrument import SpatialInstrument
-from gerg_plotting.NonSpatialInstruments import Bounds
+from gerg_plotting.NonSpatialInstruments import Bounds, Variable
 
 @define
 class Bathy(SpatialInstrument):
@@ -83,10 +83,23 @@ class Bathy(SpatialInstrument):
 @define
 class Glider(SpatialInstrument):
     # Vars
-    temperature:np.ndarray = field(default=None)
-    salinity:np.ndarray = field(default=None)
-    density:np.ndarray = field(default=None)
-    mission:np.ndarray = field(default=None)
+    temperature:np.ndarray|Variable = field(default=None)
+    salinity:np.ndarray|Variable = field(default=None)
+    density:np.ndarray|Variable = field(default=None)
+    mission:str = field(default='Glider Mission')
+
+    def __attrs_post_init__(self):
+        self.init_variables()
+
+    def init_variable(self,var:str,cmap,units,vmin,vmax):
+        if self[var] is not None:
+            if isinstance(self[var], np.ndarray):
+                self[var] = Variable(data=self[var],name=var.capitalize(),cmap=cmap,units=units,vmin=vmin,vmax=vmax)
+
+    def init_variables(self):
+        self.init_variable(var='temperature',cmap=cmocean.cm.thermal,units='°C',vmin=-10,vmax=40)
+        self.init_variable(var='salinity',cmap=cmocean.cm.haline,units='',vmin=28,vmax=40)
+        self.init_variable(var='density',cmap=cmocean.cm.dense,units="kg/m\u00B3",vmin=1020,vmax=1035)
 
 @define
 class Buoy(SpatialInstrument):
