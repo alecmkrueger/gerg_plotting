@@ -3,6 +3,8 @@ import numpy as np
 from gerg_plotting.NonSpatialInstruments import CMaps,Units
 from pprint import pformat
 
+from gerg_plotting.NonSpatialInstruments import Variable
+
 
 @define
 class SpatialInstrument:
@@ -52,4 +54,12 @@ class SpatialInstrument:
                     self.vars_with_units[key] = f'{key}'
             else:
                 self.vars_with_units[key] = f'{key}'
+
+    def init_variable(self,var:str,cmap,units,vmin,vmax):
+        if self.has_var(var.capitalize()):
+            if self[var] is not None:
+                if isinstance(self[var], np.ndarray):
+                    self[var] = Variable(data=self[var],name=var.capitalize(),cmap=cmap,units=units,vmin=vmin,vmax=vmax)
+        else:
+            raise ValueError(f'{var.capitalize()} does not exist for this instrument')
 

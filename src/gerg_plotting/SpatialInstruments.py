@@ -91,10 +91,7 @@ class Glider(SpatialInstrument):
     def __attrs_post_init__(self):
         self.init_variables()
 
-    def init_variable(self,var:str,cmap,units,vmin,vmax):
-        if self[var] is not None:
-            if isinstance(self[var], np.ndarray):
-                self[var] = Variable(data=self[var],name=var.capitalize(),cmap=cmap,units=units,vmin=vmin,vmax=vmax)
+
 
     def init_variables(self):
         self.init_variable(var='temperature',cmap=cmocean.cm.thermal,units='°C',vmin=-10,vmax=40)
@@ -104,6 +101,12 @@ class Glider(SpatialInstrument):
 @define
 class Buoy(SpatialInstrument):
     # Vars
+    u_current:np.ndarray = field(default=None)
+    v_current:np.ndarray = field(default=None)
+    s_current:np.ndarray = field(default=None)
+
+@define
+class Radar(SpatialInstrument):
     u_current:np.ndarray = field(default=None)
     v_current:np.ndarray = field(default=None)
     s_current:np.ndarray = field(default=None)
@@ -122,8 +125,3 @@ class WaveGlider(SpatialInstrument):
     temperature:np.ndarray = field(default=None)
     salinity:np.ndarray  = field(default=None)
     
-@define
-class Radar(SpatialInstrument):
-    u_current:np.ndarray = field(default=None)
-    v_current:np.ndarray = field(default=None)
-    s_current:np.ndarray = field(default=None)
