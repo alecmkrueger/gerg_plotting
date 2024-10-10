@@ -91,8 +91,6 @@ class Glider(SpatialInstrument):
     def __attrs_post_init__(self):
         self.init_variables()
 
-
-
     def init_variables(self):
         self.init_variable(var='temperature',cmap=cmocean.cm.thermal,units='°C',vmin=-10,vmax=40)
         self.init_variable(var='salinity',cmap=cmocean.cm.haline,units='',vmin=28,vmax=40)
