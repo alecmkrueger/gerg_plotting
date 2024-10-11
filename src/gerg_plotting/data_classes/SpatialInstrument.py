@@ -1,7 +1,7 @@
 from attrs import define,field,asdict
-import numpy as np
-from pprint import pformat,pp
+from pprint import pformat
 from typing import Iterable
+import cmocean
 
 from gerg_plotting.NonSpatialInstruments import Variable
 
@@ -9,10 +9,10 @@ from gerg_plotting.NonSpatialInstruments import Variable
 @define(slots=False)
 class SpatialInstrument:
     # Dims
-    lat: Iterable|None = field(default=None)
-    lon: Iterable|None = field(default=None)
-    depth: Iterable|None = field(default=None)
-    time: Iterable|None = field(default=None)
+    lat: Iterable|Variable|None = field(default=None)
+    lon: Iterable|Variable|None = field(default=None)
+    depth: Iterable|Variable|None = field(default=None)
+    time: Iterable|Variable|None = field(default=None)
     
     # Custom variables dictionary to hold dynamically added variables
     custom_variables: dict = field(factory=dict)
@@ -39,6 +39,12 @@ class SpatialInstrument:
     def __repr__(self):
         '''Pretty printing'''
         return pformat(asdict(self),width=1)
+    
+    def _init_dims(self):
+        self.init_variable(var='lat', cmap=cmocean.cm.haline, units='°', vmin=None, vmax=None)
+        self.init_variable(var='lon', cmap=cmocean.cm.thermal, units='°', vmin=None, vmax=None)
+        self.init_variable(var='depth', cmap=cmocean.cm.deep, units='m', vmin=None, vmax=None)
+        self.init_variable(var='time', cmap=cmocean.cm.thermal, units='', vmin=None, vmax=None)
 
     def init_variable(self, var: str, cmap, units, vmin, vmax):
         """Initializes standard variables if they are not None and of type np.ndarray."""

@@ -9,16 +9,15 @@ from matplotlib.colors import Colormap
 from attrs import define, field, asdict
 from pprint import pformat
 import cartopy.crs as ccrs
-import cartopy.crs as ccrs
 
-from gerg_plotting.NonSpatialInstruments import NonSpatialInstrument
+from gerg_plotting.NonSpatialInstruments import NonSpatialInstrument,Variable
 from gerg_plotting.SpatialInstrument import SpatialInstrument
 from gerg_plotting.NonSpatialInstruments import Bounds
 from gerg_plotting.utils import calculate_range,calculate_pad
 
 @define
 class Plotter:
-    instrument:NonSpatialInstrument|SpatialInstrument
+    instrument:SpatialInstrument
     bounds:Bounds|None = field(default=None)
     bounds_padding:float = field(default=0.3)
 
@@ -35,26 +34,41 @@ class Plotter:
     def __attrs_post_init__(self):
         self.detect_bounds()
 
-    def init_figure(self,fig=None,ax=None,three_d=False,geography=False) -> None:
+
+    def init_figure(self, fig=None, ax=None, three_d=False, geography=False) -> None:
         '''Initalize the figure and axes if they are not provided'''
+        
+        # Guard clause: Ensure three_d and geography are not both True
+        if three_d and geography:
+            raise ValueError("Cannot set both 'three_d' and 'geography' to True. Choose one.")
+
         if fig is None and ax is None:
-            self.fig,self.ax = matplotlib.pyplot.subplots(subplot_kw={'projection':('3d' if three_d else None)})
+            if geography:
+                # Initialize a figure with Cartopy's PlateCarree projection
+                self.fig, self.ax = matplotlib.pyplot.subplots(subplot_kw={'projection': ccrs.PlateCarree()})
+            elif three_d:
+                # Initialize a 3D figure
+                self.fig, self.ax = matplotlib.pyplot.subplots(subplot_kw={'projection': '3d'})
+            else:
+                # Standard 2D Matplotlib figure with no projection
+                self.fig, self.ax = matplotlib.pyplot.subplots()
         elif fig is not None and ax is not None:
             self.fig = fig
             self.ax = ax
             if three_d:
-                index = [idx for idx,ax in enumerate(self.fig.axes) if ax is self.ax][0]+1
+                index = [idx for idx, ax in enumerate(self.fig.axes) if ax is self.ax][0] + 1
                 self.ax.remove()
                 gs = self.ax.get_gridspec()
-                self.ax = fig.add_subplot(gs.nrows,gs.ncols,index, projection='3d')
+                self.ax = fig.add_subplot(gs.nrows, gs.ncols, index, projection='3d')
+
 
     def detect_bounds(self) -> None:
         if isinstance(self.instrument,SpatialInstrument):
             if self.bounds is None:
-                if (self.instrument.lat is not None) | (self.instrument.lon is not None):
-                    lat_min,lat_max = calculate_pad(self.instrument.lat,pad=self.bounds_padding)
-                    lon_min,lon_max = calculate_pad(self.instrument.lon,pad=self.bounds_padding)
-                    _,depth_max = calculate_range(self.instrument.depth)
+                if isinstance(self.instrument.lat,Variable) | isinstance(self.instrument.lon,Variable):
+                    lat_min,lat_max = calculate_pad(self.instrument.lat.data,pad=self.bounds_padding)
+                    lon_min,lon_max = calculate_pad(self.instrument.lon.data,pad=self.bounds_padding)
+                    _,depth_max = calculate_range(self.instrument.depth.data)
                     self.bounds = Bounds(lat_min=lat_min,
                                         lat_max=lat_max,
                                         lon_min=lon_min,
@@ -64,8 +78,8 @@ class Plotter:
 
     def get_cmap(self,color_var:str) -> Colormap:
         # If there is a colormap for the provided color_var
-        if self.instrument.cmaps.has_var(color_var):
-            cmap = self.instrument.cmaps[color_var]
+        if self.instrument[color_var].cmap is not None:
+            cmap = self.instrument[color_var].cmap
         # If there is no colormap for the provided color_var
         else:
             cmap = matplotlib.pyplot.get_cmap('viridis')
@@ -74,7 +88,7 @@ class Plotter:
     def add_colorbar(self,mappable:matplotlib.axes.Axes,var:str|None) -> None:
         if self.cbar_show:
             if var is not None:
-                cbar_label = self.instrument.vars_with_units[var]
+                cbar_label = self.instrument[var].label
                 self.cbar = matplotlib.pyplot.colorbar(mappable,ax=self.ax,
                                                 label=cbar_label,**self.cbar_kwargs)
                 self.cbar.ax.locator_params(nbins=self.cbar_nbins)
