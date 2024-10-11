@@ -3,7 +3,7 @@ from matplotlib.colors import Colormap
 from typing import Iterable
 
 from gerg_plotting.utils import lat_min_smaller_than_max,lon_min_smaller_than_max,is_flat_numpy_array,to_numpy_array
-from gerg_plotting.NonSpatialInstrument import NonSpatialInstrument
+from gerg_plotting.data_classes.NonSpatialInstrument import NonSpatialInstrument
 
 @define
 class Variable(NonSpatialInstrument):

@@ -8,8 +8,8 @@ import cartopy.mpl.gridliner
 
 import numpy as np
 
-from gerg_plotting.Plotter import Plotter
-from gerg_plotting.SpatialInstruments import Bathy
+from gerg_plotting.plotting_classes.Plotter import Plotter
+from gerg_plotting.data_classes.SpatialInstruments import Bathy
 
 
 @define

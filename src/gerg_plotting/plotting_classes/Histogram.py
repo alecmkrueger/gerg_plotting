@@ -1,7 +1,7 @@
 from attrs import define
 import numpy as np
 import matplotlib.pyplot as plt
-from gerg_plotting.Plotter import Plotter
+from gerg_plotting.plotting_classes.Plotter import Plotter
 from gerg_plotting.utils import calculate_range
 
 @define

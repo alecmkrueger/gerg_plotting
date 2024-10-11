@@ -2,7 +2,7 @@ from attrs import define
 import numpy as np
 import mayavi
 
-from gerg_plotting.SpatialInstruments import SpatialInstrument
+from gerg_plotting.data_classes.SpatialInstruments import SpatialInstrument
 
 
 @define

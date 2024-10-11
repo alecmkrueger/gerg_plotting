@@ -3,7 +3,7 @@ from pprint import pformat
 from typing import Iterable
 import cmocean
 
-from gerg_plotting.NonSpatialInstruments import Variable
+from gerg_plotting.data_classes.NonSpatialInstruments import Variable
 
 
 @define(slots=False)

@@ -10,9 +10,9 @@ from attrs import define, field, asdict
 from pprint import pformat
 import cartopy.crs as ccrs
 
-from gerg_plotting.NonSpatialInstruments import NonSpatialInstrument,Variable
-from gerg_plotting.SpatialInstrument import SpatialInstrument
-from gerg_plotting.NonSpatialInstruments import Bounds
+from gerg_plotting.data_classes.NonSpatialInstruments import NonSpatialInstrument,Variable
+from gerg_plotting.data_classes.SpatialInstrument import SpatialInstrument
+from gerg_plotting.data_classes.NonSpatialInstruments import Bounds
 from gerg_plotting.utils import calculate_range,calculate_pad
 
 @define

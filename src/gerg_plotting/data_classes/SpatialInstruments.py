@@ -13,8 +13,8 @@ from typing import Iterable
 from pprint import pformat
 
 from gerg_plotting.utils import get_center_of_mass
-from gerg_plotting.SpatialInstrument import SpatialInstrument
-from gerg_plotting.NonSpatialInstruments import Bounds, Variable
+from gerg_plotting.data_classes.SpatialInstrument import SpatialInstrument
+from gerg_plotting.data_classes.NonSpatialInstruments import Bounds, Variable
 
 @define(repr=False)
 class Bathy(SpatialInstrument):

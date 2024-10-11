@@ -2,7 +2,7 @@ from attrs import define,field
 import numpy as np
 import mayavi as mlab
 
-from gerg_plotting.Plotter3D import Plotter3D
+from gerg_plotting.plotting_classes.Plotter3D import Plotter3D
 
 @define
 class Scatter3D(Plotter3D):
