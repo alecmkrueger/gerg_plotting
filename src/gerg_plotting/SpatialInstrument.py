@@ -1,6 +1,7 @@
 from attrs import define,field,asdict
 import numpy as np
-from pprint import pformat
+from pprint import pformat,pp
+from typing import Iterable
 
 from gerg_plotting.NonSpatialInstruments import Variable
 
@@ -8,11 +9,10 @@ from gerg_plotting.NonSpatialInstruments import Variable
 @define(slots=False)
 class SpatialInstrument:
     # Dims
-    lat: np.ndarray | None = field(default=None)
-    lon: np.ndarray | None = field(default=None)
-    depth: np.ndarray | None = field(default=None)
-    time: np.ndarray | None = field(default=None)
-    vars: list = field(default=None)
+    lat: Iterable|None = field(default=None)
+    lon: Iterable|None = field(default=None)
+    depth: Iterable|None = field(default=None)
+    time: Iterable|None = field(default=None)
     
     # Custom variables dictionary to hold dynamically added variables
     custom_variables: dict = field(factory=dict)
@@ -35,11 +35,15 @@ class SpatialInstrument:
                 self.custom_variables[key] = value
         else:
             raise KeyError(f"Variable '{key}' not found.")
+        
+    def __repr__(self):
+        '''Pretty printing'''
+        return pformat(asdict(self),width=1)
 
     def init_variable(self, var: str, cmap, units, vmin, vmax):
         """Initializes standard variables if they are not None and of type np.ndarray."""
         if self._has_var(var):
-            if self[var] is not None and isinstance(self[var], np.ndarray):
+            if self[var] is not None:
                 self[var] = Variable(
                     data=self[var],
                     name=var.capitalize(),

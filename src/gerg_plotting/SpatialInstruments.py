@@ -1,5 +1,6 @@
 import numpy as np
-from attrs import define,field
+import pandas as pd
+from attrs import define,field,asdict
 import matplotlib
 import matplotlib.axes
 import matplotlib.pyplot
@@ -8,12 +9,14 @@ from matplotlib.colors import Colormap
 import xarray as xr
 from pathlib import Path
 import cmocean
+from typing import Iterable
+from pprint import pformat
 
 from gerg_plotting.utils import get_center_of_mass
 from gerg_plotting.SpatialInstrument import SpatialInstrument
 from gerg_plotting.NonSpatialInstruments import Bounds, Variable
 
-@define
+@define(repr=False)
 class Bathy(SpatialInstrument):
     # Vars
     bounds:Bounds = field(default=None)
@@ -79,15 +82,15 @@ class Bathy(SpatialInstrument):
             return self.cbar
 
 
-@define(slots=False)
+@define(slots=False,repr=False)
 class Data(SpatialInstrument):
     # Vars
-    temperature: np.ndarray | Variable | None = field(default=None)
-    salinity: np.ndarray | Variable | None = field(default=None)
-    density: np.ndarray | Variable | None = field(default=None)
-    u: np.ndarray | Variable | None = field(default=None)
-    v: np.ndarray | Variable | None = field(default=None)
-    speed: np.ndarray | Variable | None = field(default=None)
+    temperature: Iterable|Variable|None = field(default=None)
+    salinity: Iterable|Variable|None = field(default=None)
+    density: Iterable|Variable|None = field(default=None)
+    u: Iterable|Variable|None = field(default=None)
+    v: Iterable|Variable|None = field(default=None)
+    speed: Iterable|Variable|None = field(default=None)
 
     def __attrs_post_init__(self):
         self.init_variables()
@@ -100,13 +103,12 @@ class Data(SpatialInstrument):
         self.init_variable(var='v', cmap=cmocean.cm.balance, units="m/s", vmin=-5, vmax=5)
         self.init_variable(var='speed', cmap=cmocean.cm.speed, units="m/s", vmin=0, vmax=5)
 
-# Example
-data = Data(temperature=np.array([2,4,6]))
-turb = Variable(data=np.array([1,2,3]),name='turb',cmap=cmocean.cm.turbid,units='',vmin=0,vmax=1)
-data.add_custom_variable('turb',turb)
-print(data['turb'])
-print(data)
-
+# # Example
+# import pandas as pd
+# data = Data(temperature=np.array([2,4,6]))
+# turb = Variable(data=np.array([1,2,3]),name='turb',cmap=cmocean.cm.turbid,units='',vmin=0,vmax=1)
+# data.add_custom_variable('turb',turb)
+# print(data)
 
 # @define
 # class Glider(SpatialInstrument):

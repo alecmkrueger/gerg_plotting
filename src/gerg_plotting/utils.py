@@ -19,9 +19,23 @@ def validate_array_lengths(instance,attribute,value):
     if len(set(lengths.values()))>1:
         raise ValueError(f'All Dims and Vars must be the same length, got lengths of {lengths}')
 
-def is_flat_numpy_array(instance, attribute, value):
+def to_numpy_array(value):
+    # Convert iterable types (list, tuple, pandas.Series, etc.) to NumPy array
     if not isinstance(value, np.ndarray):
-        raise ValueError(f"{attribute.name} must be a NumPy array")
+        return np.fromiter(value,type(value))
+    elif isinstance(value, np.ndarray):
+        return value
+    elif value is None:
+        return None
+    else:
+        raise ValueError(f"Cannot convert {type(value)} to a NumPy array")
+
+def is_flat_numpy_array(instance, attribute, value):
+    # Validate that the value is now a NumPy array
+    if not isinstance(value, np.ndarray):
+        raise ValueError(f"{attribute.name} must be a NumPy array or a list convertible to a NumPy array")
+    
+    # Ensure the array is flat (1-dimensional)
     if value.ndim != 1:
         raise ValueError(f"{attribute.name} must be a flat array")
         
