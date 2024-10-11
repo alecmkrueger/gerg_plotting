@@ -1,5 +1,5 @@
 '''
-Thin wrapper on matplotlib for standarized plotting at GERG
+Thin wrapper around matplotlib for standarized plotting at GERG
 '''
 
 from .plotting_classes.Histogram import Histogram
