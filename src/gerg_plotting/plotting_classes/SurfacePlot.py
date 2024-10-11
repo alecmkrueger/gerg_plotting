@@ -34,7 +34,7 @@ class SurfacePlot(Plotter):
             color = 'k'
             cmap = None
         else:
-            color_var_values = self.instrument[var].copy()
+            color_var_values = self.instrument[var].data.copy()
             color = color_var_values
             cmap = self.get_cmap(var)
         if self.bounds is not None:
@@ -47,7 +47,7 @@ class SurfacePlot(Plotter):
                                          vmin=self.bathy.vmin,transform=ccrs.PlateCarree(),extend='both')
         self.cbar_bathy = self.bathy.add_colorbar(mappable=bathy_contourf,ax=self.ax)
         # Add Scatter points
-        self.sc = self.ax.scatter(self.instrument.lon,self.instrument.lat, linewidths=linewidths,
+        self.sc = self.ax.scatter(self.instrument.lon.data,self.instrument.lat.data, linewidths=linewidths,
                                   c=color,cmap=cmap,s=pointsize,transform=ccrs.PlateCarree())
         self.cbar_var = self.add_colorbar(self.sc,var)
         if grid:
