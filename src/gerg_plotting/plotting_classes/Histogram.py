@@ -19,7 +19,7 @@ class Histogram(Plotter):
 
     def plot(self,var:str,fig=None,ax=None,bins=30):
         self.init_figure(fig,ax)
-        self.ax.hist(self.instrument[var],bins=bins)
+        self.ax.hist(self.instrument[var].data,bins=bins)
         self.ax.set_ylabel('Count')
         self.ax.set_xlabel(f'{var} ({self.instrument.units[var]})')
 
