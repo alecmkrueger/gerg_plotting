@@ -19,6 +19,11 @@ def validate_array_lengths(instance,attribute,value):
     if len(set(lengths.values()))>1:
         raise ValueError(f'All Dims and Vars must be the same length, got lengths of {lengths}')
 
+def is_flat_numpy_array(instance, attribute, value):
+    if not isinstance(value, np.ndarray):
+        raise ValueError(f"{attribute.name} must be a NumPy array")
+    if value.ndim != 1:
+        raise ValueError(f"{attribute.name} must be a flat array")
         
 def get_center_of_mass(lon,lat,pressure) -> tuple:
     centroid = tuple([np.nanmean(lon), np.nanmean(lat), np.nanmean(pressure)])

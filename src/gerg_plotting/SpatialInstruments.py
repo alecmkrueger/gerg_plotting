@@ -21,11 +21,9 @@ class Bathy(SpatialInstrument):
     contour_levels:int = field(default=50)
     land_color:list = field(default=[231/255,194/255,139/255,1])
     vmin:int|float = field(default=0)
-    cmap:Colormap = field(default=matplotlib.cm.get_cmap('Blues'))
+    cmap:Colormap = field(default=matplotlib.colormaps.get_cmap('Blues'))
     cbar_show:bool = field(default=True)
     cbar:matplotlib.colorbar.Colorbar = field(init=False)
-    # cbar_shrink:float = field(default=1)
-    # cbar_pad:float = field(default=0.05)
     cbar_nbins:int = field(default=5)
     cbar_kwargs:dict = field(default=None)
     vertical_scaler:int|float = field(default=None)
@@ -80,46 +78,77 @@ class Bathy(SpatialInstrument):
             self.cbar.ax.invert_yaxis()
             return self.cbar
 
-@define
-class Glider(SpatialInstrument):
+
+@define(slots=False)
+class Data(SpatialInstrument):
     # Vars
-    temperature:np.ndarray|Variable = field(default=None)
-    salinity:np.ndarray|Variable = field(default=None)
-    density:np.ndarray|Variable = field(default=None)
-    mission:str = field(default='Glider Mission')
+    temperature: np.ndarray | Variable | None = field(default=None)
+    salinity: np.ndarray | Variable | None = field(default=None)
+    density: np.ndarray | Variable | None = field(default=None)
+    u: np.ndarray | Variable | None = field(default=None)
+    v: np.ndarray | Variable | None = field(default=None)
+    speed: np.ndarray | Variable | None = field(default=None)
 
     def __attrs_post_init__(self):
         self.init_variables()
 
     def init_variables(self):
-        self.init_variable(var='temperature',cmap=cmocean.cm.thermal,units='°C',vmin=-10,vmax=40)
-        self.init_variable(var='salinity',cmap=cmocean.cm.haline,units='',vmin=28,vmax=40)
-        self.init_variable(var='density',cmap=cmocean.cm.dense,units="kg/m\u00B3",vmin=1020,vmax=1035)
+        self.init_variable(var='temperature', cmap=cmocean.cm.thermal, units='°C', vmin=-10, vmax=40)
+        self.init_variable(var='salinity', cmap=cmocean.cm.haline, units='', vmin=28, vmax=40)
+        self.init_variable(var='density', cmap=cmocean.cm.dense, units="kg/m\u00B3", vmin=1020, vmax=1035)
+        self.init_variable(var='u', cmap=cmocean.cm.balance, units="m/s", vmin=-5, vmax=5)
+        self.init_variable(var='v', cmap=cmocean.cm.balance, units="m/s", vmin=-5, vmax=5)
+        self.init_variable(var='speed', cmap=cmocean.cm.speed, units="m/s", vmin=0, vmax=5)
 
-@define
-class Buoy(SpatialInstrument):
-    # Vars
-    u_current:np.ndarray = field(default=None)
-    v_current:np.ndarray = field(default=None)
-    s_current:np.ndarray = field(default=None)
+# Example
+data = Data(temperature=np.array([2,4,6]))
+turb = Variable(data=np.array([1,2,3]),name='turb',cmap=cmocean.cm.turbid,units='',vmin=0,vmax=1)
+data.add_custom_variable('turb',turb)
+print(data['turb'])
+print(data)
 
-@define
-class Radar(SpatialInstrument):
-    u_current:np.ndarray = field(default=None)
-    v_current:np.ndarray = field(default=None)
-    s_current:np.ndarray = field(default=None)
 
-@define
-class CTD(SpatialInstrument):
-    # Dim
-    stations:np.ndarray = field(default=None)
-    # Vars
-    temperature:np.ndarray = field(default=None)
-    salinity:np.ndarray = field(default=None)
+# @define
+# class Glider(SpatialInstrument):
+#     # Vars
+#     temperature:np.ndarray|Variable = field(default=None)
+#     salinity:np.ndarray|Variable = field(default=None)
+#     density:np.ndarray|Variable = field(default=None)
+#     mission:str = field(default='Glider Mission')
 
-@define
-class WaveGlider(SpatialInstrument):
-    # Vars
-    temperature:np.ndarray = field(default=None)
-    salinity:np.ndarray  = field(default=None)
+#     def __attrs_post_init__(self):
+#         self.init_variables()
+
+#     def init_variables(self):
+#         self.init_variable(var='temperature',cmap=cmocean.cm.thermal,units='°C',vmin=-10,vmax=40)
+#         self.init_variable(var='salinity',cmap=cmocean.cm.haline,units='',vmin=28,vmax=40)
+#         self.init_variable(var='density',cmap=cmocean.cm.dense,units="kg/m\u00B3",vmin=1020,vmax=1035)
+
+
+# @define
+# class Buoy(SpatialInstrument):
+#     # Vars
+#     u_current:np.ndarray = field(default=None)
+#     v_current:np.ndarray = field(default=None)
+#     s_current:np.ndarray = field(default=None)
+
+# @define
+# class Radar(SpatialInstrument):
+#     u_current:np.ndarray = field(default=None)
+#     v_current:np.ndarray = field(default=None)
+#     s_current:np.ndarray = field(default=None)
+
+# @define
+# class CTD(SpatialInstrument):
+#     # Dim
+#     stations:np.ndarray = field(default=None)
+#     # Vars
+#     temperature:np.ndarray = field(default=None)
+#     salinity:np.ndarray = field(default=None)
+
+# @define
+# class WaveGlider(SpatialInstrument):
+#     # Vars
+#     temperature:np.ndarray = field(default=None)
+#     salinity:np.ndarray  = field(default=None)
     

@@ -4,13 +4,13 @@ import cmocean
 from pprint import pformat
 import numpy as np
 
-from gerg_plotting.utils import lat_min_smaller_than_max,lon_min_smaller_than_max
+from gerg_plotting.utils import lat_min_smaller_than_max,lon_min_smaller_than_max,is_flat_numpy_array
 from gerg_plotting.NonSpatialInstrument import NonSpatialInstrument
 
 
 @define
 class Variable(NonSpatialInstrument):
-    data:np.ndarray
+    data:np.ndarray = field(validator=is_flat_numpy_array)
     name:str
     cmap:Colormap
     units:str
