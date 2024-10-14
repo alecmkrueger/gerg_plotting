@@ -20,10 +20,10 @@ class MapPlot(Plotter):
     grid_spacing:int = field(default=1)
 
     def __attrs_post_init__(self):
+        super().__attrs_post_init__()
         self.init_bathy()
 
     def init_bathy(self):
-        self.bathy = Bathy(bounds=self.bounds)
         self.bathy = Bathy(bounds=self.bounds)
 
     def scatter(self,var:str|None=None,pointsize=3,linewidths=0,grid=True,fig=None,ax=None) -> None:

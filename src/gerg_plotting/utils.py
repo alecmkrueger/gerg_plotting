@@ -75,7 +75,7 @@ def filter_var(var:pd.Series,min_value,max_value):
 def calculate_range(var:np.ndarray):
     return [np.nanmin(var),np.nanmax(var)]
 
-def calculate_pad(var,pad=0.15):
+def calculate_pad(var,pad=0.0):
     start, stop = calculate_range(var)
     difference = stop - start
     pad = difference*pad

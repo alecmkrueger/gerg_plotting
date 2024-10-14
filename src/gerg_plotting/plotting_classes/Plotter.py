@@ -20,7 +20,7 @@ from gerg_plotting.utils import calculate_range,calculate_pad
 class Plotter:
     instrument:SpatialInstrument
     bounds:Bounds|None = field(default=None)
-    bounds_padding:float = field(default=0.3)
+    bounds_padding:float = field(default=0)
 
     fig:matplotlib.figure.Figure = field(default=None)
     ax:matplotlib.axes.Axes = field(default=None)
@@ -34,7 +34,6 @@ class Plotter:
 
     def __attrs_post_init__(self):
         self.detect_bounds()
-
 
     def init_figure(self, fig=None, ax=None, three_d=False, geography=False) -> None:
         '''Initalize the figure and axes if they are not provided'''
@@ -74,7 +73,7 @@ class Plotter:
                                         lat_max=lat_max,
                                         lon_min=lon_min,
                                         lon_max=lon_max,
-                                        depth_bottom=depth_max,
+                                        depth_bottom=None,
                                         depth_top=None)
                 else:
                     raise ValueError(f'lat and lon must be of type Variable, you passed {type(self.instrument.lat) = } and {type(self.instrument.lon) = }')
