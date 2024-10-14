@@ -21,7 +21,7 @@ class Histogram(Plotter):
         self.init_figure(fig,ax)
         self.ax.hist(self.instrument[var].data,bins=bins)
         self.ax.set_ylabel('Count')
-        self.ax.set_xlabel(f'{var} ({self.instrument.units[var]})')
+        self.ax.set_xlabel(self.instrument[var].get_label())
 
     def plot2d(self,x:str,y:str,fig=None,ax=None,**kwargs):
         self.init_figure(fig,ax)

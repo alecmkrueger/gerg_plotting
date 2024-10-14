@@ -13,7 +13,7 @@ class Variable(NonSpatialInstrument):
     units:str = field(default=None)  # Turn off units by passing/assigning to None
     vmin:float = field(default=None)
     vmax:float = field(default=None)
-    label:str = field(default=None)
+    label:str = field(default=None)  # Set label to be used on figure and axes, use if desired
 
     # def __attrs_post_init__(self):
     #     self._init_label()
@@ -24,7 +24,7 @@ class Variable(NonSpatialInstrument):
             # if the units are defined, we will use them, else it will be an empty string
             unit = f" ({self.units})" if self.units is not None else ''
             # The label is created from the name of the variable with the units
-            self.label = f"{self.name.capitalize()}{unit}"
+            self.label = f"{self.name}{unit}"
         return self.label
 
 @define

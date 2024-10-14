@@ -77,8 +77,6 @@ class Plotter:
                                         lon_max=lon_max,
                                         depth_bottom=None,
                                         depth_top=None)
-                else:
-                    raise ValueError(f'lat and lon must be of type Variable, you passed {type(self.instrument.lat) = } and {type(self.instrument.lon) = }')
         else:
             raise ValueError(f'Must pass an instrument of type SpatialInstrument, you passed {type(self.instrument) = }')
 

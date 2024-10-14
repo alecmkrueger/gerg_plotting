@@ -25,33 +25,33 @@ class SpatialInstrument:
 
     def __getitem__(self, key):
         """Allows accessing standard and custom variables via indexing."""
-        try:
-            if self._has_var(key):
-                return getattr(self, key, self.custom_variables.get(key))
-            raise KeyError(f"Variable '{key}' not found.")
-        except KeyError:
-            if self._has_var(key.lower()):
-                return getattr(self, key.lower(), self.custom_variables.get(key.lower()))
-            raise KeyError(f"Variable '{key.lower()}' not found.")     
+        # try:
+        if self._has_var(key):
+            return getattr(self, key, self.custom_variables.get(key))
+        raise KeyError(f"Variable '{key}' not found.")
+        # except KeyError:
+        #     if self._has_var(key.lower()):
+        #         return getattr(self, key.lower(), self.custom_variables.get(key.lower()))
+        #     raise KeyError(f"Variable '{key}' not found.")     
 
     def __setitem__(self, key, value):
         """Allows setting standard and custom variables via indexing."""
-        try:
-            if self._has_var(key):
-                if key in asdict(self):
-                    setattr(self, key, value)
-                else:
-                    self.custom_variables[key] = value
+        # try:
+        if self._has_var(key):
+            if key in asdict(self):
+                setattr(self, key, value)
             else:
-                raise KeyError(f"Variable '{key}' not found.")
-        except KeyError:
-            if self._has_var(key.lower()):
-                if key in asdict(self):
-                    setattr(self, key.lower(), value)
-                else:
-                    self.custom_variables[key.lower()] = value
-            else:
-                raise KeyError(f"Variable '{key.lower()}' not found.")
+                self.custom_variables[key] = value
+        else:
+            raise KeyError(f"Variable '{key}' not found.")
+        # except KeyError:
+        #     if self._has_var(key.lower()):
+        #         if key in asdict(self):
+        #             setattr(self, key.lower(), value)
+        #         else:
+        #             self.custom_variables[key.lower()] = value
+        #     else:
+        #         raise KeyError(f"Variable '{key}' not found.")
             
     def __repr__(self):
         '''Pretty printing'''
@@ -79,15 +79,15 @@ class SpatialInstrument:
         else:
             raise ValueError(f'{var.capitalize()} does not exist, try using add_custom_variable method')
 
-    def add_custom_variable(self, variable_name: str, variable: Variable):
+    def add_custom_variable(self, variable: Variable):
         """Adds a custom Variable object and makes it accessible via both dot and dict syntax."""
         if not isinstance(variable, Variable):
             raise TypeError(f"The provided object is not an instance of the Variable class.")
         
-        if hasattr(self, variable_name):
-            raise AttributeError(f"The variable '{variable_name}' already exists.")
+        if hasattr(self, variable.name):
+            raise AttributeError(f"The variable '{variable.name}' already exists.")
         else:
             # Add to custom_variables and dynamically create the attribute
-            self.custom_variables[variable_name] = variable
-            setattr(self, variable_name, variable)
+            self.custom_variables[variable.name] = variable
+            setattr(self, variable.name, variable)
 
