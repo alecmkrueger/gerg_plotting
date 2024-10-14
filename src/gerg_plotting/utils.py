@@ -89,18 +89,14 @@ def calculate_pad(var,pad=0.0):
     stop = stop+pad
     return start,stop
 
-def adjust_colorbar(cbar, ax):
-    # Get the position of the axes
-    ax_pos = ax.get_position()
-    # Get the position of the colorbar
-    cbar_pos = cbar.ax.get_position()
-    cbar.ax.set_position([cbar_pos.x0, ax_pos.y0, cbar_pos.width, ax_pos.height])
-
-def colorbar(fig,divider,mappable,label):
+def colorbar(fig,divider,mappable,label:str,nrows:int=1,total_cbars:int=2):
+    '''Adds up to 2 colorbars to the figure'''
     last_axes = plt.gca()
     base_pad = 0.1
-    i = len(fig.axes)-1
-    pad = base_pad + i * 0.6
+    print(f'{len(fig.axes) = }')
+    num_colorbars = (len(fig.axes)-nrows)%total_cbars
+    print(f'{num_colorbars = }')
+    pad = base_pad + num_colorbars * 0.6
     cax = divider.append_axes("right", size="4%", pad=pad,axes_class=maxes.Axes)
     cbar = fig.colorbar(mappable, cax=cax,label=label)
     plt.sca(last_axes)

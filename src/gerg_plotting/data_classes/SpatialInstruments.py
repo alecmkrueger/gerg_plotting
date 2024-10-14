@@ -12,7 +12,7 @@ from pathlib import Path
 import cmocean
 from typing import Iterable
 
-from gerg_plotting.utils import get_center_of_mass,adjust_colorbar,colorbar
+from gerg_plotting.utils import get_center_of_mass,colorbar
 from gerg_plotting.data_classes.SpatialInstrument import SpatialInstrument
 from gerg_plotting.data_classes.NonSpatialInstruments import Bounds, Variable
 
@@ -71,16 +71,12 @@ class Bathy(SpatialInstrument):
         self.lat = ds.coords['lon'].values #extract the longitude values
         self.lon, self.lat = np.meshgrid(self.lat, self.lon) #create meshgrid for plotting
     
-    def add_colorbar(self,fig:matplotlib.figure.Figure,divider,mappable:matplotlib.axes.Axes) -> None:
+    def add_colorbar(self,fig:matplotlib.figure.Figure,divider,mappable:matplotlib.axes.Axes,nrows:int) -> None:
         if self.cbar_show:
             label = 'Bathymetry (m)'
-            self.cbar = colorbar(fig,divider,mappable,label)
-            # self.cbar = matplotlib.pyplot.colorbar(mappable,ax=ax,
-            #                                         label='Bathymetry (m)',
-            #                                         **self.cbar_kwargs)
+            self.cbar = colorbar(fig,divider,mappable,label,nrows=nrows)
             self.cbar.ax.locator_params(nbins=self.cbar_nbins)
             self.cbar.ax.invert_yaxis()
-            # adjust_colorbar(self.cbar,ax)
             return self.cbar
 
 

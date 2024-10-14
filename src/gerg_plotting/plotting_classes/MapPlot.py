@@ -49,7 +49,7 @@ class MapPlot(Plotter):
             bathy_contourf = self.ax.contourf(self.bathy.lon,self.bathy.lat,self.bathy.depth,
                                             levels=self.bathy.contour_levels,cmap=self.bathy.cmap,
                                             vmin=self.bathy.vmin,transform=ccrs.PlateCarree(),extend='both')
-            self.cbar_bathy = self.bathy.add_colorbar(mappable=bathy_contourf,divider=divider,fig=self.fig)
+            self.cbar_bathy = self.bathy.add_colorbar(mappable=bathy_contourf,divider=divider,fig=self.fig,nrows=self.nrows)
 
     def scatter(self,var:str|None=None,show_bathy:bool=True,pointsize=3,linewidths=0,grid=True,fig=None,ax=None) -> None:
         color,cmap,divider = self.set_up_map(fig,ax,var)
@@ -58,8 +58,7 @@ class MapPlot(Plotter):
         # Add Scatter points
         self.sc = self.ax.scatter(self.instrument['lon'].data,self.instrument['lat'].data, linewidths=linewidths,
                                   c=color,cmap=cmap,s=pointsize,transform=ccrs.PlateCarree())
-        self.cbar_var = self.add_colorbar(self.sc,var,divider)
-        
+        self.cbar_var = self.add_colorbar(self.sc,var,divider,total_cbars=(2 if show_bathy else 1))
         
         if grid:
             self.gl = self.ax.gridlines(draw_labels=True,linewidth=1, color='gray', 

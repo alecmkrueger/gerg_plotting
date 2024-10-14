@@ -14,7 +14,7 @@ import cartopy.crs as ccrs
 from gerg_plotting.data_classes.NonSpatialInstruments import NonSpatialInstrument,Variable
 from gerg_plotting.data_classes.SpatialInstrument import SpatialInstrument
 from gerg_plotting.data_classes.NonSpatialInstruments import Bounds
-from gerg_plotting.utils import calculate_range,calculate_pad,adjust_colorbar,colorbar
+from gerg_plotting.utils import calculate_range,calculate_pad,colorbar
 
 @define
 class Plotter:
@@ -24,6 +24,8 @@ class Plotter:
 
     fig:matplotlib.figure.Figure = field(default=None)
     ax:matplotlib.axes.Axes = field(default=None)
+
+    nrows:int = field(default=1)
 
     cbar_show:bool = field(default=True)
     cbar:matplotlib.colorbar.Colorbar = field(init=False)
@@ -87,18 +89,16 @@ class Plotter:
             cmap = matplotlib.pyplot.get_cmap('viridis')
         return cmap
     
-    def add_colorbar(self,mappable:matplotlib.axes.Axes,var:str|None,divider) -> None:
+    def add_colorbar(self,mappable:matplotlib.axes.Axes,var:str|None,divider,total_cbars:int=2) -> None:
         if self.cbar_show:
             if var is not None:
                 cbar_label = self.instrument[var].get_label()
 
-                self.cbar = colorbar(self.fig,divider,mappable,cbar_label)
-                # self.cbar = matplotlib.pyplot.colorbar(mappable,ax=self.ax,
-                #                                 label=cbar_label,**self.cbar_kwargs)
+                self.cbar = colorbar(self.fig,divider,mappable,cbar_label,nrows=self.nrows,total_cbars=total_cbars)
+
                 self.cbar.ax.locator_params(nbins=self.cbar_nbins)
                 if var == 'time':
                     self.cbar.ax.yaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
-                # adjust_colorbar(self.cbar,self.ax)
                 return self.cbar
 
     def __getitem__(self, key:str):
