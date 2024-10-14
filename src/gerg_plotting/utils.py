@@ -93,9 +93,7 @@ def colorbar(fig,divider,mappable,label:str,nrows:int=1,total_cbars:int=2):
     '''Adds up to 2 colorbars to the figure'''
     last_axes = plt.gca()
     base_pad = 0.1
-    print(f'{len(fig.axes) = }')
     num_colorbars = (len(fig.axes)-nrows)%total_cbars
-    print(f'{num_colorbars = }')
     pad = base_pad + num_colorbars * 0.6
     cax = divider.append_axes("right", size="4%", pad=pad,axes_class=maxes.Axes)
     cbar = fig.colorbar(mappable, cax=cax,label=label)

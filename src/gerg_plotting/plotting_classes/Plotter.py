@@ -18,6 +18,9 @@ from gerg_plotting.utils import calculate_range,calculate_pad,colorbar
 
 @define
 class Plotter:
+    '''
+    Must pass an instrument of type SpatialInstrument
+    '''
     instrument:SpatialInstrument
     bounds:Bounds|None = field(default=None)
     bounds_padding:float = field(default=0)
@@ -27,7 +30,6 @@ class Plotter:
 
     nrows:int = field(default=1)
 
-    cbar_show:bool = field(default=True)
     cbar:matplotlib.colorbar.Colorbar = field(init=False)
     cbar_nbins:int = field(default=5)
     cbar_kwargs:dict = field(default={})
@@ -55,12 +57,12 @@ class Plotter:
         elif fig is not None and ax is not None:
             self.fig = fig
             self.ax = ax
+            self.nrows = len(self.fig.axes)
             if three_d:
                 index = [idx for idx, ax in enumerate(self.fig.axes) if ax is self.ax][0] + 1
                 self.ax.remove()
                 gs = self.ax.get_gridspec()
                 self.ax = fig.add_subplot(gs.nrows, gs.ncols, index, projection='3d')
-
 
     def detect_bounds(self) -> None:
         if isinstance(self.instrument,SpatialInstrument):
@@ -90,16 +92,15 @@ class Plotter:
         return cmap
     
     def add_colorbar(self,mappable:matplotlib.axes.Axes,var:str|None,divider,total_cbars:int=2) -> None:
-        if self.cbar_show:
-            if var is not None:
-                cbar_label = self.instrument[var].get_label()
+        if var is not None:
+            cbar_label = self.instrument[var].get_label()
 
-                self.cbar = colorbar(self.fig,divider,mappable,cbar_label,nrows=self.nrows,total_cbars=total_cbars)
+            self.cbar = colorbar(self.fig,divider,mappable,cbar_label,nrows=self.nrows,total_cbars=total_cbars)
 
-                self.cbar.ax.locator_params(nbins=self.cbar_nbins)
-                if var == 'time':
-                    self.cbar.ax.yaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
-                return self.cbar
+            self.cbar.ax.locator_params(nbins=self.cbar_nbins)
+            if var == 'time':
+                self.cbar.ax.yaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
+            return self.cbar
 
     def __getitem__(self, key:str):
         return asdict(self)[key]

@@ -22,12 +22,11 @@ time = pd.Series(pd.date_range(start='10-01-2024',end='10-10-2024',periods=n_poi
 # Init Data object
 data = Data(lat=lats,lon=lons,salinity=salt,temperature=temp,depth=depth,time=time)
 # Init subplots (optional)
-nrows = 3
-fig,ax = plt.subplots(figsize=(40,15),nrows=nrows,subplot_kw={'projection': ccrs.PlateCarree()})
+fig,ax = plt.subplots(figsize=(10,10),nrows=4,subplot_kw={'projection': ccrs.PlateCarree()})
 # Init MapPlot object
-plotter = MapPlot(instrument=data,bounds=bounds,grid_spacing=3,nrows=nrows)
+plotter = MapPlot(instrument=data,bounds=bounds,grid_spacing=3)
 # Generate Scatter plots on one figure
 plotter.scatter(fig=fig,ax=ax[0],var='temperature',show_bathy=True,pointsize=30)
 plotter.scatter(fig=fig,ax=ax[1],var='salinity',show_bathy=True,pointsize=30)
 plotter.scatter(fig=fig,ax=ax[2],var='depth',show_bathy=True,pointsize=30)
-# plotter.scatter(fig=fig,ax=ax[3],var='time',show_bathy=True,pointsize=30)
+plotter.scatter(fig=fig,ax=ax[3],var='time',show_bathy=True,pointsize=30)

@@ -13,6 +13,9 @@ from gerg_plotting.data_classes.SpatialInstruments import Bathy
 
 @define
 class MapPlot(Plotter):
+    '''
+    
+    '''
     bathy:Bathy = field(default=None)
     sc:matplotlib.collections.PathCollection = field(init=False)
     gl:cartopy.mpl.gridliner.Gridliner = field(init=False)
