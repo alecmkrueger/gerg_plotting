@@ -3,6 +3,7 @@ import pandas as pd
 import xarray as xr
 import gsw
 import datetime
+import random
 
 def lat_min_smaller_than_max(instance, attribute, value):
     if value is not None:
@@ -38,6 +39,11 @@ def is_flat_numpy_array(instance, attribute, value):
     # Ensure the array is flat (1-dimensional)
     if value.ndim != 1:
         raise ValueError(f"{attribute.name} must be a flat array")
+    
+def generate_random_point(lat_min,lat_max,lon_min,lon_max):
+    lat = random.uniform(lat_min, lat_max)
+    lon = random.uniform(lon_min, lon_max)
+    return [lat, lon]
         
 def get_center_of_mass(lon,lat,pressure) -> tuple:
     centroid = tuple([np.nanmean(lon), np.nanmean(lat), np.nanmean(pressure)])

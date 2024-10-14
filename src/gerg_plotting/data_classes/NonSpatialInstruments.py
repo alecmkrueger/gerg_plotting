@@ -22,7 +22,7 @@ class Variable(NonSpatialInstrument):
         if self.label is None:
             # Define the units that are added to the label
             # if the units are defined, we will use them, else it will be an empty string
-            unit = f" {self.units}" if self.units is not None else ''
+            unit = f" ({self.units})" if self.units is not None else ''
             # The label is created from the name of the variable with the units
             self.label = f"{self.name.capitalize()}{unit}"
 

@@ -28,7 +28,7 @@ class Bathy(SpatialInstrument):
     cbar_show:bool = field(default=True)
     cbar:matplotlib.colorbar.Colorbar = field(init=False)
     cbar_nbins:int = field(default=5)
-    cbar_kwargs:dict = field(default=None)
+    cbar_kwargs:dict = field(default={})
     vertical_scaler:int|float = field(default=None)
     vertical_units:str = field(default='')
     center_of_mass:tuple = field(init=False)
@@ -51,7 +51,7 @@ class Bathy(SpatialInstrument):
         bounds (Bounds): contains attributes of lat_min,lon_min,lat_max,lon_max,depth_max,depth_min
         resolution_level (float|int): how much to coarsen the dataset by in units of degrees
         '''
-        self_path = Path(__file__)
+        self_path = Path(__file__).parent
         seafloor_path = self_path.parent.joinpath('seafloor_data/gebco_2023_n31.0_s7.0_w-100.0_e-66.5.nc')
         ds = xr.open_dataset(seafloor_path) #read in seafloor data
 
@@ -93,6 +93,7 @@ class Data(SpatialInstrument):
     speed: Iterable|Variable|None = field(default=None)
 
     def __attrs_post_init__(self):
+        super()._init_dims()
         self._init_variables()
 
     def _init_variables(self):
@@ -106,11 +107,11 @@ class Data(SpatialInstrument):
         self.init_variable(var='v', cmap=cmocean.cm.balance, units="m/s", vmin=-5, vmax=5)
         self.init_variable(var='speed', cmap=cmocean.cm.speed, units="m/s", vmin=0, vmax=5)
 
-# # Example
-data = Data(lat=[2,4,6])
-turb = Variable(data=np.array([1,2,3]),name='turb',cmap=cmocean.cm.turbid,units='',vmin=0,vmax=1)
-data.add_custom_variable('turb',turb)
-print(data)
+# # # Example
+# data = Data(lat=[2,4,6])
+# turb = Variable(data=np.array([1,2,3]),name='turb',cmap=cmocean.cm.turbid,units='',vmin=0,vmax=1)
+# data.add_custom_variable('turb',turb)
+# print(data)
 
 # @define
 # class Glider(SpatialInstrument):

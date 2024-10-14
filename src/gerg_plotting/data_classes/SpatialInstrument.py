@@ -17,6 +17,9 @@ class SpatialInstrument:
     # Custom variables dictionary to hold dynamically added variables
     custom_variables: dict = field(factory=dict)
 
+    def __attrs_post_init__(self):
+        self._init_dims()
+
     def _has_var(self, key):
         return key in asdict(self).keys() or key in self.custom_variables
 
@@ -49,17 +52,18 @@ class SpatialInstrument:
     def init_variable(self, var: str, cmap, units, vmin, vmax):
         """Initializes standard variables if they are not None and of type np.ndarray."""
         if self._has_var(var):
-            if self[var] is not None:
-                self[var] = Variable(
-                    data=self[var],
-                    name=var.capitalize(),
-                    cmap=cmap,
-                    units=units,
-                    vmin=vmin,
-                    vmax=vmax
-                )
+            if not isinstance(self[var],Variable):
+                if self[var] is not None:    
+                    self[var] = Variable(
+                        data=self[var],
+                        name=var.capitalize(),
+                        cmap=cmap,
+                        units=units,
+                        vmin=vmin,
+                        vmax=vmax
+                    )
         else:
-            raise ValueError(f'{var.capitalize()} does not exist')
+            raise ValueError(f'{var.capitalize()} does not exist, try using add_custom_variable method')
 
     def add_custom_variable(self, variable_name: str, variable: Variable):
         """Adds a custom Variable object and makes it accessible via both dot and dict syntax."""

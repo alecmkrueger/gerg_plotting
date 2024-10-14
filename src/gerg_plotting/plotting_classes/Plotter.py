@@ -29,7 +29,7 @@ class Plotter:
     # cbar_shrink:float = field(default=1)
     cbar_nbins:int = field(default=5)
     # cbar_pad:float = field(default=0.05)
-    cbar_kwargs:dict = field(default=None)
+    cbar_kwargs:dict = field(default={})
 
     def __attrs_post_init__(self):
         self.detect_bounds()
@@ -75,6 +75,10 @@ class Plotter:
                                         lon_max=lon_max,
                                         depth_bottom=depth_max,
                                         depth_top=None)
+                else:
+                    raise ValueError(f'lat and lon must be of type Variable, you passed {type(self.instrument.lat) = } and {type(self.instrument.lon) = }')
+        else:
+            raise ValueError(f'Must pass an instrument of type SpatialInstrument, you passed {type(self.instrument) = }')
 
     def get_cmap(self,color_var:str) -> Colormap:
         # If there is a colormap for the provided color_var
