@@ -2,6 +2,7 @@ from attrs import define,field
 import matplotlib.colorbar
 import matplotlib.collections
 from matplotlib.ticker import MultipleLocator
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 import cartopy.crs as ccrs
 from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 import cartopy.mpl.gridliner
@@ -12,7 +13,7 @@ from gerg_plotting.data_classes.SpatialInstruments import Bathy
 
 @define
 class MapPlot(Plotter):
-    bathy:Bathy = field(init=False)
+    bathy:Bathy = field(default=None)
     sc:matplotlib.collections.PathCollection = field(init=False)
     gl:cartopy.mpl.gridliner.Gridliner = field(init=False)
     cbar_var:matplotlib.colorbar.Colorbar = field(init=False)
@@ -24,9 +25,10 @@ class MapPlot(Plotter):
         self.init_bathy()
 
     def init_bathy(self):
-        self.bathy = Bathy(bounds=self.bounds)
+        if not isinstance(self.bathy,Bathy):
+            self.bathy = Bathy(bounds=self.bounds)
 
-    def scatter(self,var:str|None=None,pointsize=3,linewidths=0,grid=True,fig=None,ax=None) -> None:
+    def set_up_map(self,fig,ax,var):
         self.init_figure(fig=fig,ax=ax,geography=True)
         if var is None:
             color = 'k'
@@ -38,16 +40,27 @@ class MapPlot(Plotter):
         if self.bounds is not None:
             self.ax.set_extent([self.bounds.lon_min,self.bounds.lon_max,
                                self.bounds.lat_min,self.bounds.lat_max])
+        divider = make_axes_locatable(self.ax)
+        return color,cmap,divider
 
+    def add_bathy(self,show_bathy,divider):
         # Add Bathymetry
-        bathy_contourf = self.ax.contourf(self.bathy.lon,self.bathy.lat,self.bathy.depth,
-                                         levels=self.bathy.contour_levels,cmap=self.bathy.cmap,
-                                         vmin=self.bathy.vmin,transform=ccrs.PlateCarree(),extend='both')
-        self.cbar_bathy = self.bathy.add_colorbar(mappable=bathy_contourf,ax=self.ax)
+        if show_bathy:
+            bathy_contourf = self.ax.contourf(self.bathy.lon,self.bathy.lat,self.bathy.depth,
+                                            levels=self.bathy.contour_levels,cmap=self.bathy.cmap,
+                                            vmin=self.bathy.vmin,transform=ccrs.PlateCarree(),extend='both')
+            self.cbar_bathy = self.bathy.add_colorbar(mappable=bathy_contourf,divider=divider,fig=self.fig)
+
+    def scatter(self,var:str|None=None,show_bathy:bool=True,pointsize=3,linewidths=0,grid=True,fig=None,ax=None) -> None:
+        color,cmap,divider = self.set_up_map(fig,ax,var)
+
+        self.add_bathy(show_bathy,divider)
         # Add Scatter points
-        self.sc = self.ax.scatter(self.instrument.lon.data,self.instrument.lat.data, linewidths=linewidths,
+        self.sc = self.ax.scatter(self.instrument['lon'].data,self.instrument['lat'].data, linewidths=linewidths,
                                   c=color,cmap=cmap,s=pointsize,transform=ccrs.PlateCarree())
-        self.cbar_var = self.add_colorbar(self.sc,var)
+        self.cbar_var = self.add_colorbar(self.sc,var,divider)
+        
+        
         if grid:
             self.gl = self.ax.gridlines(draw_labels=True,linewidth=1, color='gray', 
                                 alpha=0.4, linestyle='--')

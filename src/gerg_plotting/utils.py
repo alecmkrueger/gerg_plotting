@@ -1,9 +1,15 @@
+import cartopy.mpl
+import cartopy.mpl.geoaxes
+from mpl_toolkits.axes_grid1 import make_axes_locatable
+import matplotlib.pyplot as plt
+import matplotlib.axes as maxes
 import numpy as np
 import pandas as pd
 import xarray as xr
 import gsw
 import datetime
 import random
+import cartopy
 
 def lat_min_smaller_than_max(instance, attribute, value):
     if value is not None:
@@ -82,6 +88,23 @@ def calculate_pad(var,pad=0.0):
     start = start-pad
     stop = stop+pad
     return start,stop
+
+def adjust_colorbar(cbar, ax):
+    # Get the position of the axes
+    ax_pos = ax.get_position()
+    # Get the position of the colorbar
+    cbar_pos = cbar.ax.get_position()
+    cbar.ax.set_position([cbar_pos.x0, ax_pos.y0, cbar_pos.width, ax_pos.height])
+
+def colorbar(fig,divider,mappable,label):
+    last_axes = plt.gca()
+    base_pad = 0.1
+    i = len(fig.axes)-1
+    pad = base_pad + i * 0.6
+    cax = divider.append_axes("right", size="4%", pad=pad,axes_class=maxes.Axes)
+    cbar = fig.colorbar(mappable, cax=cax,label=label)
+    plt.sca(last_axes)
+    return cbar
 
 def get_sigma_theta(salinity,temperature,cnt=False):
     # Subsample the data

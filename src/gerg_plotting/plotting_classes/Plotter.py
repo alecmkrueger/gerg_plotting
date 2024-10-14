@@ -14,7 +14,7 @@ import cartopy.crs as ccrs
 from gerg_plotting.data_classes.NonSpatialInstruments import NonSpatialInstrument,Variable
 from gerg_plotting.data_classes.SpatialInstrument import SpatialInstrument
 from gerg_plotting.data_classes.NonSpatialInstruments import Bounds
-from gerg_plotting.utils import calculate_range,calculate_pad
+from gerg_plotting.utils import calculate_range,calculate_pad,adjust_colorbar,colorbar
 
 @define
 class Plotter:
@@ -27,9 +27,7 @@ class Plotter:
 
     cbar_show:bool = field(default=True)
     cbar:matplotlib.colorbar.Colorbar = field(init=False)
-    # cbar_shrink:float = field(default=1)
     cbar_nbins:int = field(default=5)
-    # cbar_pad:float = field(default=0.05)
     cbar_kwargs:dict = field(default={})
 
     def __attrs_post_init__(self):
@@ -45,13 +43,13 @@ class Plotter:
         if fig is None and ax is None:
             if geography:
                 # Initialize a figure with Cartopy's PlateCarree projection
-                self.fig, self.ax = matplotlib.pyplot.subplots(subplot_kw={'projection': ccrs.PlateCarree()})
+                self.fig, self.ax = matplotlib.pyplot.subplots(figsize=(10,10),subplot_kw={'projection': ccrs.PlateCarree()})
             elif three_d:
                 # Initialize a 3D figure
-                self.fig, self.ax = matplotlib.pyplot.subplots(subplot_kw={'projection': '3d'})
+                self.fig, self.ax = matplotlib.pyplot.subplots(figsize=(10,10),subplot_kw={'projection': '3d'})
             else:
                 # Standard 2D Matplotlib figure with no projection
-                self.fig, self.ax = matplotlib.pyplot.subplots()
+                self.fig, self.ax = matplotlib.pyplot.subplots(figsize=(10,10))
         elif fig is not None and ax is not None:
             self.fig = fig
             self.ax = ax
@@ -89,17 +87,18 @@ class Plotter:
             cmap = matplotlib.pyplot.get_cmap('viridis')
         return cmap
     
-    def add_colorbar(self,mappable:matplotlib.axes.Axes,var:str|None) -> None:
+    def add_colorbar(self,mappable:matplotlib.axes.Axes,var:str|None,divider) -> None:
         if self.cbar_show:
             if var is not None:
                 cbar_label = self.instrument[var].get_label()
-                self.cbar = matplotlib.pyplot.colorbar(mappable,ax=self.ax,
-                                                label=cbar_label,**self.cbar_kwargs)
+
+                self.cbar = colorbar(self.fig,divider,mappable,cbar_label)
+                # self.cbar = matplotlib.pyplot.colorbar(mappable,ax=self.ax,
+                #                                 label=cbar_label,**self.cbar_kwargs)
                 self.cbar.ax.locator_params(nbins=self.cbar_nbins)
                 if var == 'time':
                     self.cbar.ax.yaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
-
-                # self.cbar.ax.invert_yaxis()
+                # adjust_colorbar(self.cbar,self.ax)
                 return self.cbar
 
     def __getitem__(self, key:str):
