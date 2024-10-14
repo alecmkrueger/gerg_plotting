@@ -14,13 +14,17 @@ from gerg_plotting.utils import get_sigma_theta,get_density
 from gerg_plotting.data_classes.NonSpatialInstruments import Variable
 
 @define
-class VarPlot(Plotter):
+class ScatterPlot(Plotter):
     markersize:int|float = field(default=10)
+
+    def format_axes(self):
+        '''Method to apply formatting to axes'''
+        self.ax.yaxis
 
     def depth_time_series(self,var:str,fig=None,ax=None) -> None:
         self.init_figure(fig,ax)
         sc = self.ax.scatter(self.instrument.time.data,self.instrument.depth.data,
-                        c=self.instrument[var].data,cmap=self.instrument.cmaps[var],
+                        c=self.instrument[var].data,cmap=self.instrument[var].cmap,
                         s=self.markersize)
         self.ax.invert_yaxis()
         locator = mdates.AutoDateLocator()
@@ -81,7 +85,9 @@ class VarPlot(Plotter):
     def var_var(self,x:str,y:str,color_var:str|None=None,fig=None,ax=None) -> None:
         self.init_figure(fig,ax)
         if color_var is not None:
-            self.ax.scatter(self.instrument[x].data,self.instrument[y].data,c=self.instrument[color_var].data)
+            sc = self.ax.scatter(self.instrument[x].data,self.instrument[y].data,c=self.instrument[color_var].data,cmap=self.get_cmap(color_var))
+            self.add_colorbar(sc,var=color_var)
+            self.format_axes()
         elif color_var is None:
             self.ax.scatter(self.instrument[x].data,self.instrument[y].data)
 

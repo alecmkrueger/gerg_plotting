@@ -101,7 +101,7 @@ class Data(SpatialInstrument):
         If you would like a new variable to be included in the default init,
         please contact the repository manager'''
         self.init_variable(var='temperature', cmap=cmocean.cm.thermal, units='°C', vmin=-10, vmax=40)
-        self.init_variable(var='salinity', cmap=cmocean.cm.haline, units='', vmin=28, vmax=40)
+        self.init_variable(var='salinity', cmap=cmocean.cm.haline, units=None, vmin=28, vmax=40)
         self.init_variable(var='density', cmap=cmocean.cm.dense, units="kg/m\u00B3", vmin=1020, vmax=1035)
         self.init_variable(var='u', cmap=cmocean.cm.balance, units="m/s", vmin=-5, vmax=5)
         self.init_variable(var='v', cmap=cmocean.cm.balance, units="m/s", vmin=-5, vmax=5)

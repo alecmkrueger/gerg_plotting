@@ -6,6 +6,7 @@ import matplotlib.colorbar
 import matplotlib.figure
 import matplotlib.pyplot
 from matplotlib.colors import Colormap
+import matplotlib.dates as mdates
 from attrs import define, field, asdict
 from pprint import pformat
 import cartopy.crs as ccrs
@@ -92,11 +93,14 @@ class Plotter:
     def add_colorbar(self,mappable:matplotlib.axes.Axes,var:str|None) -> None:
         if self.cbar_show:
             if var is not None:
-                cbar_label = self.instrument[var].label
+                cbar_label = self.instrument[var].get_label()
                 self.cbar = matplotlib.pyplot.colorbar(mappable,ax=self.ax,
                                                 label=cbar_label,**self.cbar_kwargs)
                 self.cbar.ax.locator_params(nbins=self.cbar_nbins)
-                self.cbar.ax.invert_yaxis()
+                if var == 'time':
+                    self.cbar.ax.yaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
+
+                # self.cbar.ax.invert_yaxis()
                 return self.cbar
 
     def __getitem__(self, key:str):

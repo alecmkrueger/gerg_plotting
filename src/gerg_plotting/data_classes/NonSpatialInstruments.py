@@ -10,14 +10,14 @@ class Variable(NonSpatialInstrument):
     data:Iterable = field(converter=to_numpy_array,validator=is_flat_numpy_array)
     name:str
     cmap:Colormap = field(default=None)
-    units:str = field(default=None)
+    units:str = field(default=None)  # Turn off units by passing/assigning to None
     vmin:float = field(default=None)
     vmax:float = field(default=None)
     label:str = field(default=None)
 
-    def __attrs_post_init__(self):
-        self._init_label()
-    def _init_label(self):
+    # def __attrs_post_init__(self):
+    #     self._init_label()
+    def get_label(self):
         '''Assign the label if it was not passed'''
         if self.label is None:
             # Define the units that are added to the label
@@ -25,6 +25,7 @@ class Variable(NonSpatialInstrument):
             unit = f" ({self.units})" if self.units is not None else ''
             # The label is created from the name of the variable with the units
             self.label = f"{self.name.capitalize()}{unit}"
+        return self.label
 
 @define
 class Bounds(NonSpatialInstrument):
