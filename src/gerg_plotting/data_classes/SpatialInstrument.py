@@ -25,29 +25,43 @@ class SpatialInstrument:
 
     def __getitem__(self, key):
         """Allows accessing standard and custom variables via indexing."""
-        if self._has_var(key):
-            return getattr(self, key, self.custom_variables.get(key))
-        raise KeyError(f"Variable '{key}' not found.")
+        try:
+            if self._has_var(key):
+                return getattr(self, key, self.custom_variables.get(key))
+            raise KeyError(f"Variable '{key}' not found.")
+        except KeyError:
+            if self._has_var(key.lower()):
+                return getattr(self, key.lower(), self.custom_variables.get(key.lower()))
+            raise KeyError(f"Variable '{key.lower()}' not found.")     
 
     def __setitem__(self, key, value):
         """Allows setting standard and custom variables via indexing."""
-        if self._has_var(key):
-            if key in asdict(self):
-                setattr(self, key, value)
+        try:
+            if self._has_var(key):
+                if key in asdict(self):
+                    setattr(self, key, value)
+                else:
+                    self.custom_variables[key] = value
             else:
-                self.custom_variables[key] = value
-        else:
-            raise KeyError(f"Variable '{key}' not found.")
-        
+                raise KeyError(f"Variable '{key}' not found.")
+        except KeyError:
+            if self._has_var(key.lower()):
+                if key in asdict(self):
+                    setattr(self, key.lower(), value)
+                else:
+                    self.custom_variables[key.lower()] = value
+            else:
+                raise KeyError(f"Variable '{key.lower()}' not found.")
+            
     def __repr__(self):
         '''Pretty printing'''
         return pformat(asdict(self),width=1)
     
     def _init_dims(self):
-        self.init_variable(var='lat', cmap=cmocean.cm.haline, units='°', vmin=None, vmax=None)
-        self.init_variable(var='lon', cmap=cmocean.cm.thermal, units='°', vmin=None, vmax=None)
+        self.init_variable(var='lat', cmap=cmocean.cm.haline, units='°N', vmin=None, vmax=None)
+        self.init_variable(var='lon', cmap=cmocean.cm.thermal, units='°W', vmin=None, vmax=None)
         self.init_variable(var='depth', cmap=cmocean.cm.deep, units='m', vmin=None, vmax=None)
-        self.init_variable(var='time', cmap=cmocean.cm.thermal, units='', vmin=None, vmax=None)
+        self.init_variable(var='time', cmap=cmocean.cm.thermal, units=None, vmin=None, vmax=None)
 
     def init_variable(self, var: str, cmap, units, vmin, vmax):
         """Initializes standard variables if they are not None and of type np.ndarray."""

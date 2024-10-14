@@ -11,7 +11,7 @@ from gerg_plotting.data_classes.SpatialInstruments import Bathy
 
 
 @define
-class SurfacePlot(Plotter):
+class MapPlot(Plotter):
     bathy:Bathy = field(init=False)
     sc:matplotlib.collections.PathCollection = field(init=False)
     gl:cartopy.mpl.gridliner.Gridliner = field(init=False)
@@ -26,7 +26,7 @@ class SurfacePlot(Plotter):
         self.bathy = Bathy(bounds=self.bounds)
         self.bathy = Bathy(bounds=self.bounds)
 
-    def map(self,var:str|None=None,pointsize=3,linewidths=0,grid=True,fig=None,ax=None) -> None:
+    def scatter(self,var:str|None=None,pointsize=3,linewidths=0,grid=True,fig=None,ax=None) -> None:
         self.init_figure(fig=fig,ax=ax,geography=True)
         if var is None:
             color = 'k'

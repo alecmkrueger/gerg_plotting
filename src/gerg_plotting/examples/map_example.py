@@ -1,4 +1,4 @@
-from gerg_plotting import Data,SurfacePlot,Bounds,ScatterPlot
+from gerg_plotting import Data,MapPlot,Bounds,ScatterPlot
 from gerg_plotting.utils import generate_random_point
 import numpy as np
 import pandas as pd
@@ -20,10 +20,7 @@ time = pd.Series(pd.date_range(start='10-01-2024',end='10-10-2024',periods=n_poi
 
 data = Data(lat=lats,lon=lons,salinity=salt,temperature=temp,depth=depth,time=time)
 
-# data.salinity.units = 
-data.salinity.name='salt'
+plotter = MapPlot(instrument=data)
 
-plotter = ScatterPlot(instrument=data)
-
-plotter.var_var('time','depth',color_var='time')
+plotter.scatter(var='temperature')
 
