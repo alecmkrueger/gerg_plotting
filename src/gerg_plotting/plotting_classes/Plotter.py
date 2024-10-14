@@ -47,13 +47,13 @@ class Plotter:
         if fig is None and ax is None:
             if geography:
                 # Initialize a figure with Cartopy's PlateCarree projection
-                self.fig, self.ax = matplotlib.pyplot.subplots(figsize=(10,10),subplot_kw={'projection': ccrs.PlateCarree()})
+                self.fig, self.ax = matplotlib.pyplot.subplots(figsize=(6.4, 4.8),subplot_kw={'projection': ccrs.PlateCarree()})
             elif three_d:
                 # Initialize a 3D figure
-                self.fig, self.ax = matplotlib.pyplot.subplots(figsize=(10,10),subplot_kw={'projection': '3d'})
+                self.fig, self.ax = matplotlib.pyplot.subplots(figsize=(6.4, 4.8),subplot_kw={'projection': '3d'})
             else:
                 # Standard 2D Matplotlib figure with no projection
-                self.fig, self.ax = matplotlib.pyplot.subplots(figsize=(10,10))
+                self.fig, self.ax = matplotlib.pyplot.subplots(figsize=(6.4, 4.8))
         elif fig is not None and ax is not None:
             self.fig = fig
             self.ax = ax

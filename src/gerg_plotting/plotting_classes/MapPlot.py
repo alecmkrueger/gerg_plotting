@@ -45,6 +45,9 @@ class MapPlot(Plotter):
                                self.bounds.lat_min,self.bounds.lat_max])
         divider = make_axes_locatable(self.ax)
         return color,cmap,divider
+    
+    def add_coasts(self):
+        self.ax.coastlines()
 
     def add_bathy(self,show_bathy,divider):
         # Add Bathymetry
@@ -62,6 +65,8 @@ class MapPlot(Plotter):
         self.sc = self.ax.scatter(self.instrument['lon'].data,self.instrument['lat'].data, linewidths=linewidths,
                                   c=color,cmap=cmap,s=pointsize,transform=ccrs.PlateCarree())
         self.cbar_var = self.add_colorbar(self.sc,var,divider,total_cbars=(2 if show_bathy else 1))
+
+        self.add_coasts()
         
         if grid:
             self.gl = self.ax.gridlines(draw_labels=True,linewidth=1, color='gray', 

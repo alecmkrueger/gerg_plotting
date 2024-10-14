@@ -1,7 +1,6 @@
 from gerg_plotting import Data,Variable
 from gerg_plotting import Histogram
 import numpy as np
-import cmocean.cm as cm
 
 # Init Data object
 data = Data()
