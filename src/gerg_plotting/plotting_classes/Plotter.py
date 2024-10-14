@@ -89,12 +89,13 @@ class Plotter:
             cmap = matplotlib.pyplot.get_cmap('viridis')
         return cmap
     
-    def add_colorbar(self,mappable:matplotlib.axes.Axes,var:str|None,divider,total_cbars:int=2) -> None:
+    def add_colorbar(self,mappable:matplotlib.axes.Axes,var:str|None,divider=None,total_cbars:int=2) -> None:
         if var is not None:
             cbar_label = self.instrument[var].get_label()
-
-            self.cbar = colorbar(self.fig,divider,mappable,cbar_label,nrows=self.nrows,total_cbars=total_cbars)
-
+            if divider is not None:
+                self.cbar = colorbar(self.fig,divider,mappable,cbar_label,nrows=self.nrows,total_cbars=total_cbars)
+            else:
+                self.cbar = self.fig.colorbar(mappable,label=cbar_label)
             self.cbar.ax.locator_params(nbins=self.cbar_nbins)
             if var == 'time':
                 self.cbar.ax.yaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))

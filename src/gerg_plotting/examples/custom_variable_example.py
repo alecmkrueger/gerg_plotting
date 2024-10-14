@@ -8,7 +8,7 @@ import cmocean
 # Generate Test Data
 bounds = Bounds(lat_min = 24,lat_max = 31,lon_min = -99,lon_max = -88,depth_top=-1,depth_bottom=1000)
 data_bounds = Bounds(lat_min = 27,lat_max = 28.5,lon_min = -96,lon_max = -89,depth_top=-1,depth_bottom=1000)
-n_points = 300
+n_points = 1000
 lats,lons = np.transpose([generate_random_point(lat_min=data_bounds.lat_min,
                                                 lat_max=data_bounds.lat_max,
                                                 lon_min=data_bounds.lon_min,
@@ -29,4 +29,4 @@ Histogram(data).plot2d(x='pH',y='temperature')
 
 MapPlot(data,bounds=bounds).scatter('pH',pointsize=30)
 
-ScatterPlot(data).TS()
+ScatterPlot(data).depth_time_series(var='pH')

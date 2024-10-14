@@ -21,7 +21,7 @@ class ScatterPlot(Plotter):
         '''Method to apply formatting to axes'''
         self.ax.yaxis
 
-    def depth_time_series(self,var:str,fig=None,ax=None) -> None:
+    def depth_time_series(self,var:str,fig=None,ax=None,contours:bool=False) -> None:
         self.init_figure(fig,ax)
         sc = self.ax.scatter(self.instrument.time.data,self.instrument.depth.data,
                         c=self.instrument[var].data,cmap=self.instrument[var].cmap,
