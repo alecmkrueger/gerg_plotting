@@ -110,7 +110,7 @@ time = pd.Series(pd.date_range(start='10-01-2024',end='10-10-2024',periods=n_poi
 
 # Init Data object
 data = Data(lat=lats,lon=lons,salinity=salinity,temperature=temperature,depth=depth,time=time)
-# Init subplots (optional)
+# Init subplots
 fig,ax = plt.subplots(figsize=(10,20),nrows=4,subplot_kw={'projection': ccrs.PlateCarree()})
 # Init MapPlot object
 plotter = MapPlot(instrument=data,bounds=bounds,grid_spacing=3)
