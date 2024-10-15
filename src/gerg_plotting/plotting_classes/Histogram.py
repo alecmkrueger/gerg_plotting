@@ -6,17 +6,7 @@ from gerg_plotting.utils import calculate_range
 
 @define
 class Histogram(Plotter):
-
-    def get_1d_range(self,var:str,**kwargs):
-        # If the range was not passed then caclulate it and return it
-        if 'range' not in kwargs.keys():
-            range = calculate_range(self.instrument[var].data)
-        # Check if range was passed with **kwargs and if so, remove it from the kwargs and return it
-        else:
-            range = kwargs['range']
-            kwargs.pop('range')
-        # Return both the range and the kwargs with the range kwarg removed
-        return range,kwargs        
+     
 
     def get_2d_range(self,x,y,**kwargs):
         # If the range was not passed then caclulate it and return it
@@ -31,8 +21,7 @@ class Histogram(Plotter):
 
     def plot(self,var:str,fig=None,ax=None,**kwargs):
         self.init_figure(fig,ax)
-        range,kwargs = self.get_1d_range(var)
-        self.ax.hist(self.instrument[var].data,range=range,**kwargs)
+        self.ax.hist(self.instrument[var].data,**kwargs)
         self.ax.set_ylabel('Count')
         self.ax.set_xlabel(self.instrument[var].get_label())
 
