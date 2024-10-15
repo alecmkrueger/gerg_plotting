@@ -68,11 +68,11 @@ data.depth.units = 'km'
 data['lat'] = Variable(data = lats, name='lat', cmap=cmocean.cm.haline, units='°N', vmin=27, vmax=28.5)
 
 
-# Assigning a variable that is a non-default/custom variable is very similar:
+# Assigning a variable that is a non-default/custom variable is simple:
 # First we must initialize the variable
 pH = np.random.uniform(7.7,8.1,n_points)
 pH_var = Variable(data = pH, name = 'pH',cmap=cmocean.cm.thermal, units=None, vmin=7.7,vmax=8.1,label='pH')
-# Then we can assign it
+# Then we can add it
 data.add_custom_variable(pH_var)
 # We can also do this in one line:
 data.add_custom_variable(Variable(data = np.random.uniform(7.7,8.1,n_points), name = 'pH', cmap=cmocean.cm.thermal, units=None, vmin=7.7, vmax=8.1, label='pH'))
