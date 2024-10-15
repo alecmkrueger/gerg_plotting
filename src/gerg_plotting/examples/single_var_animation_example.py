@@ -17,3 +17,5 @@ def make_hists(sample,data=data,range=range):
     return hist.fig
 
 Animator().animate(plotting_function=make_hists,iterable=np.arange(90),iteration_param='sample',gif_filename='hist.gif')
+
+
