@@ -4,6 +4,7 @@ import io
 import os
 from pathlib import Path
 import imageio.v3 as iio
+import imageio
 from PIL import Image,ImageFile
 import numpy as np
 import matplotlib.pyplot as plt
@@ -18,6 +19,7 @@ class Animator:
     image_dpi:int = field(default=300)
 
     gif_filename:Path = field(init=False)
+    images_path:Path = field(init=False)
     image_files:list = field(init=False)
     function_kwargs:dict = field(init=False)
 
@@ -67,11 +69,13 @@ class Animator:
     def save_gif_from_disk(self) -> None:
         '''Save GIF from frames stored on disk.'''
         self.image_files = sorted(self.images_path.glob('*.png'))
-        with iio.imopen(self.gif_filename, 'w', format="GIF", duration=self.duration) as writer:
-            for image_file in self.image_files:
-                writer.write(iio.imread(image_file))
+        images = []
+        for file in self.image_files:
+            images.append(imageio.imread(file))
+        imageio.mimsave(self.gif_filename, images)
 
-    def animate(self,plotting_function,interable,fps,iteration_param,gif_filename:str,**kwargs) -> None:
+
+    def animate(self,plotting_function,iterable,iteration_param,gif_filename:str,fps=24,**kwargs) -> None:
         '''
         Create and save a gif from the 3D self.plotting_function passed with a camera angle that moves 
         based on a set of elevation and azimuth values.
@@ -87,7 +91,7 @@ class Animator:
         '''
 
         self.plotting_function = plotting_function
-        self.iterable = interable
+        self.iterable = iterable
         self.iteration_param = iteration_param
         self.duration = 1000 / fps  # Frame duration in ms
         num_iterations = len(self.iterable)

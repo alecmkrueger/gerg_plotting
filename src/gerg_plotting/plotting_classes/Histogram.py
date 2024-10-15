@@ -6,6 +6,18 @@ from gerg_plotting.utils import calculate_range
 
 @define
 class Histogram(Plotter):
+
+    def get_1d_range(self,var:str,**kwargs):
+        # If the range was not passed then caclulate it and return it
+        if 'range' not in kwargs.keys():
+            range = calculate_range(self.instrument[var].data)
+        # Check if range was passed with **kwargs and if so, remove it from the kwargs and return it
+        else:
+            range = kwargs['range']
+            kwargs.pop('range')
+        # Return both the range and the kwargs with the range kwarg removed
+        return range,kwargs        
+
     def get_2d_range(self,x,y,**kwargs):
         # If the range was not passed then caclulate it and return it
         if 'range' not in kwargs.keys():
@@ -17,9 +29,10 @@ class Histogram(Plotter):
         # Return both the range and the kwargs with the range kwarg removed
         return range,kwargs
 
-    def plot(self,var:str,fig=None,ax=None,bins=30):
+    def plot(self,var:str,fig=None,ax=None,**kwargs):
         self.init_figure(fig,ax)
-        self.ax.hist(self.instrument[var].data,bins=bins)
+        range,kwargs = self.get_1d_range(var)
+        self.ax.hist(self.instrument[var].data,range=range,**kwargs)
         self.ax.set_ylabel('Count')
         self.ax.set_xlabel(self.instrument[var].get_label())
 
@@ -30,8 +43,6 @@ class Histogram(Plotter):
         self.ax.set_xlabel(self.instrument[x].get_label())
         self.ax.set_ylabel(self.instrument[y].get_label())
         cbar = plt.colorbar(hist[3],ax=self.ax,label='Count',orientation='horizontal')
-        # cbar.ax.tick_params(rotation=90)
-
 
     def plot3d(self,x:str,y:str,fig=None,ax=None,**kwargs):
         from matplotlib import cm

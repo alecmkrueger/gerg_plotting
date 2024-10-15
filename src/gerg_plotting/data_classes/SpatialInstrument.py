@@ -2,6 +2,7 @@ from attrs import define,field,asdict
 from pprint import pformat
 from typing import Iterable
 import cmocean
+import copy
 
 from gerg_plotting.data_classes.NonSpatialInstruments import Variable
 
@@ -20,6 +21,13 @@ class SpatialInstrument:
     def __attrs_post_init__(self):
         self._init_dims()
 
+    def copy(self):
+        self_copy = copy.deepcopy(self)
+        return self_copy
+    
+    def slice_var(self,var:str,slice:slice):
+        return self[var].data[slice]
+
     def _has_var(self, key):
         return key in asdict(self).keys() or key in self.custom_variables
     
@@ -30,14 +38,18 @@ class SpatialInstrument:
 
     def __getitem__(self, key):
         """Allows accessing standard and custom variables via indexing."""
-        # try:
-        if self._has_var(key):
+        if isinstance(key,slice):
+            self_copy = self.copy()
+            for var_name in self._get_vars():
+                if isinstance(self_copy[var_name],Variable):
+                    self_copy[var_name].data = self.slice_var(var=var_name,slice=key)
+            return self_copy
+        elif self._has_var(key):
             return getattr(self, key, self.custom_variables.get(key))
         raise KeyError(f"Variable '{key}' not found. Must be one of {self._get_vars()}")    
 
     def __setitem__(self, key, value):
         """Allows setting standard and custom variables via indexing."""
-        # try:
         if self._has_var(key):
             if key in asdict(self):
                 setattr(self, key, value)
@@ -52,7 +64,7 @@ class SpatialInstrument:
     
     def _init_dims(self):
         self._init_variable(var='lat', cmap=cmocean.cm.haline, units='°N', vmin=None, vmax=None)
-        self._init_variable(var='lon', cmap=cmocean.cm.thermal, units='°W', vmin=None, vmax=None)
+        self._init_variable(var='lon', cmap=cmocean.cm.thermal, units='°E', vmin=None, vmax=None)
         self._init_variable(var='depth', cmap=cmocean.cm.deep, units='m', vmin=None, vmax=None)
         self._init_variable(var='time', cmap=cmocean.cm.thermal, units=None, vmin=None, vmax=None)
 
