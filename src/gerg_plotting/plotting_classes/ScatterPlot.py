@@ -45,7 +45,7 @@ class ScatterPlot(Plotter):
             var (str): The variable to plot as color.
             fig (matplotlib.figure.Figure, optional): The figure to use for the plot. If None, a new figure is created.
             ax (matplotlib.axes.Axes, optional): The axes to use for the plot. If None, new axes are created.
-            contours (bool, optional): Whether to include contour lines. (Not used in this function)
+            contours (bool, optional): Whether to include contour lines.
         
         This method initializes a figure and axes, creates a scatter plot of depth vs. time, and adds a colorbar.
         """
