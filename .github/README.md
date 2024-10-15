@@ -66,60 +66,15 @@ This project was created to streamline and standardize the process of generating
 <!-- GETTING STARTED -->
 ## Getting Started
 
-There are three ways to get started
-1. Create a fresh virtual environment using your favorite method and install the dependencies
-2. Use an already established virtual environment and install the dependencies
+There are two ways to get started
+1. Clone the repo
+1. Use pip to install the package from PyPi
 
-
-
-### Dependencies
-I have provided some commands to install the dependencies using conda but you can use any package manager
-
-List of dependencies:
-* python = 3.12
-* numpy = 2.0.0
-* pandas = 2.2.2
-* matplotlib = 3.9.1
-* xarray = 2024.6.0
-* attrs = 23.2.0
-* netcdf4 = 1.7.1.post1
-* cmocean = 4.0.3
-* scipy = 1.14.0
-* mayavi = 4.8.2
-
-1. #### Creating your own virtual environment then installing dependencies
-    You can change "gerg_plotting" to your desired environment name 
-
-    ```sh
-    conda create -n gerg_plotting python=3.12
-    ```
-    
-    ```sh
-    conda activate gerg_plotting
-    ```
-
-    ```sh
-    pip install numpy pandas xarray matplotlib attrs notebook
-    ```
-
-2. #### Using an already established virtual environment
-
-    ```sh
-    conda activate your_env
-    ```
-
-    ```sh
-    pip install numpy pandas xarray gsw attrs
-    ```
 
 ### Installation
 
 1. Activate your virtual environment
-1. Verify/Install Dependencies
-1. Clone the repo
-   ```sh
-   git clone https://github.com/alecmkrueger/gerg_plotting.git
-   ```
+1. Use pip to install ```pip install gerg_plotting```
 
 
 
@@ -129,6 +84,44 @@ List of dependencies:
 ## Usage
 
 Plot data at GERG using Python.
+
+Example: Create a set of maps showing data point temperature, salinity, depth, and time
+```sh
+from gerg_plotting import Data,MapPlot,Bounds
+from gerg_plotting.utils import generate_random_point
+import numpy as np
+import pandas as pd
+import matplotlib.dates as mdates
+import matplotlib.pyplot as plt
+import cartopy.crs as ccrs
+
+# Generate Test Data
+bounds = Bounds(lat_min = 24,lat_max = 31,lon_min = -99,lon_max = -88,depth_top=-1,depth_bottom=1000)
+data_bounds = Bounds(lat_min = 27,lat_max = 28.5,lon_min = -96,lon_max = -89,depth_top=-1,depth_bottom=1000)
+n_points = 1000
+lats,lons = np.transpose([generate_random_point(lat_min=data_bounds.lat_min,
+                                                lat_max=data_bounds.lat_max,
+                                                lon_min=data_bounds.lon_min,
+                                                lon_max=data_bounds.lon_max) for _ in range(n_points)])
+salinity = np.random.uniform(low=28,high=32,size=n_points)
+temperature = np.random.uniform(low=5,high=28,size=n_points)
+depth = np.random.uniform(low=-200,high=0,size=n_points)
+time = pd.Series(pd.date_range(start='10-01-2024',end='10-10-2024',periods=n_points)).apply(mdates.date2num)
+
+# Init Data object
+data = Data(lat=lats,lon=lons,salinity=salinity,temperature=temperature,depth=depth,time=time)
+# Init subplots (optional)
+fig,ax = plt.subplots(figsize=(10,20),nrows=4,subplot_kw={'projection': ccrs.PlateCarree()})
+# Init MapPlot object
+plotter = MapPlot(instrument=data,bounds=bounds,grid_spacing=3)
+# Generate Scatter plots on one figure
+plotter.scatter(fig=fig,ax=ax[0],var='temperature',show_bathy=True,pointsize=30)
+plotter.scatter(fig=fig,ax=ax[1],var='salinity',show_bathy=True,pointsize=30)
+plotter.scatter(fig=fig,ax=ax[2],var='depth',show_bathy=True,pointsize=30)
+plotter.scatter(fig=fig,ax=ax[3],var='time',show_bathy=True,pointsize=30)
+fig.savefig('map_example.png',dpi=500)
+```
+![png of maps](https://github.com/alecmkrueger/project_images/blob/main/gerg_plotting_map_example.png?raw=true)
 
 
 
