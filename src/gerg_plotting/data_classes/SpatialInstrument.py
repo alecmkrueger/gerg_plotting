@@ -4,7 +4,6 @@ from typing import Iterable
 import cmocean
 
 from gerg_plotting.data_classes.NonSpatialInstruments import Variable
-from gerg_plotting.utils import join_dict_keys
 
 
 @define(slots=False)

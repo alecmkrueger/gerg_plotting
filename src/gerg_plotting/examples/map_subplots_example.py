@@ -24,7 +24,7 @@ time = pd.Series(pd.date_range(start='10-01-2024',end='10-10-2024',periods=n_poi
 data = Data(lat=lats,lon=lons,salinity=salinity,temperature=temperature,depth=depth,time=time)
 data.add_custom_variable(Variable(data = np.random.uniform(7.7,8.1,n_points), name = 'pH', cmap=cmocean.cm.thermal, units=None, vmin=7.7, vmax=8.1, label='pH'))
 
-# Init subplots (optional)
+# Init subplots
 fig,ax = plt.subplots(figsize=(10,15),nrows=4,subplot_kw={'projection': ccrs.PlateCarree()},layout='constrained')
 # Init MapPlot object
 plotter = MapPlot(instrument=data,bounds=bounds,grid_spacing=3)
