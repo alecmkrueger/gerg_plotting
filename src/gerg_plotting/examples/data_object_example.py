@@ -6,6 +6,7 @@ import pandas as pd
 import matplotlib.dates as mdates
 import cmocean
 
+# We will create a few Data objects below using various methods
 
 # Let's make some example data
 n_points = 1000
@@ -41,7 +42,7 @@ data = Data(lat=lats,lon=lons,depth=depth,time=time,salinity=salinity,temperatur
 # There is a bit more to do before we can initialize the Data object
 # This way we can be clear with our variable creation
 
-# Let's initialize
+# Let's initialize the Variable objects
 lat_var = Variable(data = lats,name='lat', cmap=cmocean.cm.haline, units='°N', vmin=None, vmax=None)
 lon_var = Variable(data = lons,name='lon', cmap=cmocean.cm.thermal, units='°W', vmin=None, vmax=None)
 depth_var = Variable(data = depth,name='depth', cmap=cmocean.cm.deep, units='m', vmin=None, vmax=None)
@@ -57,7 +58,6 @@ data = Data(lat=lat_var,lon=lon_var,depth=depth_var,time=time_var,
 
 
 # You can see that there are a few attributes in the Variable object initialization
-# The two Data objects will be identical regardless of method used.
 # To change any attribute of any variable just reassign after the init like this:
 data['lat'].vmin = 27
 data['depth'].units = 'km'
