@@ -4,6 +4,7 @@ from typing import Iterable
 import cmocean
 
 from gerg_plotting.data_classes.NonSpatialInstruments import Variable
+from gerg_plotting.utils import join_dict_keys
 
 
 @define(slots=False)
@@ -22,17 +23,18 @@ class SpatialInstrument:
 
     def _has_var(self, key):
         return key in asdict(self).keys() or key in self.custom_variables
+    
+    def _get_vars(self):
+        vars = list(asdict(self).keys()) + list(self.custom_variables.keys())
+        vars = [var for var in vars if var!='custom_variables']
+        return vars
 
     def __getitem__(self, key):
         """Allows accessing standard and custom variables via indexing."""
         # try:
         if self._has_var(key):
             return getattr(self, key, self.custom_variables.get(key))
-        raise KeyError(f"Variable '{key}' not found.")
-        # except KeyError:
-        #     if self._has_var(key.lower()):
-        #         return getattr(self, key.lower(), self.custom_variables.get(key.lower()))
-        #     raise KeyError(f"Variable '{key}' not found.")     
+        raise KeyError(f"Variable '{key}' not found. Must be one of {self._get_vars()}")    
 
     def __setitem__(self, key, value):
         """Allows setting standard and custom variables via indexing."""
@@ -43,27 +45,19 @@ class SpatialInstrument:
             else:
                 self.custom_variables[key] = value
         else:
-            raise KeyError(f"Variable '{key}' not found.")
-        # except KeyError:
-        #     if self._has_var(key.lower()):
-        #         if key in asdict(self):
-        #             setattr(self, key.lower(), value)
-        #         else:
-        #             self.custom_variables[key.lower()] = value
-        #     else:
-        #         raise KeyError(f"Variable '{key}' not found.")
+            raise KeyError(f"Variable '{key}' not found. Must be one of {self._get_vars()}")
             
     def __repr__(self):
         '''Pretty printing'''
         return pformat(asdict(self),width=1)
     
     def _init_dims(self):
-        self.init_variable(var='lat', cmap=cmocean.cm.haline, units='°N', vmin=None, vmax=None)
-        self.init_variable(var='lon', cmap=cmocean.cm.thermal, units='°W', vmin=None, vmax=None)
-        self.init_variable(var='depth', cmap=cmocean.cm.deep, units='m', vmin=None, vmax=None)
-        self.init_variable(var='time', cmap=cmocean.cm.thermal, units=None, vmin=None, vmax=None)
+        self._init_variable(var='lat', cmap=cmocean.cm.haline, units='°N', vmin=None, vmax=None)
+        self._init_variable(var='lon', cmap=cmocean.cm.thermal, units='°W', vmin=None, vmax=None)
+        self._init_variable(var='depth', cmap=cmocean.cm.deep, units='m', vmin=None, vmax=None)
+        self._init_variable(var='time', cmap=cmocean.cm.thermal, units=None, vmin=None, vmax=None)
 
-    def init_variable(self, var: str, cmap, units, vmin, vmax):
+    def _init_variable(self, var: str, cmap, units, vmin, vmax):
         """Initializes standard variables if they are not None and of type np.ndarray."""
         if self._has_var(var):
             if not isinstance(self[var],Variable):

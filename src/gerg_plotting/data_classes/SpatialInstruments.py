@@ -91,67 +91,16 @@ class Data(SpatialInstrument):
     speed: Iterable|Variable|None = field(default=None)
 
     def __attrs_post_init__(self):
-        super()._init_dims()
-        self._init_variables()
+        super()._init_dims()  # Init dims
+        self._init_variables()  # Init variables
 
     def _init_variables(self):
         '''Default Variable initialization.
-        If you would like a new variable to be included in the default init,
-        please contact the repository manager'''
-        self.init_variable(var='temperature', cmap=cmocean.cm.thermal, units='°C', vmin=-10, vmax=40)
-        self.init_variable(var='salinity', cmap=cmocean.cm.haline, units=None, vmin=28, vmax=40)
-        self.init_variable(var='density', cmap=cmocean.cm.dense, units="kg/m\u00B3", vmin=1020, vmax=1035)
-        self.init_variable(var='u', cmap=cmocean.cm.balance, units="m/s", vmin=-5, vmax=5)
-        self.init_variable(var='v', cmap=cmocean.cm.balance, units="m/s", vmin=-5, vmax=5)
-        self.init_variable(var='speed', cmap=cmocean.cm.speed, units="m/s", vmin=0, vmax=5)
-
-# # # Example
-# data = Data(lat=[2,4,6])
-# turb = Variable(data=np.array([1,2,3]),name='turb',cmap=cmocean.cm.turbid,units='',vmin=0,vmax=1)
-# data.add_custom_variable('turb',turb)
-# print(data)
-
-# @define
-# class Glider(SpatialInstrument):
-#     # Vars
-#     temperature:np.ndarray|Variable = field(default=None)
-#     salinity:np.ndarray|Variable = field(default=None)
-#     density:np.ndarray|Variable = field(default=None)
-#     mission:str = field(default='Glider Mission')
-
-#     def __attrs_post_init__(self):
-#         self.init_variables()
-
-#     def init_variables(self):
-#         self.init_variable(var='temperature',cmap=cmocean.cm.thermal,units='°C',vmin=-10,vmax=40)
-#         self.init_variable(var='salinity',cmap=cmocean.cm.haline,units='',vmin=28,vmax=40)
-#         self.init_variable(var='density',cmap=cmocean.cm.dense,units="kg/m\u00B3",vmin=1020,vmax=1035)
-
-
-# @define
-# class Buoy(SpatialInstrument):
-#     # Vars
-#     u_current:np.ndarray = field(default=None)
-#     v_current:np.ndarray = field(default=None)
-#     s_current:np.ndarray = field(default=None)
-
-# @define
-# class Radar(SpatialInstrument):
-#     u_current:np.ndarray = field(default=None)
-#     v_current:np.ndarray = field(default=None)
-#     s_current:np.ndarray = field(default=None)
-
-# @define
-# class CTD(SpatialInstrument):
-#     # Dim
-#     stations:np.ndarray = field(default=None)
-#     # Vars
-#     temperature:np.ndarray = field(default=None)
-#     salinity:np.ndarray = field(default=None)
-
-# @define
-# class WaveGlider(SpatialInstrument):
-#     # Vars
-#     temperature:np.ndarray = field(default=None)
-#     salinity:np.ndarray  = field(default=None)
+        If you would like a new variable to be included in the default init, contact the repo manager'''
+        self._init_variable(var='temperature', cmap=cmocean.cm.thermal, units='°C', vmin=-10, vmax=40)
+        self._init_variable(var='salinity', cmap=cmocean.cm.haline, units=None, vmin=28, vmax=40)
+        self._init_variable(var='density', cmap=cmocean.cm.dense, units="kg/m\u00B3", vmin=1020, vmax=1035)
+        self._init_variable(var='u', cmap=cmocean.cm.balance, units="m/s", vmin=-5, vmax=5)
+        self._init_variable(var='v', cmap=cmocean.cm.balance, units="m/s", vmin=-5, vmax=5)
+        self._init_variable(var='speed', cmap=cmocean.cm.speed, units="m/s", vmin=0, vmax=5)
     
