@@ -55,7 +55,7 @@ def get_center_of_mass(lon,lat,pressure) -> tuple:
     centroid = tuple([np.nanmean(lon), np.nanmean(lat), np.nanmean(pressure)])
     return centroid
 
-def interp_lat_lon_ds(ds) -> xr.Dataset:
+def interp_glider_lat_lon(ds) -> xr.Dataset:
     # Convert time and m_time to float64 for interpolation
     new_time_values = ds['time'].values.astype('datetime64[s]').astype('float64')
     new_mtime_values = ds['m_time'].values.astype('datetime64[s]').astype('float64')
