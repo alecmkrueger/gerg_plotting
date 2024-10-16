@@ -55,23 +55,33 @@ def get_center_of_mass(lon,lat,pressure) -> tuple:
     centroid = tuple([np.nanmean(lon), np.nanmean(lat), np.nanmean(pressure)])
     return centroid
 
-def interp_data(ds:xr.Dataset) -> pd.DataFrame:
+def interp_lat_lon_ds(ds) -> xr.Dataset:
+    # Convert time and m_time to float64 for interpolation
     new_time_values = ds['time'].values.astype('datetime64[s]').astype('float64')
     new_mtime_values = ds['m_time'].values.astype('datetime64[s]').astype('float64')
 
-    # Create a mask of non-NaN values in the 'longitude' variable
+    # Create masks of non-NaN values for both latitude and longitude
+    valid_latitude = ~np.isnan(ds['latitude'])
     valid_longitude = ~np.isnan(ds['longitude'])
-    # Now ds_filtered contains the data where NaN values have been dropped based on the longitude variable
 
-    ds['latitude'] = xr.DataArray(np.interp(new_time_values, new_mtime_values[valid_longitude], ds['latitude'].values[valid_longitude]),[('time',ds.time.values)])
-    ds['longitude'] = xr.DataArray(np.interp(new_time_values, new_mtime_values[valid_longitude], ds['longitude'].values[valid_longitude]),[('time',ds.time.values)])
+    # Interpolate latitude based on valid latitude and m_time values
+    ds['latitude'] = xr.DataArray(
+        np.interp(new_time_values, new_mtime_values[valid_latitude], ds['latitude'].values[valid_latitude]),
+        [('time', ds['time'].values)]
+    )
 
-    df = ds[['latitude','longitude','pressure','salinity','temperature']].to_dataframe().reset_index()
-    df['time'] = df['time'].astype('datetime64[s]')
-    # df = df.set_index(['time'])
-    df = df.dropna()
+    # Interpolate longitude based on valid longitude and m_time values
+    ds['longitude'] = xr.DataArray(
+        np.interp(new_time_values, new_mtime_values[valid_longitude], ds['longitude'].values[valid_longitude]),
+        [('time', ds['time'].values)]
+    )
 
-    return df
+    ds = ds.drop_vars('m_time')
+
+    return ds
+
+def load_example_data():
+    df = pd.read_csv('example_data/sample_glider_data.csv',parse_dates=['time'])
 
 def filter_var(var:pd.Series,min_value,max_value):
     var = var.where(var>min_value)
