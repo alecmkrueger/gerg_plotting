@@ -21,11 +21,11 @@ temperature = np.random.uniform(low=5,high=28,size=n_points)
 # Init Data object
 data = Data(lat=lats,lon=lons,depth=depth,time=time,salinity=salinity,temperature=temperature)
 # Init pH Variable object
-pH = Variable(data=np.random.normal(7.7,size=n_points),name='pH',cmap=cmocean.cm.thermal)
+pH = Variable(data=np.random.normal(7.7,scale=0.15,size=n_points),name='pH',cmap=cmocean.cm.thermal)
 # Add the pH Variable object to the Data object
 data.add_custom_variable(pH)
 # Test by plotting a histogram
-Histogram(data).plot2d(x='pH',y='temperature')
+Histogram(data).plot(var='pH')
 
 MapPlot(data,bounds=bounds).scatter('pH',pointsize=30)
 
