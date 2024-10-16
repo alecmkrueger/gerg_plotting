@@ -82,6 +82,7 @@ def interp_glider_lat_lon(ds) -> xr.Dataset:
 
 def load_example_data():
     df = pd.read_csv('example_data/sample_glider_data.csv',parse_dates=['time'])
+    return df
 
 def filter_var(var:pd.Series,min_value,max_value):
     var = var.where(var>min_value)
