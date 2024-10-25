@@ -108,9 +108,14 @@ class Plotter:
             if self.bounds is None:
                 # Detect and calculate the lat/lon bounds with padding
                 if isinstance(self.instrument.lat, Variable) and isinstance(self.instrument.lon, Variable):
-                    lat_min, lat_max = calculate_pad(self.instrument.lat.data, pad=self.bounds_padding)
-                    lon_min, lon_max = calculate_pad(self.instrument.lon.data, pad=self.bounds_padding)
-                    _, depth_max = calculate_range(self.instrument.depth.data)
+                    if self.instrument.lat is not None:
+                        lat_min, lat_max = calculate_pad(self.instrument.lat.data, pad=self.bounds_padding)
+                    else:
+                        lat_min, lat_max = None, None
+                    if self.instrument.lon is not None:
+                        lon_min, lon_max = calculate_pad(self.instrument.lon.data, pad=self.bounds_padding)
+                    else:
+                        lon_min, lon_max = None, None
                     # Set the bounds
                     self.bounds = Bounds(
                         lat_min=lat_min,
