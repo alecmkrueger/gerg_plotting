@@ -30,7 +30,7 @@ class MapPlot(Plotter):
     gl: cartopy.mpl.gridliner.Gridliner = field(init=False)  # Gridliner for controlling map gridlines
     cbar_var: matplotlib.colorbar.Colorbar = field(init=False)  # Colorbar for the variable being plotted
     cbar_bathy: matplotlib.colorbar.Colorbar = field(init=False)  # Colorbar for bathymetry data
-    grid_spacing: int = field(default=1)  # Spacing of the gridlines on the map
+    grid_spacing: int = field(default=1)  # Spacing of the gridlines on the map in degrees
 
     def __attrs_post_init__(self):
         """
@@ -121,7 +121,7 @@ class MapPlot(Plotter):
         
         # Plot scatter points on the map
         self.sc = self.ax.scatter(self.instrument['lon'].data, self.instrument['lat'].data, linewidths=linewidths,
-                                  c=color, cmap=cmap, s=pointsize, transform=ccrs.PlateCarree())
+                                  c=color, cmap=cmap, s=pointsize, transform=ccrs.PlateCarree(),vmin=self.instrument[var].vmin,vmax=self.instrument[var].vmax)
         # Add a colorbar for the scatter plot variable
         self.cbar_var = self.add_colorbar(self.sc, var, divider, total_cbars=(2 if show_bathy else 1))
 
