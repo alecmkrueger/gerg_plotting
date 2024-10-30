@@ -91,7 +91,7 @@ class Data(SpatialInstrument):
     speed: Iterable|Variable|None = field(default=None)
 
     def __attrs_post_init__(self):
-        super()._init_dims()  # Init dims
+        super().__attrs_post_init__()
         self._init_variables()  # Init variables
 
     def _init_variables(self):
