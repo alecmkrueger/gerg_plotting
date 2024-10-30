@@ -10,15 +10,17 @@ import cmocean
 # Generate Test Data
 bounds = Bounds(lat_min = 24,lat_max = 31,lon_min = -99,lon_max = -88,depth_top=-1,depth_bottom=1000)
 data_bounds = Bounds(lat_min = 27,lat_max = 28.5,lon_min = -96,lon_max = -89,depth_top=-1,depth_bottom=1000)
-n_points = 1000
-lats,lons = np.transpose([generate_random_point(lat_min=data_bounds.lat_min,
-                                                lat_max=data_bounds.lat_max,
-                                                lon_min=data_bounds.lon_min,
-                                                lon_max=data_bounds.lon_max) for _ in range(n_points)])
-salinity = np.random.uniform(low=28,high=32,size=n_points)
-temperature = np.random.uniform(low=5,high=28,size=n_points)
-depth = np.random.uniform(low=0,high=200,size=n_points)
-time = pd.Series(pd.date_range(start='10-01-2024',end='10-10-2024',periods=n_points)).apply(mdates.date2num)
+# Let's read in the example data
+df = pd.read_csv('example_data/sample_glider_data.csv',parse_dates=['time'])
+lats = df['latitude']
+lons = df['longitude']
+depth = df['pressure']
+time = df['time'].apply(mdates.date2num)
+salinity = df['salinity']
+temperature = df['temperature']
+density = df['density']
+
+n_points = len(df)
 
 # Init Data object
 data = Data(lat=lats,lon=lons,salinity=salinity,temperature=temperature,depth=depth,time=time)
@@ -33,4 +35,4 @@ plotter.scatter(fig=fig,ax=ax[0],var='temperature',show_bathy=True,pointsize=30)
 plotter.scatter(fig=fig,ax=ax[1],var='salinity',show_bathy=True,pointsize=30)
 plotter.scatter(fig=fig,ax=ax[2],var='depth',show_bathy=True,pointsize=30)
 plotter.scatter(fig=fig,ax=ax[3],var='time',show_bathy=True,pointsize=30)
-# fig.savefig('map_example.png',dpi=500,bbox_inches='tight')
+# fig.savefig('example_plots/map_example.png',dpi=500,bbox_inches='tight')
