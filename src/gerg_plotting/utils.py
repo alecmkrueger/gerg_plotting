@@ -110,10 +110,13 @@ def colorbar(fig,divider,mappable,label:str,nrows:int=1,total_cbars:int=2):
     plt.sca(last_axes)
     return cbar
 
-def get_sigma_theta(salinity,temperature,cnt=False):
+def get_sigma_theta(salinity:np.ndarray,temperature:np.ndarray,cnt:bool=False):
     # Subsample the data
     num_points = len(temperature)
-    if num_points>300_000 and num_points<1_000_000:
+    if num_points>50_000 and num_points<300_000:
+        salinity = salinity[::100]
+        temperature = temperature[::100]    
+    elif num_points>300_000 and num_points<1_000_000:
         salinity = salinity[::250]
         temperature = temperature[::250]
     elif num_points>=1_000_000:
@@ -121,8 +124,8 @@ def get_sigma_theta(salinity,temperature,cnt=False):
         temperature = temperature[::1000]        
 
     # Remove nan values
-    salinity = salinity[~np.isnan(salinity)]
-    temperature = temperature[~np.isnan(temperature)]
+    salinity = salinity[~np.isnan(salinity.astype('float64'))]
+    temperature = temperature[~np.isnan(temperature.astype('float64'))]
 
     mint=np.min(temperature)
     maxt=np.max(temperature)
