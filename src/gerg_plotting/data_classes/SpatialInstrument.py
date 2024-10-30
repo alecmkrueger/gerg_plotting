@@ -3,6 +3,7 @@ from pprint import pformat
 from typing import Iterable
 import cmocean
 import copy
+import pandas as pd
 
 from gerg_plotting.data_classes.NonSpatialInstruments import Variable
 
@@ -20,6 +21,7 @@ class SpatialInstrument:
 
     def __attrs_post_init__(self):
         self._init_dims()
+        self._format_datetime()
 
     def copy(self):
         self_copy = copy.deepcopy(self)
@@ -82,7 +84,12 @@ class SpatialInstrument:
                         vmax=vmax
                     )
         else:
-            raise ValueError(f'{var.capitalize()} does not exist, try using add_custom_variable method')
+            raise ValueError(f'{var.capitalize()} does not exist, try using the add_custom_variable method')
+        
+    def _format_datetime(self):
+        if self.time is not None:
+            if self.time.data is not None:
+                self.time.data = self.time.data.astype('datetime64')
 
     def add_custom_variable(self, variable: Variable):
         """Adds a custom Variable object and makes it accessible via both dot and dict syntax."""
@@ -95,4 +102,8 @@ class SpatialInstrument:
             # Add to custom_variables and dynamically create the attribute
             self.custom_variables[variable.name] = variable
             setattr(self, variable.name, variable)
+
+    def remove_custom_variable(self,variable_name):
+        '''Removes a custom variable'''
+        delattr(self,variable_name)
 
