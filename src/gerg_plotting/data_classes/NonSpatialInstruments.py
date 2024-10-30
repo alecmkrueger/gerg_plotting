@@ -1,4 +1,4 @@
-from attrs import define,field,validators
+from attrs import define,field,validators,asdict
 from matplotlib.colors import Colormap
 from typing import Iterable
 
@@ -15,8 +15,10 @@ class Variable(NonSpatialInstrument):
     vmax:float = field(default=None)
     label:str = field(default=None)  # Set label to be used on figure and axes, use if desired
 
-    # def __attrs_post_init__(self):
-    #     self._init_label()
+
+    def get_attrs(self):
+        return list(asdict(self).keys())
+
     def get_label(self):
         '''Assign the label if it was not passed'''
         if self.label is None:
