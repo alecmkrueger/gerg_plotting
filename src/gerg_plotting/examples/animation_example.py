@@ -10,10 +10,10 @@ data.add_custom_variable(pH)
 
 temp_range=calculate_range(data['temperature'].data)
 
-def make_hists(sample,data=data,range=range):
+def make_hists(sample,data=data):
     data_sample = data[:10*sample+1]
     hist = Histogram(data_sample)
-    hist.plot('temperature',color='g',bins=30,range=range)
+    hist.plot('temperature',color='g',bins=30)
     return hist.fig
 
 Animator().animate(plotting_function=make_hists,iterable=np.arange(90),iteration_param='sample',gif_filename='hist.gif')

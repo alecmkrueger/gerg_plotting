@@ -101,7 +101,6 @@ def calculate_pad(var,pad=0.0):
     return start,stop
 
 def colorbar(fig,divider,mappable,label:str,nrows:int=1,total_cbars:int=2):
-    '''Adds up to 2 colorbars to the figure'''
     last_axes = plt.gca()
     base_pad = 0.1
     num_colorbars = (len(fig.axes)-nrows)%total_cbars

@@ -105,7 +105,7 @@ class MapPlot(Plotter):
         """
         Plots a scatter plot of points on the map, optionally including bathymetry and gridlines.
         
-        Parameters:
+        Parameters:  
         - var (str | None): The name of the variable to plot as color (e.g., temperature).
         - show_bathy (bool): Whether to show bathymetric data.
         - pointsize (int): Size of scatter plot points (default is 3).
@@ -115,6 +115,7 @@ class MapPlot(Plotter):
         - ax (Axes): Matplotlib axes object (optional).
         """
         color, cmap, divider = self.set_up_map(fig, ax, var)
+        
 
         # Add bathymetry if needed
         self.add_bathy(show_bathy, divider)
