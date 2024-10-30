@@ -4,33 +4,29 @@ from gerg_plotting.utils import generate_random_point
 import numpy as np
 import pandas as pd
 import matplotlib.dates as mdates
+import matplotlib.pyplot as plt
 import cmocean
 
 # We will create a few Data objects below using various methods
 
-# Let's make some example data
-n_points = 1000
-data_bounds = Bounds(lat_min = 27,lat_max = 28.5,lon_min = -96,lon_max = -89,depth_top=-1,depth_bottom=1000)
-lats,lons = np.transpose([generate_random_point(lat_min=data_bounds.lat_min,
-                                                lat_max=data_bounds.lat_max,
-                                                lon_min=data_bounds.lon_min,
-                                                lon_max=data_bounds.lon_max) for _ in range(n_points)])
-depth = np.random.uniform(low=-200,high=0,size=n_points)
-time = pd.Series(pd.date_range(start='10-01-2024',end='10-10-2024',periods=n_points)).astype('datetime64[s]')
-salinity = np.random.uniform(low=28,high=32,size=n_points)
-temperature = np.random.uniform(low=5,high=28,size=n_points)
-density = np.random.uniform(1024,1031,size=n_points)
+# Let's read in the example data
+df = pd.read_csv('example_data/sample_glider_data.csv',parse_dates=['time'])
+lats = df['latitude']
+lons = df['longitude']
+depth = df['pressure']
+time = df['time']
+salinity = df['salinity']
+temperature = df['temperature']
+density = df['density']
 
-# Let's also create a dataframe, example for if your data was read in from a csv file using pandas
-df = pd.DataFrame([lats,lons,depth,time,salinity,temperature,density]).T
-df.columns = ['lat','lon','depth','time','salinity','temperature','density']  # Add column names
+n_points = len(df)
 
 
 # Method 1: Using Iterables
 
 # Here is the initialization of the Data object used for plotting using pandas.Series objects as the inputs
 # To use this method you must use one of the default variables, there is another method for adding non-default/custom variables
-data = Data(lat=df['lat'],lon=df['lon'],depth=df['depth'],time=df['time'],
+data = Data(lat=df['latitude'],lon=df['longitude'],depth=df['pressure'],time=df['time'],
             salinity=df['salinity'],temperature=df['temperature'],density=df['density'])
 # Here is an example using numpy arrays:
 data = Data(lat=lats,lon=lons,depth=depth,time=time,salinity=salinity,temperature=temperature,density=density)
@@ -57,7 +53,8 @@ data = Data(lat=lat_var,lon=lon_var,depth=depth_var,time=time_var,
             temperature=temperature_var,salinity=salinity_var,density=density_var)
 
 
-# You can see that there are a few attributes in the Variable object initialization
+# You can see that there are a few attributes in the Variable object
+print(data['lat'].get_attrs())
 # To change any attribute of any variable just reassign after the init like this:
 data['lat'].vmin = 27
 data['depth'].units = 'km'
@@ -74,6 +71,9 @@ pH = np.random.uniform(7.7,8.1,n_points)
 pH_var = Variable(data = pH, name = 'pH',cmap=cmocean.cm.thermal, units=None, vmin=7.7,vmax=8.1,label='pH')
 # Then we can add it
 data.add_custom_variable(pH_var)
-# We can also do this in one line:
-data.add_custom_variable(Variable(data = np.random.uniform(7.7,8.1,n_points), name = 'pH', cmap=cmocean.cm.thermal, units=None, vmin=7.7, vmax=8.1, label='pH'))
 
+# We can also do this in one line:
+data.remove_custom_variable('pH')  # We need to remove the old custom variable first before reassignment using add_custom_variable
+data.add_custom_variable(Variable(data = np.random.uniform(7.7,8.1,n_points), name = 'pH', cmap=plt.get_cmap('viridis'), units=None, vmin=7.7, vmax=8.1, label='pH'))
+
+print(data)
