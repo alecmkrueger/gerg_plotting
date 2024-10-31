@@ -29,4 +29,4 @@ Histogram(data).plot(var='pH')
 
 MapPlot(data,bounds=bounds).scatter('pH',pointsize=30)
 
-ScatterPlot(data).depth_time_series(var='pH')
+ScatterPlot(data).hovmoller(var='pH')
