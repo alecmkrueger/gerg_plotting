@@ -37,7 +37,7 @@ class ScatterPlot(Plotter):
         self.ax.yaxis  # Placeholder for additional formatting logic
         
     
-    def depth_time_series(self, var: str, fig=None, ax=None, contours: bool = False) -> None:
+    def hovmoller(self, var: str, fig=None, ax=None, contours: bool = False) -> None:
         """
         Create a scatter plot of depth vs time, with color representing the given variable `var`.
         
