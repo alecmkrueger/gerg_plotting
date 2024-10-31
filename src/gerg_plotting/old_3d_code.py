@@ -252,16 +252,6 @@ class Glider:
             time_text = mlab.text(*(0.89,0.019),time_start,color=(0, 0, 0),width=0.09)
 
             for i in range(self.num_iterations):
-                if i < 100:
-                    if i%25 == 0:
-                        print(f'Frame: {i}, {datetime.now():%H:%M:%S}')
-                elif i >= 100 and i <500:
-                    if i%100 == 0:
-                        print(f'Frame: {i}, {datetime.now():%H:%M:%S}')
-                elif i >= 500:
-                    if i%500 == 0:
-                        print(f'Frame: {i}, {datetime.now():%H:%M:%S}')
-
                 df_frame = self.df[:self.settings.date_range[i]]
 
                 if self.settings.evolve_time:                        
