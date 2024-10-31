@@ -11,6 +11,8 @@ import cmocean
 
 # Let's read in the example data
 df = pd.read_csv('example_data/sample_glider_data.csv',parse_dates=['time'])
+n_points = len(df)
+
 lats = df['latitude']
 lons = df['longitude']
 depth = df['pressure']
@@ -19,7 +21,6 @@ salinity = df['salinity']
 temperature = df['temperature']
 density = df['density']
 
-n_points = len(df)
 
 
 # Method 1: Using Iterables
@@ -67,13 +68,14 @@ data['lat'] = Variable(data = lats, name='lat', cmap=cmocean.cm.haline, units='Â
 
 # Assigning a variable that is a non-default/custom variable is simple:
 # First we must initialize the variable
-pH = np.random.uniform(7.7,8.1,n_points)
-pH_var = Variable(data = pH, name = 'pH',cmap=cmocean.cm.thermal, units=None, vmin=7.7,vmax=8.1,label='pH')
-# Then we can add it
-data.add_custom_variable(pH_var)
+# Init speed_of_sound Variable object
+speed_of_sound = Variable(data=df['speed_of_sound'],name='speed_of_sound',cmap=cmocean.cm.thermal,units='m/s',label='Speed of Sound (m/s)')
+# Add the speed_of_sound Variable object to the Data object
+data.add_custom_variable(speed_of_sound)
 
-# We can also do this in one line:
-data.remove_custom_variable('pH')  # We need to remove the old custom variable first before reassignment using add_custom_variable
-data.add_custom_variable(Variable(data = np.random.uniform(7.7,8.1,n_points), name = 'pH', cmap=plt.get_cmap('viridis'), units=None, vmin=7.7, vmax=8.1, label='pH'))
+# We need to remove the old custom variable first before reassignment using the add_custom_variable method, otherwise we can use the base assignment methods
+data.remove_custom_variable('speed_of_sound')
+# We can also add custom variables in one line:
+data.add_custom_variable(Variable(data=df['speed_of_sound'],name='speed_of_sound',cmap=cmocean.cm.thermal,units='m/s',label='Speed of Sound (m/s)'))
 
 print(data)
