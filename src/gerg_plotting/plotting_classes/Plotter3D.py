@@ -8,14 +8,12 @@ from gerg_plotting.data_classes.SpatialInstruments import SpatialInstrument
 
 @define
 class Plotter3D:
+    '''Wrapper around Mayavi'''
     instrument: SpatialInstrument
 
-    def __attrs_post_init__(self):
-        self.init_figure()
-
-    def init_figure(self):
-        fig = mlab.figure()
-        # raise NotImplementedError('Need to add method for initializing the mayavi figure')
+    def init_figure(self,figsize):
+        fig = mlab.figure(size=figsize)
+        return fig
     
     def _has_var(self, key) -> bool:
         '''Check if object has var'''
@@ -49,3 +47,43 @@ class Plotter3D:
     def __repr__(self):
         '''Return a pretty-printed string representation of the class attributes.'''
         return pformat(asdict(self),width=1)
+    
+    def convert_colormap(self,colormap,over_color=None,under_color=None) -> np.ndarray:
+        # Create the colormap array
+        colormap_array = np.array([colormap(i) for i in range(256)])
+        # Scale the color values to 0-1 range
+        colormap_array *= 255
+        # Convert the dtype to uint8
+        colormap_array = colormap_array.astype(np.uint8)
+        if under_color is not None:
+            colormap_array[0] = under_color
+        if over_color is not None:
+            colormap_array[-1] = over_color
+        
+        return colormap_array
+    
+    def format_colorbar(colorbar,frame_height=1080):
+        fontsize = round(((frame_height/400)**1.8)+11)  # Scale text with window size
+        fontcolor = (0, 0, 0)  # Black Text
+        # Allow the font sizes to be changed
+        colorbar.scalar_bar.unconstrained_font_size = True  # Allow the font size to change
+        # Labels text
+        colorbar.scalar_bar.label_text_property.font_size = fontsize
+        colorbar.scalar_bar.label_text_property.color = fontcolor
+        # Title text
+        colorbar.title_text_property.font_size = fontsize
+        colorbar.title_text_property.color = fontcolor
+        colorbar.title_text_property.line_offset = -7
+        colorbar.title_text_property.line_spacing = 10
+        colorbar.title_text_property.vertical_justification = 'top'
+        pos2 = colorbar.scalar_bar_representation.position2
+        colorbar.scalar_bar_representation.position2 = [pos2[0]-0.02,pos2[1]-0.01]
+    
+    def add_colormap(self,points,cmap_title,cmap=None):
+        if cmap is not None:
+            points.module_manager.scalar_lut_manager.lut.table = self.convert_colormap(cmap)
+        var_colorbar = mlab.colorbar(points, orientation='vertical',title=cmap_title,label_fmt='%0.1f',nb_labels=6)  # Add colorbar
+        var_colorbar.scalar_bar_representation.proportional_resize=True
+        self.format_colorbar(var_colorbar,frame_height=self.settings.figsize[1])
+        pos2 = var_colorbar.scalar_bar_representation.position2
+        var_colorbar.scalar_bar_representation.position2 = [pos2[0]-0.02,pos2[1]-0.01]
