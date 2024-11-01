@@ -6,6 +6,7 @@ import mayavi.modules.axes
 import numpy as np
 import mayavi.mlab as mlab
 import mayavi
+from functools import partial
 
 from gerg_plotting.plotting_classes.Plotter3D import Plotter3D
 
@@ -18,14 +19,12 @@ class ScatterPlot3D(Plotter3D):
     def show(self):
         mlab.show()
 
-    def plot(self,var:str|None=None,point_size:int|float=0.05,fig=None,show:bool=True):
-        if fig is None:
-            self.fig = self.init_figure(figsize=self.figsize)
-        elif isinstance(fig,mayavi.core.scene.Scene):
-            self.fig = fig
+    def _check_var(self,var):
         if var is not None:
             if not self.instrument._has_var(var):
                 raise ValueError(f'Instrument does not have {var}')
+
+    def _scatter(self,var,point_size,fig):
         if var is None:
             points = mlab.points3d(self.instrument.lon.data,self.instrument.lat.data,self.instrument.depth.data,
                         mode='sphere',resolution=8,scale_factor=point_size,figure=fig)
@@ -35,6 +34,16 @@ class ScatterPlot3D(Plotter3D):
             points.glyph.scale_mode = 'scale_by_vector'
         else:
             raise ValueError(f'var must be either None or one of {self.instrument}')
+
+
+    def plot(self,var:str|None=None,point_size:int|float=0.05,fig=None,show:bool=True):
+        self.fig = self.init_figure(fig=fig)
+
+        self._check_var(var)
+            
+        self._scatter(var,point_size,fig)
+            
+
         
         if show:
             self.show()

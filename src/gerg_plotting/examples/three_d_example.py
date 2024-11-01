@@ -1,4 +1,4 @@
-import mayavi.mlab
+import mayavi.mlab as mlab
 from gerg_plotting import Data,ScatterPlot3D
 import pandas as pd
 
@@ -12,7 +12,6 @@ data = Data(lat=df['latitude'],lon=df['longitude'],depth=df['pressure'],time=df[
 
 # Init the 3-d scatter plot
 three_d = ScatterPlot3D(data)
-three_d.plot('salinity',show=False)
+three_d.plot(show=False)
 fig = three_d.fig
-three_d.plot('temperature',show=False,fig=fig)
-three_d.show()
+three_d.plot('temperature',fig=fig)

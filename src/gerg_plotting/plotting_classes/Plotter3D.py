@@ -1,6 +1,7 @@
 from attrs import define,asdict,field
 from pprint import pformat
 import numpy as np
+import mayavi.core.scene
 import mayavi.mlab as mlab
 
 from gerg_plotting.data_classes.SpatialInstruments import SpatialInstrument
@@ -11,8 +12,13 @@ class Plotter3D:
     '''Wrapper around Mayavi'''
     instrument: SpatialInstrument
 
-    def init_figure(self,figsize):
-        fig = mlab.figure(size=figsize)
+    def init_figure(self,fig=None,figsize=(1920,1080)):
+        if fig is None:
+            fig = mlab.figure(size=figsize)
+        elif isinstance(fig,mayavi.core.scene.Scene):
+            fig = fig
+        else:
+            ValueError(f"fig must be either None or a mayavi.core.secne.Scene object")
         return fig
     
     def _has_var(self, key) -> bool:
