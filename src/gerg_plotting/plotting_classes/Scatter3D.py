@@ -5,12 +5,12 @@ import mayavi as mlab
 from gerg_plotting.plotting_classes.Plotter3D import Plotter3D
 
 @define
-class Plot3D(Plotter3D):
+class Scatter3D(Plotter3D):
 
     def __attrs_post_init__(self):
         super().__attrs_post_init__()
 
-    def scatter(self,var:str|None=None,point_size:int|float=0.05):
+    def plot(self,var:str|None=None,point_size:int|float=0.05):
         if not self.instrument._has_var(var):
             raise ValueError(f'Instrument does not have {var}')
         if var is None:

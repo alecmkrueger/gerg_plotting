@@ -8,3 +8,4 @@ from .data_classes.NonSpatialInstruments import Bounds,Variable
 from .data_classes.SpatialInstruments import Bathy,Data
 from .plotting_classes.MapPlot import MapPlot
 from .plotting_classes.ScatterPlot import ScatterPlot
+from .plotting_classes.Scatter3D import Scatter3D
