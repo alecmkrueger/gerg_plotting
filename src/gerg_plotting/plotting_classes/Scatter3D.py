@@ -1,6 +1,6 @@
 from attrs import define,field
 import numpy as np
-import mayavi as mlab
+import mayavi.mlab as mlab
 
 from gerg_plotting.plotting_classes.Plotter3D import Plotter3D
 
@@ -18,7 +18,7 @@ class Scatter3D(Plotter3D):
                         mode='sphere',resolution=8,line_width=0,scale_factor=point_size)
         elif isinstance(var,str):
             points = mlab.points3d(self.instrument.lon.data,self.instrument.lat.data,self.instrument.depth.data,self.instrument[var].data,
-                        mode='sphere',resolution=8,line_width=0,scale_factor=point_size,vmax=self.instrument.vmax,vmin=self.instrument.vmin)
+                        mode='sphere',resolution=8,line_width=0,scale_factor=point_size,vmax=self.instrument[var].vmax,vmin=self.instrument[var].vmin)
         else:
             raise ValueError(f'var must be either None or one of {self.instrument}')
         raise NotImplementedError('Add method for plotting the 3D data using Mayavi')

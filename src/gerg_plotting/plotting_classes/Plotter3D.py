@@ -15,7 +15,7 @@ class Plotter3D:
 
     def init_figure(self):
         fig = mlab.figure()
-        raise NotImplementedError('Need to add method for initializing the mayavi figure')
+        # raise NotImplementedError('Need to add method for initializing the mayavi figure')
     
     def _has_var(self, key) -> bool:
         '''Check if object has var'''

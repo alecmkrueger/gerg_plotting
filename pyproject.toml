@@ -20,6 +20,9 @@ mayavi = "^4.8.2"
 gsw = "^3.6.19"
 imageio = "^2.34.2"
 cartopy = "^0.23.0"
+notebook = "^7.2.2"
+configobj = "^5.0.9"
+wxpython = "^4.2.2"
 
 
 [tool.poetry.group.dev.dependencies]
