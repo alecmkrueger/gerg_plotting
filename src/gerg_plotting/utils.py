@@ -1,4 +1,3 @@
-import cartopy.mpl
 import cartopy.mpl.geoaxes
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import matplotlib.pyplot as plt
@@ -10,6 +9,7 @@ import gsw
 import datetime
 import random
 import cartopy
+from typing import Iterable
 
 def lat_min_smaller_than_max(instance, attribute, value):
     if value is not None:
@@ -26,13 +26,14 @@ def validate_array_lengths(instance,attribute,value):
     if len(set(lengths.values()))>1:
         raise ValueError(f'All Dims and Vars must be the same length, got lengths of {lengths}')
 
-def to_numpy_array(value):
+def to_numpy_array(values:Iterable):
     # Convert iterable types (list, tuple, pandas.Series, etc.) to NumPy array
-    if not isinstance(value, np.ndarray):
-        return np.fromiter(value,type(value))
-    elif isinstance(value, np.ndarray):
-        return value
-    elif value is None:
+    if not isinstance(values, np.ndarray):
+        array = pd.Series(values).to_numpy()
+        return array
+    elif isinstance(values, np.ndarray):
+        return values
+    elif values is None:
         return None
     else:
         raise ValueError(f"Cannot convert {type(value)} to a NumPy array")
