@@ -108,8 +108,8 @@ class ScatterPlot(Plotter):
             cs = self.ax.contour(Sg, Tg, sigma_theta, colors='grey', zorder=1, linestyles='dashed')
             matplotlib.pyplot.clabel(cs, fontsize=10, inline=True, fmt='%.1f')  # Add contour labels
 
-        self.ax.set_xlabel('Salinity')
-        self.ax.set_ylabel('Temperature (°C)')
+        self.ax.set_xlabel(self.instrument.salinity.get_label())
+        self.ax.set_ylabel(self.instrument.temperature.get_label())
         self.ax.set_title('T-S Diagram', fontsize=14, fontweight='bold')  # Add title
         self.ax.xaxis.set_major_locator(MaxNLocator(nbins=6))  # Set x-axis tick formatting
         self.ax.yaxis.set_major_locator(MaxNLocator(nbins=8))
