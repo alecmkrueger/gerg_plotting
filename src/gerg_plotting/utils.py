@@ -93,12 +93,14 @@ def filter_var(var:pd.Series,min_value,max_value):
 def calculate_range(var:np.ndarray):
     return [np.nanmin(var),np.nanmax(var)]
 
-def calculate_pad(var,pad=0.0):
+def calculate_pad(var:np.ndarray,pad=0.0):
     start, stop = calculate_range(var)
     difference = stop - start
     pad = difference*pad
     start = start-pad
     stop = stop+pad
+    start = float(start)
+    stop = float(stop)
     return start,stop
 
 def colorbar(fig,divider,mappable,label:str,nrows:int=1,total_cbars:int=2):
