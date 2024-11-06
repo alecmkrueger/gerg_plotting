@@ -151,7 +151,7 @@ class MapPlot(Plotter):
         
         self.add_grid(grid)
 
-    def quiver(self,x:str,y:str,quiver_density:int=None,quiver_scale:float=None,grid:bool=True,show_bathy:bool=True,show_coastlines:bool=True,fig=None,ax=None) -> None:
+    def quiver(self,x:str='lon',y:str='lat',quiver_density:int=None,quiver_scale:float=None,grid:bool=True,show_bathy:bool=True,show_coastlines:bool=True,fig=None,ax=None) -> None:
         """
         Method for plotting 2-d quivers. Example: ocean current data at a single location through depth and time.
 
