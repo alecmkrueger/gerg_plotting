@@ -18,10 +18,10 @@ from gerg_plotting.utils import calculate_range, calculate_pad, colorbar
 @define
 class Plotter:
     '''
-    Base class for creating plots of data related to spatial instruments.
+    Base class for creating plots of data.
     
     Attributes:
-        instrument (SpatialInstrument): The instrument holding spatial data (lat, lon, etc.).
+        data (SpatialInstrument): The instrument holding spatial data (lat, lon, etc.).
         bounds (Bounds, optional): Geographic boundaries of the data.
         bounds_padding (float): Padding to be applied to the detected bounds.
         fig (matplotlib.figure.Figure, optional): Matplotlib figure object.
@@ -32,7 +32,7 @@ class Plotter:
         cbar_kwargs (dict): Keyword arguments for colorbar customization.
     '''
     
-    instrument: SpatialInstrument
+    data: SpatialInstrument
     bounds: Bounds | None = field(default=None)
     bounds_padding: float = field(default=0)
 
@@ -104,16 +104,16 @@ class Plotter:
         Raises:
             ValueError: If the instrument is not of type SpatialInstrument.
         '''
-        if isinstance(self.instrument, SpatialInstrument):
+        if isinstance(self.data, SpatialInstrument):
             if self.bounds is None:
                 # Detect and calculate the lat/lon bounds with padding
-                if isinstance(self.instrument.lat, Variable) and isinstance(self.instrument.lon, Variable):
-                    if self.instrument.lat is not None:
-                        lat_min, lat_max = calculate_pad(self.instrument.lat.data, pad=self.bounds_padding)
+                if isinstance(self.data.lat, Variable) and isinstance(self.data.lon, Variable):
+                    if self.data.lat is not None:
+                        lat_min, lat_max = calculate_pad(self.data.lat.data, pad=self.bounds_padding)
                     else:
                         lat_min, lat_max = None, None
-                    if self.instrument.lon is not None:
-                        lon_min, lon_max = calculate_pad(self.instrument.lon.data, pad=self.bounds_padding)
+                    if self.data.lon is not None:
+                        lon_min, lon_max = calculate_pad(self.data.lon.data, pad=self.bounds_padding)
                     else:
                         lon_min, lon_max = None, None
                     # Set the bounds
@@ -126,7 +126,7 @@ class Plotter:
                         depth_top=None
                     )
         else:
-            raise ValueError(f'Must pass an instrument of type SpatialInstrument, you passed {type(self.instrument) = }')
+            raise ValueError(f'Must pass an instrument of type SpatialInstrument, you passed {type(self.data) = }')
 
     def get_cmap(self, color_var: str) -> Colormap:
         '''
@@ -139,8 +139,8 @@ class Plotter:
             Colormap: The colormap for the variable, or 'viridis' if none is assigned.
         '''
         # Return the variable's assigned colormap, or the default 'viridis' if none exists
-        if self.instrument[color_var].cmap is not None:
-            cmap = self.instrument[color_var].cmap
+        if self.data[color_var].cmap is not None:
+            cmap = self.data[color_var].cmap
         else:
             cmap = matplotlib.pyplot.get_cmap('viridis')
         return cmap
@@ -160,7 +160,7 @@ class Plotter:
         '''
         if var is not None:
             # Get the label for the colorbar
-            cbar_label = self.instrument[var].get_label()
+            cbar_label = self.data[var].get_label()
             if divider is not None:
                 # Create a colorbar using the custom 'colorbar' function with divider
                 self.cbar = colorbar(self.fig, divider, mappable, cbar_label, nrows=self.nrows, total_cbars=total_cbars)

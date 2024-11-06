@@ -26,8 +26,8 @@ class Histogram(Plotter):
         # If 'range' is not in kwargs, calculate it based on the instrument data
         if 'range' not in kwargs.keys():
             range = [
-                calculate_range(self.instrument[x].data),  # Calculate range for x variable
-                calculate_range(self.instrument[y].data)   # Calculate range for y variable
+                calculate_range(self.data[x].data),  # Calculate range for x variable
+                calculate_range(self.data[y].data)   # Calculate range for y variable
             ]
         # If 'range' exists in kwargs, use it and remove it from kwargs
         else:
@@ -49,11 +49,11 @@ class Histogram(Plotter):
         # Initialize the figure and axis
         self.init_figure(fig, ax)
         # Plot a histogram of the selected variable data
-        self.ax.hist(self.instrument[var].data, **kwargs)
+        self.ax.hist(self.data[var].data, **kwargs)
         # Set the y-axis label to 'Count'
         self.ax.set_ylabel('Count')
         # Set the x-axis label to the variable's label
-        self.ax.set_xlabel(self.instrument[var].get_label())
+        self.ax.set_xlabel(self.data[var].get_label())
 
     def plot2d(self, x: str, y: str, fig=None, ax=None, **kwargs):
         """
@@ -71,11 +71,11 @@ class Histogram(Plotter):
         # Get the range for the 2D histogram and update kwargs
         range, kwargs = self.get_2d_range(x, y, **kwargs)
         # Plot a 2D histogram using the x and y data
-        hist = self.ax.hist2d(self.instrument[x].data, self.instrument[y].data, range=range, **kwargs)
+        hist = self.ax.hist2d(self.data[x].data, self.data[y].data, range=range, **kwargs)
         # Set the x-axis label to the x variable's label
-        self.ax.set_xlabel(self.instrument[x].get_label())
+        self.ax.set_xlabel(self.data[x].get_label())
         # Set the y-axis label to the y variable's label
-        self.ax.set_ylabel(self.instrument[y].get_label())
+        self.ax.set_ylabel(self.data[y].get_label())
         # Add a colorbar to represent the count values
         cbar = plt.colorbar(hist[3], ax=self.ax, label='Count', orientation='horizontal')
 
@@ -97,7 +97,7 @@ class Histogram(Plotter):
         # Get the range for the 2D histogram and update kwargs
         range, kwargs = self.get_2d_range(x, y, **kwargs)
         # Calculate a 2D histogram for the x and y data
-        h, xedges, yedges = np.histogram2d(self.instrument[x].data, self.instrument[y].data, range=range, **kwargs)
+        h, xedges, yedges = np.histogram2d(self.data[x].data, self.data[y].data, range=range, **kwargs)
         # Create a mesh grid using the edges of the histogram bins
         X, Y = np.meshgrid(xedges[1:], yedges[1:])
         # Plot a 3D surface plot of the histogram data
@@ -106,8 +106,8 @@ class Histogram(Plotter):
         self.ax.zaxis.set_rotate_label(False)
         self.ax.set_zlabel('Count', rotation=90)
         # Set the x-axis label to the x variable's label
-        self.ax.set_xlabel(self.instrument[x].get_label())
+        self.ax.set_xlabel(self.data[x].get_label())
         # Set the y-axis label to the y variable's label
-        self.ax.set_ylabel(self.instrument[y].get_label())
+        self.ax.set_ylabel(self.data[y].get_label())
         # Set the initial viewing angle for the 3D plot
         self.ax.view_init(elev=30, azim=45)

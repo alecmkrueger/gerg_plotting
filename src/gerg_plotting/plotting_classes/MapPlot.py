@@ -6,6 +6,7 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 import cartopy.crs as ccrs
 from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 import cartopy.mpl.gridliner
+import cmocean
 
 from gerg_plotting.plotting_classes.Plotter import Plotter
 from gerg_plotting.data_classes.SpatialInstruments import Bathy
@@ -38,7 +39,6 @@ class MapPlot(Plotter):
         Calls the parent's post-init and initializes bathymetry if not provided.
         """
         super().__attrs_post_init__()
-        self.init_bathy()
 
     def init_bathy(self):
         """
@@ -68,7 +68,7 @@ class MapPlot(Plotter):
             color = 'k'  # Use black color if no variable is provided
             cmap = None
         else:
-            color_var_values = self.instrument[var].data.copy()
+            color_var_values = self.data[var].data.copy()
             color = color_var_values  # Color is determined by the variable data
             cmap = self.get_cmap(var)  # Get the appropriate colormap for the variable
         
@@ -79,11 +79,31 @@ class MapPlot(Plotter):
         divider = make_axes_locatable(self.ax)  # Create a divider for colorbars
         return color, cmap, divider
 
-    def add_coasts(self):
+    def add_coasts(self,show_coastlines):
         """
         Adds coastlines to the map.
         """
-        self.ax.coastlines()
+        if show_coastlines:
+            self.ax.coastlines()
+
+    def get_quiver_step(self,quiver_density):
+        if quiver_density is not None:
+            step = round(len(self.data.u.data)/quiver_density)
+        else:
+            step = None
+        return step
+
+    def add_grid(self,grid:bool):
+        # Add gridlines if requested
+        if grid:
+            self.gl = self.ax.gridlines(draw_labels=True, linewidth=1, color='gray',
+                                        alpha=0.4, linestyle='--')
+            self.gl.top_labels = False  # Disable top labels
+            self.gl.right_labels = False  # Disable right labels
+            self.gl.xformatter = LONGITUDE_FORMATTER  # Format x-axis as longitude
+            self.gl.yformatter = LATITUDE_FORMATTER  # Format y-axis as latitude
+            self.gl.xlocator = MultipleLocator(self.grid_spacing)  # Set grid spacing for x-axis
+            self.gl.ylocator = MultipleLocator(self.grid_spacing)  # Set grid spacing for y-axis
 
     def add_bathy(self, show_bathy, divider):
         """
@@ -94,6 +114,7 @@ class MapPlot(Plotter):
         - divider (AxesDivider): Divider object for placing the bathymetry colorbar.
         """
         if show_bathy:
+            self.init_bathy()
             bathy_contourf = self.ax.contourf(self.bathy.lon, self.bathy.lat, self.bathy.depth,
                                               levels=self.bathy.contour_levels, cmap=self.bathy.cmap,
                                               vmin=self.bathy.vmin, transform=ccrs.PlateCarree(), extend='both')
@@ -101,7 +122,7 @@ class MapPlot(Plotter):
             self.cbar_bathy = self.bathy.add_colorbar(mappable=bathy_contourf, divider=divider,
                                                       fig=self.fig, nrows=self.nrows)
 
-    def scatter(self, var: str | None = None, show_bathy: bool = True, pointsize=3, linewidths=0, grid=True, fig=None, ax=None) -> None:
+    def scatter(self, var: str | None = None, show_bathy: bool = True, show_coastlines:bool=True, pointsize=3, linewidths=0, grid=True, fig=None, ax=None) -> None:
         """
         Plots a scatter plot of points on the map, optionally including bathymetry and gridlines.
         
@@ -121,27 +142,40 @@ class MapPlot(Plotter):
         self.add_bathy(show_bathy, divider)
         
         # Plot scatter points on the map
-        self.sc = self.ax.scatter(self.instrument['lon'].data, self.instrument['lat'].data, linewidths=linewidths,
-                                  c=color, cmap=cmap, s=pointsize, transform=ccrs.PlateCarree(),vmin=self.instrument[var].vmin,vmax=self.instrument[var].vmax)
+        self.sc = self.ax.scatter(self.data['lon'].data, self.data['lat'].data, linewidths=linewidths,
+                                  c=color, cmap=cmap, s=pointsize, transform=ccrs.PlateCarree(),vmin=self.data[var].vmin,vmax=self.data[var].vmax)
         # Add a colorbar for the scatter plot variable
         self.cbar_var = self.add_colorbar(self.sc, var, divider, total_cbars=(2 if show_bathy else 1))
 
-        self.add_coasts()  # Add coastlines
+        self.add_coasts(show_coastlines)  # Add coastlines
         
-        # Add gridlines if requested
-        if grid:
-            self.gl = self.ax.gridlines(draw_labels=True, linewidth=1, color='gray',
-                                        alpha=0.4, linestyle='--')
-            self.gl.top_labels = False  # Disable top labels
-            self.gl.right_labels = False  # Disable right labels
-            self.gl.xformatter = LONGITUDE_FORMATTER  # Format x-axis as longitude
-            self.gl.yformatter = LATITUDE_FORMATTER  # Format y-axis as latitude
-            self.gl.xlocator = MultipleLocator(self.grid_spacing)  # Set grid spacing for x-axis
-            self.gl.ylocator = MultipleLocator(self.grid_spacing)  # Set grid spacing for y-axis
+        self.add_grid(grid)
 
-    def quiver(self) -> None:
+    def quiver(self,x:str,y:str,quiver_density:int=None,quiver_scale:float=None,grid:bool=True,show_bathy:bool=True,show_coastlines:bool=True,fig=None,ax=None) -> None:
         """
-        Placeholder for a method to plot vector fields on the map (e.g., currents).
-        This method needs to be implemented.
+        Method for plotting 2-d quivers. Example: ocean current data at a single location through depth and time.
+
+        Args:
+            x (str): x-axis variable for the quiver.
+            y (str): y-axis variable for the quiver.
+            quiver_density (int): density of quiver arrows. The higher the value the more dense the quivers
+            quiver_scale (float|int): Scales the length of the arrow inversely.
         """
-        raise NotImplementedError('Need to add Quiver')
+        _, cmap, divider = self.set_up_map(fig, ax, 'speed')
+        
+        # Add bathymetry if needed
+        self.add_bathy(show_bathy, divider)
+
+        step = self.get_quiver_step(quiver_density)
+
+        mappable = self.ax.quiver(self.data[x].data[::step], self.data[y].data[::step], 
+                                        self.data.u.data[::step], self.data.v.data[::step], 
+                                        self.data.speed.data[::step], cmap=cmap,
+                                        pivot='tail', scale=quiver_scale, units='height')
+        self.cbar_var = self.add_colorbar(mappable, 'speed', divider, total_cbars=(2 if show_bathy else 1))
+        
+        self.add_coasts(show_coastlines)  # Add coastlines
+
+        self.add_grid(grid)
+        
+        

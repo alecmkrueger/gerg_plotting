@@ -80,3 +80,17 @@ def data_from_df(df:pd.DataFrame,mapped_variables:dict|None=None):
     data = Data(**mapped_variables)
 
     return data
+
+def data_from_csv(filename:str,mapped_variables:dict|None=None):
+
+    df = pd.read_csv(filename)
+
+    # If the user does not pass mapped_variables
+    if mapped_variables is None:
+        mapped_variables = get_var_mapping(df)
+
+    mapped_variables = {key:df[value] for key,value in mapped_variables.items() if value is not None}
+
+    data = Data(**mapped_variables)
+
+    return data
