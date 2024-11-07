@@ -234,7 +234,7 @@ class ScatterPlot(Plotter):
         step = round(num_points/quiver_density)
         return step
     
-    def quiver1d(self,x:str, fig=None, ax=None) -> None:
+    def quiver1d(self,x:str,fig=None,ax=None) -> None:
         """
         Method for plotting 1-d quivers. Example: ocean current data at a single location and depth through time.
 
@@ -243,7 +243,7 @@ class ScatterPlot(Plotter):
         """
         raise NotImplementedError('Need to add method to plot 1-d quivers')
 
-    def quiver2d(self,x:str,y:str,quiver_density:int=None,quiver_scale:float=None, fig=None, ax=None) -> None:
+    def quiver2d(self,x:str,y:str,quiver_density:int=None,quiver_scale:float=None,fig=None,ax=None) -> None:
         """
         Method for plotting 2-d quivers. Example: ocean current data at a single location through depth and time.
 
@@ -254,14 +254,16 @@ class ScatterPlot(Plotter):
             quiver_scale (float|int): Scales the length of the arrow inversely.
         """
         self.init_figure(fig=fig,ax=ax)
+        # Get the data slice step size using the quiver_density value
         if quiver_density is not None:
             step = self.calculate_quiver_step(len(self.data.u.data),quiver_density)
         elif quiver_density is None:
             step = 1
 
+        # Create the quiver plot
         mappable = self.ax.quiver(self.data[x].data[::step], self.data[y].data[::step], 
                                         self.data.u.data[::step], self.data.v.data[::step], 
                                         self.data.speed.data[::step], cmap=cmocean.cm.speed,
                                         pivot='tail', scale=quiver_scale, units='height')
-        
+        # Add the colorbar
         self.add_colorbar(mappable,'speed')

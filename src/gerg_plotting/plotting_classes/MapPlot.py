@@ -87,6 +87,7 @@ class MapPlot(Plotter):
             self.ax.coastlines()
 
     def get_quiver_step(self,quiver_density):
+        """Calculate the step size for slicing the data to change the density of the quiver plot"""
         if quiver_density is not None:
             step = round(len(self.data.u.data)/quiver_density)
         else:
