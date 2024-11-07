@@ -252,6 +252,8 @@ class ScatterPlot(Plotter):
             y (str): y-axis variable for the quiver.
             quiver_density (int): density of quiver arrows. The higher the value the more dense the quivers
             quiver_scale (float|int): Scales the length of the arrow inversely.
+            fig (matplotlib.figure.Figure|None): figure to draw the quiver on, if None a new figure will be generated
+            ax (matplotlib.axes.Axes|None): axes to draw the quiver on, if None, a new axes will be generated
         """
         self.init_figure(fig=fig,ax=ax)
         # Get the data slice step size using the quiver_density value
