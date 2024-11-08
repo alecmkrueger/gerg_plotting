@@ -32,6 +32,7 @@ class Bathy(SpatialInstrument):
     vertical_scaler:int|float = field(default=None)
     vertical_units:str = field(default='')
     center_of_mass:tuple = field(init=False)
+    label:str = field(default='Bathymetry')
 
     def __attrs_post_init__(self):
         self.get_bathy()
@@ -39,6 +40,11 @@ class Bathy(SpatialInstrument):
             self.depth = self.depth*self.vertical_scaler
         self.center_of_mass = get_center_of_mass(self.lon,self.lat,self.depth)
         self.adjust_cmap()
+
+    def get_label(self):
+        if self.vertical_units != '':
+            self.label = f"Bathymetry ({self.vertical_units})"
+        return self.label
         
     def adjust_cmap(self):
         # Remove the white most but of the colormap
@@ -50,6 +56,9 @@ class Bathy(SpatialInstrument):
         '''
         bounds (Bounds): contains attributes of lat_min,lon_min,lat_max,lon_max,depth_max,depth_min
         resolution_level (float|int): how much to coarsen the dataset by in units of degrees
+
+        returns:
+        lon,lat,depth
         '''
         self_path = Path(__file__).parent
         seafloor_path = self_path.parent.joinpath('seafloor_data/gebco_2023_n31.0_s7.0_w-100.0_e-66.5.nc')
@@ -70,6 +79,8 @@ class Bathy(SpatialInstrument):
         self.lon = ds.coords['lat'].values #extract the latitude values
         self.lat = ds.coords['lon'].values #extract the longitude values
         self.lon, self.lat = np.meshgrid(self.lat, self.lon) #create meshgrid for plotting
+
+        return self.lon,self.lat,self.depth
     
     def add_colorbar(self,fig:matplotlib.figure.Figure,divider,mappable:matplotlib.axes.Axes,nrows:int) -> None:
         if self.cbar_show:
@@ -90,6 +101,9 @@ class Data(SpatialInstrument):
     v: Iterable|Variable|None = field(default=None)
     speed: Iterable|Variable|None = field(default=None)
 
+    # Bounds
+    bounds:Bounds = field(default=None)
+
     def __attrs_post_init__(self):
         super().__attrs_post_init__()
         self._init_variables()  # Init variables
@@ -103,4 +117,7 @@ class Data(SpatialInstrument):
         self._init_variable(var='u', cmap=cmocean.cm.balance, units="m/s", vmin=-5, vmax=5)
         self._init_variable(var='v', cmap=cmocean.cm.balance, units="m/s", vmin=-5, vmax=5)
         self._init_variable(var='speed', cmap=cmocean.cm.speed, units="m/s", vmin=0, vmax=5)
+
+
+
 
