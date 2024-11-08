@@ -26,6 +26,7 @@ class SpatialInstrument:
     def __attrs_post_init__(self):
         self._init_dims()
         self._format_datetime()
+        # self.detect_bounds()
 
     def copy(self):
         self_copy = copy.deepcopy(self)
@@ -95,13 +96,21 @@ class SpatialInstrument:
             if self.time.data is not None:
                 self.time.data = self.time.data.astype('datetime64')
 
-    def detect_bounds(self,bounds_padding) -> None:
+    def detect_bounds(self,bounds_padding=0) -> Bounds:
         '''
-        Detect the geographic bounds of the instrument data, applying padding if specified.
-        
-        Raises:
-            ValueError: If the instrument is not of type SpatialInstrument.
+        Detect the geographic bounds of the data, applying padding if specified.
+
+        An intentional effect of this function:
+            will only calculate the bounds when self.bounds is None,
+            so that it does not overwrite the user's custom bounds passed,
+            this will also ensure that the bounds is not repeatedly calculated unless desired
+            can recalculate self.bounds using a new bounds_padding value if self.bounds is set to None
+
+        Returns:
+            self.bounds (Bounds): Bounds passed by the user or generated from this function
+
         '''
+        # If the user did not pass bounds
         if self.bounds is None:
             # Detect and calculate the lat bounds with padding
             if self.lat is not None:
@@ -113,15 +122,23 @@ class SpatialInstrument:
                 lon_min, lon_max = calculate_pad(self.lon.data, pad=bounds_padding)
             else:
                 lon_min, lon_max = None, None
+            
+            # depth_bottom: positive depth example: 1000
+            # depth_top:positive depth example for surface: 0
+            
+            if self.depth is not None:
+                depth_top, depth_bottom = calculate_pad(self.depth.data)
+                
             # Set the bounds
             self.bounds = Bounds(
                 lat_min=lat_min,
                 lat_max=lat_max,
                 lon_min=lon_min,
                 lon_max=lon_max,
-                depth_bottom=None,
-                depth_top=None
+                depth_bottom=depth_bottom,
+                depth_top=depth_top
             )
+
         return self.bounds
 
     def add_custom_variable(self, variable: Variable):
