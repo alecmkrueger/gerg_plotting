@@ -28,15 +28,17 @@ class ScatterPlot(Plotter):
     
     markersize: int | float = field(default=10)
 
-    def format_axes(self):
+    def format_axes(self,xlabel,ylabel,invert_yaxis:bool=False):
         """
         Method to format the axes.
 
         This method can be extended to apply more specific formatting to the axes, like setting labels, 
         tick formatting, gridlines, etc.
         """
-        self.ax.yaxis  # Placeholder for additional formatting logic
-        
+        self.ax.set_xlabel(xlabel=xlabel)
+        self.ax.set_ylabel(ylabel=ylabel)
+        if invert_yaxis:
+            self.ax.invert_yaxis()
     
     def hovmoller(self, var: str, fig=None, ax=None, contours: bool = False) -> None:
         """
@@ -67,6 +69,7 @@ class ScatterPlot(Plotter):
         self.ax.xaxis.set_major_formatter(formatter)  # Set date formatter for x-axis
         matplotlib.pyplot.xticks(rotation=60, fontsize='small')  # Rotate x-axis labels for readability
         self.add_colorbar(sc, var=var)  # Add colorbar to the plot
+        self.format_axes(xlabel=self.data.time.get_label(),ylabel=self.data.depth.get_label())
 
     def check_ts(self, color_var: str = None) -> None:
         """
@@ -109,8 +112,7 @@ class ScatterPlot(Plotter):
             cs = self.ax.contour(Sg, Tg, sigma_theta, colors='grey', zorder=1, linestyles='dashed')
             matplotlib.pyplot.clabel(cs, fontsize=10, inline=True, fmt='%.1f')  # Add contour labels
 
-        self.ax.set_xlabel(self.data.salinity.get_label())
-        self.ax.set_ylabel(self.data.temperature.get_label())
+        self.format_axes(xlabel=self.data.salinity.get_label(),ylabel=self.data.temperature.get_label())
         self.ax.set_title('T-S Diagram', fontsize=14, fontweight='bold')  # Add title
         self.ax.xaxis.set_major_locator(MaxNLocator(nbins=6))  # Set x-axis tick formatting
         self.ax.yaxis.set_major_locator(MaxNLocator(nbins=8))
@@ -187,7 +189,7 @@ class ScatterPlot(Plotter):
         
         self.add_colorbar(sc, color_var)  # Add a colorbar to the plot
 
-    def var_var(self, x: str, y: str, color_var: str | None = None, fig=None, ax=None) -> None:
+    def scatter(self, x: str, y: str, color_var: str | None = None, invert_yaxis:bool=False, fig=None, ax=None) -> None:
         """
         Create a scatter plot of two variables `x` and `y`, with optional coloring by a third variable.
         
@@ -210,9 +212,11 @@ class ScatterPlot(Plotter):
                 cmap=self.get_cmap(color_var)
             )  # Scatter plot with color representing `color_var`
             self.add_colorbar(sc, var=color_var)  # Add colorbar
-            self.format_axes()  # Apply any additional axis formatting
+            
         else:
             self.ax.scatter(self.data[x].data, self.data[y].data)  # Scatter plot without color variable
+
+        self.format_axes(xlabel=self.data[x].get_label(),ylabel=self.data[y].get_label(),invert_yaxis=invert_yaxis)
 
     def cross_section(self, longitude, latitude) -> None:
         """
@@ -269,3 +273,4 @@ class ScatterPlot(Plotter):
                                         pivot='tail', scale=quiver_scale, units='height')
         # Add the colorbar
         self.add_colorbar(mappable,'speed')
+        self.format_axes(xlabel=self.data[x].get_label(),ylabel=self.data[y].get_label())
