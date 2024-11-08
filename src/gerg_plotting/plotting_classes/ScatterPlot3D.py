@@ -80,7 +80,8 @@ class ScatterPlot3D(Plotter3D):
             raise ValueError(f'var must be either None or one of {self.data}')
         
         # Revert depth scaling back to original
-        self.data['depth'].data = self.data['depth'].data * vertical_scalar
+        if vertical_scalar is not None:
+            self.data['depth'].data = self.data['depth'].data * vertical_scalar
 
     def _add_bathy(self, fig, bounds_padding, vertical_scaler=None):
         """
