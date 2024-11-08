@@ -4,7 +4,7 @@ import numpy as np
 import mayavi.core.scene
 import mayavi.mlab as mlab
 
-from gerg_plotting.data_classes.SpatialInstruments import SpatialInstrument
+from gerg_plotting.data_classes.SpatialInstruments import SpatialInstrument,Bathy
 
 
 @define
@@ -12,12 +12,14 @@ class Plotter3D:
     '''Wrapper around Mayavi'''
     data: SpatialInstrument
 
-    figsize:tuple = field(init=False)
+    bathy: Bathy = field(default=None)
 
-    def init_figure(self,fig=None,figsize=(1920,1080)):
+    fig:mayavi.core.scene.Scene = field(default=None)
+    figsize:tuple = field(default=(1920,1080))
+
+    def init_figure(self,fig=None):
         if fig is None:
-            fig = mlab.figure(size=figsize)
-            self.figsize = figsize
+            fig = mlab.figure(size=self.figsize)
         elif isinstance(fig,mayavi.core.scene.Scene):
             fig = fig
         else:
@@ -124,7 +126,7 @@ class Plotter3D:
             colorbar.scalar_bar_representation.position2 = [pos2[0] + x_pos2_offset, pos2[1] + y_pos2_offset]
 
 
-    def add_colormap(self, mappable, cmap_title,over_color=None,x_pos1_offset=None,y_pos1_offset=None,x_pos2_offset=None,y_pos2_offset=None,cmap=None):
+    def add_colorbar(self, mappable, cmap_title,over_color=None,x_pos1_offset=None,y_pos1_offset=None,x_pos2_offset=None,y_pos2_offset=None,cmap=None):
         """
         Adds a colormap to a 3D point cloud plot and attaches a formatted vertical colorbar with a title.
 
