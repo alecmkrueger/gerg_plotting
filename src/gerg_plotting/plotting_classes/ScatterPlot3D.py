@@ -16,9 +16,6 @@ from gerg_plotting.data_classes.SpatialInstruments import Bathy
 @define
 class ScatterPlot3D(Plotter3D):
 
-    fig:mayavi.core.scene.Scene = field(default=None)
-    figsize:tuple = field(default=(1920,1080))
-
     def show(self):
         mlab.show()
 
@@ -37,7 +34,9 @@ class ScatterPlot3D(Plotter3D):
             points = mlab.points3d(self.data.lon.data,self.data.lat.data,self.data.depth.data,self.data[var].data,
                         mode='sphere',resolution=8,scale_factor=point_size,vmax=self.data[var].vmax,vmin=self.data[var].vmin,figure=self.fig)
             points.glyph.scale_mode = 'scale_by_vector'
-            self.add_colormap(mappable=points,cmap_title=self.data[var].get_label(),x_pos1_offset=0.04,y_pos1_offset=0,x_pos2_offset=-0.02,y_pos2_offset=0.01)
+            self.add_colorbar(mappable=points,cmap_title=self.data[var].get_label(),
+                              x_pos1_offset=0.04,y_pos1_offset=0,x_pos2_offset=-0.02,y_pos2_offset=0.01,
+                              cmap=self.data[var].cmap)
         else:
             if vertical_scalar is not None:
                 self.data['depth'].data = self.data['depth'].data*vertical_scalar
@@ -46,9 +45,10 @@ class ScatterPlot3D(Plotter3D):
         
     def _add_bathy(self,fig,bounds_padding,vertical_scaler=None):
         # Get bathymetry data
-        # print(f'{self.data.detect_bounds(bounds_padding=bounds_padding) = }')
-        bathy_class = Bathy(bounds=self.data.detect_bounds(bounds_padding=bounds_padding))
-        x_bathy,y_bathy,z_bathy = bathy_class.get_bathy()
+        if self.bathy is None:
+            bounds = self.data.detect_bounds(bounds_padding=bounds_padding)
+            self.bathy = Bathy(bounds=bounds)
+        x_bathy,y_bathy,z_bathy = self.bathy.get_bathy()
 
         # Rescale depth
         if vertical_scaler is not None:
@@ -61,11 +61,11 @@ class ScatterPlot3D(Plotter3D):
         bathy_cmap = cmocean.tools.crop_by_percent(bathy_cmap,25,'max')
         bathy_cmap = cmocean.tools.crop_by_percent(bathy_cmap,18,'min')
 
-        self.add_colormap(mappable=bathy,cmap_title=bathy_class.get_label(),over_color=land_color,x_pos1_offset=0.04,y_pos1_offset=0,x_pos2_offset=-0.02,y_pos2_offset=0.01)
+        self.add_colorbar(mappable=bathy,cmap_title=self.bathy.get_label(),over_color=land_color,x_pos1_offset=0.04,y_pos1_offset=0,x_pos2_offset=-0.02,y_pos2_offset=0.01,cmap=bathy_cmap)
 
         # bathy.module_manager.scalar_lut_manager.lut.table = self.convert_colormap(bathy_cmap,over_color=land_color)
         # Add and format colorbar
-        # bathy_colorbar = mlab.colorbar(bathy, orientation='vertical',title=bathy_class.get_label(),label_fmt='%0.1f',nb_labels=6)  # Add colorbar
+        # bathy_colorbar = mlab.colorbar(bathy, orientation='vertical',title=self.bathy.get_label(),label_fmt='%0.1f',nb_labels=6)  # Add colorbar
         # bathy_colorbar.scalar_bar_representation.position = [0.89, 0.15]  # Adjust position
         # self.format_colorbar(bathy_colorbar,frame_height=self.settings.figsize[1])
         # pos1 = bathy_colorbar.scalar_bar_representation.position
