@@ -33,7 +33,6 @@ class Plotter:
     '''
     
     data: SpatialInstrument
-    bounds: Bounds | None = field(default=None)
     bounds_padding: float = field(default=0)
 
     fig: matplotlib.figure.Figure = field(default=None)
@@ -45,9 +44,9 @@ class Plotter:
     cbar_nbins: int = field(default=5)
     cbar_kwargs: dict = field(default={})
 
-    def __attrs_post_init__(self):
-        '''Post-initialization step to automatically detect bounds after the object is created.'''
-        self.detect_bounds()
+    # def __attrs_post_init__(self):
+    #     '''Post-initialization step to automatically detect bounds after the object is created.'''
+    #     self.data.detect_bounds(self.bounds_padding)
 
     def init_figure(self, fig=None, ax=None, three_d=False, geography=False) -> None:
         '''
@@ -96,37 +95,6 @@ class Plotter:
                 self.ax.remove()  # Remove existing 2D axis
                 gs = self.ax.get_gridspec()  # Get grid specification
                 self.ax = fig.add_subplot(gs.nrows, gs.ncols, index, projection='3d')
-
-    def detect_bounds(self) -> None:
-        '''
-        Detect the geographic bounds of the instrument data, applying padding if specified.
-        
-        Raises:
-            ValueError: If the instrument is not of type SpatialInstrument.
-        '''
-        if isinstance(self.data, SpatialInstrument):
-            if self.bounds is None:
-                # Detect and calculate the lat/lon bounds with padding
-                if isinstance(self.data.lat, Variable) and isinstance(self.data.lon, Variable):
-                    if self.data.lat is not None:
-                        lat_min, lat_max = calculate_pad(self.data.lat.data, pad=self.bounds_padding)
-                    else:
-                        lat_min, lat_max = None, None
-                    if self.data.lon is not None:
-                        lon_min, lon_max = calculate_pad(self.data.lon.data, pad=self.bounds_padding)
-                    else:
-                        lon_min, lon_max = None, None
-                    # Set the bounds
-                    self.bounds = Bounds(
-                        lat_min=lat_min,
-                        lat_max=lat_max,
-                        lon_min=lon_min,
-                        lon_max=lon_max,
-                        depth_bottom=None,
-                        depth_top=None
-                    )
-        else:
-            raise ValueError(f'Must pass an instrument of type SpatialInstrument, you passed {type(self.data) = }')
 
     def get_cmap(self, color_var: str) -> Colormap:
         '''
