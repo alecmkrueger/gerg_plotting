@@ -58,7 +58,9 @@ class ScatterPlot(Plotter):
             self.data.depth.data,
             c=self.data[var].data,
             cmap=self.data[var].cmap,
-            s=self.markersize
+            s=self.markersize,
+            vmin = self.data[var].vmin,
+            vmax = self.data[var].vmax
         )  # Create scatter plot with color mapped to `var`
         
         self.ax.invert_yaxis()  # Invert the y-axis to have depth increasing downward
@@ -184,7 +186,9 @@ class ScatterPlot(Plotter):
             c=color_data,
             s=self.markersize,
             marker='.',
-            cmap=cmap
+            cmap=cmap,
+            vmin = self.data[color_var].vmin,
+            vmax = self.data[color_var].vmax
         )  # Scatter plot with color representing `color_var`
         
         self.add_colorbar(sc, color_var)  # Add a colorbar to the plot
@@ -209,7 +213,9 @@ class ScatterPlot(Plotter):
                 self.data[x].data,
                 self.data[y].data,
                 c=self.data[color_var].data,
-                cmap=self.get_cmap(color_var)
+                cmap=self.get_cmap(color_var),
+                vmin = self.data[color_var].vmin,
+                vmax = self.data[color_var].vmax
             )  # Scatter plot with color representing `color_var`
             self.add_colorbar(sc, var=color_var)  # Add colorbar
             
