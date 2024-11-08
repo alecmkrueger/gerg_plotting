@@ -1,4 +1,3 @@
-import cartopy.mpl.geoaxes
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import matplotlib.pyplot as plt
 import matplotlib.axes as maxes
@@ -10,6 +9,8 @@ import datetime
 import random
 import cartopy
 from typing import Iterable
+from matplotlib.colors import ListedColormap
+
 
 def lat_min_smaller_than_max(instance, attribute, value):
     if value is not None:
@@ -155,6 +156,34 @@ def get_sigma_theta(salinity:np.ndarray,temperature:np.ndarray,cnt:bool=False):
 
 def get_density(salinity,temperature):
     return gsw.sigma0(salinity, temperature)
+
+
+def get_turner_cmap():
+    # Define the number of colors
+    n_colors = 256
+
+    # Create an array of RGBA colors from an existing colormap, here 'viridis'
+    viridis = plt.cm.get_cmap('viridis', n_colors)
+    newcolors = viridis(np.linspace(0, 1, n_colors))
+
+    # Define colors for each range
+    red = np.array([1, 0, 0, 1])       # RGBA for red
+    yellow = np.array([1, 1, 0, 1])    # RGBA for yellow
+    green = np.array([0, 1, 0, 1])     # RGBA for green
+    blue = np.array([0, 0, 1, 1])      # RGBA for blue
+
+    # Assign colors to specific ranges
+    newcolors[:int(256 * 0.125)] = red    # Values below -90
+    newcolors[int(256 * 0.125):int(256 * 0.375)] = yellow  # Values between -90 and -45
+    newcolors[int(256 * 0.375):int(256 * 0.625)] = green   # Values between -45 and 45
+    newcolors[int(256 * 0.625):int(256 * 0.875)] = blue    # Values between 45 and 90
+    newcolors[int(256 * 0.875):] = red    # Values above 90
+
+    # Create the ListedColormap
+    newcmp = ListedColormap(newcolors)
+
+    return newcmp
+
 
 def print_time(value: int = None, intervals: list = [10,50,100,500,1000]):
     """
