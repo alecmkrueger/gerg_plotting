@@ -12,9 +12,12 @@ class Plotter3D:
     '''Wrapper around Mayavi'''
     data: SpatialInstrument
 
+    figsize:tuple = field(init=False)
+
     def init_figure(self,fig=None,figsize=(1920,1080)):
         if fig is None:
             fig = mlab.figure(size=figsize)
+            self.figsize = figsize
         elif isinstance(fig,mayavi.core.scene.Scene):
             fig = fig
         else:
@@ -53,93 +56,94 @@ class Plotter3D:
     def __repr__(self):
         '''Return a pretty-printed string representation of the class attributes.'''
         return pformat(asdict(self),width=1)
+
     
-import numpy as np
-from mayavi import mlab
+    def convert_colormap(self, colormap, over_color=None, under_color=None) -> np.ndarray:
+        """
+        Converts a colormap to an array of colors scaled to 0-255 (uint8) format, with optional customization
+        of the first (under_color) and last (over_color) colors in the array.
 
-def convert_colormap(self, colormap, over_color=None, under_color=None) -> np.ndarray:
-    """
-    Converts a colormap to an array of colors scaled to 0-255 (uint8) format, with optional customization
-    of the first (under_color) and last (over_color) colors in the array.
+        Parameters:
+            colormap (Callable): A callable that generates colors, usually a Matplotlib colormap function.
+            over_color (tuple, optional): A color to assign to the highest value in the colormap (e.g., (255, 0, 0) for red).
+            under_color (tuple, optional): A color to assign to the lowest value in the colormap.
 
-    Parameters:
-        colormap (Callable): A callable that generates colors, usually a Matplotlib colormap function.
-        over_color (tuple, optional): A color to assign to the highest value in the colormap (e.g., (255, 0, 0) for red).
-        under_color (tuple, optional): A color to assign to the lowest value in the colormap.
+        Returns:
+            np.ndarray: An array of colors where each entry is a color in RGBA format (scaled to 0-255) as uint8.
+        """
+        # Create the colormap array by iterating over 256 color points
+        colormap_array = np.array([colormap(i) for i in range(256)])
+        # Scale color values from [0,1] range to [0,255] for uint8 compatibility
+        colormap_array *= 255
+        # Convert color array to uint8 for compatibility with visualization libraries
+        colormap_array = colormap_array.astype(np.uint8)
 
-    Returns:
-        np.ndarray: An array of colors where each entry is a color in RGBA format (scaled to 0-255) as uint8.
-    """
-    # Create the colormap array by iterating over 256 color points
-    colormap_array = np.array([colormap(i) for i in range(256)])
-    # Scale color values from [0,1] range to [0,255] for uint8 compatibility
-    colormap_array *= 255
-    # Convert color array to uint8 for compatibility with visualization libraries
-    colormap_array = colormap_array.astype(np.uint8)
+        # Apply the under_color if specified, replacing the lowest color
+        if under_color is not None:
+            colormap_array[0] = under_color
 
-    # Apply the under_color if specified, replacing the lowest color
-    if under_color is not None:
-        colormap_array[0] = under_color
+        # Apply the over_color if specified, replacing the highest color
+        if over_color is not None:
+            colormap_array[-1] = over_color
 
-    # Apply the over_color if specified, replacing the highest color
-    if over_color is not None:
-        colormap_array[-1] = over_color
-
-    return colormap_array
+        return colormap_array
 
 
-def format_colorbar(colorbar, frame_height=1080):
-    """
-    Formats a colorbar to adapt font sizes and colors based on frame height, improving readability and aesthetics.
+    def format_colorbar(self,colorbar,x_pos1_offset,y_pos1_offset,x_pos2_offset,y_pos2_offset):
+        """
+        Formats a colorbar to adapt font sizes and colors based on frame height, improving readability and aesthetics.
 
-    Parameters:
-        colorbar (mayavi.modules.scalarbar.ScalarBar): The colorbar object to be formatted.
-        frame_height (int, optional): The height of the display frame, used to scale font sizes. Default is 1080.
-    """
-    # Calculate font size based on frame height for adaptive scaling
-    fontsize = round(((frame_height / 400) ** 1.8) + 11)
-    fontcolor = (0, 0, 0)  # Set text color to black
+        Parameters:
+            colorbar (mayavi.modules.scalarbar.ScalarBar): The colorbar object to be formatted.
+        """
+        # Calculate font size based on frame height for adaptive scaling
+        fontsize = round(((self.figsize[1] / 400) ** 1.8) + 11)
+        fontcolor = (0, 0, 0)  # Set text color to black
 
-    # Enable dynamic font scaling
-    colorbar.scalar_bar.unconstrained_font_size = True
+        # Enable dynamic font scaling
+        colorbar.scalar_bar.unconstrained_font_size = True
 
-    # Set label text font size and color
-    colorbar.scalar_bar.label_text_property.font_size = fontsize
-    colorbar.scalar_bar.label_text_property.color = fontcolor
+        # Set label text font size and color
+        colorbar.scalar_bar.label_text_property.font_size = fontsize
+        colorbar.scalar_bar.label_text_property.color = fontcolor
 
-    # Set title text font size, color, and alignment properties
-    colorbar.title_text_property.font_size = fontsize
-    colorbar.title_text_property.color = fontcolor
-    colorbar.title_text_property.line_offset = -7  # Adjust offset for better alignment
-    colorbar.title_text_property.line_spacing = 10
-    colorbar.title_text_property.vertical_justification = 'top'
+        # Set title text font size, color, and alignment properties
+        colorbar.title_text_property.font_size = fontsize
+        colorbar.title_text_property.color = fontcolor
+        colorbar.title_text_property.line_offset = -7  # Adjust offset for better alignment
+        colorbar.title_text_property.line_spacing = 10
+        colorbar.title_text_property.vertical_justification = 'top'
 
-    # Adjust colorbar's size and position slightly for aesthetic refinement
-    pos2 = colorbar.scalar_bar_representation.position2
-    colorbar.scalar_bar_representation.position2 = [pos2[0] - 0.02, pos2[1] - 0.01]
+        # Adjust colorbar's size and position slightly for aesthetic refinement
+        if x_pos1_offset is not None or y_pos1_offset is not None:  # Check if an offset is provided
+            pos1 = colorbar.scalar_bar_representation.position
+            colorbar.scalar_bar_representation.position = [pos1[0] + x_pos1_offset, pos1[1] + y_pos1_offset]
+
+        if x_pos2_offset is not None or y_pos2_offset is not None:  # Check if an offset is provided
+            pos2 = colorbar.scalar_bar_representation.position2
+            colorbar.scalar_bar_representation.position2 = [pos2[0] + x_pos2_offset, pos2[1] + y_pos2_offset]
 
 
-def add_colormap(self, points, cmap_title, cmap=None):
-    """
-    Adds a colormap to a 3D point cloud plot and attaches a formatted vertical colorbar with a title.
+    def add_colormap(self, mappable, cmap_title,x_pos1_offset=None,y_pos1_offset=None,x_pos2_offset=None,y_pos2_offset=None,cmap=None):
+        """
+        Adds a colormap to a 3D point cloud plot and attaches a formatted vertical colorbar with a title.
 
-    Parameters:
-        points (mayavi.modules.glyph.Glyph): The 3D points to which the colormap will be applied.
-        cmap_title (str): Title for the colorbar, indicating the variable represented by the colors.
-        cmap (Callable, optional): A colormap function to use. If None, the default colormap is applied.
-    """
-    # Apply custom colormap if provided, converting to compatible color format
-    if cmap is not None:
-        points.module_manager.scalar_lut_manager.lut.table = self.convert_colormap(cmap)
+        Parameters:
+            points (mayavi.modules.glyph.Glyph): The 3D points to which the colormap will be applied.
+            cmap_title (str): Title for the colorbar, indicating the variable represented by the colors.
+            cmap (Callable, optional): A colormap function to use. If None, the default colormap is applied.
+        """
+        # Apply custom colormap if provided, converting to compatible color format
+        if cmap is not None:
+            mappable.module_manager.scalar_lut_manager.lut.table = self.convert_colormap(cmap)
 
-    # Add a colorbar with custom title, label format, and vertical orientation
-    var_colorbar = mlab.colorbar(points, orientation='vertical', title=cmap_title, label_fmt='%0.1f', nb_labels=6)
-    var_colorbar.scalar_bar_representation.proportional_resize = True  # Enable proportional resizing
+        # Add a colorbar with custom title, label format, and vertical orientation
+        colorbar = mlab.colorbar(mappable, orientation='vertical', title=cmap_title, label_fmt='%0.1f', nb_labels=6)
+        colorbar.scalar_bar_representation.proportional_resize = True  # Enable proportional resizing
 
-    # Format the colorbar for improved readability and consistency
-    self.format_colorbar(var_colorbar, frame_height=self.settings.figsize[1])
+        # Format the colorbar for improved readability and consistency
+        self.format_colorbar(colorbar,
+                             x_pos1_offset=x_pos1_offset,y_pos1_offset=y_pos1_offset,
+                             x_pos2_offset=x_pos2_offset, y_pos2_offset=y_pos2_offset)
 
-    # Adjust colorbar position slightly for better layout alignment
-    pos2 = var_colorbar.scalar_bar_representation.position2
-    var_colorbar.scalar_bar_representation.position2 = [pos2[0] - 0.02, pos2[1] - 0.01]
 
