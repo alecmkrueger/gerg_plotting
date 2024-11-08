@@ -68,14 +68,14 @@ data['lat'] = Variable(data = lats, name='lat', cmap=cmocean.cm.haline, units='Â
 
 # Assigning a variable that is a non-default/custom variable is simple:
 # First we must initialize the variable
-# Init speed_of_sound Variable object
-speed_of_sound = Variable(data=df['speed_of_sound'],name='speed_of_sound',cmap=cmocean.cm.thermal,units='m/s',label='Speed of Sound (m/s)')
-# Add the speed_of_sound Variable object to the Data object
-data.add_custom_variable(speed_of_sound)
+# Init Turner_Rsubrho Variable object
+Turner_Rsubrho = Variable(data=df['Turner_Rsubrho'],name='Turner_Rsubrho',cmap=cmocean.cm.thermal,units='m/s',label='Speed of Sound (m/s)')
+# Add the Turner_Rsubrho Variable object to the Data object
+data.add_custom_variable(Turner_Rsubrho)
 
 # We need to remove the old custom variable first before reassignment using the add_custom_variable method, otherwise we can use the base assignment methods
-data.remove_custom_variable('speed_of_sound')
+data.remove_custom_variable('Turner_Rsubrho')
 # We can also add custom variables in one line:
-data.add_custom_variable(Variable(data=df['speed_of_sound'],name='speed_of_sound',cmap=cmocean.cm.thermal,units='m/s',label='Speed of Sound (m/s)'))
+data.add_custom_variable(Variable(data=df['Turner_Rsubrho'],name='Turner_Rsubrho',cmap=cmocean.cm.thermal,units='m/s',label='Speed of Sound (m/s)'))
 
 print(data)
