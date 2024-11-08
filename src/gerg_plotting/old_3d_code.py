@@ -12,6 +12,19 @@ from datetime import datetime
 import glob
 from Scripts.Utils.utils import img2mov,generate_unique_filename,add_keys,format_colorbar,get_map_bounds,get_bathy,set_ssh_bounds,get_ssh # type: ignore
 
+def get_colormap(colormap,over_color=None,under_color=None) -> np.ndarray:
+    # Create the colormap array
+    colormap_array = np.array([colormap(i) for i in range(256)])
+    # Scale the color values to 0-1 range
+    colormap_array *= 255
+    # Convert the dtype to uint8
+    colormap_array = colormap_array.astype(np.uint8)
+    if under_color is not None:
+        colormap_array[0] = under_color
+    if over_color is not None:
+        colormap_array[-1] = over_color
+    
+    return colormap_array
 
 @define
 class Glider:
