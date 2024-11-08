@@ -12,6 +12,6 @@ data = Data(lat=df['latitude'],lon=df['longitude'],depth=df['pressure'],time=df[
 
 # Init the 3-d scatter plot
 three_d = ScatterPlot3D(data)
-three_d.map(var='temperature',vertical_scalar=1000)
+three_d.map(var='temperature',vertical_scalar=-1000)
 # fig = three_d.fig
 # three_d.plot('temperature',fig=fig)

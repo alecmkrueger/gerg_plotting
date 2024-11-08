@@ -61,7 +61,7 @@ class ScatterPlot3D(Plotter3D):
         bathy_cmap = cmocean.tools.crop_by_percent(bathy_cmap,25,'max')
         bathy_cmap = cmocean.tools.crop_by_percent(bathy_cmap,18,'min')
 
-        self.add_colormap(mappable=bathy,cmap_title=bathy_class.get_label(),x_pos1_offset=0.04,y_pos1_offset=0,x_pos2_offset=-0.02,y_pos2_offset=0.01)
+        self.add_colormap(mappable=bathy,cmap_title=bathy_class.get_label(),over_color=land_color,x_pos1_offset=0.04,y_pos1_offset=0,x_pos2_offset=-0.02,y_pos2_offset=0.01)
 
         # bathy.module_manager.scalar_lut_manager.lut.table = self.convert_colormap(bathy_cmap,over_color=land_color)
         # Add and format colorbar

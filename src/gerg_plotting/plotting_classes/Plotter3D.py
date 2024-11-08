@@ -124,7 +124,7 @@ class Plotter3D:
             colorbar.scalar_bar_representation.position2 = [pos2[0] + x_pos2_offset, pos2[1] + y_pos2_offset]
 
 
-    def add_colormap(self, mappable, cmap_title,x_pos1_offset=None,y_pos1_offset=None,x_pos2_offset=None,y_pos2_offset=None,cmap=None):
+    def add_colormap(self, mappable, cmap_title,over_color=None,x_pos1_offset=None,y_pos1_offset=None,x_pos2_offset=None,y_pos2_offset=None,cmap=None):
         """
         Adds a colormap to a 3D point cloud plot and attaches a formatted vertical colorbar with a title.
 
@@ -135,7 +135,7 @@ class Plotter3D:
         """
         # Apply custom colormap if provided, converting to compatible color format
         if cmap is not None:
-            mappable.module_manager.scalar_lut_manager.lut.table = self.convert_colormap(cmap)
+            mappable.module_manager.scalar_lut_manager.lut.table = self.convert_colormap(cmap,over_color=over_color)
 
         # Add a colorbar with custom title, label format, and vertical orientation
         colorbar = mlab.colorbar(mappable, orientation='vertical', title=cmap_title, label_fmt='%0.1f', nb_labels=6)
