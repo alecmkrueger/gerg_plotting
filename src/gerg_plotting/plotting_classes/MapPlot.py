@@ -33,12 +33,12 @@ class MapPlot(Plotter):
     cbar_bathy: matplotlib.colorbar.Colorbar = field(init=False)  # Colorbar for bathymetry data
     grid_spacing: int = field(default=1)  # Spacing of the gridlines on the map in degrees
 
-    def __attrs_post_init__(self):
-        """
-        Post-initialization method. This is automatically called after the object is created.
-        Calls the parent's post-init and initializes bathymetry if not provided.
-        """
-        super().__attrs_post_init__()
+    # def __attrs_post_init__(self):
+    #     """
+    #     Post-initialization method. This is automatically called after the object is created.
+    #     Calls the parent's post-init and initializes bathymetry if not provided.
+    #     """
+    #     super().__attrs_post_init__()
 
     def init_bathy(self):
         """
@@ -46,7 +46,7 @@ class MapPlot(Plotter):
         If no bathymetry object is passed, it creates one based on the current map bounds.
         """
         if not isinstance(self.bathy, Bathy):
-            self.bathy = Bathy(bounds=self.bounds)
+            self.bathy = Bathy(bounds=self.data.bounds)
 
     def set_up_map(self, fig, ax, var):
         """
@@ -72,9 +72,9 @@ class MapPlot(Plotter):
             color = color_var_values  # Color is determined by the variable data
             cmap = self.get_cmap(var)  # Get the appropriate colormap for the variable
         
-        if self.bounds is not None:
-            self.ax.set_extent([self.bounds.lon_min, self.bounds.lon_max,
-                                self.bounds.lat_min, self.bounds.lat_max])  # Set map extent
+        if self.data.bounds is not None:
+            self.ax.set_extent([self.data.bounds.lon_min, self.data.bounds.lon_max,
+                                self.data.bounds.lat_min, self.data.bounds.lat_max])  # Set map extent
         
         divider = make_axes_locatable(self.ax)  # Create a divider for colorbars
         return color, cmap, divider
