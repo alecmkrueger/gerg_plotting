@@ -5,7 +5,8 @@ import cmocean
 import copy
 import pandas as pd
 
-from gerg_plotting.data_classes.NonSpatialInstruments import Variable
+from gerg_plotting.data_classes.NonSpatialInstruments import Variable,Bounds
+from gerg_plotting.utils import calculate_pad
 
 
 @define(slots=False)
@@ -15,6 +16,9 @@ class SpatialInstrument:
     lon: Iterable|Variable|None = field(default=None)
     depth: Iterable|Variable|None = field(default=None)
     time: Iterable|Variable|None = field(default=None)
+
+    # Bounds
+    bounds:Bounds = field(default=None)
     
     # Custom variables dictionary to hold dynamically added variables
     custom_variables: dict = field(factory=dict)
@@ -90,6 +94,35 @@ class SpatialInstrument:
         if self.time is not None:
             if self.time.data is not None:
                 self.time.data = self.time.data.astype('datetime64')
+
+    def detect_bounds(self,bounds_padding) -> None:
+        '''
+        Detect the geographic bounds of the instrument data, applying padding if specified.
+        
+        Raises:
+            ValueError: If the instrument is not of type SpatialInstrument.
+        '''
+        if self.bounds is None:
+            # Detect and calculate the lat bounds with padding
+            if self.lat is not None:
+                lat_min, lat_max = calculate_pad(self.lat.data, pad=bounds_padding)
+            else:
+                lat_min, lat_max = None, None
+            # Detect and calculate the lon bounds with padding
+            if self.lon is not None:
+                lon_min, lon_max = calculate_pad(self.lon.data, pad=bounds_padding)
+            else:
+                lon_min, lon_max = None, None
+            # Set the bounds
+            self.bounds = Bounds(
+                lat_min=lat_min,
+                lat_max=lat_max,
+                lon_min=lon_min,
+                lon_max=lon_max,
+                depth_bottom=None,
+                depth_top=None
+            )
+        return self.bounds
 
     def add_custom_variable(self, variable: Variable):
         """Adds a custom Variable object and makes it accessible via both dot and dict syntax."""
