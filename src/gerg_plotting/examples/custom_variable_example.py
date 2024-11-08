@@ -1,20 +1,22 @@
-from gerg_plotting import Data,MapPlot,Bounds,ScatterPlot,Histogram,Variable
+from gerg_plotting import ScatterPlot,Histogram,Variable,data_from_df,ScatterPlot3D
+from gerg_plotting.utils import get_turner_cmap
 import pandas as pd
-import cmocean
 
 # Let's read in the example data
-df = pd.read_csv('example_data/sample_glider_data.csv')
+df = pd.read_csv('example_data/sample_glider_data_test.csv')
 
 # Let's initilize the data object
-data = Data(lat=df['latitude'],lon=df['longitude'],depth=df['pressure'],time=df['time'],
-            salinity=df['salinity'],temperature=df['temperature'],density=df['density'])
+data = data_from_df(df)
 
+cmap = get_turner_cmap()
 
-# Init speed_of_sound Variable object
-speed_of_sound = Variable(data=df['speed_of_sound'],name='speed_of_sound',cmap=cmocean.cm.thermal,units='m/s',label='Speed of Sound (m/s)')
-# Add the speed_of_sound Variable object to the Data object
-data.add_custom_variable(speed_of_sound)
+# Init Turner_Rsubrho Variable object
+Turner_Rsubrho = Variable(data=df['Turner_Rsubrho'],name='Turner_Rsubrho',cmap=cmap,units='m/s',vmin=-90,vmax=90)
+# Add the Turner_Rsubrho Variable object to the Data object
+data.add_custom_variable(Turner_Rsubrho)
 # Test by plotting a histogram
-Histogram(data).plot(var='speed_of_sound')
+Histogram(data).plot(var='Turner_Rsubrho')
 # Plot hovmoller 
-ScatterPlot(data).hovmoller(var='speed_of_sound')
+ScatterPlot(data).hovmoller(var='Turner_Rsubrho')
+# Plot 3d map
+ScatterPlot3D(data).map(var='Turner_Rsubrho',vertical_scalar=-1000)
