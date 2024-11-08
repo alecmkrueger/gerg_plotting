@@ -10,7 +10,7 @@ from gerg_plotting.data_classes.SpatialInstruments import SpatialInstrument
 @define
 class Plotter3D:
     '''Wrapper around Mayavi'''
-    instrument: SpatialInstrument
+    data: SpatialInstrument
 
     def init_figure(self,fig=None,figsize=(1920,1080)):
         if fig is None:
