@@ -207,7 +207,8 @@ class ScatterPlot(Plotter):
         Args:
             x: x-axis variable for the quiver.
         """
-        self.init_figure(fig=fig,ax=ax)
+        self.init_figure(fig=fig,ax=ax,figsize=(15,5))
+        self.check_for_vars([x,'u','v','speed'])
         # Get the data slice step size using the quiver_density value
         if quiver_density is not None:
             step = self.calculate_quiver_step(len(self.data.u.data),quiver_density)
@@ -222,6 +223,7 @@ class ScatterPlot(Plotter):
         # Add the colorbar
         self.add_colorbar(mappable,'speed')
         self.format_axes(xlabel=self.data[x].get_label(),ylabel=None)
+        self.ax.get_yaxis().set_visible(False)
 
     def quiver2d(self,x:str,y:str,quiver_density:int=None,quiver_scale:float=None,fig=None,ax=None) -> None:
         """
