@@ -13,6 +13,7 @@ import numpy as np
 
 from gerg_plotting.data_classes.NonSpatialInstruments import NonSpatialInstrument, Variable
 from gerg_plotting.data_classes.SpatialInstrument import SpatialInstrument
+from gerg_plotting.data_classes.SpatialInstruments import Data
 from gerg_plotting.data_classes.NonSpatialInstruments import Bounds
 from gerg_plotting.utils import calculate_range, calculate_pad, colorbar
 
@@ -33,7 +34,7 @@ class Plotter:
         cbar_kwargs (dict): Keyword arguments for colorbar customization.
     '''
     
-    data: SpatialInstrument
+    data: Data
     bounds_padding: float = field(default=0)
 
     fig: matplotlib.figure.Figure = field(default=None)
