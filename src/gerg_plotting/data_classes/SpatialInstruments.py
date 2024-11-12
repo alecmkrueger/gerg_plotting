@@ -1,5 +1,6 @@
 import matplotlib.figure
 import numpy as np
+import math
 import pandas as pd
 from attrs import define,field,asdict
 import matplotlib
@@ -110,6 +111,7 @@ class Data(SpatialInstrument):
     def __attrs_post_init__(self):
         super().__attrs_post_init__()
         self._init_variables()  # Init variables
+        self.calculate_speed()
 
     def _init_variables(self):
         '''Default Variable initialization.
@@ -121,6 +123,16 @@ class Data(SpatialInstrument):
         self._init_variable(var='v', cmap=cmocean.cm.balance, units="m/s", vmin=-5, vmax=5)
         self._init_variable(var='w', cmap=cmocean.cm.balance, units="m/s", vmin=-5, vmax=5)
         self._init_variable(var='speed', cmap=cmocean.cm.speed, units="m/s", vmin=0, vmax=5)
+
+    def calculate_speed(self,include_w:bool=False):
+        if self.speed is None:
+            if include_w:
+                if self.check_for_vars('u','v','w'):
+                    self.speed = math.hypot(self.u.data,self.v.data,self.w.data)
+                    self._init_variable(var='speed', cmap=cmocean.cm.speed, units="m/s", vmin=0, vmax=5)  
+            if self.check_for_vars('u','v'):
+                self.speed = math.hypot(self.u.data,self.v.data)
+                self._init_variable(var='speed', cmap=cmocean.cm.speed, units="m/s", vmin=0, vmax=5)
 
     def calcluate_PSD(self,sampling_freq,segment_length,theta_rad=None):
         '''
