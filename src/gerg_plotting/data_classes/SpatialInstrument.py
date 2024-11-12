@@ -98,6 +98,12 @@ class SpatialInstrument:
             if self.time.data is not None:
                 self.time.data = self.time.data.astype('datetime64')
 
+    def check_for_vars(self,vars:list):
+        for var in vars:
+            if self[var] is None:
+                raise ValueError(f"Data for '{var}' is missing. Make sure the Data object passed contains '{var}'")
+        return True
+
     def date2num(self):
         if self.time is not None:
             if self.time.data is not None:
