@@ -157,32 +157,6 @@ def rotate_vector(u,v,theta_rad):
 def filter_nan(values):
     return values[~np.isnan(values)]
 
-# def calcluate_PSD(sampling_freq,segment_length,u,v,w=None,theta_rad=None):
-#     '''
-#     Calculate the power spectral density using Welch's method
-
-#     segment_length (int): Length of each segment for Welch's method
-#     '''
-#     # Rotate vectors if needed
-#     if theta_rad is not None:
-#         u,v = rotate_vector(u,v,theta_rad)
-
-#     # Filter out NaNs
-#     u = filter_nan(u)
-#     v = filter_nan(v)
-#     if w is not None:
-#         w = filter_nan(w)
-
-#     freq, psd_U = welch(u**2, fs=sampling_freq, nperseg=segment_length)
-#     _, psd_V = welch(v**2, fs=sampling_freq, nperseg=segment_length)
-#     if w is not None:
-#         _, psd_W = welch(w**2, fs=sampling_freq, nperseg=segment_length)
-
-#     if w is None:
-#         return freq,psd_U,psd_V
-#     elif w is not None:
-#         return freq,psd_U,psd_V,psd_W
-
 def get_turner_cmap():
     # Define the number of colors
     n_colors = 256
