@@ -1,6 +1,7 @@
 from attrs import define,field,validators,asdict
 from matplotlib.colors import Colormap
 from typing import Iterable
+import numpy as np
 
 from gerg_plotting.utils import lat_min_smaller_than_max,lon_min_smaller_than_max,is_flat_numpy_array,to_numpy_array
 from gerg_plotting.data_classes.NonSpatialInstrument import NonSpatialInstrument
@@ -16,8 +17,17 @@ class Variable(NonSpatialInstrument):
     label:str = field(default=None)  # Set label to be used on figure and axes, use if desired
 
 
+    def __attrs_post_init__(self):
+        self.get_vmin_vmax()
+
     def get_attrs(self):
         return list(asdict(self).keys())
+    
+    def get_vmin_vmax(self):
+        if self.vmin is None:
+            self.vmin = np.nanmin(self.data)
+        if self.vmax is None:
+            self.vmax = np.nanmax(self.data)
 
     def get_label(self):
         '''Assign the label if it was not passed'''
