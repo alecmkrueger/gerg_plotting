@@ -3,6 +3,7 @@ import matplotlib.axes
 import matplotlib.cm
 import matplotlib.figure
 import matplotlib.pyplot
+import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 from matplotlib.ticker import MaxNLocator
 import numpy as np
@@ -263,22 +264,25 @@ class ScatterPlot(Plotter):
         '''
         # Check if the proper values were passed
         if psd_freq is None and psd is None and sampling_freq is None and segment_length is None:
+            # Check if 
             raise ValueError('You must pass either [psd_freq and psd] or [sampling_freq, segment_length, and theta_rad (optional)]')  
              
         # Calculate the power spectra density
         if psd_freq is None or psd is None:
             self.data.calcluate_PSD(sampling_freq,segment_length,theta_rad)
-        if psd_freq is not None and psd_freq is not None:
-            self.data.add_custom_variable(Variable(psd_freq,name='psd_freq'),exist_ok=True)
-            self.data.add_custom_variable(Variable(psd,name=f'psd_{var_name}'),exist_ok=True)
+        elif psd_freq is not None and psd_freq is not None:
+            self.data.add_custom_variable(Variable(psd_freq,name='psd_freq',units='cpd',label='Power Spectra Density Frequency (cpd)'),exist_ok=True)
+            self.data.add_custom_variable(Variable(psd,name=f'psd_{var_name}',units='cm²/s²/cpd',label='Power Spectra Density V (cm²/s²/cpd)'),exist_ok=True)
 
         self.init_figure(fig=fig,ax=ax)
-        self.ax.plot(psd_freq, psd, color='blue')
-        self.ax.set_xlabel("Frequency [cpd]")
-        self.ax.set_ylabel("Power Spectral Density [cm²/s²/cpd]")
+        self.ax.plot(self.data.psd_freq.data, self.data[f'psd_{var_name}'].data, color='blue')
+        self.ax.set_xlabel(self.data.psd_freq.get_label())
+        self.ax.set_ylabel(self.data[f'psd_{var_name}'].get_label())
         self.ax.set_yscale("log")  # Log scale for PSD
         self.ax.set_xscale("log")  # Log scale for frequency
         self.ax.grid(True, which="both", linestyle="--", linewidth=0.5)
-        for highlight_freq in highlight_freqs:
-            self.ax.axvline(highlight_freq, color='red', linestyle='--', linewidth=1, label=f'{highlight_freq:.3f} cpd' if highlight_freq == highlight_freqs[0] else "")
+        # Add highlight freqencies
+        _ = [self.ax.axvline(highlight_freq, color=plt.get_cmap('tab10')(idx), linestyle='--', linewidth=1, label=f'{highlight_freq:.3f} cpd') for idx,highlight_freq in enumerate(highlight_freqs)]
+
         self.ax.legend()
+        self.fig.suptitle(f'Power Spectra Density',fontsize=22)
