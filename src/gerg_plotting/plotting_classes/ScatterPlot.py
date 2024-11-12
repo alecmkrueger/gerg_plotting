@@ -39,8 +39,48 @@ class ScatterPlot(Plotter):
         self.ax.set_ylabel(ylabel=ylabel)
         if invert_yaxis:
             self.ax.invert_yaxis()
+
+    def scatter(self, x: str, y: str, color_var: str | None = None, invert_yaxis:bool=False, fig=None, ax=None) -> None:
+        """
+        Create a scatter plot of two variables `x` and `y`, with optional coloring by a third variable.
+        
+        Args:
+            x (str): The variable to plot on the x-axis.
+            y (str): The variable to plot on the y-axis.
+            color_var (str | None, optional): The variable to map to color (default is None).
+            fig (matplotlib.figure.Figure, optional): The figure to use.
+            ax (matplotlib.axes.Axes, optional): The axes to use.
+        
+        This method creates a scatter plot of the variables `x` and `y`, with optional coloring by `color_var`.
+        """
+        self.init_figure(fig, ax)  # Initialize figure and axes
+
+        # If color_var is passed
+        if color_var is not None:
+            if color_var == "time":
+                color_data = self.data.date2num()
+            else:
+                color_data = self.data[color_var].data
+            sc = self.ax.scatter(
+                self.data[x].data,
+                self.data[y].data,
+                c=color_data,
+                cmap=self.get_cmap(color_var),
+                vmin = self.data[color_var].vmin,
+                vmax = self.data[color_var].vmax
+            )
+            self.add_colorbar(sc, var=color_var)  # Add colorbar
+
+        # If color_var is not passed 
+        else:
+            sc = self.ax.scatter(self.data[x].data, self.data[y].data)
+
+        self.format_axes(xlabel=self.data[x].get_label(),ylabel=self.data[y].get_label(),invert_yaxis=invert_yaxis)
+
+        return sc
+
     
-    def hovmoller(self, var: str, fig=None, ax=None, contours: bool = False) -> None:
+    def hovmoller(self, var: str, fig=None, ax=None) -> None:
         """
         Create a scatter plot of depth vs time, with color representing the given variable `var`.
         
@@ -48,29 +88,19 @@ class ScatterPlot(Plotter):
             var (str): The variable to plot as color.
             fig (matplotlib.figure.Figure, optional): The figure to use for the plot. If None, a new figure is created.
             ax (matplotlib.axes.Axes, optional): The axes to use for the plot. If None, new axes are created.
-            contours (bool, optional): Whether to include contour lines.
         
         This method initializes a figure and axes, creates a scatter plot of depth vs. time, and adds a colorbar.
         """
-        self.init_figure(fig, ax)  # Initialize figure and axes
-        sc = self.ax.scatter(
-            self.data.time.data,
-            self.data.depth.data,
-            c=self.data[var].data,
-            cmap=self.data[var].cmap,
-            s=self.markersize,
-            vmin = self.data[var].vmin,
-            vmax = self.data[var].vmax
-        )  # Create scatter plot with color mapped to `var`
+        sc = self.scatter(x='time',
+                          y='depth',
+                          color_var=var,invert_yaxis=True)
         
-        self.ax.invert_yaxis()  # Invert the y-axis to have depth increasing downward
         locator = mdates.AutoDateLocator()
         formatter = mdates.AutoDateFormatter(locator)
 
         self.ax.xaxis.set_major_locator(locator)  # Set date locator for x-axis
         self.ax.xaxis.set_major_formatter(formatter)  # Set date formatter for x-axis
         matplotlib.pyplot.xticks(rotation=60, fontsize='small')  # Rotate x-axis labels for readability
-        self.add_colorbar(sc, var=var)  # Add colorbar to the plot
         self.format_axes(xlabel=self.data.time.get_label(),ylabel=self.data.depth.get_label())
 
     def check_ts(self, color_var: str = None) -> None:
@@ -119,7 +149,7 @@ class ScatterPlot(Plotter):
         self.ax.xaxis.set_major_locator(MaxNLocator(nbins=6))  # Set x-axis tick formatting
         self.ax.yaxis.set_major_locator(MaxNLocator(nbins=8))
 
-    def TS(self, fig=None, ax=None, contours: bool = True) -> None:
+    def TS(self, color_var=None, fig=None, ax=None, contours: bool = True) -> None:
         """
         Create a temperature vs salinity scatter plot, with optional contours.
         
@@ -131,12 +161,8 @@ class ScatterPlot(Plotter):
         This method plots salinity vs. temperature, with optional sigma-theta contour lines.
         """
         self.format_ts(fig, ax, contours)  # Prepare T-S diagram layout
-        self.ax.scatter(
-            self.data['salinity'].data,
-            self.data['temperature'].data,
-            s=self.markersize,
-            marker='.'
-        )  # Scatter plot of salinity vs temperature
+
+        sc=  self.scatter('salinity','temperature',color_var=color_var)
 
     def get_density_color_data(self, color_var: str) -> np.ndarray:
         """
@@ -163,66 +189,6 @@ class ScatterPlot(Plotter):
             color_data = self.data[color_var].data  # Retrieve color data for the specified variable
 
         return color_data
-
-    def TS_with_color_var(self, color_var: str, fig=None, ax=None, contours: bool = True) -> None:
-        """
-        Create a temperature vs salinity scatter plot, with color representing another variable.
-        
-        Args:
-            color_var (str): The variable to map to color in the scatter plot.
-            fig (matplotlib.figure.Figure, optional): The figure to use.
-            ax (matplotlib.axes.Axes, optional): The axes to use.
-            contours (bool, optional): Whether to include sigma-theta contour lines (default is True).
-        
-        This method plots salinity vs. temperature, with the color of each point determined by the specified `color_var`.
-        """
-        self.format_ts(fig, ax, contours)  # Prepare T-S diagram layout
-        cmap = self.get_cmap(color_var)  # Get colormap for the color variable
-        color_data = self.get_density_color_data(color_var)  # Get color data (or calculate density if needed)
-
-        sc = self.ax.scatter(
-            self.data['salinity'].data,
-            self.data['temperature'].data,
-            c=color_data,
-            s=self.markersize,
-            marker='.',
-            cmap=cmap,
-            vmin = self.data[color_var].vmin,
-            vmax = self.data[color_var].vmax
-        )  # Scatter plot with color representing `color_var`
-        
-        self.add_colorbar(sc, color_var)  # Add a colorbar to the plot
-
-    def scatter(self, x: str, y: str, color_var: str | None = None, invert_yaxis:bool=False, fig=None, ax=None) -> None:
-        """
-        Create a scatter plot of two variables `x` and `y`, with optional coloring by a third variable.
-        
-        Args:
-            x (str): The variable to plot on the x-axis.
-            y (str): The variable to plot on the y-axis.
-            color_var (str | None, optional): The variable to map to color (default is None).
-            fig (matplotlib.figure.Figure, optional): The figure to use.
-            ax (matplotlib.axes.Axes, optional): The axes to use.
-        
-        This method creates a scatter plot of the variables `x` and `y`, with optional coloring by `color_var`.
-        """
-        self.init_figure(fig, ax)  # Initialize figure and axes
-
-        if color_var is not None:
-            sc = self.ax.scatter(
-                self.data[x].data,
-                self.data[y].data,
-                c=self.data[color_var].data,
-                cmap=self.get_cmap(color_var),
-                vmin = self.data[color_var].vmin,
-                vmax = self.data[color_var].vmax
-            )  # Scatter plot with color representing `color_var`
-            self.add_colorbar(sc, var=color_var)  # Add colorbar
-            
-        else:
-            self.ax.scatter(self.data[x].data, self.data[y].data)  # Scatter plot without color variable
-
-        self.format_axes(xlabel=self.data[x].get_label(),ylabel=self.data[y].get_label(),invert_yaxis=invert_yaxis)
 
     def cross_section(self, longitude, latitude) -> None:
         """

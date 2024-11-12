@@ -9,6 +9,7 @@ import matplotlib.dates as mdates
 from attrs import define, field, asdict
 from pprint import pformat
 import cartopy.crs as ccrs
+import numpy as np
 
 from gerg_plotting.data_classes.NonSpatialInstruments import NonSpatialInstrument, Variable
 from gerg_plotting.data_classes.SpatialInstrument import SpatialInstrument
@@ -141,6 +142,8 @@ class Plotter:
 
             # Format the colorbar for time-based variables
             if var == 'time':
+                loc = mdates.AutoDateLocator()
+                self.cbar.ax.yaxis.set_major_locator(loc)
                 self.cbar.ax.yaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
 
             return self.cbar

@@ -68,7 +68,10 @@ class MapPlot(Plotter):
             color = 'k'  # Use black color if no variable is provided
             cmap = None
         else:
-            color_var_values = self.data[var].data.copy()
+            if var == 'time':
+                color_var_values = self.data.date2num()
+            else:
+                color_var_values = self.data[var].data.copy()
             color = color_var_values  # Color is determined by the variable data
             cmap = self.get_cmap(var)  # Get the appropriate colormap for the variable
         
