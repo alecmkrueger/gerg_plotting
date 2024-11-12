@@ -4,6 +4,8 @@ from typing import Iterable
 import cmocean
 import copy
 import pandas as pd
+import matplotlib.dates as mdates
+
 
 from gerg_plotting.data_classes.NonSpatialInstruments import Variable,Bounds
 from gerg_plotting.utils import calculate_pad
@@ -95,6 +97,13 @@ class SpatialInstrument:
         if self.time is not None:
             if self.time.data is not None:
                 self.time.data = self.time.data.astype('datetime64')
+
+    def date2num(self):
+        if self.time is not None:
+            if self.time.data is not None:
+                return mdates.date2num(self.time.data)
+            else: raise ValueError('time data not given')
+        else: raise ValueError('time data given')
 
     def detect_bounds(self,bounds_padding=0) -> Bounds:
         '''
