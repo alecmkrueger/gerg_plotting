@@ -250,10 +250,30 @@ class ScatterPlot(Plotter):
         self.add_colorbar(mappable,'speed')
         self.format_axes(xlabel=self.data[x].get_label(),ylabel=self.data[y].get_label())
 
-    def power_spectra_density(self,freq, psd, highlight_freqs:list,fig=None,ax=None):
+    def power_spectra_density(self,psd_freq=None,psd=None,
+                              var_name:str=None, sampling_freq=None,segment_length=None,theta_rad=None,
+                              highlight_freqs:list=None,fig=None,ax=None):
+        '''
+        Plot of power spectra density
+
+        You can either pass psd_freq and psd that you calculated
+        or 
+        You can pass the var_name (string of the variable name), sampling_freq, segment_length, and theta_rad (optional) and let the data.calculate_PSD function calculate it for you
+
+        '''
+        # Check if the proper values were passed
+        if psd_freq is None and psd is None and sampling_freq is None and segment_length is None:
+            raise ValueError('You must pass either [psd_freq and psd] or [sampling_freq, segment_length, and theta_rad (optional)]')  
+             
+        # Calculate the power spectra density
+        if psd_freq is None or psd is None:
+            self.data.calcluate_PSD(sampling_freq,segment_length,theta_rad)
+        if psd_freq is not None and psd_freq is not None:
+            self.data.add_custom_variable(Variable(psd_freq,name='psd_freq'),exist_ok=True)
+            self.data.add_custom_variable(Variable(psd,name=f'psd_{var_name}'),exist_ok=True)
+
         self.init_figure(fig=fig,ax=ax)
-        self.ax.plot(freq, psd, label='Buoy B (U)', color='blue')
-        # self.ax.set_title(f'Auto-spectra of U Velocity (Bin Depth: {tabs_b["bin_depth"].values[bin_idx]} m)')
+        self.ax.plot(psd_freq, psd, color='blue')
         self.ax.set_xlabel("Frequency [cpd]")
         self.ax.set_ylabel("Power Spectral Density [cm²/s²/cpd]")
         self.ax.set_yscale("log")  # Log scale for PSD
