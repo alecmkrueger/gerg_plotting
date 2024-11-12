@@ -21,7 +21,7 @@ class Animator:
     iterable: np.ndarray | list = field(init=False)  # Values over which to iterate (e.g., angles, time)
     duration: int | float = field(init=False)  # Duration of each frame in the GIF (in ms)
     iteration_param: str = field(init=False)  # The parameter name for the iteration (e.g., azimuth)
-    frames: list = field(factory=list)  # List to store generated frames in memory
+    frames: list = field(init=False)  # List to store generated frames in memory
     image_dpi: int = field(default=300)  # DPI (resolution) for saved images
 
     # Paths and file names for image and GIF handling
@@ -30,7 +30,10 @@ class Animator:
     image_files: list = field(init=False)  # List of image file paths generated on disk
     function_kwargs: dict = field(init=False)  # Additional arguments for the plotting function
 
-    def fig2img(self, fig) -> ImageFile:
+    def __attrs_post_init__(self):
+        self.frames = []
+
+    def _fig2img(self, fig) -> ImageFile:
         """
         Convert a Matplotlib figure to a PIL Image.
 
@@ -50,7 +53,7 @@ class Animator:
         img = Image.open(buf)
         return img
 
-    def delete_images(self) -> None:
+    def _delete_images(self) -> None:
         """
         Delete image files from disk.
         """
@@ -58,7 +61,7 @@ class Animator:
         for file in self.image_files:
             os.remove(file)
 
-    def generate_frames_in_memory(self) -> None:
+    def _generate_frames_in_memory(self) -> None:
         """
         Generate frames for the animation and store them in memory.
         """
@@ -66,15 +69,17 @@ class Animator:
         for _, iter_value in enumerate(self.iterable):
             # Call the plotting function with the current iteration value and additional kwargs
             fig = self.plotting_function(**{self.iteration_param: iter_value}, **self.function_kwargs)
+            if fig is None:
+                raise ValueError('Ensure you are returning the figure in your plotting_function')
             # If the figure is successfully created, convert it to an image
             if fig:
-                img = self.fig2img(fig)
+                img = self._fig2img(fig)
                 # Append the image to the frames list
                 self.frames.append(img)
                 # Close the figure to free memory
                 plt.close(fig)
 
-    def generate_frames_on_disk(self) -> None:
+    def _generate_frames_on_disk(self) -> None:
         """
         Generate frames for the animation and store them on disk.
         """
@@ -86,17 +91,21 @@ class Animator:
             image_filename = self.images_path / f"{idx:0{num_padding}}.png"
             # Call the plotting function with the current iteration value and additional kwargs
             fig = self.plotting_function(**{self.iteration_param: iter_value}, **self.function_kwargs)
+            if fig is None:
+                raise ValueError('Ensure you are returning the figure in your plotting_function')
             # If the figure is successfully created, save it as a PNG on disk
             if fig:
                 fig.savefig(image_filename, dpi=self.image_dpi, format='png')
                 # Close the figure to free memory
                 plt.close(fig)
 
-    def save_gif_from_memory(self) -> None:
+    def _save_gif_from_memory(self) -> None:
         """
         Save the GIF from frames stored in memory.
         """
         # Use the first frame as the starting point and append the rest of the frames
+        if len(self.frames) == 0:
+            raise ValueError('No Frames found, make sure you are returning the figure in your plotting_function')
         self.frames[0].save(
             self.gif_filename,
             save_all=True,
@@ -106,7 +115,7 @@ class Animator:
             loop=0  # Set the GIF to loop infinitely
         )
 
-    def save_gif_from_disk(self) -> None:
+    def _save_gif_from_disk(self) -> None:
         """
         Save the GIF from frames stored on disk.
         """
@@ -143,13 +152,13 @@ class Animator:
         # Decide whether to store frames in memory or on disk based on the number of iterations
         if num_iterations < 100:
             print(f'Saving figures to memory, n_iterations: {num_iterations}')
-            self.generate_frames_in_memory()  # Store frames in memory
-            self.save_gif_from_memory()  # Save GIF from memory
+            self._generate_frames_in_memory()  # Store frames in memory
+            self._save_gif_from_memory()  # Save GIF from memory
         else:
             print(f'Saving figures to storage, n_iterations: {num_iterations}')
             # Create a directory for storing images if it doesn't exist
             self.images_path = Path(__file__).parent.joinpath('images')
             self.images_path.mkdir(parents=True, exist_ok=True)
-            self.generate_frames_on_disk()  # Store frames on disk
-            self.save_gif_from_disk()  # Save GIF from disk
-            self.delete_images()  # Delete temporary image files from disk
+            self._generate_frames_on_disk()  # Store frames on disk
+            self._save_gif_from_disk()  # Save GIF from disk
+            self._delete_images()  # Delete temporary image files from disk
