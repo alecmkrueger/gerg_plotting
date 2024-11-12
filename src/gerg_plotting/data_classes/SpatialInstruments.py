@@ -111,7 +111,6 @@ class Data(SpatialInstrument):
     def __attrs_post_init__(self):
         super().__attrs_post_init__()
         self._init_variables()  # Init variables
-        self.calculate_speed()
 
     def _init_variables(self):
         '''Default Variable initialization.
@@ -127,10 +126,10 @@ class Data(SpatialInstrument):
     def calculate_speed(self,include_w:bool=False):
         if self.speed is None:
             if include_w:
-                if self.check_for_vars('u','v','w'):
+                if self.check_for_vars(['u','v','w']):
                     self.speed = math.hypot(self.u.data,self.v.data,self.w.data)
                     self._init_variable(var='speed', cmap=cmocean.cm.speed, units="m/s", vmin=0, vmax=5)  
-            if self.check_for_vars('u','v'):
+            if self.check_for_vars(['u','v']):
                 self.speed = math.hypot(self.u.data,self.v.data)
                 self._init_variable(var='speed', cmap=cmocean.cm.speed, units="m/s", vmin=0, vmax=5)
 
