@@ -46,11 +46,7 @@ class Plotter:
     cbar_nbins: int = field(default=5)
     cbar_kwargs: dict = field(default={})
 
-    # def __attrs_post_init__(self):
-    #     '''Post-initialization step to automatically detect bounds after the object is created.'''
-    #     self.data.detect_bounds(self.bounds_padding)
-
-    def init_figure(self, fig=None, ax=None, three_d=False, geography=False) -> None:
+    def init_figure(self, fig=None, ax=None, figsize=(6.4, 4.8), three_d=False, geography=False) -> None:
         '''
         Initialize the figure and axes if they are not provided.
         
@@ -73,18 +69,18 @@ class Plotter:
             if geography:
                 # Initialize a figure with Cartopy's PlateCarree projection for geographic plots
                 self.fig, self.ax = matplotlib.pyplot.subplots(
-                    figsize=(6.4, 4.8),
+                    figsize=figsize,
                     subplot_kw={'projection': ccrs.PlateCarree()}
                 )
             elif three_d:
                 # Initialize a 3D figure
                 self.fig, self.ax = matplotlib.pyplot.subplots(
-                    figsize=(6.4, 4.8),
+                    figsize=figsize,
                     subplot_kw={'projection': '3d'}
                 )
             else:
                 # Standard 2D Matplotlib figure with no projection
-                self.fig, self.ax = matplotlib.pyplot.subplots(figsize=(6.4, 4.8))
+                self.fig, self.ax = matplotlib.pyplot.subplots(figsize=figsize)
         elif fig is not None and ax is not None:
             # Use existing figure and axes
             self.fig = fig
@@ -160,6 +156,11 @@ class Plotter:
                 self.cbar.ax.yaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
 
             return self.cbar
+        
+    def check_for_vars(self,vars:list):
+        for var in vars:
+            if self.data[var] is None:
+                raise ValueError(f"Data for '{var}' is missing. Make sure the Data object passed contains '{var}'")
         
     def _has_var(self, key) -> bool:
         '''Check if object has var'''
