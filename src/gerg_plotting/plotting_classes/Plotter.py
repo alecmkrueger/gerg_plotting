@@ -94,6 +94,7 @@ class Plotter:
                 gs = self.ax.get_gridspec()  # Get grid specification
                 self.ax = fig.add_subplot(gs.nrows, gs.ncols, index, projection='3d')
 
+
     def format_axes(self,xlabel,ylabel,invert_yaxis:bool=False):
         """
         Method to format the axes.
@@ -156,11 +157,6 @@ class Plotter:
                 self.cbar.ax.yaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
 
             return self.cbar
-        
-    def check_for_vars(self,vars:list):
-        for var in vars:
-            if self.data[var] is None:
-                raise ValueError(f"Data for '{var}' is missing. Make sure the Data object passed contains '{var}'")
         
     def _has_var(self, key) -> bool:
         '''Check if object has var'''
