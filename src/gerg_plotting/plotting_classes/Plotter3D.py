@@ -1,6 +1,7 @@
 from attrs import define, asdict, field
 from pprint import pformat
 import numpy as np
+import mayavi.core.lut_manager
 import mayavi.core.scene
 import mayavi.mlab as mlab
 
@@ -160,6 +161,8 @@ class Plotter3D:
             pos2 = colorbar.scalar_bar_representation.position2
             colorbar.scalar_bar_representation.position2 = [pos2[0] + x_pos2_offset, pos2[1] + y_pos2_offset]
 
+        return colorbar
+
     def add_colorbar(self, mappable, cmap_title, over_color=None, x_pos1_offset=None, y_pos1_offset=None,
                      x_pos2_offset=None, y_pos2_offset=None, cmap=None):
         """
@@ -184,5 +187,11 @@ class Plotter3D:
         colorbar.scalar_bar_representation.proportional_resize = True  # Enable proportional resizing
 
         # Apply colorbar formatting
-        self.format_colorbar(colorbar, x_pos1_offset=x_pos1_offset, y_pos1_offset=y_pos1_offset,
-                             x_pos2_offset=x_pos2_offset, y_pos2_offset=y_pos2_offset)
+        colorbar = self.format_colorbar(colorbar, x_pos1_offset=x_pos1_offset, y_pos1_offset=y_pos1_offset,
+                                        x_pos2_offset=x_pos2_offset, y_pos2_offset=y_pos2_offset)
+        
+        return colorbar
+        
+        
+        
+
