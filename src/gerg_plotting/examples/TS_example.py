@@ -1,10 +1,12 @@
-from gerg_plotting import Data,ScatterPlot
+from gerg_plotting import Data,ScatterPlot,data_from_csv
 import pandas as pd
 
 # Let's read in the example data
-df = pd.read_csv('example_data/sample_glider_data.csv')
+data = data_from_csv('example_data/sample_glider_data.csv')
 
-data = Data(lat=df['latitude'],lon=df['longitude'],depth=df['pressure'],time=df['time'],
-            salinity=df['salinity'],temperature=df['temperature'],density=df['density'])
-
-ScatterPlot(data).TS(contours=True)
+# Initialize the scatter plot
+scatter = ScatterPlot(data)
+# Plot just the TS diagram
+scatter.TS()
+# Plot the TS diagram with a color variable
+scatter.TS(color_var='salinity')
