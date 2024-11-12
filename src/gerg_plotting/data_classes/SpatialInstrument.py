@@ -150,12 +150,15 @@ class SpatialInstrument:
 
         return self.bounds
 
-    def add_custom_variable(self, variable: Variable):
-        """Adds a custom Variable object and makes it accessible via both dot and dict syntax."""
+    def add_custom_variable(self, variable: Variable, exist_ok:bool=False):
+        """
+        Adds a custom Variable object and makes it accessible via both dot and dict syntax.
+        If exist_ok is True then if the variable already exists it will be replaced
+        """
         if not isinstance(variable, Variable):
             raise TypeError(f"The provided object is not an instance of the Variable class.")
         
-        if hasattr(self, variable.name):
+        if hasattr(self, variable.name) and not exist_ok:
             raise AttributeError(f"The variable '{variable.name}' already exists.")
         else:
             # Add to custom_variables and dynamically create the attribute
