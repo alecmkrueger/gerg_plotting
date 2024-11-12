@@ -29,7 +29,7 @@ class ScatterPlot(Plotter):
     
     markersize: int | float = field(default=10)
 
-    def scatter(self, x: str, y: str, color_var: str | None = None, invert_yaxis:bool=False, fig=None, ax=None) -> None:
+    def scatter(self, x: str, y: str, color_var: str | None = None, invert_yaxis:bool=False, fig=None, ax=None, **kwargs) -> None:
         """
         Create a scatter plot of two variables `x` and `y`, with optional coloring by a third variable.
         
@@ -42,6 +42,7 @@ class ScatterPlot(Plotter):
         
         This method creates a scatter plot of the variables `x` and `y`, with optional coloring by `color_var`.
         """
+        self.data.check_for_vars([x,y,color_var])
         self.init_figure(fig, ax)  # Initialize figure and axes
 
         # If color_var is passed
@@ -56,13 +57,13 @@ class ScatterPlot(Plotter):
                 c=color_data,
                 cmap=self.get_cmap(color_var),
                 vmin = self.data[color_var].vmin,
-                vmax = self.data[color_var].vmax
+                vmax = self.data[color_var].vmax, **kwargs
             )
             self.add_colorbar(sc, var=color_var)  # Add colorbar
 
         # If color_var is not passed 
         else:
-            sc = self.ax.scatter(self.data[x].data, self.data[y].data)
+            sc = self.ax.scatter(self.data[x].data, self.data[y].data, **kwargs)
 
         self.format_axes(xlabel=self.data[x].get_label(),ylabel=self.data[y].get_label(),invert_yaxis=invert_yaxis)
 
@@ -93,37 +94,19 @@ class ScatterPlot(Plotter):
         matplotlib.pyplot.xticks(rotation=60, fontsize='small')  # Rotate x-axis labels for readability
         self.format_axes(xlabel=self.data.time.get_label(),ylabel=self.data.depth.get_label())
 
-    def check_ts(self, color_var: str = None) -> None:
-        """
-        Check if the instrument contains the required variables for a temperature-salinity (T-S) diagram.
-        
-        Args:
-            color_var (str, optional): Additional variable to check for existence.
-        
-        Raises:
-            ValueError: If the instrument lacks required variables like salinity or temperature, or the given color_var.
-        """
-        if not self.data._has_var('salinity'):
-            raise ValueError('Instrument has no salinity attribute')
-        if not self.data._has_var('temperature'):
-            raise ValueError('Instrument has no temperature attribute')
-        if color_var is not None and not self.data._has_var(color_var):
-            raise ValueError(f'Instrument has no {color_var} attribute')
 
-    def format_ts(self, fig, ax, contours: bool = True) -> None:
+    def TS(self, color_var=None, fig=None, ax=None, contours: bool = True) -> None:
         """
-        Prepare a temperature-salinity (T-S) diagram with optional contour lines.
+        Create a temperature vs salinity scatter plot, with optional contours.
         
         Args:
-            fig (matplotlib.figure.Figure): The figure to use.
-            ax (matplotlib.axes.Axes): The axes to use.
-            contours (bool, optional): Whether to include density contour lines (default is True).
+            fig (matplotlib.figure.Figure, optional): The figure to use.
+            ax (matplotlib.axes.Axes, optional): The axes to use.
+            contours (bool, optional): Whether to include sigma-theta contour lines (default is True).
         
-        This method initializes the figure and axes, adds contour lines for sigma-theta if requested, 
-        and applies axis labels and formatting for a T-S diagram.
+        This method plots salinity vs. temperature, with optional sigma-theta contour lines.
         """
-        self.check_ts()  # Check if instrument contains required variables
-        self.init_figure(fig, ax)  # Initialize figure and axes
+        sc = self.scatter('salinity','temperature',color_var=color_var,fig=fig,ax=ax,zorder=3)  # zorder to put the scatter on top of contours
 
         if contours:
             # Calculate sigma-theta contours
@@ -139,20 +122,7 @@ class ScatterPlot(Plotter):
         self.ax.xaxis.set_major_locator(MaxNLocator(nbins=6))  # Set x-axis tick formatting
         self.ax.yaxis.set_major_locator(MaxNLocator(nbins=8))
 
-    def TS(self, color_var=None, fig=None, ax=None, contours: bool = True) -> None:
-        """
-        Create a temperature vs salinity scatter plot, with optional contours.
         
-        Args:
-            fig (matplotlib.figure.Figure, optional): The figure to use.
-            ax (matplotlib.axes.Axes, optional): The axes to use.
-            contours (bool, optional): Whether to include sigma-theta contour lines (default is True).
-        
-        This method plots salinity vs. temperature, with optional sigma-theta contour lines.
-        """
-        self.format_ts(fig, ax, contours)  # Prepare T-S diagram layout
-
-        sc = self.scatter('salinity','temperature',color_var=color_var,fig=fig,ax=ax)
 
     def get_density_color_data(self, color_var: str) -> np.ndarray:
         """
@@ -207,8 +177,10 @@ class ScatterPlot(Plotter):
         Args:
             x: x-axis variable for the quiver.
         """
+        self.data.calculate_speed()
+        self.data.check_for_vars([x,'u','v','speed'])
         self.init_figure(fig=fig,ax=ax,figsize=(15,5))
-        self.check_for_vars([x,'u','v','speed'])
+        
         # Get the data slice step size using the quiver_density value
         if quiver_density is not None:
             step = self.calculate_quiver_step(len(self.data.u.data),quiver_density)
@@ -237,7 +209,10 @@ class ScatterPlot(Plotter):
             fig (matplotlib.figure.Figure|None): figure to draw the quiver on, if None a new figure will be generated
             ax (matplotlib.axes.Axes|None): axes to draw the quiver on, if None, a new axes will be generated
         """
+        self.data.calculate_speed()
+        self.data.check_for_vars([x,y,'u','v','speed'])
         self.init_figure(fig=fig,ax=ax)
+
         # Get the data slice step size using the quiver_density value
         if quiver_density is not None:
             step = self.calculate_quiver_step(len(self.data.u.data),quiver_density)
@@ -264,9 +239,8 @@ class ScatterPlot(Plotter):
         You can pass the var_name (string of the variable name), sampling_freq, segment_length, and theta_rad (optional) and let the data.calculate_PSD function calculate it for you
 
         '''
-        # Check if the proper values were passed
-        if psd_freq is None and psd is None and sampling_freq is None and segment_length is None:
-            # Check if 
+        # Check if all variables are None         
+        if all(var is None for var in [psd_freq, psd, sampling_freq, segment_length]):
             raise ValueError('You must pass either [psd_freq and psd] or [sampling_freq, segment_length, and theta_rad (optional)]')  
              
         # Calculate the power spectra density
