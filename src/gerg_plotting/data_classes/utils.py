@@ -49,7 +49,7 @@ def map_variables(keys, values, synonyms=None, blocklist=None):
 
 
 def get_var_mapping(df) -> dict:
-    keys = ['lat', 'lon', 'depth', 'time', 'temperature', 'salinity', 'density', 'u', 'v', 'speed']
+    keys = ['lat', 'lon', 'depth', 'time', 'temperature', 'salinity', 'density', 'u', 'v','w', 'speed']
     values = df.columns.tolist()
     synonyms = {
         'depth': ['pressure', 'pres'],
@@ -58,7 +58,8 @@ def get_var_mapping(df) -> dict:
         'density': ['density_metric', 'rho'],
         'u': ['eastward_velocity', 'u_component'],
         'v': ['northward_velocity', 'v_component'],
-        's':['combined_velocity','velocity','speed']
+        'w': ['downward_velocity','upward_velocity','w_component'],
+        's': ['combined_velocity','velocity','speed']
     }
     blocklist = {
         's': ['sound']
@@ -85,12 +86,6 @@ def data_from_csv(filename:str,mapped_variables:dict|None=None):
 
     df = pd.read_csv(filename)
 
-    # If the user does not pass mapped_variables
-    if mapped_variables is None:
-        mapped_variables = get_var_mapping(df)
-
-    mapped_variables = {key:df[value] for key,value in mapped_variables.items() if value is not None}
-
-    data = Data(**mapped_variables)
+    data = data_from_df(df,mapped_variables=mapped_variables)
 
     return data
