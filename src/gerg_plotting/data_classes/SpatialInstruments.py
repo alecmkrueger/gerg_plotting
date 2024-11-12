@@ -11,8 +11,10 @@ import xarray as xr
 from pathlib import Path
 import cmocean
 from typing import Iterable
+from scipy.signal import welch
 
-from gerg_plotting.utils import get_center_of_mass,colorbar
+
+from gerg_plotting.utils import get_center_of_mass,colorbar,rotate_vector,filter_nan
 from gerg_plotting.data_classes.SpatialInstrument import SpatialInstrument
 from gerg_plotting.data_classes.NonSpatialInstruments import Bounds, Variable
 
@@ -99,6 +101,7 @@ class Data(SpatialInstrument):
     density: Iterable|Variable|None = field(default=None)
     u: Iterable|Variable|None = field(default=None)
     v: Iterable|Variable|None = field(default=None)
+    w: Iterable|Variable|None = field(default=None)
     speed: Iterable|Variable|None = field(default=None)
 
     # Bounds
@@ -116,7 +119,42 @@ class Data(SpatialInstrument):
         self._init_variable(var='density', cmap=cmocean.cm.dense, units="kg/m\u00B3", vmin=1020, vmax=1035)
         self._init_variable(var='u', cmap=cmocean.cm.balance, units="m/s", vmin=-5, vmax=5)
         self._init_variable(var='v', cmap=cmocean.cm.balance, units="m/s", vmin=-5, vmax=5)
+        self._init_variable(var='w', cmap=cmocean.cm.balance, units="m/s", vmin=-5, vmax=5)
         self._init_variable(var='speed', cmap=cmocean.cm.speed, units="m/s", vmin=0, vmax=5)
+
+    def calcluate_PSD(self,sampling_freq,segment_length,theta_rad=None):
+        '''
+        Calculate the power spectral density using Welch's method
+
+        segment_length (int): Length of each segment for Welch's method
+        '''
+
+        u = self.u.data
+        v = self.v.data
+        if self.w is not None:
+            w = self.w.data
+        else:
+            w = None
+
+        # Rotate vectors if needed
+        if theta_rad is not None:
+            u,v = rotate_vector(u,v,theta_rad)
+
+        # Filter out NaNs
+        u = filter_nan(u)
+        v = filter_nan(v)
+        if w is not None:
+            w = filter_nan(w)
+
+        freq, psd_U = welch(u**2, fs=sampling_freq, nperseg=segment_length)
+        _, psd_V = welch(v**2, fs=sampling_freq, nperseg=segment_length)
+        if w is not None:
+            _, psd_W = welch(w**2, fs=sampling_freq, nperseg=segment_length)
+
+        if w is None:
+            return freq,psd_U,psd_V
+        elif w is not None:
+            return freq,psd_U,psd_V,psd_W
 
 
 

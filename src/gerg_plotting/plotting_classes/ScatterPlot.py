@@ -28,18 +28,6 @@ class ScatterPlot(Plotter):
     
     markersize: int | float = field(default=10)
 
-    def format_axes(self,xlabel,ylabel,invert_yaxis:bool=False):
-        """
-        Method to format the axes.
-
-        This method can be extended to apply more specific formatting to the axes, like setting labels, 
-        tick formatting, gridlines, etc.
-        """
-        self.ax.set_xlabel(xlabel=xlabel)
-        self.ax.set_ylabel(ylabel=ylabel)
-        if invert_yaxis:
-            self.ax.invert_yaxis()
-
     def scatter(self, x: str, y: str, color_var: str | None = None, invert_yaxis:bool=False, fig=None, ax=None) -> None:
         """
         Create a scatter plot of two variables `x` and `y`, with optional coloring by a third variable.
@@ -78,7 +66,6 @@ class ScatterPlot(Plotter):
         self.format_axes(xlabel=self.data[x].get_label(),ylabel=self.data[y].get_label(),invert_yaxis=invert_yaxis)
 
         return sc
-
     
     def hovmoller(self, var: str, fig=None, ax=None) -> None:
         """
@@ -93,7 +80,9 @@ class ScatterPlot(Plotter):
         """
         sc = self.scatter(x='time',
                           y='depth',
-                          color_var=var,invert_yaxis=True)
+                          color_var=var,
+                          invert_yaxis=True,
+                          ax=ax, fig=fig)
         
         locator = mdates.AutoDateLocator()
         formatter = mdates.AutoDateFormatter(locator)
@@ -162,7 +151,7 @@ class ScatterPlot(Plotter):
         """
         self.format_ts(fig, ax, contours)  # Prepare T-S diagram layout
 
-        sc=  self.scatter('salinity','temperature',color_var=color_var)
+        sc = self.scatter('salinity','temperature',color_var=color_var,fig=fig,ax=ax)
 
     def get_density_color_data(self, color_var: str) -> np.ndarray:
         """
@@ -210,14 +199,28 @@ class ScatterPlot(Plotter):
         step = round(num_points/quiver_density)
         return step
     
-    def quiver1d(self,x:str,fig=None,ax=None) -> None:
+    def quiver1d(self,x:str,quiver_density:int=None,quiver_scale:float=None,fig=None,ax=None) -> None:
         """
         Method for plotting 1-d quivers. Example: ocean current data at a single location and depth through time.
 
         Args:
             x: x-axis variable for the quiver.
         """
-        raise NotImplementedError('Need to add method to plot 1-d quivers')
+        self.init_figure(fig=fig,ax=ax)
+        # Get the data slice step size using the quiver_density value
+        if quiver_density is not None:
+            step = self.calculate_quiver_step(len(self.data.u.data),quiver_density)
+        elif quiver_density is None:
+            step = 1
+
+        # Create the quiver plot
+        mappable = self.ax.quiver(self.data[x].data[::step], 0, 
+                                        self.data.u.data[::step], self.data.v.data[::step], 
+                                        self.data.speed.data[::step], cmap=cmocean.cm.speed,
+                                        pivot='tail', scale=quiver_scale, units='height')
+        # Add the colorbar
+        self.add_colorbar(mappable,'speed')
+        self.format_axes(xlabel=self.data[x].get_label(),ylabel=None)
 
     def quiver2d(self,x:str,y:str,quiver_density:int=None,quiver_scale:float=None,fig=None,ax=None) -> None:
         """
@@ -246,3 +249,16 @@ class ScatterPlot(Plotter):
         # Add the colorbar
         self.add_colorbar(mappable,'speed')
         self.format_axes(xlabel=self.data[x].get_label(),ylabel=self.data[y].get_label())
+
+    def power_spectra_density(self,freq, psd, highlight_freqs:list,fig=None,ax=None):
+        self.init_figure(fig=fig,ax=ax)
+        self.ax.plot(freq, psd, label='Buoy B (U)', color='blue')
+        # self.ax.set_title(f'Auto-spectra of U Velocity (Bin Depth: {tabs_b["bin_depth"].values[bin_idx]} m)')
+        self.ax.set_xlabel("Frequency [cpd]")
+        self.ax.set_ylabel("Power Spectral Density [cm²/s²/cpd]")
+        self.ax.set_yscale("log")  # Log scale for PSD
+        self.ax.set_xscale("log")  # Log scale for frequency
+        self.ax.grid(True, which="both", linestyle="--", linewidth=0.5)
+        for highlight_freq in highlight_freqs:
+            self.ax.axvline(highlight_freq, color='red', linestyle='--', linewidth=1, label=f'{highlight_freq:.3f} cpd' if highlight_freq == highlight_freqs[0] else "")
+        self.ax.legend()

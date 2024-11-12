@@ -97,6 +97,18 @@ class Plotter:
                 gs = self.ax.get_gridspec()  # Get grid specification
                 self.ax = fig.add_subplot(gs.nrows, gs.ncols, index, projection='3d')
 
+    def format_axes(self,xlabel,ylabel,invert_yaxis:bool=False):
+        """
+        Method to format the axes.
+
+        This method can be extended to apply more specific formatting to the axes, like setting labels, 
+        tick formatting, gridlines, etc.
+        """
+        self.ax.set_xlabel(xlabel=xlabel)
+        self.ax.set_ylabel(ylabel=ylabel)
+        if invert_yaxis:
+            self.ax.invert_yaxis()
+
     def get_cmap(self, color_var: str) -> Colormap:
         '''
         Retrieve the colormap for a specified variable.

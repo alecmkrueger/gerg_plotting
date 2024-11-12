@@ -10,6 +10,7 @@ import random
 import cartopy
 from typing import Iterable
 from matplotlib.colors import ListedColormap
+from scipy.signal import welch
 
 
 def lat_min_smaller_than_max(instance, attribute, value):
@@ -48,11 +49,6 @@ def is_flat_numpy_array(instance, attribute, value):
     if value.ndim != 1:
         raise ValueError(f"{attribute.name} must be a flat array")
     
-def generate_random_point(lat_min,lat_max,lon_min,lon_max):
-    lat = random.uniform(lat_min, lat_max)
-    lon = random.uniform(lon_min, lon_max)
-    return [lat, lon]
-        
 def get_center_of_mass(lon,lat,pressure) -> tuple:
     centroid = tuple([np.nanmean(lon), np.nanmean(lat), np.nanmean(pressure)])
     return centroid
@@ -81,10 +77,6 @@ def interp_glider_lat_lon(ds) -> xr.Dataset:
     ds = ds.drop_vars('m_time')
 
     return ds
-
-def load_example_data():
-    df = pd.read_csv('example_data/sample_glider_data.csv',parse_dates=['time'])
-    return df
 
 def filter_var(var:pd.Series,min_value,max_value):
     var = var.where(var>min_value)
@@ -157,6 +149,39 @@ def get_sigma_theta(salinity:np.ndarray,temperature:np.ndarray,cnt:bool=False):
 def get_density(salinity,temperature):
     return gsw.sigma0(salinity, temperature)
 
+def rotate_vector(u,v,theta_rad):
+    u_rotated = u * np.cos(theta_rad) - v * np.sin(theta_rad)
+    v_rotated = u * np.sin(theta_rad) + v * np.cos(theta_rad)
+    return u_rotated,v_rotated
+
+def filter_nan(values):
+    return values[~np.isnan(values)]
+
+# def calcluate_PSD(sampling_freq,segment_length,u,v,w=None,theta_rad=None):
+#     '''
+#     Calculate the power spectral density using Welch's method
+
+#     segment_length (int): Length of each segment for Welch's method
+#     '''
+#     # Rotate vectors if needed
+#     if theta_rad is not None:
+#         u,v = rotate_vector(u,v,theta_rad)
+
+#     # Filter out NaNs
+#     u = filter_nan(u)
+#     v = filter_nan(v)
+#     if w is not None:
+#         w = filter_nan(w)
+
+#     freq, psd_U = welch(u**2, fs=sampling_freq, nperseg=segment_length)
+#     _, psd_V = welch(v**2, fs=sampling_freq, nperseg=segment_length)
+#     if w is not None:
+#         _, psd_W = welch(w**2, fs=sampling_freq, nperseg=segment_length)
+
+#     if w is None:
+#         return freq,psd_U,psd_V
+#     elif w is not None:
+#         return freq,psd_U,psd_V,psd_W
 
 def get_turner_cmap():
     # Define the number of colors
