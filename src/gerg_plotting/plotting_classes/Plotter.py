@@ -162,7 +162,7 @@ class Plotter:
         '''Check if object has var'''
         return key in asdict(self).keys()
     
-    def _get_vars(self) -> list:
+    def get_vars(self) -> list:
         '''Get list of object variables/attributes'''
         return list(asdict(self).keys())
 
@@ -178,14 +178,14 @@ class Plotter:
         '''
         if self._has_var(key):
             return getattr(self, key)
-        raise KeyError(f"Variable '{key}' not found. Must be one of {self._get_vars()}")  
+        raise KeyError(f"Variable '{key}' not found. Must be one of {self.get_vars()}")  
 
     def __setitem__(self, key, value):
         """Allows setting standard and custom variables via indexing."""
         if self._has_var(key):
             setattr(self, key, value)
         else:
-            raise KeyError(f"Variable '{key}' not found. Must be one of {self._get_vars()}")
+            raise KeyError(f"Variable '{key}' not found. Must be one of {self.get_vars()}")
 
     def __repr__(self):
         '''Return a pretty-printed string representation of the class attributes.'''

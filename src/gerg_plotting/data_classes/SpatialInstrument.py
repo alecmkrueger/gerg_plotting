@@ -40,7 +40,7 @@ class SpatialInstrument:
     def _has_var(self, key):
         return key in asdict(self).keys() or key in self.custom_variables
     
-    def _get_vars(self):
+    def get_vars(self):
         vars = list(asdict(self).keys()) + list(self.custom_variables.keys())
         vars = [var for var in vars if var!='custom_variables']
         return vars
@@ -49,13 +49,13 @@ class SpatialInstrument:
         """Allows accessing standard and custom variables via indexing."""
         if isinstance(key,slice):
             self_copy = self.copy()
-            for var_name in self._get_vars():
+            for var_name in self.get_vars():
                 if isinstance(self_copy[var_name],Variable):
                     self_copy[var_name].data = self.slice_var(var=var_name,slice=key)
             return self_copy
         elif self._has_var(key):
             return getattr(self, key, self.custom_variables.get(key))
-        raise KeyError(f"Variable '{key}' not found. Must be one of {self._get_vars()}")    
+        raise KeyError(f"Variable '{key}' not found. Must be one of {self.get_vars()}")    
 
     def __setitem__(self, key, value):
         """Allows setting standard and custom variables via indexing."""
@@ -65,7 +65,7 @@ class SpatialInstrument:
             else:
                 self.custom_variables[key] = value
         else:
-            raise KeyError(f"Variable '{key}' not found. Must be one of {self._get_vars()}")
+            raise KeyError(f"Variable '{key}' not found. Must be one of {self.get_vars()}")
             
     def __repr__(self):
         '''Pretty printing'''

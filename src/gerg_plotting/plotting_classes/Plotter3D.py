@@ -55,7 +55,7 @@ class Plotter3D:
         # Check if key exists in the object's dictionary representation
         return key in asdict(self).keys()
     
-    def _get_vars(self) -> list:
+    def get_vars(self) -> list:
         """
         Retrieve a list of all object attributes.
 
@@ -78,7 +78,7 @@ class Plotter3D:
         # Check for existence of the attribute
         if self._has_var(key):
             return getattr(self, key)  # Return attribute value if found
-        raise KeyError(f"Variable '{key}' not found. Must be one of {self._get_vars()}")  
+        raise KeyError(f"Variable '{key}' not found. Must be one of {self.get_vars()}")  
 
     def __setitem__(self, key, value):
         """
@@ -92,7 +92,7 @@ class Plotter3D:
         if self._has_var(key):
             setattr(self, key, value)  # Set attribute value if found
         else:
-            raise KeyError(f"Variable '{key}' not found. Must be one of {self._get_vars()}")
+            raise KeyError(f"Variable '{key}' not found. Must be one of {self.get_vars()}")
 
     def __repr__(self):
         """
