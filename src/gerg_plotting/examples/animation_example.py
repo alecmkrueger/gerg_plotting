@@ -1,6 +1,8 @@
 from gerg_plotting import Data,Variable,Histogram,Animator
 from gerg_plotting.plotting_classes.utils import calculate_range
 import numpy as np
+import matplotlib.pyplot as plt
+import cmocean
 
 n_points = 10000
 
@@ -10,14 +12,20 @@ data.add_custom_variable(pH)
 
 temp_range=calculate_range(data['temperature'].data)
 
-def make_hists(sample,data=data):
+def make_hists(sample,color,data=data):
     '''Plot Histogram based on sample size'''
     data_sample = data[:10*sample+1]  # Slice data
     hist = Histogram(data_sample)  # Init histogram plotter
-    hist.plot('temperature',color='g',bins=30,range=(25,31))  # Plot 1-d histogram
+    hist.plot('temperature',color=color,bins=30,range=(25,31))  # Plot 1-d histogram
     hist.ax.set_ybound(upper=80)  # Set the ybounds maximum to 80 for a clearer plot
     return hist.fig
 
-Animator().animate(plotting_function=make_hists,iterable=range(90),iteration_param='sample',gif_filename='hist.gif')
+samples = np.arange(90)
+cmap = plt.get_cmap('Greens')
+cmap = cmocean.tools.crop_by_percent(cmap,30,which='min')
+cmap = cmocean.tools.crop_by_percent(cmap,20,which='max')
 
+colors = [cmap((idx*2)+10) for idx in samples]
+
+Animator().animate(plotting_function=make_hists,param_dict={'sample':samples,'color':colors},fps=12,gif_filename='example_plots/hist.gif')
 
