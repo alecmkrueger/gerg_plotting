@@ -82,14 +82,14 @@ class SpatialInstrument:
                 if self[var] is not None:    
                     self[var] = Variable(
                         data=self[var],
-                        name=var.capitalize(),
+                        name=var,
                         cmap=cmap,
                         units=units,
                         vmin=vmin,
                         vmax=vmax
                     )
         else:
-            raise ValueError(f'{var.capitalize()} does not exist, try using the add_custom_variable method')
+            raise ValueError(f'{var} does not exist, try using the add_custom_variable method')
         
     def _format_datetime(self):
         if self.time is not None:
