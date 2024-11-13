@@ -1,19 +1,14 @@
-from gerg_plotting import Data,Variable,Histogram,Animator
-from gerg_plotting.plotting_classes.utils import calculate_range
+from gerg_plotting import Data,Histogram,Animator,cmocean
 import numpy as np
 import matplotlib.pyplot as plt
-import cmocean
 
+# Let's make some example data
 n_points = 10000
+data = Data(temperature=np.random.normal(28,size=n_points))
 
-data = Data(temperature=np.random.normal(28,size=n_points),salinity=np.random.normal(35.25,scale=0.25,size=n_points))
-pH = Variable(data=np.random.normal(7.7,scale=0.25,size=n_points),name='pH')
-data.add_custom_variable(pH)
-
-temp_range=calculate_range(data['temperature'].data)
-
+# Let's create a histogram function to plot the data how we would like
 def make_hists(sample,color,data=data):
-    '''Plot Histogram based on sample size'''
+    '''Plot Histogram based on sample size and color'''
     data_sample = data[:10*sample+1]  # Slice data
     hist = Histogram(data_sample)  # Init histogram plotter
     hist.plot('temperature',color=color,bins=30,range=(25,31))  # Plot 1-d histogram
