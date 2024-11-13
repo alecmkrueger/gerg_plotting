@@ -109,7 +109,7 @@ plotter.scatter(fig=fig,ax=ax[3],var='time',show_bathy=True,pointsize=30)
 plt.show()
 fig.savefig('example_plots/map_example.png',dpi=500,bbox_inches='tight')
 ```
-![png of maps](https://github.com/alecmkrueger/gerg_plotting/src/gerg_plotting/examples/example_plots/map_example.png)
+![png of maps](https://github.com/alecmkrueger/gerg_plotting/blob/main/src/gerg_plotting/examples/example_plots/map_example.png?raw=true)
 
 
 
