@@ -22,9 +22,7 @@ def make_hists(sample,color,data=data):
 
 samples = np.arange(90)
 cmap = plt.get_cmap('Greens')
-cmap = cmocean.tools.crop_by_percent(cmap,30,which='min')
-cmap = cmocean.tools.crop_by_percent(cmap,20,which='max')
-
+cmap = cmocean.tools.crop_by_percent(cmap,30,which='both')
 colors = [cmap((idx*2)+10) for idx in samples]
 
 Animator().animate(plotting_function=make_hists,param_dict={'sample':samples,'color':colors},fps=12,gif_filename='example_plots/hist.gif')
