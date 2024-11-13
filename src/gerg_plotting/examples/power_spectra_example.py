@@ -68,5 +68,5 @@ def power_spectra_plot(group:pd.DataFrame):
 groups = [group for _,group in df.groupby('bin_depth')]
 
 # Create an animation of the power spectra along depth
-Animator().animate(plotting_function=power_spectra_plot,iterable=groups,iteration_param='group',gif_filename='example_plots/power_spectra.gif',fps=0.75)
+Animator().animate(plotting_function=power_spectra_plot,param_dict={'group':groups},gif_filename='example_plots/power_spectra.gif',fps=0.75)
 
