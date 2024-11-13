@@ -53,31 +53,6 @@ def get_center_of_mass(lon,lat,pressure) -> tuple:
     centroid = tuple([np.nanmean(lon), np.nanmean(lat), np.nanmean(pressure)])
     return centroid
 
-def interp_glider_lat_lon(ds) -> xr.Dataset:
-    # Convert time and m_time to float64 for interpolation
-    new_time_values = ds['time'].values.astype('datetime64[s]').astype('float64')
-    new_mtime_values = ds['m_time'].values.astype('datetime64[s]').astype('float64')
-
-    # Create masks of non-NaN values for both latitude and longitude
-    valid_latitude = ~np.isnan(ds['latitude'])
-    valid_longitude = ~np.isnan(ds['longitude'])
-
-    # Interpolate latitude based on valid latitude and m_time values
-    ds['latitude'] = xr.DataArray(
-        np.interp(new_time_values, new_mtime_values[valid_latitude], ds['latitude'].values[valid_latitude]),
-        [('time', ds['time'].values)]
-    )
-
-    # Interpolate longitude based on valid longitude and m_time values
-    ds['longitude'] = xr.DataArray(
-        np.interp(new_time_values, new_mtime_values[valid_longitude], ds['longitude'].values[valid_longitude]),
-        [('time', ds['time'].values)]
-    )
-
-    ds = ds.drop_vars('m_time')
-
-    return ds
-
 def filter_var(var:pd.Series,min_value,max_value):
     var = var.where(var>min_value)
     var = var.where(var<max_value)

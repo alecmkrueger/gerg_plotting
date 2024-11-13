@@ -15,7 +15,7 @@ from gerg_plotting.data_classes.NonSpatialInstruments import NonSpatialInstrumen
 from gerg_plotting.data_classes.SpatialInstrument import SpatialInstrument
 from gerg_plotting.data_classes.SpatialInstruments import Data
 from gerg_plotting.data_classes.NonSpatialInstruments import Bounds
-from gerg_plotting.utils import calculate_range, calculate_pad, colorbar
+from gerg_plotting.plotting_classes.utils import calculate_range, calculate_pad, colorbar
 
 @define
 class Plotter:

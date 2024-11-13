@@ -1,5 +1,5 @@
 from gerg_plotting import Data,Variable,Histogram,Animator
-from gerg_plotting.utils import calculate_range
+from gerg_plotting.plotting_classes.utils import calculate_range
 import numpy as np
 
 n_points = 10000

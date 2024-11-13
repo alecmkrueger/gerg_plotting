@@ -1,5 +1,5 @@
 from gerg_plotting import Data,MapPlot,Bounds,Variable,data_from_csv
-from gerg_plotting.utils import generate_random_point
+from gerg_plotting.plotting_classes.utils import generate_random_point
 import numpy as np
 import pandas as pd
 import matplotlib.dates as mdates
