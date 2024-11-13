@@ -3,7 +3,6 @@ from pprint import pformat
 from typing import Iterable
 import cmocean
 import copy
-import pandas as pd
 import matplotlib.dates as mdates
 
 
@@ -28,7 +27,6 @@ class SpatialInstrument:
     def __attrs_post_init__(self):
         self._init_dims()
         self._format_datetime()
-        # self.detect_bounds()
 
     def copy(self):
         self_copy = copy.deepcopy(self)
