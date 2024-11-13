@@ -1,5 +1,5 @@
 '''
-Thin wrapper around matplotlib for standarized plotting at GERG
+A module for standardized plotting at GERG
 '''
 
 from .plotting_classes.Histogram import Histogram
@@ -10,3 +10,4 @@ from .plotting_classes.MapPlot import MapPlot
 from .plotting_classes.ScatterPlot import ScatterPlot
 from .plotting_classes.ScatterPlot3D import ScatterPlot3D
 from .data_classes.utils import data_from_df,data_from_csv
+import cmocean
