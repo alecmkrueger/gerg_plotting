@@ -1,5 +1,6 @@
 from gerg_plotting.data_classes.SpatialInstruments import Variable,cmocean
 import numpy as np
+import pandas as pd
 import unittest
 import collections
 
@@ -73,6 +74,10 @@ class TestVariable(unittest.TestCase):
         # Check if the data is intact
         self.assertTrue(np.array_equal(self.variable.data,np.array([2,4,6,8])))
 
-    def test_(self):
-        ''''''
+    def test_different_data_iterables(self):
+        iterables = [[2,4,6,8],(2,4,6,8),{2,4,6,8},{'a':2,'b':4,'c':6,'d':8},np.array([2,4,6,8]),pd.Series([2,4,6,8])]
+        for iter in iterables:
+            self.variable.data = iter
+            self.assertIsInstance(self.variable.data,np.ndarray,f'{self.variable.data} should be a np.ndarray got {type(self.variable.data)}')
+            self.setUp()
 
