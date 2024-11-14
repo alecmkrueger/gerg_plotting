@@ -4,6 +4,11 @@ import numpy as np
 import pandas as pd
 
 def to_numpy_array(values):
+    # convert set to list for pandas can convert to array
+    if isinstance(values,dict):
+        values = values.values()
+    if isinstance(values,set):
+        values = list(values)
     if not isinstance(values, np.ndarray):
         array = pd.Series(values).to_numpy()
         return array
