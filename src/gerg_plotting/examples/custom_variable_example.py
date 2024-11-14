@@ -1,5 +1,5 @@
 from gerg_plotting import ScatterPlot,Histogram,Variable,data_from_df,ScatterPlot3D
-from gerg_plotting.plotting_classes.utils import get_turner_cmap
+from gerg_plotting.utils import get_turner_cmap
 import pandas as pd
 
 # Let's read in the example data

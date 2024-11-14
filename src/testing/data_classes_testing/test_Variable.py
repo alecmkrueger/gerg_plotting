@@ -60,13 +60,21 @@ class TestVariable(unittest.TestCase):
     def test_assignments(self):
         # Check dot assignment
         self.variable.data = [2,4,6,8]
+        # Check to ensure data to converted to np.ndarray
         self.assertIsInstance(self.variable.data,np.ndarray)
+        # Check if the data is intact
         self.assertTrue(np.array_equal(self.variable.data,np.array([2,4,6,8])))
+        # Reset the variable
         self.setUp()
         # Check key assignment
         self.variable['data'] = [2,4,6,8]
+        # Check to ensure data to converted to np.ndarray
         self.assertIsInstance(self.variable.data,np.ndarray)
+        # Check if the data is intact
         self.assertTrue(np.array_equal(self.variable.data,np.array([2,4,6,8])))
+
+    def test_():
+        ''''''
 
     
 
