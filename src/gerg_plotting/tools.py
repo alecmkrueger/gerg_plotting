@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 
-from gerg_plotting.utils.utils import get_var_mapping
+from gerg_plotting.modules.utils import get_var_mapping
 from gerg_plotting.data_classes.SpatialInstruments import Data
 
 def interp_glider_lat_lon(ds) -> xr.Dataset:
