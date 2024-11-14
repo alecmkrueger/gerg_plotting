@@ -1,8 +1,3 @@
-import pandas as pd
-import xarray as xr
-import numpy as np
-
-from mpl_toolkits.axes_grid1 import make_axes_locatable
 import matplotlib.pyplot as plt
 import matplotlib.axes as maxes
 import numpy as np
@@ -10,11 +5,8 @@ import pandas as pd
 import xarray as xr
 import gsw
 import datetime
-import random
-import cartopy
 from typing import Iterable
 from matplotlib.colors import ListedColormap
-from scipy.signal import welch
 
 def lat_min_smaller_than_max(instance, attribute, value):
     if value is not None:
