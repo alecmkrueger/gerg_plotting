@@ -1,7 +1,5 @@
-from gerg_plotting import Data,MapPlot,data_from_csv,data_from_df,Bathy,ScatterPlot
+from gerg_plotting import data_from_csv,ScatterPlot
 import matplotlib.pyplot as plt
-import pandas as pd
-import cmocean
 
 data = data_from_csv('example_data/sample_tabs_data.csv')
 

@@ -1,4 +1,4 @@
-from gerg_plotting import ScatterPlot3D,Bounds,Bathy,data_from_csv
+from gerg_plotting import ScatterPlot3D,Bathy,data_from_csv
 
 # Let's read in the example data
 data = data_from_csv('example_data/sample_glider_data.csv')

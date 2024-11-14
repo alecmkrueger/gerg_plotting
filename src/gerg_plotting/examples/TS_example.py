@@ -1,5 +1,4 @@
-from gerg_plotting import Data,ScatterPlot,data_from_csv
-import pandas as pd
+from gerg_plotting import ScatterPlot,data_from_csv
 
 # Let's read in the example data
 data = data_from_csv('example_data/sample_glider_data.csv')
