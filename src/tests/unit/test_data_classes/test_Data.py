@@ -27,6 +27,3 @@ class TestVariable(unittest.TestCase):
         pH = Variable(data=[1,2,3,4],name='pH',cmap=cmocean.cm.thermal,units='K',vmin=0,vmax=5)
         self.data.add_custom_variable(variable=pH)
 
-
-if __name__ == "__main__":
-    unittest.main()
