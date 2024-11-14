@@ -37,6 +37,7 @@ pylint = "^3.2.5"
 [tool.poetry.group.test.dependencies]
 pytest = "^8.2.2"
 faker = "^26.0.0"
+pytest-cov = "^6.0.0"
 
 [build-system]
 requires = ["poetry-core"]
