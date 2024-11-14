@@ -4,7 +4,8 @@ import xarray as xr
 
 from gerg_plotting.data_classes.SpatialInstruments import Data
 
-def map_variables(keys, values, synonyms=None, blocklist=None):
+
+def _map_variables(keys, values, synonyms=None, blocklist=None):
     """
     Maps each key from the keys list to the most likely corresponding value from the values list,
     using optional synonyms and blocklist terms for flexible and precise matching.
@@ -51,7 +52,7 @@ def map_variables(keys, values, synonyms=None, blocklist=None):
     return mapped_dict
 
 
-def get_var_mapping(df) -> dict:
+def _get_var_mapping(df) -> dict:
     keys = ['lat', 'lon', 'depth', 'time', 'temperature', 'salinity', 'density', 'u', 'v','w', 'speed']
     values = df.columns.tolist()
     synonyms = {
@@ -68,7 +69,7 @@ def get_var_mapping(df) -> dict:
         's': ['sound']
     }
 
-    mapped_variables = map_variables(keys, values, synonyms, blocklist)
+    mapped_variables = _map_variables(keys, values, synonyms, blocklist)
 
     return mapped_variables
 
@@ -103,13 +104,14 @@ def data_from_df(df:pd.DataFrame,mapped_variables:dict|None=None):
 
     # If the user does not pass mapped_variables
     if mapped_variables is None:
-        mapped_variables = get_var_mapping(df)
+        mapped_variables = _get_var_mapping(df)
 
     mapped_variables = {key:df[value] for key,value in mapped_variables.items() if value is not None}
 
     data = Data(**mapped_variables)
 
     return data
+
 
 def data_from_csv(filename:str,mapped_variables:dict|None=None):
 
