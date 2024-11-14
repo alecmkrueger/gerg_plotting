@@ -1,4 +1,4 @@
-from gerg_plotting import Variable,cmocean
+from gerg_plotting.data_classes.SpatialInstruments import Variable,cmocean
 import numpy as np
 import unittest
 import collections
@@ -73,7 +73,7 @@ class TestVariable(unittest.TestCase):
         # Check if the data is intact
         self.assertTrue(np.array_equal(self.variable.data,np.array([2,4,6,8])))
 
-    def test_():
+    def test_(self):
         ''''''
 
     
