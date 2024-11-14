@@ -15,7 +15,9 @@ from typing import Iterable
 from scipy.signal import welch
 
 
-from gerg_plotting.modules.utils import get_center_of_mass,colorbar,rotate_vector,filter_nan
+from gerg_plotting.modules.calculations import get_center_of_mass,rotate_vector
+from gerg_plotting.modules.filters import filter_nan
+from gerg_plotting.modules.plotting import colorbar
 from gerg_plotting.data_classes.SpatialInstrument import SpatialInstrument
 from gerg_plotting.data_classes.NonSpatialInstruments import Bounds, Variable
 

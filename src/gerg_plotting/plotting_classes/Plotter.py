@@ -9,13 +9,9 @@ import matplotlib.dates as mdates
 from attrs import define, field, asdict
 from pprint import pformat
 import cartopy.crs as ccrs
-import numpy as np
 
-from gerg_plotting.data_classes.NonSpatialInstruments import NonSpatialInstrument, Variable
-from gerg_plotting.data_classes.SpatialInstrument import SpatialInstrument
 from gerg_plotting.data_classes.SpatialInstruments import Data
-from gerg_plotting.data_classes.NonSpatialInstruments import Bounds
-from gerg_plotting.modules.utils import calculate_range, calculate_pad, colorbar
+from gerg_plotting.modules.plotting import  colorbar
 
 @define
 class Plotter:
