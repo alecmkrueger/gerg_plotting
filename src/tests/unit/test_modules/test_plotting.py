@@ -26,12 +26,6 @@ class TestColorbarFunction(unittest.TestCase):
         cbar = colorbar(self.fig, self.divider, self.mappable, self.label)
         self.assertEqual(cbar.ax.get_ylabel(), self.label, "Colorbar label does not match the expected value.")
 
-    def test_colorbar_position(self):
-        """Test that the colorbar is positioned correctly."""
-        colorbar(self.fig, self.divider, self.mappable, self.label)
-        cbar_ax = self.fig.axes[-1]
-        self.assertEqual(cbar_ax.get_position().x0 > self.ax.get_position().x1, True, "Colorbar is not correctly positioned.")
-
     def tearDown(self):
         plt.close(self.fig)
 

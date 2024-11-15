@@ -1,10 +1,13 @@
-from gerg_plotting.modules.utilities import to_numpy_array,calculate_range,calculate_pad,print_time
+from gerg_plotting.modules.utilities import to_numpy_array,calculate_range,calculate_pad,print_time,print_datetime
 
 import unittest
 import numpy as np
 import pandas as pd
-from unittest.mock import patch
+import xarray as xr
+import io
+from unittest.mock import patch,call
 import datetime
+import time
 
 class TestToNumpyArray(unittest.TestCase):
     def test_dict_conversion(self):
@@ -39,7 +42,7 @@ class TestToNumpyArray(unittest.TestCase):
     def test_invalid_type(self):
         """Test that invalid types raise a ValueError."""
         with self.assertRaises(ValueError):
-            to_numpy_array(42)
+            to_numpy_array(xr.DataArray([[1,2,3,4],[1,2,3]]))
 
 
 class TestCalculateRange(unittest.TestCase):
@@ -72,32 +75,45 @@ class TestCalculatePad(unittest.TestCase):
 
 
 class TestPrintTime(unittest.TestCase):
-    @patch("builtins.print")
-    @patch("datetime.datetime")
-    def test_print_time_no_value(self, mock_datetime, mock_print):
-        """Test printing the current time when value is None."""
-        mock_datetime.datetime.now.return_value = datetime.datetime(2024, 1, 1, 12, 0, 0)
-        print_time()
-        mock_print.assert_called_once_with("12:00:00")
+    @patch('sys.stdout', new_callable=io.StringIO)
+    @patch('datetime.datetime')  # Mock datetime.datetime
+    def test_print_time(self, mock_datetime, mock_stdout):
+        """Test the print_time_simple function to ensure correct output."""
 
-    @patch("builtins.print")
-    @patch("datetime.datetime")
-    def test_print_time_value_within_interval(self, mock_datetime, mock_print):
-        """Test printing when value is within intervals."""
-        mock_datetime.datetime.now.return_value = datetime.datetime(2024, 1, 1, 12, 0, 0)
-        print_time(value=10, intervals=[10, 50, 100])
-        mock_print.assert_called_once_with("value = 10, 12:00:00")
+        # Set up the mock to return a fixed datetime
+        fixed_time = datetime.datetime(2024, 11, 15, 12, 0, 0)
+        mock_datetime.today.return_value = fixed_time
+        mock_datetime.strftime = datetime.datetime.strftime
 
-    def test_print_time_invalid_intervals(self):
-        """Test that invalid intervals raise a ValueError."""
-        with self.assertRaises(ValueError):
-            print_time(value=10, intervals=[10])
+        # Call the function
+        message = "Test message"
+        print_time(message)
 
-    @patch("builtins.print")
-    @patch("datetime.datetime")
-    def test_print_time_large_value(self, mock_datetime, mock_print):
-        """Test printing when value is larger than the last interval."""
-        mock_datetime.datetime.now.return_value = datetime.datetime(2024, 1, 1, 12, 0, 0)
-        print_time(value=5000, intervals=[10, 50, 100, 500, 1000])
-        mock_print.assert_called_once_with("value = 5000, 12:00:00")
+        # Expected output based on the mocked datetime
+        expected_output = f"{message}: {fixed_time.strftime('%H:%M:%S')}"
+
+        # Verify the output
+        self.assertEqual(mock_stdout.getvalue().rstrip(), expected_output)
+        
+
+class TestPrintDateTime(unittest.TestCase):
+    @patch('sys.stdout', new_callable=io.StringIO)
+    @patch('datetime.datetime')  # Mock datetime.datetime
+    def test_print_time(self, mock_datetime, mock_stdout):
+        """Test the print_time_simple function to ensure correct output."""
+
+        # Set up the mock to return a fixed datetime
+        fixed_time = datetime.datetime(2024, 11, 15, 12, 0, 0)
+        mock_datetime.today.return_value = fixed_time
+        mock_datetime.strftime = datetime.datetime.strftime
+
+        # Call the function
+        message = "Test message"
+        print_datetime(message)
+
+        # Expected output based on the mocked datetime
+        expected_output = f"{message}: {fixed_time.strftime('%Y-%m-%d %H:%M:%S')}"
+
+        # Verify the output
+        self.assertEqual(mock_stdout.getvalue().rstrip(), expected_output)
 

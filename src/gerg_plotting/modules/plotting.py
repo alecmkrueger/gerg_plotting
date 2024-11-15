@@ -17,7 +17,7 @@ def colorbar(fig, divider, mappable, label, nrows=1, total_cbars=2):
 
 def get_turner_cmap():
     n_colors = 256
-    viridis = plt.cm.get_cmap('viridis', n_colors)
+    viridis = plt.get_cmap('viridis', n_colors)
     newcolors = viridis(np.linspace(0, 1, n_colors))
 
     red, yellow, green, blue = np.array([1, 0, 0, 1]), np.array([1, 1, 0, 1]), np.array([0, 1, 0, 1]), np.array([0, 0, 1, 1])

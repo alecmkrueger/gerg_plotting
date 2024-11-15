@@ -2,9 +2,12 @@
 
 import numpy as np
 import pandas as pd
+import datetime
 
 def to_numpy_array(values):
     # convert set to list for pandas can convert to array
+    if values is None:
+        return None
     if isinstance(values,dict):
         values = values.values()
     if isinstance(values,set):
@@ -14,8 +17,6 @@ def to_numpy_array(values):
         return array
     elif isinstance(values, np.ndarray):
         return values
-    elif values is None:
-        return None
     else:
         raise ValueError(f"Cannot convert {type(values)} to a NumPy array")
 
@@ -30,19 +31,20 @@ def calculate_pad(var, pad=0.0):
     stop = stop + pad
     return float(start), float(stop)
 
-def print_time(value=None, intervals=[10, 50, 100, 500, 1000]):
-    import datetime
-    current_time = datetime.datetime.now().strftime("%H:%M:%S")
-    if value is None:
-        print(current_time)
-        return
-    if not len(intervals) >= 2:
-        raise ValueError(f'Not enough intervals, need at least 2 values, you passed {len(intervals)}')
-    if value <= intervals[0]:
-        print(f'{value = }, {current_time}')
-    elif value <= intervals[-2]:
-        for idx, interval in enumerate(intervals[:-1]):
-            if interval <= value < intervals[idx+1] and value % interval == 0:
-                print(f'{value = }, {current_time}')
-    elif value >= intervals[-1] and value % intervals[-1] == 0:
-        print(f'{value = }, {current_time}')
+def print_time(message):
+    """
+    Prints a message with the current time in 'HH:MM:SS' format.
+
+    Parameters:
+        message (str): The message to include in the output.
+    """
+    print(f"{message}: {datetime.datetime.today().strftime('%H:%M:%S')}")
+
+def print_datetime(message):
+    """
+    Prints a message with the current date and time in 'YYYY-MM-DD HH:MM:SS' format.
+
+    Parameters:
+        message (str): The message to include in the output.
+    """
+    print(f"{message}: {datetime.datetime.today().strftime('%Y-%m-%d %H:%M:%S')}")
