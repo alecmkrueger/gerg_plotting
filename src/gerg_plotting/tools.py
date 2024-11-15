@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 
-from gerg_plotting.data_classes.SpatialInstruments import Data
+from gerg_plotting.data_classes.Data import Data
 
 
 def _map_variables(keys, values, synonyms=None, blocklist=None):

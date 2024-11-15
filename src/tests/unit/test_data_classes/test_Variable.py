@@ -1,4 +1,5 @@
-from gerg_plotting.data_classes.SpatialInstruments import Variable,cmocean
+from gerg_plotting.data_classes.Variable import Variable
+import cmocean
 import numpy as np
 import pandas as pd
 import unittest

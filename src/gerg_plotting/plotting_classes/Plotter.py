@@ -10,7 +10,7 @@ from attrs import define, field, asdict
 from pprint import pformat
 import cartopy.crs as ccrs
 
-from gerg_plotting.data_classes.SpatialInstruments import Data
+from gerg_plotting.data_classes.Data import Data
 from gerg_plotting.modules.plotting import  colorbar
 
 @define

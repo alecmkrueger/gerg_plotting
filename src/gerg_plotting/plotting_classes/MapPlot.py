@@ -9,7 +9,7 @@ import cartopy.mpl.gridliner
 import cmocean
 
 from gerg_plotting.plotting_classes.Plotter import Plotter
-from gerg_plotting.data_classes.SpatialInstruments import Bathy
+from gerg_plotting.data_classes.Bathy import Bathy
 
 @define
 class MapPlot(Plotter):

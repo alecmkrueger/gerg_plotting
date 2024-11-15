@@ -4,7 +4,7 @@ import cmocean
 import matplotlib.pyplot as plt
 
 from gerg_plotting.plotting_classes.Plotter3D import Plotter3D
-from gerg_plotting.data_classes.SpatialInstruments import Bathy
+from gerg_plotting.data_classes.Bathy import Bathy
 
 @define
 class ScatterPlot3D(Plotter3D):

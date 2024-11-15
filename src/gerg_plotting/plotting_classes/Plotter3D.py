@@ -5,7 +5,8 @@ import mayavi.core.lut_manager
 import mayavi.core.scene
 import mayavi.mlab as mlab
 
-from gerg_plotting.data_classes.SpatialInstruments import SpatialInstrument, Bathy
+from gerg_plotting.data_classes.Data import Data
+from gerg_plotting.data_classes.Bathy import Bathy
 
 @define
 class Plotter3D:
@@ -18,7 +19,7 @@ class Plotter3D:
         fig (mayavi.core.scene.Scene): Figure object for 3D visualizations.
         figsize (tuple): Size of the figure window in pixels (width, height).
     """
-    data: SpatialInstrument
+    data: Data
     bathy: Bathy = field(default=None)
     fig: mayavi.core.scene.Scene = field(default=None)
     figsize: tuple = field(default=(1920, 1080))
