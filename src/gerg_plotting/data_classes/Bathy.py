@@ -83,7 +83,7 @@ class Bathy(SpatialInstrument):
     
     def add_colorbar(self,fig:matplotlib.figure.Figure,divider,mappable:matplotlib.axes.Axes,nrows:int) -> None:
         if self.cbar_show:
-            label = 'Bathymetry (m)'
+            label = self.get_label()
             self.cbar = colorbar(fig,divider,mappable,label,nrows=nrows)
             self.cbar.ax.locator_params(nbins=self.cbar_nbins)
             self.cbar.ax.invert_yaxis()
