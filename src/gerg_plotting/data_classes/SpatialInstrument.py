@@ -6,7 +6,8 @@ import copy
 import matplotlib.dates as mdates
 
 
-from gerg_plotting.data_classes.NonSpatialInstruments import Variable,Bounds
+from gerg_plotting.data_classes.Variable import Variable
+from gerg_plotting.data_classes.Bounds import Bounds
 from gerg_plotting.modules.utilities import calculate_pad
 
 
