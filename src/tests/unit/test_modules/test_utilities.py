@@ -2,20 +2,17 @@ from gerg_plotting.modules.utilities import to_numpy_array,calculate_range,calcu
 
 import unittest
 import numpy as np
-import pandas as pd
-import xarray as xr
 import io
-from unittest.mock import patch,call
+from unittest.mock import patch
 import datetime
-import time
 
 class TestToNumpyArray(unittest.TestCase):
     def test_dict_conversion(self):
         """Test that a dictionary is converted to a NumPy array."""
         input_dict = {"a": 1, "b": 2, "c": 3}
-        result = to_numpy_array(input_dict)
-        np.testing.assert_array_equal(result, np.array([1, 2, 3]))
-
+        with self.assertRaises(TypeError):
+            to_numpy_array(input_dict)
+        
     def test_set_conversion(self):
         """Test that a set is converted to a NumPy array."""
         input_set = {1, 2, 3}
@@ -38,11 +35,6 @@ class TestToNumpyArray(unittest.TestCase):
         """Test that None is returned as None."""
         result = to_numpy_array(None)
         self.assertIsNone(result)
-
-    def test_invalid_type(self):
-        """Test that invalid types raise a ValueError."""
-        with self.assertRaises(ValueError):
-            to_numpy_array(xr.DataArray([[1,2,3,4],[1,2,3]]))
 
 
 class TestCalculateRange(unittest.TestCase):

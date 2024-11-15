@@ -5,20 +5,23 @@ import pandas as pd
 import datetime
 
 def to_numpy_array(values):
-    # convert set to list for pandas can convert to array
+    # convert set to list for pandas can convert to numpy array
+
+    # Early return if values is None
     if values is None:
         return None
-    if isinstance(values,dict):
-        values = values.values()
-    if isinstance(values,set):
-        values = list(values)
-    if not isinstance(values, np.ndarray):
-        array = pd.Series(values).to_numpy()
-        return array
+    # Return early if values are already a numpy array
     elif isinstance(values, np.ndarray):
         return values
-    else:
-        raise ValueError(f"Cannot convert {type(values)} to a NumPy array")
+    if isinstance(values,dict):
+        raise TypeError(f"Cannot convert a dict with values of '{values}' to a NumPy array")
+    # Convert set to list before attempting to convert
+    elif isinstance(values,set):
+        values = list(values)
+    # Try to convert to numpy using pandas series as the parser
+    array = pd.Series(values).to_numpy()
+    return array
+
 
 def calculate_range(var):
     return [np.nanmin(var), np.nanmax(var)]
