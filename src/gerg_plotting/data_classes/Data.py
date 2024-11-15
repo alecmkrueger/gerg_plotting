@@ -6,6 +6,7 @@ from scipy.signal import welch
 
 from gerg_plotting.modules.calculations import rotate_vector
 from gerg_plotting.modules.filters import filter_nan
+
 from gerg_plotting.data_classes.SpatialInstrument import SpatialInstrument
 from gerg_plotting.data_classes.Bounds import Bounds
 from gerg_plotting.data_classes.Variable import Variable

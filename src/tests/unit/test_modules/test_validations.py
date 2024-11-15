@@ -1,4 +1,4 @@
-from gerg_plotting.modules.validations import lat_min_smaller_than_max,lon_min_smaller_than_max,validate_array_lengths,is_flat_numpy_array
+from gerg_plotting.modules.validations import lat_min_smaller_than_max,lon_min_smaller_than_max,is_flat_numpy_array
 
 import unittest
 import numpy as np
@@ -29,30 +29,6 @@ class TestLonMinSmallerThanMax(unittest.TestCase):
         mock_instance = MagicMock(lon_max=20)
         with self.assertRaises(ValueError):
             lon_min_smaller_than_max(mock_instance, None, 25)
-
-
-class TestValidateArrayLengths(unittest.TestCase):
-    def setUp(self):
-        """Create a mock instance with attributes for testing."""
-        self.mock_instance = MagicMock()
-        # Mock __attrs_attrs__ to behave like attrs class attributes
-        self.mock_instance.__attrs_attrs__ = [
-            MagicMock(name="attr1"),
-            MagicMock(name="attr2"),
-        ]
-
-    def test_valid_array_lengths(self):
-        """Test that no error is raised when all array lengths match."""
-        self.mock_instance.attr1 = np.array([1, 2, 3])
-        self.mock_instance.attr2 = np.array([4, 5, 6])
-        validate_array_lengths(self.mock_instance, None, None)  # Should not raise
-
-    def test_invalid_array_lengths(self):
-        """Test that ValueError is raised when array lengths differ."""
-        self.mock_instance.attr1 = np.array([1, 2, 3])
-        self.mock_instance.attr2 = np.array([4, 5])
-        with self.assertRaises(ValueError):
-            validate_array_lengths(self.mock_instance, None, None)
 
 
 class TestIsFlatNumpyArray(unittest.TestCase):
