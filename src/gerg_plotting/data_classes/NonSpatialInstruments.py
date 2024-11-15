@@ -2,13 +2,13 @@ from attrs import define,field,validators,asdict
 from matplotlib.colors import Colormap
 from typing import Iterable
 import numpy as np
+from pprint import pformat
 
 from gerg_plotting.modules.validations import lat_min_smaller_than_max,lon_min_smaller_than_max,is_flat_numpy_array
 from gerg_plotting.modules.utilities import to_numpy_array
-from gerg_plotting.data_classes.NonSpatialInstrument import NonSpatialInstrument
 
 @define
-class Variable(NonSpatialInstrument):
+class Variable():
     data:Iterable = field(converter=to_numpy_array,validator=is_flat_numpy_array)
     name:str
     cmap:Colormap = field(default=None)
@@ -19,6 +19,21 @@ class Variable(NonSpatialInstrument):
 
     def __attrs_post_init__(self):
         self.get_vmin_vmax()
+
+    def _has_var(self, key):
+        return key in asdict(self).keys()
+    def __getitem__(self, key):
+        if self._has_var(key):
+            return getattr(self, key)
+        raise KeyError(f"Attribute '{key}' not found")
+    def __setitem__(self, key, value):
+        if self._has_var(key):
+            setattr(self, key, value)
+        else:
+            raise KeyError(f"Attribute '{key}' not found")
+    def __repr__(self):
+        '''Pretty printing'''
+        return pformat(asdict(self), indent=1,width=2,compact=True,depth=1)
 
     def get_attrs(self):
         return list(asdict(self).keys())
@@ -41,7 +56,7 @@ class Variable(NonSpatialInstrument):
         return self.label
 
 @define
-class Bounds(NonSpatialInstrument):
+class Bounds():
     '''
     depth_bottom: positive depth example: 1000
     depth_top:positive depth example for surface: 0
@@ -54,3 +69,19 @@ class Bounds(NonSpatialInstrument):
 
     depth_bottom:float|int|None = field(default=None)
     depth_top:float|int|None = field(default=None)
+
+
+    def _has_var(self, key):
+        return key in asdict(self).keys()
+    def __getitem__(self, key):
+        if self._has_var(key):
+            return getattr(self, key)
+        raise KeyError(f"Attribute '{key}' not found")
+    def __setitem__(self, key, value):
+        if self._has_var(key):
+            setattr(self, key, value)
+        else:
+            raise KeyError(f"Attribute '{key}' not found")
+    def __repr__(self):
+        '''Pretty printing'''
+        return pformat(asdict(self), indent=1,width=2,compact=True,depth=1)
