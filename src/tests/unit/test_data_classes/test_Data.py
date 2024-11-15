@@ -3,7 +3,7 @@ from gerg_plotting.data_classes.Variable import Variable
 import cmocean
 import unittest
 
-class TestVariable(unittest.TestCase):
+class TestData(unittest.TestCase):
 
     def setUp(self):
         self.data = Data()
