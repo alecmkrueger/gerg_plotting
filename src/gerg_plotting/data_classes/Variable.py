@@ -10,7 +10,7 @@ from gerg_plotting.modules.utilities import to_numpy_array
 
 @define
 class Variable():
-    data:Iterable = field(converter=to_numpy_array,validator=is_flat_numpy_array)
+    data:np.ndarray = field(converter=to_numpy_array,validator=is_flat_numpy_array)
     name:str
     cmap:Colormap = field(default=None)
     units:str = field(default=None)  # Turn off units by passing/assigning to None

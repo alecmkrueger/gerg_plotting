@@ -95,7 +95,7 @@ class SpatialInstrument:
     def _format_datetime(self):
         if self.time is not None:
             if self.time.data is not None:
-                self.time.data = self.time.data.astype('datetime64')
+                self.time.data = self.time.data.astype('datetime64[ns]')
 
     def check_for_vars(self,vars:list):
         vars = [var for var in vars if var is not None]
