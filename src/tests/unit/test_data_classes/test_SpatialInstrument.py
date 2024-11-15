@@ -46,6 +46,18 @@ class TestSpatialInstrument(unittest.TestCase):
         self.spatial_instrument.add_custom_variable(custom_var)
         self.assertEqual(self.spatial_instrument['custom_var'].data.tolist(), [11, 12, 13, 14, 15])
 
+        # Test setting a custom variable after adding a custom variable
+        self.spatial_instrument['custom_var'] = [1,2,3,4]
+
+        # Test getting a non-existing variable
+        with self.assertRaises(KeyError):
+            self.spatial_instrument['non_existing_var']
+
+
+    def test_setitem_invalid(self):
+        with self.assertRaises(KeyError):
+            self.spatial_instrument['invalid_key'] = [1,2,3,4]
+
     def test_remove_custom_variable(self):
         """Test removing a custom variable."""
         custom_var = Variable(data=np.array([1, 2, 3]), name="remove_var", cmap=None, units="units")
@@ -62,13 +74,32 @@ class TestSpatialInstrument(unittest.TestCase):
         self.assertTrue(self.spatial_instrument.check_for_vars(["check_var"]))
 
         # Check for missing variable (should raise an exception)
-        with self.assertRaises(KeyError):
-            self.spatial_instrument.check_for_vars(["missing_var"])
+        # Remove the variable lat
+        self.spatial_instrument['lat'] = None
+        with self.assertRaises(ValueError):
+            self.spatial_instrument.check_for_vars(["lat"])
 
     def test_detect_bounds(self):
         """Test the detect_bounds method."""
         bounds = self.spatial_instrument.detect_bounds()
         self.assertIsInstance(bounds, Bounds)
+
+    def test_detect_bounds_if_given_by_user(self):
+        # Test if bounds is given by the user
+        bounds = Bounds(lat_min=None,lat_max=None,lon_min=None,lon_max=None,depth_bottom=None,depth_top=None)
+        self.spatial_instrument.bounds = bounds
+        bounds_detected = self.spatial_instrument.detect_bounds()
+        self.assertEqual(bounds,bounds_detected)
+
+    def test_detect_bounds_lat_lon_missing(self):
+        # Test if lat and/or lon variables are missing
+        self.spatial_instrument.lat = None
+        self.spatial_instrument.lon = None
+        self.spatial_instrument.detect_bounds()
+        lat_min = self.spatial_instrument.bounds.lat_min
+        lat_max = self.spatial_instrument.bounds.lat_max
+        self.assertIsNone(lat_min)
+        self.assertIsNone(lat_max)
 
     def test_format_datetime(self):
         """Test the _format_datetime method."""
@@ -89,7 +120,6 @@ class TestSpatialInstrument(unittest.TestCase):
 
     def test_slicing(self):
         """Test slicing functionality."""
-        # self.spatial_instrument['lat'] = np.array([10, 20, 30, 40, 50])
         sliced_instrument = self.spatial_instrument[:3]
         self.assertEqual(sliced_instrument['lat'].data.tolist(), [1, 2, 3])
 
@@ -100,6 +130,21 @@ class TestSpatialInstrument(unittest.TestCase):
         self.assertTrue(hasattr(self.spatial_instrument, "custom_var"))
         self.assertEqual(self.spatial_instrument.custom_var.data.tolist(), [100, 200, 300])
 
+        # Test not passing a Variable object
+        with self.assertRaises(TypeError):
+            self.spatial_instrument.add_custom_variable([1,2,3,4])
+
+        # Test if the variable already exists and exists_ok = False
+        lat = Variable(data=np.array([100, 200, 300]), name="lat", cmap=None, units="units")
+        with self.assertRaises(AttributeError):
+            self.spatial_instrument.add_custom_variable(lat)
+
+        # Test if the variavle already exists and exists_ok = True
+        lat = Variable(data=np.array([100, 200, 300]), name="lat", cmap=None, units="units")
+        self.spatial_instrument.add_custom_variable(lat,exist_ok=True)
+        self.assertEqual(self.spatial_instrument.lat.data.tolist(), [100, 200, 300])
+
+
     def test_date2num(self):
         """Test the date2num method."""
         time_var = Variable(data=np.array(["2024-01-01", "2024-01-02"], dtype='datetime64[D]'),
@@ -108,7 +153,14 @@ class TestSpatialInstrument(unittest.TestCase):
         date_num = self.spatial_instrument.date2num()
         self.assertEqual(len(date_num), 2)
 
+        # Test if time variable is missing
+        self.spatial_instrument.time = None
+        with self.assertRaises(ValueError):
+            date_num = self.spatial_instrument.date2num()
+
+
     def test_repr(self):
+        """Test the __repr__ method."""
         self.spatial_instrument = SpatialInstrument()
         self.assertEqual(repr(self.spatial_instrument), "{'bounds': None,\n 'custom_variables': {},\n 'depth': None,\n 'lat': None,\n 'lon': None,\n 'time': None}")
 

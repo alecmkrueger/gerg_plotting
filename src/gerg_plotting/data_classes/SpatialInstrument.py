@@ -108,8 +108,7 @@ class SpatialInstrument:
         if self.time is not None:
             if self.time.data is not None:
                 return mdates.date2num(self.time.data)
-            else: raise ValueError('time data not given')
-        else: raise ValueError('time data not given')
+        else: raise ValueError('time variable not present')
 
     def detect_bounds(self,bounds_padding=0) -> Bounds:
         '''
