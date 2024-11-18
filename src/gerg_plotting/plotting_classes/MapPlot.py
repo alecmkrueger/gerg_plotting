@@ -61,7 +61,7 @@ class MapPlot(Plotter):
         - divider (AxesDivider): Divider object for placing colorbars.
         """
         # Ensure the bounds exists
-        self.data.detect_bounds()
+        self.data.detect_bounds(self.bounds_padding)
         # Ensure the fig and axes exist
         self.init_figure(fig=fig, ax=ax, geography=True)
         
@@ -166,6 +166,10 @@ class MapPlot(Plotter):
             quiver_density (int): density of quiver arrows. The higher the value the more dense the quivers
             quiver_scale (float|int): Scales the length of the arrow inversely.
         """
+        # Ensure that data has speed
+        self.data.calculate_speed(include_w=False)
+
+        # Set up the map
         _, cmap, divider = self.set_up_map(fig=fig, ax=ax, var='speed')
         
         # Add bathymetry if needed

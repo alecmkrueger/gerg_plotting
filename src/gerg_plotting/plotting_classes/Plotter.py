@@ -77,6 +77,7 @@ class Plotter:
             else:
                 # Standard 2D Matplotlib figure with no projection
                 self.fig, self.ax = matplotlib.pyplot.subplots(figsize=figsize)
+                
         elif fig is not None and ax is not None:
             # Use existing figure and axes
             self.fig = fig

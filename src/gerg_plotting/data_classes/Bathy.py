@@ -63,6 +63,9 @@ class Bathy(SpatialInstrument):
         returns:
         lon,lat,depth
         '''
+        if self.bounds is None:
+            raise ValueError(f'The map bounds are not found')
+        
         self_path = Path(__file__).parent
         seafloor_path = self_path.parent.joinpath('seafloor_data/seafloor_data.nc')
         ds = xr.open_dataset(seafloor_path) #read in seafloor data
