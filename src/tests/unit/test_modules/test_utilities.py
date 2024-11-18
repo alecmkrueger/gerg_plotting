@@ -62,8 +62,8 @@ class TestCalculatePad(unittest.TestCase):
         """Test that padding is added correctly."""
         input_array = np.array([1, 2, 3, 4, 5])
         result = calculate_pad(input_array, pad=0.1)
-        self.assertAlmostEqual(result[0], 0.6)
-        self.assertAlmostEqual(result[1], 5.4)
+        self.assertAlmostEqual(result[0], 0.9)
+        self.assertAlmostEqual(result[1], 5.1)
 
 
 class TestPrintTime(unittest.TestCase):

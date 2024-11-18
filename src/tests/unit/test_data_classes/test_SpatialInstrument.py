@@ -101,6 +101,22 @@ class TestSpatialInstrument(unittest.TestCase):
         self.assertIsNone(lat_min)
         self.assertIsNone(lat_max)
 
+    def test_detect_bounds_with_bounds_padding(self):
+        bounds = self.spatial_instrument.detect_bounds(bounds_padding=1)
+
+        self.assertEqual(self.spatial_instrument.bounds,bounds)
+
+        # Check to ensure the depth is not affected by the bounds_padding parameter
+        self.assertEqual(bounds.depth_top,1,f'{bounds}')
+        self.assertEqual(bounds.depth_bottom,5)
+
+        self.assertEqual(bounds.lat_min,0)
+        self.assertEqual(bounds.lat_max,6)
+
+        self.assertEqual(bounds.lon_min,0)
+        self.assertEqual(bounds.lon_max,6)
+
+
     def test_format_datetime(self):
         """Test the _format_datetime method."""
         time_var = Variable(data=np.array(["2024-01-01", "2024-01-02", "2024-01-03"], dtype='datetime64[D]'),

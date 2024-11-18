@@ -120,6 +120,8 @@ class SpatialInstrument:
             this will also ensure that the bounds is not repeatedly calculated unless desired
             can recalculate self.bounds using a new bounds_padding value if self.bounds is set to None
 
+        The depth bounds are not affected by the bounds padding, so the max and min values of the depth data are used
+
         Returns:
             self.bounds (Bounds): Bounds passed by the user or generated from this function
 
@@ -142,6 +144,8 @@ class SpatialInstrument:
             
             if self.depth is not None:
                 depth_top, depth_bottom = calculate_pad(self.depth.data)
+            else:
+                depth_top, depth_bottom = None,None
                 
             # Set the bounds
             self.bounds = Bounds(

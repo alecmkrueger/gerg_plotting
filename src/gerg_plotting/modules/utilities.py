@@ -28,11 +28,9 @@ def calculate_range(var):
 
 def calculate_pad(var, pad=0.0):
     start, stop = calculate_range(var)
-    difference = stop - start
-    pad = difference * pad
-    start = start - pad
-    stop = stop + pad
-    return float(start), float(stop)
+    start_with_pad = start - pad
+    stop_with_pad = stop + pad
+    return float(start_with_pad), float(stop_with_pad)
 
 def print_time(message):
     """
