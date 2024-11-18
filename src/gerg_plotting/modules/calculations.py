@@ -3,8 +3,11 @@
 import numpy as np
 import gsw
 
-def get_center_of_mass(lon, lat, pressure):
-    return tuple([np.nanmean(lon), np.nanmean(lat), np.nanmean(pressure)])
+def get_center_of_mass(lon:np.ndarray, lat:np.ndarray, pressure:np.ndarray):
+    if not (len(lon) == 0 and len(lat) == 0 and len(pressure) == 0):
+        return tuple([np.nanmean(lon), np.nanmean(lat), np.nanmean(pressure)])
+    else:
+        return tuple([np.nan,np.nan,np.nan])
 
 
 def get_sigma_theta(salinity, temperature, cnt=False):
