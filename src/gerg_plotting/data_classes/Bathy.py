@@ -33,25 +33,29 @@ class Bathy(SpatialInstrument):
     center_of_mass:tuple = field(init=False)
     label:str = field(default='Bathymetry')
 
-    def __attrs_post_init__(self):
+
+    def __attrs_post_init__(self) -> None:
         self.get_bathy()
         if self.vertical_scaler is not None:
             self.depth = self.depth*self.vertical_scaler
         self.center_of_mass = get_center_of_mass(self.lon,self.lat,self.depth)
         self.adjust_cmap()
 
-    def get_label(self):
+
+    def get_label(self) -> str:
         if self.vertical_units != '':
             self.label = f"Bathymetry ({self.vertical_units})"
         return self.label
         
-    def adjust_cmap(self):
+
+    def adjust_cmap(self) -> None:
         # Remove the white most but of the colormap
         self.cmap = cmocean.tools.crop_by_percent(self.cmap,20,'min')
         # Add land color to the colormap
         self.cmap.set_under(self.land_color)
 
-    def get_bathy(self):
+
+    def get_bathy(self) -> tuple[np.ndarray,np.ndarray,np.ndarray]:
         '''
         bounds (Bounds): contains attributes of lat_min,lon_min,lat_max,lon_max,depth_max,depth_min
         resolution_level (float|int): how much to coarsen the dataset by in units of degrees
@@ -80,6 +84,7 @@ class Bathy(SpatialInstrument):
         self.lon, self.lat = np.meshgrid(self.lat, self.lon) #create meshgrid for plotting
 
         return self.lon,self.lat,self.depth
+    
     
     def add_colorbar(self,fig:matplotlib.figure.Figure,divider,mappable:matplotlib.axes.Axes,nrows:int) -> None:
         if self.cbar_show:

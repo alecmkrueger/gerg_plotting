@@ -18,35 +18,46 @@ class Variable():
     vmax:float = field(default=None)
     label:str = field(default=None)  # Set label to be used on figure and axes, use if desired
 
-    def __attrs_post_init__(self):
+
+    def __attrs_post_init__(self) -> None:
         self.get_vmin_vmax()
+
 
     def _has_var(self, key):
         return key in asdict(self).keys()
+    
+
     def __getitem__(self, key):
         if self._has_var(key):
             return getattr(self, key)
         raise KeyError(f"Attribute '{key}' not found")
-    def __setitem__(self, key, value):
+    
+
+    def __setitem__(self, key, value) -> None:
         if self._has_var(key):
             setattr(self, key, value)
         else:
             raise KeyError(f"Attribute '{key}' not found")
-    def __repr__(self):
+        
+
+    def __repr__(self) -> None:
         '''Pretty printing'''
         return pformat(asdict(self), indent=1,width=2,compact=True,depth=1)
 
-    def get_attrs(self):
+
+    def get_attrs(self) -> list:
         return list(asdict(self).keys())
     
-    def get_vmin_vmax(self):
+
+    def get_vmin_vmax(self) -> None:
         if self.name != 'time':  # do not calcluate vmin and vmax for time
             if self.vmin is None:
                 self.vmin = np.nanmin(self.data)
             if self.vmax is None:
                 self.vmax = np.nanmax(self.data)
 
-    def get_label(self):
+
+    def get_label(self) -> str:
         '''Assign the label if it was not passed'''
         if self.label is None:
             # Define the units that are added to the label

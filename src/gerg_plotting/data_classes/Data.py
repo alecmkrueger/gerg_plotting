@@ -27,11 +27,13 @@ class Data(SpatialInstrument):
     # Bounds
     bounds:Bounds = field(default=None)
 
-    def __attrs_post_init__(self):
+
+    def __attrs_post_init__(self) -> None:
         super().__attrs_post_init__()
         self._init_variables()  # Init variables
 
-    def _init_variables(self):
+
+    def _init_variables(self) -> None:
         '''Default Variable initialization.
         If you would like a new variable to be included in the default init, contact the repo manager'''
         self._init_variable(var='temperature', cmap=cmocean.cm.thermal, units='°C', vmin=-10, vmax=40)
@@ -42,7 +44,8 @@ class Data(SpatialInstrument):
         self._init_variable(var='w', cmap=cmocean.cm.balance, units="m/s", vmin=-5, vmax=5)
         self._init_variable(var='speed', cmap=cmocean.cm.speed, units="m/s", vmin=0, vmax=5)
 
-    def calculate_speed(self,include_w:bool=False):
+
+    def calculate_speed(self,include_w:bool=False) -> None:
         if self.speed is None:
             if include_w:
                 if self.check_for_vars(['u','v','w']):
@@ -53,7 +56,7 @@ class Data(SpatialInstrument):
                 self._init_variable(var='speed', cmap=cmocean.cm.speed, units="m/s", vmin=None, vmax=None)
 
 
-    def calcluate_PSD(self,sampling_freq,segment_length,theta_rad=None):
+    def calcluate_PSD(self,sampling_freq,segment_length,theta_rad=None) -> tuple[np.ndarray,np.ndarray,np.ndarray]|tuple[np.ndarray,np.ndarray,np.ndarray,np.ndarray]:
         '''
         Calculate the power spectral density using Welch's method
 

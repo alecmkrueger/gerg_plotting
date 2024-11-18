@@ -26,24 +26,30 @@ class SpatialInstrument:
     # Custom variables dictionary to hold dynamically added variables
     custom_variables: dict = field(factory=dict)
 
+
     def __attrs_post_init__(self) -> None:
         self._init_dims()
         self._format_datetime()
+
 
     def copy(self):
         self_copy = copy.deepcopy(self)
         return self_copy
     
+
     def slice_var(self,var:str,slice:slice) -> np.ndarray:
         return self[var].data[slice]
+
 
     def _has_var(self, key) -> bool:
         return key in asdict(self).keys() or key in self.custom_variables
     
+
     def get_vars(self) -> list:
         vars = list(asdict(self).keys()) + list(self.custom_variables.keys())
         vars = [var for var in vars if var!='custom_variables']
         return vars
+
 
     def __getitem__(self, key) -> Variable:
         """Allows accessing standard and custom variables via indexing."""
@@ -57,6 +63,7 @@ class SpatialInstrument:
             return getattr(self, key, self.custom_variables.get(key))
         raise KeyError(f"Variable '{key}' not found. Must be one of {self.get_vars()}")    
 
+
     def __setitem__(self, key, value) -> None:
         """Allows setting standard and custom variables via indexing."""
         if self._has_var(key):
@@ -66,16 +73,19 @@ class SpatialInstrument:
                 self.custom_variables[key] = value
         else:
             raise KeyError(f"Variable '{key}' not found. Must be one of {self.get_vars()}")
-            
+
+
     def __repr__(self) -> None:
         '''Pretty printing'''
         return pformat(asdict(self),width=1)
     
+
     def _init_dims(self):
         self._init_variable(var='lat', cmap=cmocean.cm.haline, units='°N', vmin=None, vmax=None)
         self._init_variable(var='lon', cmap=cmocean.cm.thermal, units='°E', vmin=None, vmax=None)
         self._init_variable(var='depth', cmap=cmocean.cm.deep, units='m', vmin=None, vmax=None)
         self._init_variable(var='time', cmap=cmocean.cm.thermal, units=None, vmin=None, vmax=None)
+
 
     def _init_variable(self, var: str, cmap, units, vmin, vmax) -> None:
         """Initializes standard variables if they are not None and of type np.ndarray."""
@@ -93,6 +103,7 @@ class SpatialInstrument:
         else:
             raise ValueError(f'{var} does not exist, try using the add_custom_variable method')
         
+
     def _format_datetime(self) -> None:
         if self.time is not None:
             if self.time.data is not None:
@@ -105,11 +116,13 @@ class SpatialInstrument:
             raise ValueError(f"Data for the following variables is missing: {', '.join(vars)}. Make sure the Data object passed contains all missing variables")
         return True
 
+
     def date2num(self) -> list:
         if self.time is not None:
             if self.time.data is not None:
                 return list(mdates.date2num(self.time.data))
         else: raise ValueError('time variable not present')
+
 
     def detect_bounds(self,bounds_padding=0) -> Bounds:
         '''
@@ -160,6 +173,7 @@ class SpatialInstrument:
 
         return self.bounds
 
+
     def add_custom_variable(self, variable: Variable, exist_ok:bool=False) -> None:
         """
         Adds a custom Variable object and makes it accessible via both dot and dict syntax.
@@ -174,6 +188,7 @@ class SpatialInstrument:
             # Add to custom_variables and dynamically create the attribute
             self.custom_variables[variable.name] = variable
             setattr(self, variable.name, variable)
+
 
     def remove_custom_variable(self,variable_name) -> None:
         '''Removes a custom variable'''

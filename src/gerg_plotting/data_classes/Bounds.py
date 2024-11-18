@@ -19,17 +19,24 @@ class Bounds():
     depth_top:float|int|None = field(default=None)
 
 
-    def _has_var(self, key):
+    def _has_var(self, key) -> bool:
         return key in asdict(self).keys()
-    def __getitem__(self, key):
+    
+    
+    def __getitem__(self, key) -> float|int|None:
         if self._has_var(key):
             return getattr(self, key)
         raise KeyError(f"Attribute '{key}' not found")
-    def __setitem__(self, key, value):
+    
+
+    def __setitem__(self, key, value) -> None:
         if self._has_var(key):
             setattr(self, key, value)
         else:
             raise KeyError(f"Attribute '{key}' not found")
-    def __repr__(self):
+        
+
+    def __repr__(self) -> None:
         '''Pretty printing'''
         return pformat(asdict(self), indent=1,width=2,compact=True,depth=1)
+    
