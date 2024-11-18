@@ -39,6 +39,11 @@ pytest = "^8.2.2"
 faker = "^26.0.0"
 pytest-cov = "^6.0.0"
 
+[tool.pytest.ini_options]
+filterwarnings = [
+    "ignore::DeprecationWarning"
+]
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
