@@ -139,8 +139,6 @@ class Animator:
         Save the GIF from frames stored in memory.
         """
         # Use the first frame as the starting point and append the rest of the frames
-        if len(self.frames) == 0:
-            raise ValueError('No Frames found, make sure you are returning the figure in your plotting_function')
         self.frames[0].save(
             self.gif_filename,
             save_all=True,
