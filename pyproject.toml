@@ -42,7 +42,8 @@ pytest-cov = "^6.0.0"
 [tool.pytest.ini_options]
 filterwarnings = [
     "error::RuntimeWarning",
-    "ignore::DeprecationWarning"
+    "ignore::DeprecationWarning",
+    'ignore:numpy.ndarray size changed, may indicate binary incompatibility',
 ]
 markers = [
     "slow: marks tests as slow (deselect with '-m \"not slow\"')",
