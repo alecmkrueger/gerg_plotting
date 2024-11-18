@@ -84,3 +84,21 @@ class TestData(unittest.TestCase):
         self.assertIsInstance(psd_W, np.ndarray)
         self.assertIn('psd_w', self.data.custom_variables)
 
+    def test_calculate_PSD_with_theta_rad(self):
+        theta_rad = np.deg2rad(55)
+        sampling_freq = 10
+        segment_length = 3
+
+        # Remove w so the calculation will not use it
+        self.data.w = None
+
+        freq, psd_U, psd_V = self.data.calcluate_PSD(sampling_freq, segment_length,theta_rad=theta_rad)
+
+        self.assertIsInstance(freq, np.ndarray)
+        self.assertIsInstance(psd_U, np.ndarray)
+        self.assertIsInstance(psd_V, np.ndarray)
+        self.assertIn('psd_freq', self.data.custom_variables)
+        self.assertIn('psd_u', self.data.custom_variables)
+        self.assertIn('psd_v', self.data.custom_variables)
+
+

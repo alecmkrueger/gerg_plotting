@@ -103,18 +103,19 @@ class TestSpatialInstrument(unittest.TestCase):
 
     def test_detect_bounds_with_bounds_padding(self):
         bounds = self.spatial_instrument.detect_bounds(bounds_padding=1)
-
         self.assertEqual(self.spatial_instrument.bounds,bounds)
-
         # Check to ensure the depth is not affected by the bounds_padding parameter
         self.assertEqual(bounds.depth_top,1,f'{bounds}')
         self.assertEqual(bounds.depth_bottom,5)
-
         self.assertEqual(bounds.lat_min,0)
         self.assertEqual(bounds.lat_max,6)
-
         self.assertEqual(bounds.lon_min,0)
         self.assertEqual(bounds.lon_max,6)
+
+    def test_detect_bounds_without_depth_data(self):
+        self.spatial_instrument.depth = None
+        bounds = self.spatial_instrument.detect_bounds()
+        self.assertIsInstance(bounds, Bounds)
 
 
     def test_format_datetime(self):
