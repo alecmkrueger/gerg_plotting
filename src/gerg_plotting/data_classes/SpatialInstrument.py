@@ -4,6 +4,7 @@ from typing import Iterable
 import cmocean
 import copy
 import matplotlib.dates as mdates
+import numpy as np
 
 
 from gerg_plotting.data_classes.Variable import Variable
@@ -25,7 +26,7 @@ class SpatialInstrument:
     # Custom variables dictionary to hold dynamically added variables
     custom_variables: dict = field(factory=dict)
 
-    def __attrs_post_init__(self):
+    def __attrs_post_init__(self) -> None:
         self._init_dims()
         self._format_datetime()
 
@@ -33,18 +34,18 @@ class SpatialInstrument:
         self_copy = copy.deepcopy(self)
         return self_copy
     
-    def slice_var(self,var:str,slice:slice):
+    def slice_var(self,var:str,slice:slice) -> np.ndarray:
         return self[var].data[slice]
 
-    def _has_var(self, key):
+    def _has_var(self, key) -> bool:
         return key in asdict(self).keys() or key in self.custom_variables
     
-    def get_vars(self):
+    def get_vars(self) -> list:
         vars = list(asdict(self).keys()) + list(self.custom_variables.keys())
         vars = [var for var in vars if var!='custom_variables']
         return vars
 
-    def __getitem__(self, key):
+    def __getitem__(self, key) -> Variable:
         """Allows accessing standard and custom variables via indexing."""
         if isinstance(key,slice):
             self_copy = self.copy()
@@ -56,7 +57,7 @@ class SpatialInstrument:
             return getattr(self, key, self.custom_variables.get(key))
         raise KeyError(f"Variable '{key}' not found. Must be one of {self.get_vars()}")    
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key, value) -> None:
         """Allows setting standard and custom variables via indexing."""
         if self._has_var(key):
             if key in asdict(self):
@@ -66,7 +67,7 @@ class SpatialInstrument:
         else:
             raise KeyError(f"Variable '{key}' not found. Must be one of {self.get_vars()}")
             
-    def __repr__(self):
+    def __repr__(self) -> None:
         '''Pretty printing'''
         return pformat(asdict(self),width=1)
     
@@ -76,7 +77,7 @@ class SpatialInstrument:
         self._init_variable(var='depth', cmap=cmocean.cm.deep, units='m', vmin=None, vmax=None)
         self._init_variable(var='time', cmap=cmocean.cm.thermal, units=None, vmin=None, vmax=None)
 
-    def _init_variable(self, var: str, cmap, units, vmin, vmax):
+    def _init_variable(self, var: str, cmap, units, vmin, vmax) -> None:
         """Initializes standard variables if they are not None and of type np.ndarray."""
         if self._has_var(var):
             if not isinstance(self[var],Variable):
@@ -92,22 +93,22 @@ class SpatialInstrument:
         else:
             raise ValueError(f'{var} does not exist, try using the add_custom_variable method')
         
-    def _format_datetime(self):
+    def _format_datetime(self) -> None:
         if self.time is not None:
             if self.time.data is not None:
                 self.time.data = self.time.data.astype('datetime64[ns]')
 
-    def check_for_vars(self,vars:list):
+    def check_for_vars(self,vars:list) -> bool:
         vars = [var for var in vars if var is not None]
         vars = [var for var in vars if self[var] is None]
         if vars:
             raise ValueError(f"Data for the following variables is missing: {', '.join(vars)}. Make sure the Data object passed contains all missing variables")
         return True
 
-    def date2num(self):
+    def date2num(self) -> list:
         if self.time is not None:
             if self.time.data is not None:
-                return mdates.date2num(self.time.data)
+                return list(mdates.date2num(self.time.data))
         else: raise ValueError('time variable not present')
 
     def detect_bounds(self,bounds_padding=0) -> Bounds:
@@ -159,7 +160,7 @@ class SpatialInstrument:
 
         return self.bounds
 
-    def add_custom_variable(self, variable: Variable, exist_ok:bool=False):
+    def add_custom_variable(self, variable: Variable, exist_ok:bool=False) -> None:
         """
         Adds a custom Variable object and makes it accessible via both dot and dict syntax.
         If exist_ok is True then if the variable already exists it will be replaced
@@ -174,7 +175,7 @@ class SpatialInstrument:
             self.custom_variables[variable.name] = variable
             setattr(self, variable.name, variable)
 
-    def remove_custom_variable(self,variable_name):
+    def remove_custom_variable(self,variable_name) -> None:
         '''Removes a custom variable'''
         delattr(self,variable_name)
 
