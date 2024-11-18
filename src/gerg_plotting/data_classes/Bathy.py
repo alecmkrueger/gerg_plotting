@@ -60,7 +60,7 @@ class Bathy(SpatialInstrument):
         lon,lat,depth
         '''
         self_path = Path(__file__).parent
-        seafloor_path = self_path.parent.joinpath('seafloor_data/gebco_2023_n31.0_s7.0_w-100.0_e-66.5.nc')
+        seafloor_path = self_path.parent.joinpath('seafloor_data/seafloor_data.nc')
         ds = xr.open_dataset(seafloor_path) #read in seafloor data
 
         ds = ds.sel(lat=slice(self.bounds["lat_min"],self.bounds["lat_max"])).sel(lon=slice(self.bounds["lon_min"],self.bounds["lon_max"])) #slice to the focus area
