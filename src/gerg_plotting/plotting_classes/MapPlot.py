@@ -33,12 +33,6 @@ class MapPlot(Plotter):
     cbar_bathy: matplotlib.colorbar.Colorbar = field(init=False)  # Colorbar for bathymetry data
     grid_spacing: int = field(default=1)  # Spacing of the gridlines on the map in degrees
 
-    # def __attrs_post_init__(self):
-    #     """
-    #     Post-initialization method. This is automatically called after the object is created.
-    #     Calls the parent's post-init and initializes bathymetry if not provided.
-    #     """
-    #     super().__attrs_post_init__()
 
     def init_bathy(self):
         """
@@ -48,7 +42,7 @@ class MapPlot(Plotter):
         if not isinstance(self.bathy, Bathy):
             self.bathy = Bathy(bounds=self.data.bounds)
 
-    def set_up_map(self, fig, ax, var):
+    def set_up_map(self, fig=None, ax=None, var=None):
         """
         Sets up the figure and axis for the map plot, including axis limits, color maps, and dividers for colorbars.
         
@@ -62,6 +56,9 @@ class MapPlot(Plotter):
         - cmap (Colormap | None): Colormap for the scatter plot.
         - divider (AxesDivider): Divider object for placing colorbars.
         """
+        # Ensure the bounds exists
+        self.data.detect_bounds()
+        # Ensure the fig and axes exist
         self.init_figure(fig=fig, ax=ax, geography=True)
         
         if var is None:
@@ -139,7 +136,7 @@ class MapPlot(Plotter):
         - fig (Figure): Matplotlib figure object (optional).
         - ax (Axes): Matplotlib axes object (optional).
         """
-        color, cmap, divider = self.set_up_map(fig, ax, var)
+        color, cmap, divider = self.set_up_map(fig=fig, ax=ax, var=var)
         
 
         # Add bathymetry if needed
@@ -165,7 +162,7 @@ class MapPlot(Plotter):
             quiver_density (int): density of quiver arrows. The higher the value the more dense the quivers
             quiver_scale (float|int): Scales the length of the arrow inversely.
         """
-        _, cmap, divider = self.set_up_map(fig, ax, 'speed')
+        _, cmap, divider = self.set_up_map(fig=fig, ax=ax, var='speed')
         
         # Add bathymetry if needed
         self.add_bathy(show_bathy, divider)
