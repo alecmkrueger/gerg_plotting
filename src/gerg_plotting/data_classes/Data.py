@@ -1,4 +1,5 @@
 import math
+import numpy as np
 from attrs import define,field
 import cmocean
 from typing import Iterable
@@ -45,11 +46,12 @@ class Data(SpatialInstrument):
         if self.speed is None:
             if include_w:
                 if self.check_for_vars(['u','v','w']):
-                    self.speed = math.hypot(self.u.data,self.v.data,self.w.data)
-                    self._init_variable(var='speed', cmap=cmocean.cm.speed, units="m/s", vmin=0, vmax=5)  
+                    self.speed = np.sqrt(self.u.data**2 + self.v.data**2 + self.w.data**2)
+                    self._init_variable(var='speed', cmap=cmocean.cm.speed, units="m/s", vmin=None, vmax=None)  
             if self.check_for_vars(['u','v']):
-                self.speed = math.hypot(self.u.data,self.v.data)
-                self._init_variable(var='speed', cmap=cmocean.cm.speed, units="m/s", vmin=0, vmax=5)
+                self.speed = np.sqrt(self.u.data**2 + self.v.data**2)
+                self._init_variable(var='speed', cmap=cmocean.cm.speed, units="m/s", vmin=None, vmax=None)
+
 
     def calcluate_PSD(self,sampling_freq,segment_length,theta_rad=None):
         '''
