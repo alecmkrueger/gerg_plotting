@@ -3,11 +3,34 @@
 import numpy as np
 import gsw
 
-def get_center_of_mass(lon:np.ndarray, lat:np.ndarray, pressure:np.ndarray):
-    if not (len(lon) == 0 and len(lat) == 0 and len(pressure) == 0):
-        return tuple([np.nanmean(lon), np.nanmean(lat), np.nanmean(pressure)])
-    else:
-        return tuple([np.nan,np.nan,np.nan])
+def get_center_of_mass(lon: np.ndarray, lat: np.ndarray, pressure: np.ndarray) -> tuple:
+    """
+    Calculates the center of mass for given longitude, latitude, and pressure arrays.
+    Handles cases where inputs are empty or contain only NaN values.
+
+    Parameters:
+    - lon (np.ndarray): Array of longitude values.
+    - lat (np.ndarray): Array of latitude values.
+    - pressure (np.ndarray): Array of pressure values.
+
+    Returns:
+    - tuple: A tuple containing the mean longitude, mean latitude, and mean pressure.
+             If an input is empty or all-NaN, the corresponding value in the tuple is np.nan.
+    """
+    def safe_nanmean(arr: np.ndarray) -> float:
+        """
+        Safely computes the mean of an array, returning np.nan if the array is empty
+        or contains only NaN values.
+        """
+        if arr.size == 0 or np.isnan(arr).all():
+            return np.nan
+        return np.nanmean(arr)
+    
+    return (
+        safe_nanmean(lon),
+        safe_nanmean(lat),
+        safe_nanmean(pressure)
+    )
 
 
 def get_sigma_theta(salinity, temperature, cnt=False):
