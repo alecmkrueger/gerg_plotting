@@ -3,13 +3,17 @@ import matplotlib.colorbar
 import matplotlib.collections
 from matplotlib.ticker import MultipleLocator
 from mpl_toolkits.axes_grid1 import make_axes_locatable
+from matplotlib.colors import Colormap
+from mpl_toolkits.axes_grid1.axes_divider import AxesDivider
 import cartopy.crs as ccrs
 from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 import cartopy.mpl.gridliner
 import cmocean
+import numpy as np
 
 from gerg_plotting.plotting_classes.Plotter import Plotter
 from gerg_plotting.data_classes.Bathy import Bathy
+
 
 @define
 class MapPlot(Plotter):
@@ -34,7 +38,7 @@ class MapPlot(Plotter):
     grid_spacing: int = field(default=1)  # Spacing of the gridlines on the map in degrees
 
 
-    def init_bathy(self):
+    def init_bathy(self) -> None:
         """
         Initializes the bathymetry object if it's not already provided.
         If no bathymetry object is passed, it creates one based on the current map bounds.
@@ -42,7 +46,7 @@ class MapPlot(Plotter):
         if not isinstance(self.bathy, Bathy):
             self.bathy = Bathy(bounds=self.data.bounds)
 
-    def set_up_map(self, fig=None, ax=None, var=None):
+    def set_up_map(self, fig=None, ax=None, var=None) -> tuple[str,Colormap,AxesDivider]|tuple[np.ndarray,Colormap,AxesDivider]:
         """
         Sets up the figure and axis for the map plot, including axis limits, color maps, and dividers for colorbars.
         
@@ -79,14 +83,14 @@ class MapPlot(Plotter):
         divider = make_axes_locatable(self.ax)  # Create a divider for colorbars
         return color, cmap, divider
 
-    def add_coasts(self,show_coastlines):
+    def add_coasts(self,show_coastlines) -> None:
         """
         Adds coastlines to the map.
         """
         if show_coastlines:
             self.ax.coastlines()
 
-    def get_quiver_step(self,quiver_density):
+    def get_quiver_step(self,quiver_density) -> int|None:
         """Calculate the step size for slicing the data to change the density of the quiver plot"""
         if quiver_density is not None:
             step = round(len(self.data.u.data)/quiver_density)
@@ -94,7 +98,7 @@ class MapPlot(Plotter):
             step = None
         return step
 
-    def add_grid(self,grid:bool):
+    def add_grid(self,grid:bool) -> None:
         # Add gridlines if requested
         if grid:
             self.gl = self.ax.gridlines(draw_labels=True, linewidth=1, color='gray',
@@ -106,7 +110,7 @@ class MapPlot(Plotter):
             self.gl.xlocator = MultipleLocator(self.grid_spacing)  # Set grid spacing for x-axis
             self.gl.ylocator = MultipleLocator(self.grid_spacing)  # Set grid spacing for y-axis
 
-    def add_bathy(self, show_bathy, divider):
+    def add_bathy(self, show_bathy, divider) -> None:
         """
         Adds bathymetric data to the map as a filled contour plot, and creates a colorbar for it.
         

@@ -34,7 +34,7 @@ class Animator:
     def __attrs_post_init__(self):
         self.frames = []
 
-    def _restructure_params(self,param_dict):
+    def _restructure_params(self,param_dict) -> list[dict]:
         """
         Restructure a dictionary of parameters, each with an array of values, into
         a list of dictionaries where each dictionary has one value per key.

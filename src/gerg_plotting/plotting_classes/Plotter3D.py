@@ -24,6 +24,7 @@ class Plotter3D:
     fig: mayavi.core.scene.Scene = field(default=None)
     figsize: tuple = field(default=(1920, 1080))
 
+
     def init_figure(self, fig=None):
         """
         Initialize a new Mayavi figure or use an existing one if provided.
@@ -43,6 +44,7 @@ class Plotter3D:
             raise ValueError("fig must be either None or a mayavi.core.scene.Scene object")
         return fig
     
+
     def _has_var(self, key) -> bool:
         """
         Check if the object has an attribute with the specified key.
@@ -56,6 +58,7 @@ class Plotter3D:
         # Check if key exists in the object's dictionary representation
         return key in asdict(self).keys()
     
+
     def get_vars(self) -> list:
         """
         Retrieve a list of all object attributes.
@@ -65,6 +68,7 @@ class Plotter3D:
         """
         # Get list of attributes by converting object to dictionary
         return list(asdict(self).keys())
+
 
     def __getitem__(self, key: str):
         """
@@ -81,6 +85,7 @@ class Plotter3D:
             return getattr(self, key)  # Return attribute value if found
         raise KeyError(f"Variable '{key}' not found. Must be one of {self.get_vars()}")  
 
+
     def __setitem__(self, key, value):
         """
         Set class attributes using dictionary-style indexing.
@@ -95,7 +100,8 @@ class Plotter3D:
         else:
             raise KeyError(f"Variable '{key}' not found. Must be one of {self.get_vars()}")
 
-    def __repr__(self):
+
+    def __repr__(self) -> None:
         """
         Pretty-print the class attributes for improved readability.
 
@@ -104,6 +110,7 @@ class Plotter3D:
         """
         # Convert attributes to formatted string for display
         return pformat(asdict(self), width=1)
+
 
     def convert_colormap(self, colormap, over_color=None, under_color=None) -> np.ndarray:
         """
@@ -132,6 +139,7 @@ class Plotter3D:
             colormap_array[-1] = over_color
 
         return colormap_array
+
 
     def format_colorbar(self, colorbar, x_pos1_offset, y_pos1_offset, x_pos2_offset, y_pos2_offset):
         """
@@ -164,6 +172,7 @@ class Plotter3D:
 
         return colorbar
 
+
     def add_colorbar(self, mappable, cmap_title, over_color=None, x_pos1_offset=None, y_pos1_offset=None,
                      x_pos2_offset=None, y_pos2_offset=None, cmap=None):
         """
@@ -193,6 +202,3 @@ class Plotter3D:
         
         return colorbar
         
-        
-        
-

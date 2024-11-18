@@ -230,7 +230,7 @@ class ScatterPlot(Plotter):
 
     def power_spectra_density(self,psd_freq=None,psd=None,
                               var_name:str=None, sampling_freq=None,segment_length=None,theta_rad=None,
-                              highlight_freqs:list=None,fig=None,ax=None):
+                              highlight_freqs:list=None,fig=None,ax=None) -> None:
         '''
         Plot of power spectra density
 

@@ -91,7 +91,7 @@ class Plotter:
                 self.ax = fig.add_subplot(gs.nrows, gs.ncols, index, projection='3d')
 
 
-    def format_axes(self,xlabel,ylabel,invert_yaxis:bool=False):
+    def format_axes(self,xlabel,ylabel,invert_yaxis:bool=False) -> None:
         """
         Method to format the axes.
 
@@ -176,13 +176,13 @@ class Plotter:
             return getattr(self, key)
         raise KeyError(f"Variable '{key}' not found. Must be one of {self.get_vars()}")  
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key, value) -> None:
         """Allows setting standard and custom variables via indexing."""
         if self._has_var(key):
             setattr(self, key, value)
         else:
             raise KeyError(f"Variable '{key}' not found. Must be one of {self.get_vars()}")
 
-    def __repr__(self):
+    def __repr__(self) -> None:
         '''Return a pretty-printed string representation of the class attributes.'''
         return pformat(asdict(self),width=1)
