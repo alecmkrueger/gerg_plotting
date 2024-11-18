@@ -4,7 +4,8 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 
-def filter_var(var, min_value, max_value):
+
+def filter_var(var, min_value, max_value) -> np.ndarray:
     """
     Filters values in an iterable or array-like object based on a range.
 
@@ -35,7 +36,7 @@ def filter_var(var, min_value, max_value):
     return var
 
 
-def filter_nan(values):
+def filter_nan(values) -> np.ndarray:
     """
     Removes NaN values from an iterable or array-like object.
 

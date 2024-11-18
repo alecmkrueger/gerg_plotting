@@ -3,6 +3,7 @@
 import numpy as np
 import gsw
 
+
 def get_center_of_mass(lon: np.ndarray, lat: np.ndarray, pressure: np.ndarray) -> tuple:
     """
     Calculates the center of mass for given longitude, latitude, and pressure arrays.
@@ -33,7 +34,7 @@ def get_center_of_mass(lon: np.ndarray, lat: np.ndarray, pressure: np.ndarray) -
     )
 
 
-def get_sigma_theta(salinity, temperature, cnt=False):
+def get_sigma_theta(salinity, temperature, cnt=False) -> tuple[np.ndarray,np.ndarray,np.ndarray]|tuple[np.ndarray,np.ndarray,np.ndarray,np.ndarray]:
     """
     Computes sigma_theta on a grid of temperature and salinity data.
     
@@ -71,10 +72,11 @@ def get_sigma_theta(salinity, temperature, cnt=False):
     return (Sg, Tg, sigma_theta, np.linspace(sigma_theta.min(), sigma_theta.max(), target_points)) if cnt else (Sg, Tg, sigma_theta)
 
 
-def get_density(salinity, temperature):
-    return gsw.sigma0(salinity, temperature)
+def get_density(salinity, temperature) -> np.ndarray:
+    return np.array(gsw.sigma0(salinity, temperature))
 
-def rotate_vector(u, v, theta_rad):
+
+def rotate_vector(u, v, theta_rad) -> tuple[np.ndarray,np.ndarray]:
     u_rotated = u * np.cos(theta_rad) - v * np.sin(theta_rad)
     v_rotated = u * np.sin(theta_rad) + v * np.cos(theta_rad)
     return u_rotated, v_rotated

@@ -4,7 +4,8 @@ import numpy as np
 import pandas as pd
 import datetime
 
-def to_numpy_array(values):
+
+def to_numpy_array(values) -> np.ndarray:
     # convert set to list for pandas can convert to numpy array
 
     # Early return if values is None
@@ -23,16 +24,18 @@ def to_numpy_array(values):
     return array
 
 
-def calculate_range(var):
+def calculate_range(var) -> list[float,float]:
     return [np.nanmin(var), np.nanmax(var)]
 
-def calculate_pad(var, pad=0.0):
+
+def calculate_pad(var, pad=0.0) -> tuple[float,float]:
     start, stop = calculate_range(var)
     start_with_pad = start - pad
     stop_with_pad = stop + pad
     return float(start_with_pad), float(stop_with_pad)
 
-def print_time(message):
+
+def print_time(message) -> None:
     """
     Prints a message with the current time in 'HH:MM:SS' format.
 
@@ -41,7 +44,8 @@ def print_time(message):
     """
     print(f"{message}: {datetime.datetime.today().strftime('%H:%M:%S')}")
 
-def print_datetime(message):
+
+def print_datetime(message) -> None:
     """
     Prints a message with the current date and time in 'YYYY-MM-DD HH:MM:SS' format.
 

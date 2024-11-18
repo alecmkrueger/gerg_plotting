@@ -4,8 +4,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
 import matplotlib.axes as maxes
+from matplotlib.colorbar import Colorbar
+from matplotlib.colors import ListedColormap
 
-def colorbar(fig, divider, mappable, label, nrows=1, total_cbars=2):
+
+def colorbar(fig, divider, mappable, label, nrows=1, total_cbars=2) -> Colorbar:
     last_axes = plt.gca()
     base_pad = 0.1
     num_colorbars = (len(fig.axes) - nrows) % total_cbars
@@ -15,7 +18,8 @@ def colorbar(fig, divider, mappable, label, nrows=1, total_cbars=2):
     plt.sca(last_axes)
     return cbar
 
-def get_turner_cmap():
+
+def get_turner_cmap() -> ListedColormap:
     n_colors = 256
     viridis = plt.get_cmap('viridis', n_colors)
     newcolors = viridis(np.linspace(0, 1, n_colors))
