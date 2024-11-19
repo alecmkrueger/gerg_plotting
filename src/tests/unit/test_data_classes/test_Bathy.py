@@ -57,6 +57,13 @@ class TestBathy(unittest.TestCase):
         self.assertEqual(lon.shape, lat.shape)  # lon and lat should have the same shape as meshgrid
         self.assertEqual(depth.shape, lon.shape)  # depth should align with lon/lat meshgrid
 
+    def test_get_bathy_missing_bounds(self):
+        """Test the get_bathy method for proper depth, lon, and lat extraction."""
+        # This test assumes the presence of the file defined in the get_bathy method.
+        self.bathy.bounds = None
+        with self.assertRaises(ValueError):
+            self.bathy.get_bathy()
+
     def test_add_colorbar(self):
         """Test the add_colorbar method."""
         fig, ax = plt.subplots()
