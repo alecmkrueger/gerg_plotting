@@ -246,17 +246,10 @@ class ScatterPlot(Plotter):
         # Calculate the power spectra density
         if psd_freq is None or psd is None:
             self.data.calcluate_PSD(sampling_freq,segment_length,theta_rad)
-
+            
         elif psd_freq is not None and psd_freq is not None:
-            if isinstance(psd,Variable):
-                self.data.add_custom_variable(psd)
-            else:
-                self.data.add_custom_variable(Variable(psd,name=f'psd_{var_name}',units='cm²/s²/cpd',label='Power Spectra Density V (cm²/s²/cpd)'),exist_ok=True)
-            if isinstance(psd_freq,Variable):
-                self.data.add_custom_variable(psd_freq)
-            else:
-                self.data.add_custom_variable(Variable(psd_freq,name='psd_freq',units='cpd',label='Power Spectra Density Frequency (cpd)'),exist_ok=True)
-                
+            self.data.add_custom_variable(Variable(psd_freq,name='psd_freq',units='cpd',label='Power Spectra Density Frequency (cpd)'),exist_ok=True)
+            self.data.add_custom_variable(Variable(psd,name=f'psd_{var_name}',units='cm²/s²/cpd',label='Power Spectra Density V (cm²/s²/cpd)'),exist_ok=True)
 
         self.init_figure(fig=fig,ax=ax)
         self.ax.plot(self.data.psd_freq.data, self.data[f'psd_{var_name}'].data, color='blue')
@@ -269,5 +262,4 @@ class ScatterPlot(Plotter):
         if highlight_freqs is not None:
             _ = [self.ax.axvline(highlight_freq, color=plt.get_cmap('tab10')(idx), linestyle='--', linewidth=1, label=f'{highlight_freq:.3f} cpd') for idx,highlight_freq in enumerate(highlight_freqs)]
             self.ax.legend()
-            
         self.fig.suptitle(f'Power Spectra Density',fontsize=22)
