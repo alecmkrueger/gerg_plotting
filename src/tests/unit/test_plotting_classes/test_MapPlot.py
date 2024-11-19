@@ -1,5 +1,6 @@
 import unittest
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import cartopy.crs as ccrs
@@ -15,6 +16,7 @@ class TestMapPlot(unittest.TestCase):
             'lon': np.linspace(-100, -80, 100),
             'lat': np.linspace(20, 40, 100),
             'depth':np.linspace(0,200,100),
+            'time':pd.date_range('2024-07-10','2024-09-13',periods=100),
             'temperature': np.random.rand(100),
             'salinity': np.random.rand(100),
             'u': np.random.rand(100),
@@ -28,8 +30,14 @@ class TestMapPlot(unittest.TestCase):
 
     def test_init_bathy(self):
         """Test that the bathy object is initialized correctly."""
+        self.map_plot.bathy = None
         self.map_plot.init_bathy()
         self.assertIsInstance(self.map_plot.bathy, Bathy)
+
+    def test_get_quiver_step(self):
+        quiver_density = 10
+        step = self.map_plot.get_quiver_step(quiver_density=quiver_density)
+        self.assertEqual(step,10)
 
     def test_set_up_map(self):
         """Test the map setup process and returned values."""
@@ -39,12 +47,27 @@ class TestMapPlot(unittest.TestCase):
         self.assertIsNotNone(cmap)
         self.assertIsNotNone(divider)
 
+    def test_set_up_map_no_var(self):
+        """Test the map setup process and returned values."""
+        fig, ax = plt.subplots(subplot_kw={'projection': ccrs.PlateCarree()})
+        color, cmap, divider = self.map_plot.set_up_map(fig=fig, ax=ax)
+        self.assertIsInstance(color, str)
+        self.assertIsNone(cmap)
+        self.assertIsNotNone(divider)
+
+    def test_set_up_map_time(self):
+        """Test the map setup process and returned values."""
+        fig, ax = plt.subplots(subplot_kw={'projection': ccrs.PlateCarree()})
+        color, cmap, divider = self.map_plot.set_up_map(fig=fig, ax=ax, var='time')
+        self.assertIsInstance(color, np.ndarray)
+        self.assertIsNotNone(cmap)
+        self.assertIsNotNone(divider)
+
     def test_add_coasts(self):
         """Test adding coastlines to the map."""
         fig, ax = plt.subplots(subplot_kw={'projection': ccrs.PlateCarree()})
         self.map_plot.init_figure(fig=fig, ax=ax, geography=True)
         self.map_plot.add_coasts(show_coastlines=True)
-        # No exception indicates success; visual testing can verify coastlines.
 
     def test_add_grid(self):
         """Test adding gridlines to the map."""
