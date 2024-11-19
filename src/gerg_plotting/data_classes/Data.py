@@ -58,7 +58,7 @@ class Data(SpatialInstrument):
 
     def calcluate_PSD(self,sampling_freq,segment_length,theta_rad=None) -> tuple[np.ndarray,np.ndarray,np.ndarray]|tuple[np.ndarray,np.ndarray,np.ndarray,np.ndarray]:
         '''
-        Calculate the power spectral density using Welch's method
+        Calculate the power spectral density using Welch's method for currents
 
         segment_length (int): Length of each segment for Welch's method
         '''
