@@ -5,7 +5,7 @@ import xarray as xr
 from gerg_plotting.data_classes.Data import Data
 
 
-def _map_variables(keys, values, synonyms=None, blocklist=None):
+def _map_variables(keys:list[str], values:list[str], synonyms:dict[str,list[str]]|None=None, blocklist:dict[str,list[str]]|None=None):
     """
     Maps each key from the keys list to the most likely corresponding value from the values list,
     using optional synonyms and blocklist terms for flexible and precise matching.
@@ -36,23 +36,36 @@ def _map_variables(keys, values, synonyms=None, blocklist=None):
         
         # Search through values for matches
         for value in values:
-            # Check if this is a single-letter key (like 'u' or 'v')
+            # Check if the value is blocked for the key
+            if any(block.lower() in value.lower() for block in blocked_words):
+                continue  # Skip this value since it's blocked
+
+            # Check for exact matches
+            if any(match.lower() == value.lower() for match in possible_matches):
+                mapped_dict[key] = value
+                break
+            
+            # Check if this is a single-letter key (like 'u', 'v', 'w', or 's')
             if len(key) == 1:
+                # Check the synonyms first
+                if any(match.lower() == value.lower() for match in possible_matches):
+                    mapped_dict[key] = value
+                    break
                 # Ensure the key appears only at the start or end of the value string
-                if (value.lower().startswith(key.lower()) or value.lower().endswith(key.lower())):
+                elif value.lower().startswith(key.lower()) or value.lower().endswith(key.lower()):
                     mapped_dict[key] = value
                     break
             else:
-                # Check for matching while excluding blocked words
-                if (any(match.lower() in value.lower() for match in possible_matches) and
-                    all(block.lower() not in value.lower() for block in blocked_words)):
+                # Check for matching using synonyms and the key itself
+                if any(match.lower() in value.lower() for match in possible_matches):
                     mapped_dict[key] = value
                     break
     
     return mapped_dict
 
 
-def _get_var_mapping(df) -> dict:
+
+def _get_var_mapping(df:pd.DataFrame) -> dict:
     keys = ['lat', 'lon', 'depth', 'time', 'temperature', 'salinity', 'density', 'u', 'v','w', 'speed']
     values = df.columns.tolist()
     synonyms = {
@@ -60,13 +73,13 @@ def _get_var_mapping(df) -> dict:
         'temperature': ['temp', 'temperature_measure'],
         'salinity': ['salt', 'salinity_level'],
         'density': ['density_metric', 'rho'],
-        'u': ['eastward_velocity', 'u_component'],
-        'v': ['northward_velocity', 'v_component'],
-        'w': ['downward_velocity','upward_velocity','w_component'],
-        's': ['combined_velocity','velocity','speed']
+        'u': ['eastward_velocity', 'u_component', 'u_current', 'current_u'],
+        'v': ['northward_velocity', 'v_component', 'v_current', 'current_v'],
+        'w': ['downward_velocity','upward_velocity','w_component', 'w_current', 'current_w'],
+        's': ['combined_velocity','velocity','speed', 's_current', 'current_s']
     }
     blocklist = {
-        's': ['sound']
+        's': ['sound','pres']
     }
 
     mapped_variables = _map_variables(keys, values, synonyms, blocklist)
