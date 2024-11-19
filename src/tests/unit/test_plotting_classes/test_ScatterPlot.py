@@ -37,6 +37,9 @@ class TestScatterPlot(unittest.TestCase):
         # Initialize ScatterPlot
         self.plotter = ScatterPlot(data=self.data)
 
+    def tearDown(self):
+        plt.close()
+
     def test_get_density_color_data(self):
         self.plotter.get_density_color_data(color_var='density')
 
@@ -49,7 +52,6 @@ class TestScatterPlot(unittest.TestCase):
         
         # Assert that the scatter plot is created
         self.assertIsNotNone(scatter)
-        plt.close(fig)
 
     def test_scatter_time(self):
         """
@@ -60,7 +62,6 @@ class TestScatterPlot(unittest.TestCase):
         
         # Assert that the scatter plot is created
         self.assertIsNotNone(scatter)
-        plt.close(fig)
 
     def test_scatter_no_var(self):
         """
@@ -71,7 +72,6 @@ class TestScatterPlot(unittest.TestCase):
         
         # Assert that the scatter plot is created
         self.assertIsNotNone(scatter)
-        plt.close(fig)
 
     def test_hovmoller(self):
         """
@@ -83,7 +83,6 @@ class TestScatterPlot(unittest.TestCase):
         # Assert the axes are formatted correctly
         self.assertEqual(ax.get_xlabel(), "Time")
         self.assertEqual(ax.get_ylabel(), "Depth")
-        plt.close(fig)
 
     def test_TS(self):
         """
@@ -96,7 +95,6 @@ class TestScatterPlot(unittest.TestCase):
         self.assertEqual(ax.get_title(), "T-S Diagram")
         self.assertEqual(ax.get_xlabel(), "Salinity")
         self.assertEqual(ax.get_ylabel(), "Temperature")
-        plt.close(fig)
 
     def test_quiver1d(self):
         """
@@ -107,7 +105,16 @@ class TestScatterPlot(unittest.TestCase):
 
         # Assert that y-axis is hidden
         self.assertFalse(ax.yaxis.get_visible())
-        plt.close(fig)
+
+    def test_quiver1d_no_quiver_density(self):
+        """
+        Test the 1D quiver plot method for velocity vectors.
+        """
+        fig, ax = plt.subplots()
+        self.plotter.quiver1d(x="time", quiver_scale=1, fig=fig, ax=ax)
+
+        # Assert that y-axis is hidden
+        self.assertFalse(ax.yaxis.get_visible())
 
     def test_quiver2d(self):
         """
@@ -119,7 +126,17 @@ class TestScatterPlot(unittest.TestCase):
         # Assert the axes labels
         self.assertEqual(ax.get_xlabel(), "Time")
         self.assertEqual(ax.get_ylabel(), "Depth")
-        plt.close(fig)
+
+    def test_quiver2d_no_quiver_density(self):
+        """
+        Test the 2D quiver plot method for velocity vectors.
+        """
+        fig, ax = plt.subplots()
+        self.plotter.quiver2d(x="time", y="depth",quiver_scale=1, fig=fig, ax=ax)
+
+        # Assert the axes labels
+        self.assertEqual(ax.get_xlabel(), "Time")
+        self.assertEqual(ax.get_ylabel(), "Depth")
 
     def test_power_spectra_density(self):
         """
@@ -131,8 +148,6 @@ class TestScatterPlot(unittest.TestCase):
         # Add PSD variables to data
         psd_freq = Variable(psd_freq, name="psd_freq", units="Hz", label="Frequency (Hz)")
         psd_example = Variable(psd, name="psd_example", units="dB", label="Power Spectra Density")
-        # self.data.add_custom_variable(psd_freq)
-        # self.data.add_custom_variable(psd_example)
 
         fig, ax = plt.subplots()
         self.plotter.power_spectra_density(psd_freq=psd_freq, psd=psd_example, var_name="example", fig=fig, ax=ax)
@@ -140,5 +155,65 @@ class TestScatterPlot(unittest.TestCase):
         # Assert that the plot is created
         self.assertEqual(ax.get_xlabel(), "Frequency (Hz)")
         self.assertEqual(ax.get_ylabel(), "Power Spectra Density")
-        plt.close(fig)
+
+    def test_power_spectra_density_with_highlights(self):
+        """
+        Test the PSD plotting method with generated data.
+        """
+        psd_freq = np.logspace(-2, 1, 10)  # Example frequencies
+        psd = np.random.uniform(1, 10, 10)  # Example PSD values
+
+        # Add PSD variables to data
+        psd_freq = Variable(psd_freq, name="psd_freq", units="Hz", label="Frequency (Hz)")
+        psd_example = Variable(psd, name="psd_example", units="dB", label="Power Spectra Density")
+
+        fig, ax = plt.subplots()
+        self.plotter.power_spectra_density(psd_freq=psd_freq, psd=psd_example, var_name="example", highlight_freqs=[0,10], fig=fig, ax=ax)
+        # Assert that the plot is created
+        self.assertEqual(ax.get_xlabel(), "Frequency (Hz)")
+        self.assertEqual(ax.get_ylabel(), "Power Spectra Density")
+
+    def test_power_spectra_density_psd_non_Variable(self):
+        """
+        Test the PSD plotting method with generated data.
+        """
+        psd_freq = np.logspace(-2, 1, 10)  # Example frequencies
+        psd = np.random.uniform(1, 10, 10)  # Example PSD values
+
+        fig, ax = plt.subplots()
+        self.plotter.power_spectra_density(psd_freq=psd_freq, psd=psd, var_name="V",fig=fig, ax=ax)
+        # Assert that the plot is created
+        self.assertEqual(ax.get_xlabel(), "Power Spectra Density Frequency (cpd)")
+        self.assertEqual(ax.get_ylabel(), "Power Spectra Density V (cm²/s²/cpd)")
+
+    def test_power_spectra_density_no_vars_passed(self):
+        """
+        Test the PSD plotting method with generated data.
+        """
+        fig, ax = plt.subplots()
+        with self.assertRaises(ValueError):
+            self.plotter.power_spectra_density(var_name="example",fig=fig, ax=ax)
+
+
+    def test_power_spectra_density_samplingfreq_seglen(self):
+        """
+        Test the PSD plotting method with generated data.
+        """
+        fig, ax = plt.subplots()
+        self.plotter.power_spectra_density(sampling_freq=10,segment_length=18,var_name="u",fig=fig, ax=ax)
+        # Assert that the plot is created
+        self.assertEqual(ax.get_xlabel(), "Power Spectra Density Frequency (cpd)")
+        self.assertEqual(ax.get_ylabel(), "Power Spectra Density U (cm²/s²/cpd)")
+
+    def test_power_spectra_density_samplingfreq_seglen_thetarad(self):
+        """
+        Test the PSD plotting method with generated data.
+        """
+        fig, ax = plt.subplots()
+        self.plotter.power_spectra_density(sampling_freq=10,segment_length=18,theta_rad=55,var_name="u",fig=fig, ax=ax)
+        # Assert that the plot is created
+        self.assertEqual(ax.get_xlabel(), "Power Spectra Density Frequency (cpd)")
+        self.assertEqual(ax.get_ylabel(), "Power Spectra Density U (cm²/s²/cpd)")
+
+
 
