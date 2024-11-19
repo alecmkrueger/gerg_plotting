@@ -11,6 +11,29 @@ from gerg_plotting.data_classes.Data import Data
 from gerg_plotting.tools import _map_variables, _get_var_mapping, interp_glider_lat_lon, data_from_df, data_from_csv
 
 
+# Sample dataset for testing
+def create_test_dataset():
+    """
+    Creates a test dataset with variables 'time', 'm_time', 'latitude', and 'longitude'.
+    Includes NaN values for latitude and longitude to test interpolation.
+    """
+    time = np.array(['2023-01-01T00:00:00', '2023-01-01T01:00:00', '2023-01-01T02:00:00'], dtype='datetime64[ns]')
+    m_time = np.array(['2023-01-01T00:00:00', '2023-01-01T01:30:00', '2023-01-01T02:00:00'], dtype='datetime64[ns]')
+    
+    latitude = np.array([34.0, np.nan, 36.0])  # Include NaN to test interpolation
+    longitude = np.array([-120.0, np.nan, -118.0])  # Include NaN to test interpolation
+    
+    ds = xr.Dataset(
+        {
+            'latitude': (['m_time'], latitude),
+            'longitude': (['m_time'], longitude),
+            'time': (['time'], time),
+            'm_time': (['m_time'], m_time),
+        }
+    )
+    return ds
+
+
 class TestFunctions(unittest.TestCase):
 
     def tearDown(self):
@@ -62,31 +85,30 @@ class TestFunctions(unittest.TestCase):
 
         self.assertEqual(_get_var_mapping(df), expected_output,msg=f'{_get_var_mapping(df) = }')
 
-    def test_interp_glider_lat_lon(self):
-        # Create a sample dataset
-        ds = xr.Dataset({
-            'time': ('time', pd.date_range("2023-01-01", periods=5)),
-            'm_time': ('time', pd.date_range("2023-01-01", periods=5).shift(-1)),
-            'latitude': ('time', [10, np.nan, 15, np.nan, 20]),
-            'longitude': ('time', [30, 35, np.nan, np.nan, 50])
-        })
+    def test_interpolation(self):
+        """Test interpolation of latitude and longitude in the function."""
+        # Create the test dataset
+        ds = create_test_dataset()
 
-        result = interp_glider_lat_lon(ds)
+        # Call the function
+        interpolated_ds = interp_glider_lat_lon(ds)
 
-        # Assert lat/lon are interpolated correctly
-        np.testing.assert_allclose(
-            result['latitude'].values,
-            [10, 12.5, 15, 17.5, 20],
-            rtol=1e-5
-        )
-        np.testing.assert_allclose(
-            result['longitude'].values,
-            [30, 35, 40, 45, 50],
-            rtol=1e-5
-        )
+        # Check that 'm_time' was removed
+        self.assertNotIn('m_time', interpolated_ds)
 
-        # Assert 'm_time' is dropped
-        self.assertNotIn('m_time', result)
+        # Verify 'latitude' interpolation
+        expected_latitude = np.array([34.0, 35.0, 36.0])
+        np.testing.assert_almost_equal(interpolated_ds['latitude'].values, expected_latitude)
+
+        # Verify 'longitude' interpolation
+        expected_longitude = np.array([-120.0, -119.0, -118.0])
+        np.testing.assert_almost_equal(interpolated_ds['longitude'].values, expected_longitude)
+
+        # Check dimensions and coordinates of the output dataset
+        self.assertIn('time', interpolated_ds.dims)
+        self.assertEqual(len(interpolated_ds['time']), 3)
+        self.assertEqual(interpolated_ds['latitude'].dims, ('time',))
+        self.assertEqual(interpolated_ds['longitude'].dims, ('time',))
 
     def test_data_from_df(self):
         df = pd.DataFrame({
