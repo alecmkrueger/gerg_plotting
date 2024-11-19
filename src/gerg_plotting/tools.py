@@ -87,10 +87,10 @@ def _get_var_mapping(df:pd.DataFrame) -> dict:
     return mapped_variables
 
 
-def interp_glider_lat_lon(ds) -> xr.Dataset:
+def interp_glider_lat_lon(ds:xr.Dataset) -> xr.Dataset:
     # Convert time and m_time to float64 for interpolation
-    new_time_values = ds['time'].values.astype('datetime64[s]').astype('float64')
-    new_mtime_values = ds['m_time'].values.astype('datetime64[s]').astype('float64')
+    new_time_values = ds['time'].values.astype('datetime64[ns]').astype('float64')
+    new_mtime_values = ds['m_time'].values.astype('datetime64[ns]').astype('float64')
 
     # Create masks of non-NaN values for both latitude and longitude
     valid_latitude = ~np.isnan(ds['latitude'])
