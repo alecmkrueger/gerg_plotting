@@ -70,7 +70,7 @@ class MapPlot(Plotter):
             cmap = None
         else:
             if var == 'time':
-                color_var_values = self.data.date2num()
+                color_var_values = np.array(self.data.date2num())
             else:
                 color_var_values = self.data[var].data.copy()
             color = color_var_values  # Color is determined by the variable data
