@@ -215,5 +215,3 @@ class TestScatterPlot(unittest.TestCase):
         self.assertEqual(ax.get_xlabel(), "Power Spectra Density Frequency (cpd)")
         self.assertEqual(ax.get_ylabel(), "Power Spectra Density U (cm²/s²/cpd)")
 
-
-
