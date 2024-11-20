@@ -155,6 +155,15 @@ class Plotter:
 
             return self.cbar
         
+    def save(self,filename,**kwargs):
+        '''
+        
+        '''
+        if self.fig is not None:
+            self.fig.savefig(fname=filename,**kwargs)
+        else:
+            raise ValueError('No figure to save')
+        
     def _has_var(self, key) -> bool:
         '''Check if object has var'''
         return key in asdict(self).keys()
