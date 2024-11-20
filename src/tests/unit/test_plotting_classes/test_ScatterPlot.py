@@ -145,16 +145,12 @@ class TestScatterPlot(unittest.TestCase):
         psd_freq = np.logspace(-2, 1, 10)  # Example frequencies
         psd = np.random.uniform(1, 10, 10)  # Example PSD values
 
-        # Add PSD variables to data
-        psd_freq = Variable(psd_freq, name="psd_freq", units="Hz", label="Frequency (Hz)")
-        psd_example = Variable(psd, name="psd_example", units="dB", label="Power Spectra Density")
-
         fig, ax = plt.subplots()
-        self.plotter.power_spectra_density(psd_freq=psd_freq, psd=psd_example, var_name="example", fig=fig, ax=ax)
+        self.plotter.power_spectra_density(psd_freq=psd_freq, psd=psd, var_name="example", fig=fig, ax=ax)
 
         # Assert that the plot is created
-        self.assertEqual(ax.get_xlabel(), "Frequency (Hz)")
-        self.assertEqual(ax.get_ylabel(), "Power Spectra Density")
+        self.assertEqual(ax.get_xlabel(), "Power Spectra Density Frequency (cpd)")
+        self.assertEqual(ax.get_ylabel(), "Power Spectra Density V (cm²/s²/cpd)")
 
     def test_power_spectra_density_with_highlights(self):
         """
@@ -163,15 +159,11 @@ class TestScatterPlot(unittest.TestCase):
         psd_freq = np.logspace(-2, 1, 10)  # Example frequencies
         psd = np.random.uniform(1, 10, 10)  # Example PSD values
 
-        # Add PSD variables to data
-        psd_freq = Variable(psd_freq, name="psd_freq", units="Hz", label="Frequency (Hz)")
-        psd_example = Variable(psd, name="psd_example", units="dB", label="Power Spectra Density")
-
         fig, ax = plt.subplots()
-        self.plotter.power_spectra_density(psd_freq=psd_freq, psd=psd_example, var_name="example", highlight_freqs=[0,10], fig=fig, ax=ax)
+        self.plotter.power_spectra_density(psd_freq=psd_freq, psd=psd, var_name="example", highlight_freqs=[0,10], fig=fig, ax=ax)
         # Assert that the plot is created
-        self.assertEqual(ax.get_xlabel(), "Frequency (Hz)")
-        self.assertEqual(ax.get_ylabel(), "Power Spectra Density")
+        self.assertEqual(ax.get_xlabel(), "Power Spectra Density Frequency (cpd)")
+        self.assertEqual(ax.get_ylabel(), "Power Spectra Density V (cm²/s²/cpd)")
 
     def test_power_spectra_density_psd_non_Variable(self):
         """
@@ -200,7 +192,7 @@ class TestScatterPlot(unittest.TestCase):
         Test the PSD plotting method with generated data.
         """
         fig, ax = plt.subplots()
-        self.plotter.power_spectra_density(sampling_freq=10,segment_length=18,var_name="u",fig=fig, ax=ax)
+        self.plotter.power_spectra_density(sampling_freq=10,segment_length=9,var_name="u",fig=fig, ax=ax)
         # Assert that the plot is created
         self.assertEqual(ax.get_xlabel(), "Power Spectra Density Frequency (cpd)")
         self.assertEqual(ax.get_ylabel(), "Power Spectra Density U (cm²/s²/cpd)")
@@ -210,7 +202,7 @@ class TestScatterPlot(unittest.TestCase):
         Test the PSD plotting method with generated data.
         """
         fig, ax = plt.subplots()
-        self.plotter.power_spectra_density(sampling_freq=10,segment_length=18,theta_rad=55,var_name="u",fig=fig, ax=ax)
+        self.plotter.power_spectra_density(sampling_freq=10,segment_length=9,theta_rad=55,var_name="u",fig=fig, ax=ax)
         # Assert that the plot is created
         self.assertEqual(ax.get_xlabel(), "Power Spectra Density Frequency (cpd)")
         self.assertEqual(ax.get_ylabel(), "Power Spectra Density U (cm²/s²/cpd)")
