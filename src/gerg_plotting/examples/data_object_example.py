@@ -1,84 +1,109 @@
-from gerg_plotting import Data,Variable,Bounds
-import numpy as np
+from gerg_plotting import Data, Variable, data_from_csv,data_from_df
 import pandas as pd
-import matplotlib.dates as mdates
-import matplotlib.pyplot as plt
 import cmocean
 
 
-def data_object_example():
-    # We will create a few Data objects below using various methods
-
-    # Let's read in the example data
-    df = pd.read_csv('example_data/sample_glider_data.csv',parse_dates=['time'])
-    n_points = len(df)
-
-    lats = df['latitude']
-    lons = df['longitude']
-    depth = df['pressure']
-    time = df['time']
-    salinity = df['salinity']
-    temperature = df['temperature']
-    density = df['density']
+def read_example_data(filepath):
+    """Reads example data from a CSV file and returns a DataFrame."""
+    return pd.read_csv(filepath, parse_dates=['time'])
 
 
-
-    # Method 1: Using Iterables
-
-    # Here is the initialization of the Data object used for plotting using pandas.Series objects as the inputs
-    # To use this method you must use one of the default variables, there is another method for adding non-default/custom variables
-    data = Data(lat=df['latitude'],lon=df['longitude'],depth=df['pressure'],time=df['time'],
-                salinity=df['salinity'],temperature=df['temperature'],density=df['density'])
-    # Here is an example using numpy arrays:
-    data = Data(lat=lats,lon=lons,depth=depth,time=time,salinity=salinity,temperature=temperature,density=density)
+def create_data_from_csv(filename):
+    return data_from_csv(filename)
 
 
-
-    # Method 2: Using Variable Objects
-
-    # There is a bit more to do before we can initialize the Data object
-    # This way we can be clear with our variable creation
-
-    # Let's initialize the Variable objects
-    lat_var = Variable(data = lats,name='lat', cmap=cmocean.cm.haline, units='°N', vmin=None, vmax=None)
-    lon_var = Variable(data = lons,name='lon', cmap=cmocean.cm.thermal, units='°W', vmin=None, vmax=None)
-    depth_var = Variable(data = depth,name='depth', cmap=cmocean.cm.deep, units='m', vmin=None, vmax=None)
-    time_var = Variable(data = time,name='time', cmap=cmocean.cm.thermal, units=None, vmin=None, vmax=None)
-
-    temperature_var = Variable(data = temperature,name='temperature', cmap=cmocean.cm.thermal, units='°C', vmin=-10, vmax=40)
-    salinity_var = Variable(data = salinity,name='salinity', cmap=cmocean.cm.haline, units=None, vmin=28, vmax=40)
-    density_var = Variable(data = density,name='density', cmap=cmocean.cm.dense, units="kg/m\u00B3", vmin=1020, vmax=1035)
-
-    # Now that we have our Variables we can initialize the Data object just like before
-    data = Data(lat=lat_var,lon=lon_var,depth=depth_var,time=time_var,
-                temperature=temperature_var,salinity=salinity_var,density=density_var)
+def create_data_from_df(df):
+    return data_from_df(df)
 
 
-    # You can see that there are a few attributes in the Variable object
-    print(data['lat'].get_attrs())
-    # To change any attribute of any variable just reassign after the init like this:
+def create_data_with_iterables(df):
+    """
+    Creates a Data object using iterable inputs (pandas.Series or numpy arrays).
+    """
+    data = Data(
+        lat=df['latitude'], lon=df['longitude'], depth=df['pressure'], time=df['time'],
+        salinity=df['salinity'], temperature=df['temperature'], density=df['density']
+    )
+    return data
+
+
+def create_variable_objects(df):
+    """
+    Creates Variable objects for latitude, longitude, depth, time, temperature,
+    salinity, and density using data from a DataFrame.
+    """
+    lat_var = Variable(data=df['latitude'], name='lat', cmap=cmocean.cm.haline, units='°N')
+    lon_var = Variable(data=df['longitude'], name='lon', cmap=cmocean.cm.thermal, units='°W')
+    depth_var = Variable(data=df['pressure'], name='depth', cmap=cmocean.cm.deep, units='m')
+    time_var = Variable(data=df['time'], name='time', cmap=cmocean.cm.thermal)
+    temperature_var = Variable(data=df['temperature'], name='temperature', cmap=cmocean.cm.thermal, units='°C', vmin=-10, vmax=40)
+    salinity_var = Variable(data=df['salinity'], name='salinity', cmap=cmocean.cm.haline, vmin=28, vmax=40)
+    density_var = Variable(data=df['density'], name='density', cmap=cmocean.cm.dense, units="kg/m\u00B3", vmin=1020, vmax=1035)
+
+    return lat_var, lon_var, depth_var, time_var, temperature_var, salinity_var, density_var
+
+
+def create_data_with_variables(lat_var, lon_var, depth_var, time_var, temperature_var, salinity_var, density_var):
+    """
+    Creates a Data object using Variable objects for each data variable.
+    """
+    data = Data(
+        lat=lat_var, lon=lon_var, depth=depth_var, time=time_var,
+        temperature=temperature_var, salinity=salinity_var, density=density_var
+    )
+    return data
+
+
+def modify_data_attributes(data):
+    """
+    Demonstrates modifying attributes of variables in a Data object.
+    """
     data['lat'].vmin = 27
     data['depth'].units = 'km'
-    # or like this:
-    data.lat.vmin = 27
-    data.depth.units = 'km'
-    # You can even reassign an entire variable like this:
-    data['lat'] = Variable(data = lats, name='lat', cmap=cmocean.cm.haline, units='°N', vmin=27, vmax=28.5)
+    return data
 
 
-    # Assigning a variable that is a non-default/custom variable is simple:
-    # First we must initialize the variable
-    # Init Turner_Rsubrho Variable object
-    Turner_Rsubrho = Variable(data=df['Turner_Rsubrho'],name='Turner_Rsubrho',cmap=cmocean.cm.thermal,units='m/s',label='Speed of Sound (m/s)')
-    # Add the Turner_Rsubrho Variable object to the Data object
-    data.add_custom_variable(Turner_Rsubrho)
+def add_custom_variable(data, df, var_name):
+    """
+    Adds a custom variable to a Data object using data from a DataFrame.
+    """
+    custom_var = Variable(data=df[var_name], name=var_name, cmap=cmocean.cm.thermal, units='m/s', label='Speed of Sound (m/s)')
+    data.add_custom_variable(custom_var)
+    return data
 
-    # We need to remove the old custom variable first before reassignment using the add_custom_variable method, otherwise we can use the base assignment methods
-    data.remove_custom_variable('Turner_Rsubrho')
-    # We can also add custom variables in one line:
-    data.add_custom_variable(Variable(data=df['Turner_Rsubrho'],name='Turner_Rsubrho',cmap=cmocean.cm.thermal,units='m/s',label='Speed of Sound (m/s)'))
 
-    print(data)
+def main():
+    # Read the data
+    filepath = 'example_data/sample_glider_data.csv'
+    df = read_example_data(filepath)
+
+    # Create Data object from a csv
+    data_obj_from_csv = create_data_from_csv(filepath)
+    print("Data object created from csv:", data_obj_from_csv)
+
+    # Create Data object from a dataframe
+    data_obj_from_df = create_data_from_df(df)
+    print("Data object created from dataframe:", data_obj_from_df)
+
+    # Create Data object using iterables
+    data_iterables = create_data_with_iterables(df)
+    print("Data object created with iterables:", data_iterables)
+
+    # Create Variable objects
+    lat_var, lon_var, depth_var, time_var, temperature_var, salinity_var, density_var = create_variable_objects(df)
+
+    # Create Data object using Variable objects
+    data_variables = create_data_with_variables(lat_var, lon_var, depth_var, time_var, temperature_var, salinity_var, density_var)
+    print("Data object created with Variable objects:", data_variables)
+
+    # Modify data attributes
+    modified_data = modify_data_attributes(data_variables)
+    print("Modified Data object:", modified_data)
+
+    # Add a custom variable
+    updated_data = add_custom_variable(modified_data, df, 'Turner_Rsubrho')
+    print("Data object with custom variable added:", updated_data)
+
 
 if __name__ == "__main__":
-    data_object_example()
+    main()
