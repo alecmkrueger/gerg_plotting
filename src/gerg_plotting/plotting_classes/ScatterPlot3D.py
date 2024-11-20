@@ -14,9 +14,6 @@ class ScatterPlot3D(Plotter3D):
     Inherits from Plotter3D.
     """
 
-    def show(self):
-        """Display the 3D plot in a Mayavi window."""
-        mlab.show()
 
     def _check_var(self, var) -> None:
         """
@@ -33,6 +30,7 @@ class ScatterPlot3D(Plotter3D):
             # Verify if the variable exists in the data, raise error if not
             if not self.data._has_var(var):
                 raise ValueError(f'Instrument does not have {var}')
+
 
     def _points3d(self, var, point_size, fig, vertical_scalar) -> None:
         """
@@ -83,6 +81,7 @@ class ScatterPlot3D(Plotter3D):
         if vertical_scalar is not None:
             self.data['depth'].data = self.data['depth'].data * vertical_scalar
 
+
     def _add_bathy(self, fig, bounds_padding, vertical_scaler=None) -> None:
         """
         Add bathymetric data to the 3D plot using a mesh.
@@ -122,6 +121,7 @@ class ScatterPlot3D(Plotter3D):
             cmap=bathy_cmap
         )
 
+
     def scatter(self, var: str | None = None, point_size: int | float = 0.05, vertical_scalar=None, fig=None, show: bool = True) -> None:
         """
         Create a 3D scatter plot with optional color scaling and depth adjustments.
@@ -145,6 +145,7 @@ class ScatterPlot3D(Plotter3D):
         # Display the plot if 'show' is True
         if show:
             self.show()
+
 
     def map(self, var: str | None = None, point_size: int | float = 0.05, bounds_padding=0, vertical_scalar=None, fig=None, show: bool = True) -> None:
         """
