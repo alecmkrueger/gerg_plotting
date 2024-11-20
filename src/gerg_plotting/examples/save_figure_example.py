@@ -9,7 +9,7 @@ def save_figure_example():
 
     scatter.hovmoller('temperature')
 
-    scatter.fig.savefig('example_plots/temperature_hovmoller.png',dpi=300)
+    scatter.fig.savefig('example_plots/save_figure_example.png',dpi=300)
 
 if __name__ == "__main__":
     save_figure_example()

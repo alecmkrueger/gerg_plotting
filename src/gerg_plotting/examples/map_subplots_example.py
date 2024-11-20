@@ -19,7 +19,7 @@ def map_subplots_example():
     plotter.scatter(fig=fig,ax=ax[2],var='depth',show_bathy=True,pointsize=30)
     plotter.scatter(fig=fig,ax=ax[3],var='time',show_bathy=True,pointsize=30)
     plt.show()
-    fig.savefig('example_plots/map_example.png',dpi=500,bbox_inches='tight')
+    fig.savefig('example_plots/map_subplots_example.png',dpi=500,bbox_inches='tight')
 
 if __name__ == "__main__":
     map_subplots_example()
