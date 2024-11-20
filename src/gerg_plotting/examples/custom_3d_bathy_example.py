@@ -10,7 +10,11 @@ def custom_3d_bathy():
 
     # Init the 3-d scatter plot
     three_d = ScatterPlot3D(data,bathy=bathy)
-    three_d.map(var='temperature',vertical_scalar=-1000)
+    three_d.map(var='temperature',vertical_scalar=-1000,show=False)
+    three_d.save('example_plots/custom_3d_bathy.png')
+    # if you want to show the figure after saving:
+    # three_d.show()
+
 
 if __name__ == "__main__":
     custom_3d_bathy()
