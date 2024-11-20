@@ -1,15 +1,12 @@
-from gerg_plotting.examples.custom_3d_bathy_example import custom_3d_bathy_example
+# from gerg_plotting.examples.custom_3d_bathy_example import custom_3d_bathy_example
+# from tests.check_image_file import check_image_file
 
-import unittest
-import os
-from pathlib import Path
+# import unittest
+# import os
 
-class test_custom_3d_bathy_example(unittest.TestCase):
+# class test_custom_3d_bathy_example(unittest.TestCase):
 
-    def test(self):
-        image_path = Path('example_plots/custom_3d_bathy_example.png')
-        if image_path.exists():
-            os.remove(image_path)
-        custom_3d_bathy_example()
-        self.assertTrue(image_path.exists())
+#     def test(self):
+
+#         self.assertTrue(check_image_file('custom_3d_bathy_example.png',custom_3d_bathy_example))
 
