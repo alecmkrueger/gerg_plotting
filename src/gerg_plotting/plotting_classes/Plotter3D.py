@@ -110,6 +110,35 @@ class Plotter3D:
         """
         # Convert attributes to formatted string for display
         return pformat(asdict(self), width=1)
+    
+
+    def show(self):
+        """Display the 3D plot in a Mayavi window."""
+        mlab.show()
+
+
+    def save(self,filename,size=None,**kwargs):
+        '''
+        To save the scene you must do so before you show the scene.
+
+        When saving the scene, set show=False in the plotting method
+        Example:
+        ```
+        # Init the plotter
+        three_d = ScatterPlot3D(data)
+        three_d.map(show=False)
+        three_d.save('map.png')
+        # If you would like to see the scene:
+        three_d.show()
+        ```
+
+        '''
+        if isinstance(self.fig,mayavi.core.scene.Scene):
+            scene = self.fig.scene
+            if scene is not None:
+                scene.save(filename,size=size,**kwargs)
+            else:
+                raise ValueError(f'No scene found. If trying to save a plot, set show=False, then use the save method')
 
 
     def convert_colormap(self, colormap, over_color=None, under_color=None) -> np.ndarray:
