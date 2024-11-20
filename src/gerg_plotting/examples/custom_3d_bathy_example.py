@@ -1,6 +1,6 @@
 from gerg_plotting import ScatterPlot3D,Bathy,data_from_csv
 
-def custom_3d_bathy():
+def custom_3d_bathy_example():
     # Let's read in the example data
     data = data_from_csv('example_data/sample_glider_data.csv')
 
@@ -11,10 +11,10 @@ def custom_3d_bathy():
     # Init the 3-d scatter plot
     three_d = ScatterPlot3D(data,bathy=bathy)
     three_d.map(var='temperature',vertical_scalar=-1000,show=False)
-    three_d.save('example_plots/custom_3d_bathy.png')
+    three_d.save('example_plots/custom_3d_bathy_example.png')
     # if you want to show the figure after saving:
     # three_d.show()
 
 
 if __name__ == "__main__":
-    custom_3d_bathy()
+    custom_3d_bathy_example()

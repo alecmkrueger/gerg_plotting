@@ -1,0 +1,2 @@
+from gerg_plotting.examples.simple_histogram_example import simple_histogram_example
+
