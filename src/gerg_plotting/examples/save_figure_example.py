@@ -1,10 +1,15 @@
 from gerg_plotting import data_from_csv,ScatterPlot
 
-# Let's read in some example data
-data = data_from_csv('example_data/sample_glider_data.csv')
 
-scatter = ScatterPlot(data)
+def save_figure_example():
+    # Let's read in some example data
+    data = data_from_csv('example_data/sample_glider_data.csv')
 
-scatter.hovmoller('temperature')
+    scatter = ScatterPlot(data)
 
-scatter.fig.savefig('example_plots/temperature_hovmoller.png',dpi=300)
+    scatter.hovmoller('temperature')
+
+    scatter.fig.savefig('example_plots/temperature_hovmoller.png',dpi=300)
+
+if __name__ == "__main__":
+    save_figure_example()
