@@ -47,7 +47,8 @@ filterwarnings = [
 ]
 markers = [
     "slow: marks tests as slow (deselect with '-m \"not slow\"')",
-    "serial"
+    "serial",
+    "example: marks tests as example (deselect with '-m \"not example\"')"
 ]
 
 [tool.coverage.report]
