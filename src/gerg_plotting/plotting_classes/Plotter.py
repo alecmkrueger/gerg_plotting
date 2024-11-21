@@ -91,6 +91,36 @@ class Plotter:
                 gs = self.ax.get_gridspec()  # Get grid specification
                 self.ax = fig.add_subplot(gs.nrows, gs.ncols, index, projection='3d')
 
+    def adjust_datetime_labels(self, rotation=30):
+        """
+        Dynamically adjust the datetime labels on the x-axis.
+        Rotates labels only if they overlap.
+
+        Parameters:
+        ax : matplotlib.axes.Axes
+            The Axes object to adjust.
+        rotation : int
+            Rotation angle to apply if labels overlap.
+        """
+        # Get tick labels
+        labels = self.ax.get_xticklabels()
+        renderer = self.ax.figure.canvas.get_renderer()
+        
+        # Get bounding boxes for the labels
+        bboxes = [label.get_window_extent(renderer) for label in labels if label.get_text()]
+        
+        if len(bboxes) < 2:  # No need to check if fewer than two labels
+            return
+        
+        # Check for overlaps
+        overlap = any(bboxes[i].overlaps(bboxes[i+1]) for i in range(len(bboxes) - 1))
+        
+        if overlap:
+            # Apply rotation if overlap is detected
+            matplotlib.pyplot.setp(labels, rotation=rotation, ha='right')
+        else:
+            # Ensure labels are not rotated
+            matplotlib.pyplot.setp(labels, rotation=0, ha='center')
 
     def format_axes(self,xlabel,ylabel,invert_yaxis:bool=False) -> None:
         """
@@ -103,6 +133,7 @@ class Plotter:
         self.ax.set_ylabel(ylabel=ylabel)
         if invert_yaxis:
             self.ax.invert_yaxis()
+        self.adjust_datetime_labels()
 
     def get_cmap(self, color_var: str) -> Colormap:
         '''
