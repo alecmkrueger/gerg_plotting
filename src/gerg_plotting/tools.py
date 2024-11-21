@@ -113,7 +113,7 @@ def interp_glider_lat_lon(ds:xr.Dataset) -> xr.Dataset:
     return ds
 
 
-def data_from_df(df:pd.DataFrame,mapped_variables:dict|None=None):
+def data_from_df(df:pd.DataFrame,mapped_variables:dict|None=None,**kwargs):
 
     # If the user does not pass mapped_variables
     if mapped_variables is None:
@@ -121,15 +121,15 @@ def data_from_df(df:pd.DataFrame,mapped_variables:dict|None=None):
 
     mapped_variables = {key:df[value] for key,value in mapped_variables.items() if value is not None}
 
-    data = Data(**mapped_variables)
+    data = Data(**mapped_variables,**kwargs)
 
     return data
 
 
-def data_from_csv(filename:str,mapped_variables:dict|None=None):
+def data_from_csv(filename:str,mapped_variables:dict|None=None,**kwargs):
 
     df = pd.read_csv(filename)
 
-    data = data_from_df(df,mapped_variables=mapped_variables)
+    data = data_from_df(df,mapped_variables=mapped_variables,**kwargs)
 
     return data
