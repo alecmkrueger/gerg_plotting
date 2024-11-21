@@ -38,7 +38,7 @@ def map_subplots_example():
     plotter.fig.suptitle('Surface Layer Properties (0-5 Meters)',fontsize = 20)
     # If you want to show the plot
     # plotter.show()
-    # fig.savefig('example_plots/map_subplots_example.png',dpi=500,bbox_inches='tight')
+    fig.savefig('example_plots/map_subplots_example.png',dpi=500,bbox_inches='tight')
 
 if __name__ == "__main__":
     map_subplots_example()
