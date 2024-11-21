@@ -85,3 +85,7 @@ class TestExamples:
         assert module_name in list_of_plots, f"Plot for {module_name} was not created."
 
         self.tear_down()
+
+if __name__ == "__main__":
+    # Run pytest programmatically
+    pytest.main(["-v", __file__])
