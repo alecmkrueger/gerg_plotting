@@ -49,12 +49,20 @@ class Variable():
         return list(asdict(self).keys())
     
 
-    def get_vmin_vmax(self) -> None:
-        if self.name != 'time':  # do not calcluate vmin and vmax for time
-            if self.vmin is None:
-                self.vmin = np.nanmin(self.data)
-            if self.vmax is None:
-                self.vmax = np.nanmax(self.data)
+    # def get_vmin_vmax(self) -> None:
+    #     if self.name != 'time':  # do not calcluate vmin and vmax for time
+    #         if self.vmin is None:
+    #             self.vmin = np.nanmin(self.data)
+    #         if self.vmax is None:
+    #             self.vmax = np.nanmax(self.data)
+
+    def get_vmin_vmax(self,ignore_existing:bool=False) -> None:
+        if self.name != 'time':  # do not calculate vmin and vmax for time
+            if self.vmin is None or ignore_existing:
+                self.vmin = np.percentile(self.data, 1)  # 1st percentile (lower 1%)
+            if self.vmax is None or ignore_existing:
+                self.vmax = np.percentile(self.data, 99)  # 99th percentile (upper 1%)
+
 
 
     def get_label(self) -> str:
