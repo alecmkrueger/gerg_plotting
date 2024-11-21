@@ -1,1 +1,0 @@
-from gerg_plotting.examples.simple_scatter_plot import simple_scatter_plot

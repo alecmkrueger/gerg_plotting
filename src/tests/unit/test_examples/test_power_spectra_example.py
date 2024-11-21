@@ -1,2 +1,0 @@
-from gerg_plotting.examples.power_spectra_example import power_spectra_example
-

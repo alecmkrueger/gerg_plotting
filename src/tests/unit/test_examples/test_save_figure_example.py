@@ -1,2 +1,0 @@
-from gerg_plotting.examples.save_figure_example import save_figure_example
-

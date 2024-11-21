@@ -1,2 +1,0 @@
-from gerg_plotting.examples.simple_3d_map_example import simple_3d_map_example
-

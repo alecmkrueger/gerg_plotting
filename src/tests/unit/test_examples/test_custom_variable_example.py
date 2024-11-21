@@ -1,2 +1,0 @@
-from gerg_plotting.examples.custom_variable_example import custom_variable_example
-

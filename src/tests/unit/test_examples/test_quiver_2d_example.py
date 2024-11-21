@@ -1,2 +1,0 @@
-from gerg_plotting.examples.quiver_2d_example import quiver_2d_example
-
