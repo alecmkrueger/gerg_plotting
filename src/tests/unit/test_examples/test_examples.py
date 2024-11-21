@@ -6,6 +6,8 @@ import inspect
 import sys
 import pytest
 
+os.chdir('../../../gerg_plotting/examples')
+
 @pytest.mark.example
 class TestExamples(unittest.TestCase):
     """
@@ -19,17 +21,19 @@ class TestExamples(unittest.TestCase):
         Dynamically configure paths for imports.
         """
         # Base path for the `gerg_plotting/src` folder
-        base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../.."))
+        # base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../.."))
+
+        base_dir = os.getcwd()
 
         # Ensure the base path is in the module search path
         sys.path.insert(0, base_dir)
 
         # Directory containing examples
-        cls.examples_dir = os.path.join(base_dir, "gerg_plotting/examples")
+        cls.examples_dir = base_dir
         cls.example_files = glob.glob(os.path.join(cls.examples_dir, "*.py"))
 
         # Set the example data directory (to be accessed by example plotting functions)
-        cls.example_data_dir = os.path.join(base_dir, "gerg_plotting/examples/example_data")
+        cls.example_data_dir = os.path.join(base_dir, "example_data")
 
         # Ensure the example data directory is accessible by the plotting functions
         if not os.path.exists(cls.example_data_dir):
@@ -40,7 +44,7 @@ class TestExamples(unittest.TestCase):
         """
         Dynamically test each example function.
         """
-        self.assertGreater(len(self.example_files),1)
+        self.assertGreater(len(self.example_files),1,msg=f"{self.examples_dir}")
         for example_file in self.example_files:
             # Get the module name (file name without extension)
             module_name = os.path.splitext(os.path.basename(example_file))[0]
