@@ -9,7 +9,7 @@ def simple_3d_map_example():
     scatter = ScatterPlot3D(data)
     scatter.map(var='temperature',vertical_scalar=-1000,bounds_padding=0.3,show=False)
     scatter.save('example_plots/simple_3d_map_example.png')
-    scatter.show()
+    # scatter.show()
 
 if __name__ == "__main__":
     simple_3d_map_example()

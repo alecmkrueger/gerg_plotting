@@ -71,6 +71,11 @@ def add_custom_variable(data, df, var_name):
     data.add_custom_variable(custom_var)
     return data
 
+def make_example_plot(data,var):
+    from gerg_plotting.plotting_classes.Histogram import Histogram
+    hist = Histogram(data)
+    hist.plot(var)
+    hist.save('example_plots/data_object_example.png')
 
 def data_object_example():
     # Read the data
@@ -103,6 +108,9 @@ def data_object_example():
     # Add a custom variable
     updated_data = add_custom_variable(modified_data, df, 'Turner_Rsubrho')
     print("Data object with custom variable added:", updated_data)
+
+    # Create example plot to show custom variable
+    make_example_plot(updated_data,'Turner_Rsubrho')
 
 
 if __name__ == "__main__":

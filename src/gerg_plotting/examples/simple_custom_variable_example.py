@@ -11,7 +11,9 @@ def simple_custom_variable_example():
     # Add the pH Variable object to the Data object
     data.add_custom_variable(pH)
     # Test by plotting a histogram
-    Histogram(data).plot('pH')
+    hist = Histogram(data)
+    hist.plot('pH')
+    hist.save('example_plots/simple_custom_variable_example.png')
 
 if __name__ == "__main__":
     simple_custom_variable_example()

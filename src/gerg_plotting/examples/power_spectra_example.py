@@ -29,7 +29,7 @@ def power_spectra_example():
     scatter.ax.set_ylim(*y_limits)
     # Add an informative title
     scatter.ax.set_title('Vector U')
-    plt.show()
+    # plt.show()
 
 
     # Now Let's look at a more advanced use
@@ -70,7 +70,7 @@ def power_spectra_example():
     groups = [group for _,group in df.groupby('bin_depth')]
 
     # Create an animation of the power spectra along depth
-    Animator().animate(plotting_function=power_spectra_plot,param_dict={'group':groups},gif_filename='example_plots/power_spectra.gif',fps=0.75)
+    Animator().animate(plotting_function=power_spectra_plot,param_dict={'group':groups},gif_filename='example_plots/power_spectra_example.gif',fps=0.75)
 
 if __name__ == "__main__":
     power_spectra_example()

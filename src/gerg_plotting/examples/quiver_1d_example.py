@@ -9,7 +9,9 @@ def quiver_1d_example():
     # Init data from the first group
     data = data_from_df(groups[0])
 
-    ScatterPlot(data).quiver1d(x='time',quiver_scale=700)
+    scatter = ScatterPlot(data)
+    scatter.quiver1d(x='time',quiver_scale=700)
+    scatter.save('example_plots/quiver_1d_example.png')
 
 
 if __name__ == "__main__":

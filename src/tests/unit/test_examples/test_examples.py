@@ -1,70 +1,100 @@
-import unittest
+import pytest
 import glob
 import importlib
 import os
 import inspect
-import sys
-import pytest
+from pathlib import Path
 
-os.chdir('../../../gerg_plotting/examples')
+original_working_dir = os.getcwd()
+
+# Examples path
+examples_path = Path(__file__).parent.parent.parent.parent.joinpath('gerg_plotting','examples')
+
+# Counter for test case numbering
+test_counter = {"current": 0, "total": 0}
+
+
+def pytest_sessionstart(session):
+    """Calculate total test cases before running."""
+    global test_counter
+    test_counter["total"] = sum(1 for item in session.items)
+
+
+def pytest_runtest_protocol(item, nextitem):
+    """Add test numbering during execution."""
+    global test_counter
+    test_counter["current"] += 1
+    progress = f"[{test_counter['current']}/{test_counter['total']}] "
+    print(progress, end="", flush=True)
+    return None  # Proceed with the default pytest execution
+
 
 @pytest.mark.example
-class TestExamples(unittest.TestCase):
+class TestExamples:
     """
-    Unittest class to dynamically test all example functions.
+    Pytest class to dynamically test all example functions.
     """
 
-    @classmethod
-    def setUpClass(cls):
+    def setup(self):
         """
         Set up class-level variables for dynamic test discovery.
         Dynamically configure paths for imports.
         """
-        # Base path for the `gerg_plotting/src` folder
-        # base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../.."))
+        
 
-        base_dir = os.getcwd()
+        # Define the base dir
+        self.base_dir = examples_path
 
-        # Ensure the base path is in the module search path
-        sys.path.insert(0, base_dir)
-
-        # Directory containing examples
-        cls.examples_dir = base_dir
-        cls.example_files = glob.glob(os.path.join(cls.examples_dir, "*.py"))
+        # Change the working directory
+        os.chdir(self.base_dir)
 
         # Set the example data directory (to be accessed by example plotting functions)
-        cls.example_data_dir = os.path.join(base_dir, "example_data")
+        self.example_data_dir = self.base_dir.joinpath("example_data")
+
+        # Set the example plot output directory
+        self.example_plots_dir = self.base_dir.joinpath("example_plots")
 
         # Ensure the example data directory is accessible by the plotting functions
-        if not os.path.exists(cls.example_data_dir):
-            raise FileNotFoundError(f"Example data directory {cls.example_data_dir} not found.")
+        if not self.example_data_dir.exists():
+            raise FileNotFoundError(f"Example data directory {self.example_data_dir} not found.")
+        
+    
+    def tear_down(self):
+        os.chdir(original_working_dir)
+        
+
+    def remove_old_plot(self,example_file:str):
+        [os.remove(file) for file in self.example_plots_dir.rglob(f'{Path(example_file).stem}.*')]
 
 
-    def test_examples(self):
+    @pytest.mark.parametrize("example_file", list(examples_path.rglob('*py')))
+    def test_examples(self, example_file):
         """
         Dynamically test each example function.
         """
-        self.assertGreater(len(self.example_files),1,msg=f"{self.examples_dir}")
-        for example_file in self.example_files:
-            # Get the module name (file name without extension)
-            module_name = os.path.splitext(os.path.basename(example_file))[0]
-            module_path = f"gerg_plotting.examples.{module_name}"
+        self.setup()
+        # Get the module name (file name without extension)
+        module_name = os.path.splitext(os.path.basename(example_file))[0]
+        module_path = f"gerg_plotting.examples.{module_name}"
 
-            with self.subTest(module=module_name):
-                try:
-                    # Import the module dynamically
-                    module = importlib.import_module(module_path)
+        # Import the module dynamically
+        module = importlib.import_module(module_path)
 
-                    # Get the function dynamically
-                    func = getattr(module, module_name, None)
+        # Get the function dynamically
+        func = getattr(module, module_name, None)
 
-                    # Check that the function exists and is callable
-                    self.assertIsNotNone(func, f"{module_name} function does not exist in {example_file}")
-                    self.assertTrue(inspect.isfunction(func), f"{module_name} is not a function in {example_file}")
+        # Check that the function exists and is callable
+        assert func is not None, f"{module_name} function does not exist in {example_file}"
+        assert inspect.isfunction(func), f"{module_name} is not a function in {example_file}"
 
-                    # Call the function (the actual test)
-                    func()
+        # Remove existing plot
+        self.remove_old_plot(str(example_file))
 
-                except Exception as e:
-                    self.fail(f"Test for {module_name} failed with error: {e}")
+        # Call the function (the actual test)
+        func()
 
+        # Check if the module function output a matching image
+        list_of_plots = [file.stem for file in self.example_plots_dir.rglob("*")]
+        assert module_name in list_of_plots, f"Plot for {module_name} was not created."
+
+        self.tear_down()

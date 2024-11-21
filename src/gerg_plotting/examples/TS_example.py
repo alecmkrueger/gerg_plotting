@@ -11,6 +11,8 @@ def TS_example():
     # Plot the TS diagram with a color variable
     scatter.TS(color_var='salinity')
 
+    scatter.save('example_plots/TS_example.png')
+
 
 if __name__ == "__main__":
     TS_example()
