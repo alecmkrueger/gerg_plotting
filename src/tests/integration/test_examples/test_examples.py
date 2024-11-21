@@ -10,25 +10,11 @@ original_working_dir = os.getcwd()
 # Examples path
 examples_path = Path(__file__).parent.parent.parent.parent.joinpath('gerg_plotting','examples')
 
-# Counter for test case numbering
-test_counter = {"current": 0, "total": 0}
+# Example py files
+example_py_files = examples_path.rglob('*py')
 
 
-def pytest_sessionstart(session):
-    """Calculate total test cases before running."""
-    global test_counter
-    test_counter["total"] = sum(1 for item in session.items)
-
-
-def pytest_runtest_protocol(item, nextitem):
-    """Add test numbering during execution."""
-    global test_counter
-    test_counter["current"] += 1
-    progress = f"[{test_counter['current']}/{test_counter['total']}] "
-    print(progress, end="", flush=True)
-    return None  # Proceed with the default pytest execution
-
-
+@pytest.mark.slow
 @pytest.mark.example
 class TestExamples:
     """
@@ -67,14 +53,15 @@ class TestExamples:
         [os.remove(file) for file in self.example_plots_dir.rglob(f'{Path(example_file).stem}.*')]
 
 
-    @pytest.mark.parametrize("example_file", list(examples_path.rglob('*py')))
+    @pytest.mark.parametrize("example_file", example_py_files, ids=lambda file: Path(file).name)
     def test_examples(self, example_file):
         """
         Dynamically test each example function.
         """
         self.setup()
         # Get the module name (file name without extension)
-        module_name = os.path.splitext(os.path.basename(example_file))[0]
+        module_name = Path(example_file).stem
+        # module_name = os.path.splitext(os.path.basename(example_file))[0]
         module_path = f"gerg_plotting.examples.{module_name}"
 
         # Import the module dynamically
