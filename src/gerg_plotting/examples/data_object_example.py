@@ -72,7 +72,7 @@ def add_custom_variable(data, df, var_name):
     return data
 
 
-def main():
+def data_object_example():
     # Read the data
     filepath = 'example_data/sample_glider_data.csv'
     df = read_example_data(filepath)
@@ -106,4 +106,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    data_object_example()
