@@ -1,7 +1,7 @@
 from gerg_plotting import data_from_csv,ScatterPlot
 
 
-def save_figure_example():
+def simple_hovmoller_example():
     # Let's read in some example data
     data = data_from_csv('example_data/sample_glider_data.csv')
 
@@ -9,7 +9,7 @@ def save_figure_example():
 
     scatter.hovmoller('temperature')
 
-    scatter.fig.savefig('example_plots/save_figure_example.png',dpi=300)
+    scatter.fig.savefig('example_plots/simple_hovmoller_example.png',dpi=300)
 
 if __name__ == "__main__":
-    save_figure_example()
+    simple_hovmoller_example()
