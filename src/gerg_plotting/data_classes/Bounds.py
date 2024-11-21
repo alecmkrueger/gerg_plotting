@@ -15,8 +15,11 @@ class Bounds():
     lon_min:float|int|None = field(default=None,validator=[validators.instance_of(float|int|None),lon_min_smaller_than_max])
     lon_max:float|int|None = field(default=None)
 
-    depth_bottom:float|int|None = field(default=None)
-    depth_top:float|int|None = field(default=None)
+    depth_bottom:float|int|None = field(default=None)  # Base units are meters
+    depth_top:float|int|None = field(default=None)  # Base units are meters
+
+    vertical_scaler:float|int|None = field(default=1)  # Scale factor, depth multiplier
+    vertical_units:str|None = field(default='m')  # vertical units, if you change the vertical_scaler, change this too
 
 
     def _has_var(self, key) -> bool:

@@ -28,23 +28,22 @@ class Bathy(SpatialInstrument):
     cbar:matplotlib.colorbar.Colorbar = field(init=False)
     cbar_nbins:int = field(default=5)
     cbar_kwargs:dict = field(default={})
-    vertical_scaler:int|float = field(default=None)
-    vertical_units:str = field(default='')
     center_of_mass:tuple = field(init=False)
     label:str = field(default='Bathymetry')
 
 
     def __attrs_post_init__(self) -> None:
         self.get_bathy()
-        if self.vertical_scaler is not None:
-            self.depth = self.depth*self.vertical_scaler
+        if self.bounds.vertical_scaler is not None:
+            self.depth = self.depth*self.bounds.vertical_scaler
         self.center_of_mass = get_center_of_mass(self.lon,self.lat,self.depth)
         self.adjust_cmap()
 
 
     def get_label(self) -> str:
-        if self.vertical_units != '':
-            self.label = f"Bathymetry ({self.vertical_units})"
+        # if the user provided units, we will use them
+        if self.bounds.vertical_units != '':
+            self.label = f"Bathymetry ({self.bounds.vertical_units})"
         return self.label
         
 
