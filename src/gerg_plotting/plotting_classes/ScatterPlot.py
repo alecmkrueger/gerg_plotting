@@ -91,7 +91,6 @@ class ScatterPlot(Plotter):
 
         self.ax.xaxis.set_major_locator(locator)  # Set date locator for x-axis
         self.ax.xaxis.set_major_formatter(formatter)  # Set date formatter for x-axis
-        matplotlib.pyplot.xticks(rotation=60, fontsize='small')  # Rotate x-axis labels for readability
         self.format_axes(xlabel=self.data.time.get_label(),ylabel=self.data.depth.get_label())
 
 
