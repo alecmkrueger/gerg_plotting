@@ -13,13 +13,13 @@ def custom_variable_example():
 
     cmap = get_turner_cmap()
 
-    # Init Turner_Rsubrho Variable object
-    Turner_Rsubrho = Variable(data=df['Turner_Rsubrho'],name='Turner_Rsubrho',cmap=cmap,units='m/s',vmin=-90,vmax=90)
-    # Add the Turner_Rsubrho Variable object to the Data object
-    data.add_custom_variable(Turner_Rsubrho)
+    # Init Turner_angle Variable object
+    Turner_angle = Variable(data=df['Turner_angle'],name='Turner_angle',cmap=cmap,units='m/s',vmin=-90,vmax=90)
+    # Add the Turner_angle Variable object to the Data object
+    data.add_custom_variable(Turner_angle)
     # Test by plotting a histogram
     hist = Histogram(data)
-    hist.plot(var='Turner_Rsubrho')
+    hist.plot(var='Turner_angle')
     hist.save('example_plots/custom_variable_example.png')
 
 

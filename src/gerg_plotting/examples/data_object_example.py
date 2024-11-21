@@ -106,11 +106,11 @@ def data_object_example():
     print("Modified Data object:", modified_data)
 
     # Add a custom variable
-    updated_data = add_custom_variable(modified_data, df, 'Turner_Rsubrho')
+    updated_data = add_custom_variable(modified_data, df, 'Turner_angle')
     print("Data object with custom variable added:", updated_data)
 
     # Create example plot to show custom variable
-    make_example_plot(updated_data,'Turner_Rsubrho')
+    make_example_plot(updated_data,'Turner_angle')
 
 
 if __name__ == "__main__":
