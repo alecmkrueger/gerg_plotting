@@ -36,13 +36,13 @@ class Data(SpatialInstrument):
     def _init_variables(self) -> None:
         '''Default Variable initialization.
         If you would like a new variable to be included in the default init, contact the repo manager'''
-        self._init_variable(var='temperature', cmap=cmocean.cm.thermal, units='°C', vmin=-10, vmax=40)
-        self._init_variable(var='salinity', cmap=cmocean.cm.haline, units=None, vmin=28, vmax=40)
-        self._init_variable(var='density', cmap=cmocean.cm.dense, units="kg/m\u00B3", vmin=1020, vmax=1035)
-        self._init_variable(var='u', cmap=cmocean.cm.balance, units="m/s", vmin=-5, vmax=5)
-        self._init_variable(var='v', cmap=cmocean.cm.balance, units="m/s", vmin=-5, vmax=5)
-        self._init_variable(var='w', cmap=cmocean.cm.balance, units="m/s", vmin=-5, vmax=5)
-        self._init_variable(var='speed', cmap=cmocean.cm.speed, units="m/s", vmin=0, vmax=5)
+        self._init_variable(var='temperature', cmap=cmocean.cm.thermal, units='°C', vmin=None, vmax=None)
+        self._init_variable(var='salinity', cmap=cmocean.cm.haline, units=None, vmin=None, vmax=None)
+        self._init_variable(var='density', cmap=cmocean.cm.dense, units="kg/m\u00B3", vmin=None, vmax=None)
+        self._init_variable(var='u', cmap=cmocean.cm.balance, units="m/s", vmin=None, vmax=None)
+        self._init_variable(var='v', cmap=cmocean.cm.balance, units="m/s", vmin=None, vmax=None)
+        self._init_variable(var='w', cmap=cmocean.cm.balance, units="m/s", vmin=None, vmax=None)
+        self._init_variable(var='speed', cmap=cmocean.cm.speed, units="m/s", vmin=None, vmax=None)
 
 
     def calculate_speed(self,include_w:bool=False) -> None:
