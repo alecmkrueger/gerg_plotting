@@ -157,12 +157,18 @@ class Plotter:
         
     def save(self,filename,**kwargs):
         '''
-        
+        Save the current figure
         '''
         if self.fig is not None:
             self.fig.savefig(fname=filename,**kwargs)
         else:
             raise ValueError('No figure to save')
+        
+    def show(self):
+        '''
+        Show all open figures
+        '''
+        matplotlib.pyplot.show()
         
     def _has_var(self, key) -> bool:
         '''Check if object has var'''

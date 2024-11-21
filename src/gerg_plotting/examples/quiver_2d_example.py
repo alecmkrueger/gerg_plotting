@@ -13,8 +13,8 @@ def quiver_2d_example():
     scatter.quiver2d(x='time',y='depth',quiver_scale=800)
     scatter.ax.invert_yaxis()
     scatter.save('example_plots/quiver_2d_example.png')
-
-    # plt.show()
+    # If you want to show the plot
+    # scatter.show()
 
 if __name__ == "__main__":
     quiver_2d_example()

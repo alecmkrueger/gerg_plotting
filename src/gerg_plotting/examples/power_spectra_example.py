@@ -29,7 +29,7 @@ def power_spectra_example():
     scatter.ax.set_ylim(*y_limits)
     # Add an informative title
     scatter.ax.set_title('Vector U')
-    # plt.show()
+    # scatter.show()
 
 
     # Now Let's look at a more advanced use
