@@ -98,17 +98,28 @@ class MapPlot(Plotter):
             step = None
         return step
 
-    def add_grid(self,grid:bool) -> None:
+    def add_grid(self,grid:bool,show_coords:bool) -> None:
         # Add gridlines if requested
         if grid:
             self.gl = self.ax.gridlines(draw_labels=True, linewidth=1, color='gray',
                                         alpha=0.4, linestyle='--')
+            self.gl.xlocator = MultipleLocator(self.grid_spacing)  # Set grid spacing for x-axis
+            self.gl.ylocator = MultipleLocator(self.grid_spacing)  # Set grid spacing for y-axis
+        else:
+            self.gl = self.ax.gridlines(draw_labels=True, linewidth=1, color='gray',
+                                        alpha=0.0, linestyle='--')
+            self.gl.xlocator = MultipleLocator(self.grid_spacing)  # Set grid spacing for x-axis
+            self.gl.ylocator = MultipleLocator(self.grid_spacing)  # Set grid spacing for y-axis
+        if show_coords:
             self.gl.top_labels = False  # Disable top labels
             self.gl.right_labels = False  # Disable right labels
             self.gl.xformatter = LONGITUDE_FORMATTER  # Format x-axis as longitude
             self.gl.yformatter = LATITUDE_FORMATTER  # Format y-axis as latitude
-            self.gl.xlocator = MultipleLocator(self.grid_spacing)  # Set grid spacing for x-axis
-            self.gl.ylocator = MultipleLocator(self.grid_spacing)  # Set grid spacing for y-axis
+        else:
+            self.gl.top_labels = False  # Disable top labels
+            self.gl.right_labels = False  # Disable right labels
+            self.gl.bottom_labels = False  # Disable top labels
+            self.gl.left_labels = False  # Disable right labels
 
     def add_bathy(self, show_bathy, divider) -> None:
         """
@@ -127,7 +138,7 @@ class MapPlot(Plotter):
             self.cbar_bathy = self.bathy.add_colorbar(mappable=bathy_contourf, divider=divider,
                                                       fig=self.fig, nrows=self.nrows)
 
-    def scatter(self, var: str | None = None, show_bathy: bool = True, show_coastlines:bool=True, pointsize=3, linewidths=0, grid=True, fig=None, ax=None) -> None:
+    def scatter(self, var: str | None = None, show_bathy: bool = True, show_coastlines:bool=True, pointsize=3, linewidths=0, grid=True,show_coords=True, fig=None, ax=None) -> None:
         """
         Plots a scatter plot of points on the map, optionally including bathymetry and gridlines.
         
@@ -154,7 +165,8 @@ class MapPlot(Plotter):
 
         self.add_coasts(show_coastlines)  # Add coastlines
         
-        self.add_grid(grid)
+        self.add_grid(grid=grid,show_coords=show_coords)
+
 
     def quiver(self,x:str='lon',y:str='lat',quiver_density:int=None,quiver_scale:float=None,grid:bool=True,show_bathy:bool=True,show_coastlines:bool=True,fig=None,ax=None) -> None:
         """
