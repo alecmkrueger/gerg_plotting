@@ -59,9 +59,9 @@ class Variable():
     def get_vmin_vmax(self,ignore_existing:bool=False) -> None:
         if self.name != 'time':  # do not calculate vmin and vmax for time
             if self.vmin is None or ignore_existing:
-                self.vmin = np.percentile(self.data, 1)  # 1st percentile (lower 1%)
+                self.vmin = np.nanpercentile(self.data, 1)  # 1st percentile (lower 1%)
             if self.vmax is None or ignore_existing:
-                self.vmax = np.percentile(self.data, 99)  # 99th percentile (upper 1%)
+                self.vmax = np.nanpercentile(self.data, 99)  # 99th percentile (upper 1%)
 
 
 
@@ -71,6 +71,8 @@ class Variable():
             # Define the units that are added to the label
             # if the units are defined, we will use them, else it will be an empty string
             unit = f" ({self.units})" if self.units is not None else ''
+            # Replace any underscores in the name with spaces then capitalize them
+            name = self.name.replace('_',' ').title()
             # The label is created from the name of the variable with the units
-            self.label = f"{self.name.capitalize()}{unit}"
+            self.label = f"{name}{unit}"
         return self.label
