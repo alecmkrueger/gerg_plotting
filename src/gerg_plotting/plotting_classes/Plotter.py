@@ -30,7 +30,7 @@ class Plotter:
         cbar_kwargs (dict): Keyword arguments for colorbar customization.
     '''
     
-    data: Data
+    data: Data = field(default=None)
     bounds_padding: float = field(default=0)
 
     fig: matplotlib.figure.Figure = field(default=None)
