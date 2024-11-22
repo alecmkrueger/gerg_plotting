@@ -1,24 +1,27 @@
 import matplotlib.axes
 import matplotlib.colors
 import matplotlib.figure
+import matplotlib.patches
+import matplotlib.text
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FixedLocator
-from matplotlib.patches import Rectangle,Polygon
+from matplotlib.patches import Rectangle
 from attrs import define,field
 import itertools
+import inspect
 
-from gerg_plotting.modules.utilities import extract_kwargs,extract_kwargs_with_aliases
+
+
+from gerg_plotting.plotting_classes.Plotter import Plotter
+from gerg_plotting.modules.utilities import extract_kwargs_with_aliases
 
 
 @define
-class CoveragePlot():
+class CoveragePlot(Plotter):
     x_labels:list = field(default=None)
     y_labels:list = field(default=None)
-
-    fig: matplotlib.figure.Figure = field(default=None)
-    ax: matplotlib.axes.Axes = field(default=None)
 
     colormap:matplotlib.colors.Colormap = field(default=None)
     n_colors:int = field(default=None)
@@ -105,14 +108,14 @@ class CoveragePlot():
             self.ax = ax
 
 
-    def set_up_plot(self,fig,ax):
+    def set_up_plot(self,fig,ax,padding=0.15):
         # Init figure
         self.init_figure(fig=fig,ax=ax)
         # Set custom ticks and labels
         self.custom_ticks(labels=self.y_labels,axis='y')
         self.custom_ticks(labels=self.x_labels,axis='x')
         # Add padding to the border
-        self.set_padding(0.15)
+        self.set_padding(padding)
         # invert the y-xais
         self.ax.invert_yaxis()
 
@@ -126,16 +129,24 @@ class CoveragePlot():
         height = (y_range[1] - y_range[0]) + 0.25
 
         defaults = {'alpha': 0.85,('linewidth','lw'): 1,('edgecolor','ec'): 
-                    'k','label': None,('facecolor','fc'):self.coverage_color()}
+                    'k','label': None,('facecolor','fc'):self.coverage_color(),
+                    ('fontsize','label_fontsize'):11}
 
-        alpha, linewidth, edgecolor, label, fc = extract_kwargs_with_aliases(kwargs, defaults).values()
+        alpha, linewidth, edgecolor, label, fc, fontsize  = extract_kwargs_with_aliases(kwargs, defaults).values()
+
+
+        rect_args = list(inspect.signature(matplotlib.patches.Rectangle).parameters)
+        rect_dict = {k: kwargs.pop(k) for k in dict(kwargs) if k in rect_args}
 
         rect = Rectangle(anchor_point,width=width,height=height,
                          fc=fc,alpha=alpha,
                          linewidth=linewidth, edgecolor = edgecolor,
-                         label=label,**kwargs)
+                         label=label,**rect_dict)
         
-        self.ax.text(*rect.get_center(),s=label,ha='center',va='center')
+        text_args = list(inspect.signature(matplotlib.text.Text.set).parameters)+list(inspect.signature(matplotlib.text.Text).parameters)
+        text_dict = {k: kwargs.pop(k) for k in dict(kwargs) if k in text_args}
+        
+        self.ax.text(*rect.get_center(),s=label,ha='center',va='center',fontsize=fontsize,**text_dict)
 
         self.ax.add_patch(rect)
 
@@ -154,6 +165,8 @@ class CoveragePlot():
         '''
         x_range (list): A list of values containing the x coverage range
         y_range (list): A list of values containing the y coverage range
+
+        Turn off the label on top of the coverage, but keep the label in the legend, pass `visible = False`
         '''
         # Init test values
         len_x_range = len(x_range)
@@ -166,41 +179,3 @@ class CoveragePlot():
         else:
             raise ValueError(f'x-range and y_range must both be the same length')
 
-
-# palette = ['#275C62', '#298880', '#5AA786','#8AB17D','#E9C46A','#F4A261','#E76F51']
-# palette = ['#298880', '#8AB17D', '#BABB74','#E9C46A','#F4A261','#EE8959','#E76F51']
-
-# cmap = matplotlib.colors.ListedColormap(palette)
-# n_colors = len(palette)
-
-cmap = 'tab20'
-n_colors = 20
-
-x_labels = ['Seconds','Minutes','Hours','Days','Weeks','Month','Years','Decades']
-y_labels = ['Surface','10-100\nmeters','100-500\nmeters','Below 500\nmeters','Benthos']
-
-
-fig,ax = plt.subplots(figsize=(11,7))
-
-plotter = CoveragePlot(x_labels=x_labels,y_labels=y_labels,
-             colormap=cmap,n_colors=n_colors)
-# Init plot with the x and y labels and the axes bounds limit
-plotter.set_up_plot(fig=fig,ax=ax)
-# Add grid
-plotter.add_hlines(np.arange(-0.5,5.5,1),linewidth=1.25,ls='--',color='gray')
-plotter.add_vlines(np.arange(0,9,1),linewidth=1.25,ls='--',color='gray')
-# All Depths
-plotter.add_coverage(x_range=[7,8],y_range=[-0.45,4.2],label='Climate\nScience')
-plotter.add_coverage(x_range=[5,6],y_range=[-0.45,4.2],label='Fisheries')
-# Surface
-plotter.add_coverage(x_range=[3,7],y_range=[-0.15,-0.15],label='Oil and Gas')
-plotter.add_coverage(x_range=[2,3],y_range=[-0.45,-0.45],label='SAR')
-plotter.add_coverage(x_range=[3,7],y_range=[0.15,0.15],label='Wind and Algal Blooms')
-# 10-100m
-plotter.add_coverage(x_range=[2,4],y_range=[0.85,0.85],label='Hurricane Forcasting')
-plotter.add_coverage(x_range=[3,6],y_range=[1.15,1.15],label='Hypoxia')
-# 100-500m
-plotter.add_coverage(x_range=[0,3],y_range=[2,3],label='Example')
-plotter.ax.texts[7].set_fontsize(20)
-# Below 500m
-plotter.add_coverage(x_range=[3,7],y_range=[3,3],label='Oil and Gas',fc=plotter.colormap(2))
