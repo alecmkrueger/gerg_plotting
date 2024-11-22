@@ -35,6 +35,54 @@ def calculate_pad(var, pad=0.0) -> tuple[float,float]:
     return float(start_with_pad), float(stop_with_pad)
 
 
+def extract_kwargs(kwargs:dict, defaults:dict):
+    """
+    Extracts values from kwargs with defaults for missing keys.
+
+    Parameters:
+    -----------
+    kwargs : dict
+        The keyword arguments dictionary.
+    defaults : dict
+        A dictionary of default values for keys.
+
+    Returns:
+    --------
+    dict
+        A dictionary containing the extracted values.
+    """
+    return {key: kwargs.pop(key, default) for key, default in defaults.items()}
+
+def extract_kwargs_with_aliases(kwargs, defaults):
+    """
+    Extracts values from kwargs, handling key aliases and defaults.
+
+    Parameters:
+    -----------
+    kwargs : dict
+        The keyword arguments dictionary.
+    defaults : dict
+        A dictionary where keys are the primary keys or tuples of aliases,
+        and values are the default values.
+
+    Returns:
+    --------
+    dict
+        A dictionary containing the extracted values using the primary keys.
+    """
+    extracted = {}
+    for keys, default in defaults.items():
+        if not isinstance(keys, tuple):
+            keys = (keys,)  # Ensure single keys are treated as tuples
+        for key in keys:
+            if key in kwargs:
+                extracted[keys[0]] = kwargs.pop(key)
+                break
+        else:
+            extracted[keys[0]] = default
+    return extracted
+
+
 def print_time(message) -> None:
     """
     Prints a message with the current time in 'HH:MM:SS' format.
