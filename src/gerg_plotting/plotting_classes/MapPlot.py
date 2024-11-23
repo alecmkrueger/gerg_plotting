@@ -98,7 +98,7 @@ class MapPlot(Plotter):
             step = None
         return step
 
-    def add_grid(self,grid:bool,show_coords:bool) -> None:
+    def add_grid(self,grid:bool,show_coords:bool=True) -> None:
         # Add gridlines if requested
         if grid:
             self.gl = self.ax.gridlines(draw_labels=True, linewidth=1, color='gray',
