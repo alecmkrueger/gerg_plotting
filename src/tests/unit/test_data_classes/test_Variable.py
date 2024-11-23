@@ -18,8 +18,8 @@ class TestVariable(unittest.TestCase):
         self.assertTrue(np.array_equal(self.variable.data, self.data))
         self.assertEqual(self.variable.name, self.variable_name)
         self.assertEqual(self.variable.units, self.units)
-        self.assertEqual(self.variable.vmin, np.min(self.data))
-        self.assertEqual(self.variable.vmax, np.max(self.data))
+        self.assertEqual(self.variable.vmin, np.nanpercentile(self.data, 1))
+        self.assertEqual(self.variable.vmax, np.nanpercentile(self.data, 99))
 
     def test_label_generation(self):
         """Test automatic generation of the label."""
@@ -68,6 +68,6 @@ class TestVariable(unittest.TestCase):
         self.variable.vmin = None
         self.variable.vmax = None
         self.variable.get_vmin_vmax()
-        self.assertEqual(self.variable.vmin, np.min(self.data))
-        self.assertEqual(self.variable.vmax, np.max(self.data))
+        self.assertEqual(self.variable.vmin, np.nanpercentile(self.data, 1))
+        self.assertEqual(self.variable.vmax, np.nanpercentile(self.data, 99))
 
