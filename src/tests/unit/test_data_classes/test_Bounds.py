@@ -68,6 +68,8 @@ class TestBounds(unittest.TestCase):
             " 'lat_max': 20,\n"
             " 'lat_min': 10,\n"
             " 'lon_max': 40,\n"
-            " 'lon_min': 30}"
+            " 'lon_min': 30,\n"
+            " 'vertical_scaler': 1,\n"
+            " 'vertical_units': 'm'}"
         )
         self.assertEqual(repr(self.bounds), expected_repr,f'{repr(self.bounds)}')
