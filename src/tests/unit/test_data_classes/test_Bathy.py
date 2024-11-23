@@ -37,9 +37,9 @@ class TestBathy(unittest.TestCase):
 
     def test_get_label(self):
         """Test that the label updates correctly with vertical units."""
-        self.assertEqual(self.bathy.get_label(), "Bathymetry")
-        self.bathy.vertical_units = "m"
         self.assertEqual(self.bathy.get_label(), "Bathymetry (m)")
+        self.bathy.bounds.vertical_units = "km"
+        self.assertEqual(self.bathy.get_label(), "Bathymetry (km)")
 
     def test_adjust_cmap(self):
         """Test that the colormap is adjusted correctly."""
@@ -74,7 +74,7 @@ class TestBathy(unittest.TestCase):
         self.bathy.add_colorbar(fig, mock_divider, mock_mappable, nrows)
         self.assertIsInstance(self.bathy.cbar, Colorbar)
         self.assertEqual(self.bathy.cbar.locator._nbins,5)  # Check if nbins is working
-        self.assertEqual(self.bathy.cbar.ax.get_ylabel(), "Bathymetry")  # Check if the label is being assigned
+        self.assertEqual(self.bathy.cbar.ax.get_ylabel(), "Bathymetry (m)")  # Check if the label is being assigned
         self.assertTrue(self.bathy.cbar.ax.yaxis_inverted())
 
 
