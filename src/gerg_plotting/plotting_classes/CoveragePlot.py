@@ -20,12 +20,29 @@ from gerg_plotting.modules.utilities import extract_kwargs_with_aliases
 
 @define
 class CoveragePlot(Plotter):
+    '''
+    A 2-d Categorical plot showing the coverage through categories
+    '''
     x_labels:list = field(default=None)
     y_labels:list = field(default=None)
 
     colormap:matplotlib.colors.Colormap = field(default=None)
     n_colors:int = field(default=None)
     color_iterator:itertools.cycle = field(init=False)
+
+    # Default Coverage Parameters
+    figsize:tuple = field(default=(10,6))
+    coverage_alpha:float = field(default=0.85)
+    coverage_linewidth:float = field(default=1.0)
+    coverage_edgecolor:str|tuple = field(default='k')
+    coverage_label:str|None = field(default=None)
+    coverage_fontsize:float|int = field(default=11)
+    coverage_color_default:str|tuple = field(default=None)
+
+    # Default Grid Parameters
+    grid_linestyle:str = field(default='--')
+    grid_linewidth:float = field(default=1)
+    grid_color:str|tuple = field(default='gray')
 
 
     def __attrs_post_init__(self):
@@ -42,7 +59,7 @@ class CoveragePlot(Plotter):
         elif isinstance(self.colormap,matplotlib.colors.Colormap):
             self.colormap = self.colormap
         if self.n_colors is None:
-            self.n_colors = 10
+            self.n_colors = self.colormap.N
         self.color_iterator = itertools.cycle(
             (self.colormap(i / (self.n_colors - 1)) for i in range(self.n_colors))
         )
@@ -54,7 +71,10 @@ class CoveragePlot(Plotter):
 
         :yield: A tuple representing an RGBA color.
         """
-        return next(self.color_iterator)
+        if self.coverage_color_default is None:
+            return next(self.color_iterator)
+        else:
+            return self.coverage_color_default
 
 
     def custom_ticks(self,labels,axis:str):
@@ -74,17 +94,17 @@ class CoveragePlot(Plotter):
         label_setter(labels)
         self.ax.tick_params('both',length=0)
 
-    def set_padding(self,padding):
-        xmin = 0 -padding
-        xmax = len(self.x_labels)+padding
+    def set_padding(self,vertical_padding,horizontal_padding):
+        xmin = 0 - horizontal_padding
+        xmax = len(self.x_labels)+horizontal_padding
 
-        ymin = -1 - padding
-        ymax = len(self.y_labels)+padding
+        ymin = 0 - vertical_padding
+        ymax = len(self.y_labels)-1+vertical_padding
 
         self.ax.set_xlim(xmin,xmax)
         self.ax.set_ylim(ymin,ymax)
 
-    def init_figure(self, fig=None, ax=None, figsize=(10, 6)) -> None:
+    def init_figure(self, fig=None, ax=None) -> None:
         '''
         Initialize the figure and axes if they are not provided.
         
@@ -99,23 +119,36 @@ class CoveragePlot(Plotter):
         '''
 
         if fig is None and ax is None:
-            # Standard 2D Matplotlib figure with no projection
-            self.fig, self.ax = plt.subplots(figsize=figsize)
+            # Standard 2D Matplotlib figure
+            self.fig, self.ax = plt.subplots(figsize=self.figsize)
                 
         elif fig is not None and ax is not None:
             # Use existing figure and axes
             self.fig = fig
             self.ax = ax
 
+    def add_grid(self,show_grid,grid_kwargs):
+        if show_grid:
+            defaults = {('linewidth','lw'): self.grid_linewidth,
+                        ('color','c'): self.grid_color,('linestyle','ls'): self.grid_linestyle}
 
-    def set_up_plot(self,fig,ax,padding=0.15):
+            linewidth, color, linestyle  = extract_kwargs_with_aliases(grid_kwargs, defaults).values()
+            n_hlines = len(self.y_labels)
+            n_vlines = len(self.x_labels)
+            self.add_hlines(np.arange(-0.5,n_hlines+0.5,1),linewidth=linewidth,ls=linestyle,color=color)
+            self.add_vlines(np.arange(0,n_vlines+1,1),linewidth=linewidth,ls=linestyle,color=color)
+
+
+    def set_up_plot(self,fig=None,ax=None,show_grid:bool=True,vertical_padding=0.15,horizontal_padding=0.15,**grid_kwargs):
         # Init figure
         self.init_figure(fig=fig,ax=ax)
         # Set custom ticks and labels
         self.custom_ticks(labels=self.y_labels,axis='y')
         self.custom_ticks(labels=self.x_labels,axis='x')
+        # Show the grid
+        self.add_grid(show_grid,grid_kwargs)
         # Add padding to the border
-        self.set_padding(padding)
+        self.set_padding(vertical_padding=vertical_padding,horizontal_padding=horizontal_padding)
         # invert the y-xais
         self.ax.invert_yaxis()
 
@@ -128,9 +161,10 @@ class CoveragePlot(Plotter):
 
         height = (y_range[1] - y_range[0]) + 0.25
 
-        defaults = {'alpha': 0.85,('linewidth','lw'): 1,('edgecolor','ec'): 
-                    'k','label': None,('facecolor','fc'):self.coverage_color(),
-                    ('fontsize','label_fontsize'):11}
+        defaults = {'alpha': self.coverage_alpha,('linewidth','lw'): self.coverage_linewidth,
+                    ('edgecolor','ec'): self.coverage_edgecolor,'label': self.coverage_label,
+                    ('facecolor','fc'):self.coverage_color(),
+                    ('fontsize','label_fontsize'):self.coverage_fontsize}
 
         alpha, linewidth, edgecolor, label, fc, fontsize  = extract_kwargs_with_aliases(kwargs, defaults).values()
 
