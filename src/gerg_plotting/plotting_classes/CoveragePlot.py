@@ -11,11 +11,46 @@ from matplotlib.patches import Rectangle
 from attrs import define,field
 import itertools
 import inspect
-
+import re
 
 
 from gerg_plotting.plotting_classes.Plotter import Plotter
 from gerg_plotting.modules.utilities import extract_kwargs_with_aliases
+
+
+def normalize_string(input_string: str) -> str:
+    """
+    Normalizes a string by performing the following actions:
+    - Converts the string to lowercase.
+    - Replaces spaces, newlines, and other specified characters with underscores.
+    - Removes leading and trailing underscores.
+    - Collapses multiple consecutive underscores into a single underscore.
+
+    Parameters:
+    input_string (str): The string to normalize.
+
+    Returns:
+    str: The normalized string.
+    """
+    if not isinstance(input_string, str):
+        raise ValueError("Input must be a string.")
+    
+    # Define the characters to be replaced by underscores
+    replace_pattern = r"[ \t\n\r\f\v.,;:!@#$%^&*()+=?/<>|\\\"'`~\[\]{}]"
+    
+    # Convert to lowercase
+    normalized = input_string.lower()
+    
+    # Replace specified characters with underscores
+    normalized = re.sub(replace_pattern, "_", normalized)
+    
+    # Collapse multiple underscores into one
+    normalized = re.sub(r"__+", "_", normalized)
+    
+    # Remove leading and trailing underscores
+    normalized = normalized.strip("_")
+    
+    return normalized
 
 
 @define
@@ -26,9 +61,18 @@ class CoveragePlot(Plotter):
     x_labels:list = field(default=None)
     y_labels:list = field(default=None)
 
+    x_label_dict:dict = field(init=False)
+    y_label_dict:dict = field(init=False)
+
     colormap:matplotlib.colors.Colormap = field(default=None)
     n_colors:int = field(default=None)
     color_iterator:itertools.cycle = field(init=False)
+
+    patches:list = field(init=False)
+
+    # Default figure/axes Parameters
+    horizontal_padding:float = field(default=0.25)
+    vertical_padding:float = field(default=0.75)
 
     # Default Coverage Parameters
     figsize:tuple = field(default=(10,6))
@@ -38,6 +82,7 @@ class CoveragePlot(Plotter):
     coverage_label:str|None = field(default=None)
     coverage_fontsize:float|int = field(default=11)
     coverage_color_default:str|tuple = field(default=None)
+    coverage_min_rectangle_height:float = field(default=0.25)
 
     # Default Grid Parameters
     grid_linestyle:str = field(default='--')
@@ -63,6 +108,11 @@ class CoveragePlot(Plotter):
         self.color_iterator = itertools.cycle(
             (self.colormap(i / (self.n_colors - 1)) for i in range(self.n_colors))
         )
+
+        self.x_label_dict = {normalize_string(value):idx for idx,value in enumerate(self.x_labels)}
+        self.y_label_dict = {normalize_string(value):idx for idx,value in enumerate(self.y_labels)}
+
+        self.patches = list([])
 
 
     def coverage_color(self):
@@ -94,12 +144,12 @@ class CoveragePlot(Plotter):
         label_setter(labels)
         self.ax.tick_params('both',length=0)
 
-    def set_padding(self,vertical_padding,horizontal_padding):
-        xmin = 0 - horizontal_padding
-        xmax = len(self.x_labels)+horizontal_padding
+    def set_padding(self):
+        xmin = 0 - self.horizontal_padding
+        xmax = len(self.x_labels)+self.horizontal_padding
 
-        ymin = 0 - vertical_padding
-        ymax = len(self.y_labels)-1+vertical_padding
+        ymin = 0 - self.vertical_padding
+        ymax = len(self.y_labels)-1+self.vertical_padding
 
         self.ax.set_xlim(xmin,xmax)
         self.ax.set_ylim(ymin,ymax)
@@ -139,7 +189,7 @@ class CoveragePlot(Plotter):
             self.add_vlines(np.arange(0,n_vlines+1,1),linewidth=linewidth,ls=linestyle,color=color)
 
 
-    def set_up_plot(self,fig=None,ax=None,show_grid:bool=True,vertical_padding=0.15,horizontal_padding=0.15,**grid_kwargs):
+    def set_up_plot(self,fig=None,ax=None,show_grid:bool=True,**grid_kwargs):
         # Init figure
         self.init_figure(fig=fig,ax=ax)
         # Set custom ticks and labels
@@ -148,18 +198,56 @@ class CoveragePlot(Plotter):
         # Show the grid
         self.add_grid(show_grid,grid_kwargs)
         # Add padding to the border
-        self.set_padding(vertical_padding=vertical_padding,horizontal_padding=horizontal_padding)
+        self.set_padding()
         # invert the y-xais
         self.ax.invert_yaxis()
+        # Put the x-axis labels on top
+        self.ax.tick_params(axis='x', labeltop=True, labelbottom=False)
+        # Set layout to tight
+        self.fig.tight_layout()
+
+    
+    def handle_ranges(self,x_range,y_range):
+        '''
+        If the user used label names/strings to identify the x and y ranges,
+        we need to convert those to numeric so we can plot it
+        '''
+
+        # Handle using labels for position
+        for idx,x in enumerate(x_range):
+            if isinstance(x,str):
+                x = normalize_string(x)
+                x_range[idx] = self.x_label_dict[x]
+                if idx == 1:
+                    x_range[1]+=1
+
+                
+        for idx,y in enumerate(y_range):
+            if isinstance(y,str):
+                y = normalize_string(y)
+                y_range[idx] = self.y_label_dict[y]
+                if idx == 1:
+                    y_range[1]+=0.5
+                if idx == 0:
+                    y_range[0]-=0.5
+
+        return x_range,y_range
 
 
-    def add_rectangle(self,x_range,y_range,**kwargs):
+
+    def make_rectangle(self,x_range,y_range,**kwargs):
+
+        x_range,y_range = self.handle_ranges(x_range,y_range)
+
         # Bottom left corner
         anchor_point = (x_range[0],y_range[0])
 
         width = (x_range[1] - x_range[0])
 
-        height = (y_range[1] - y_range[0]) + 0.25
+        height = (y_range[1] - y_range[0])
+
+        if height == 0:
+            height = self.coverage_min_rectangle_height
 
         defaults = {'alpha': self.coverage_alpha,('linewidth','lw'): self.coverage_linewidth,
                     ('edgecolor','ec'): self.coverage_edgecolor,'label': self.coverage_label,
@@ -167,7 +255,6 @@ class CoveragePlot(Plotter):
                     ('fontsize','label_fontsize'):self.coverage_fontsize}
 
         alpha, linewidth, edgecolor, label, fc, fontsize  = extract_kwargs_with_aliases(kwargs, defaults).values()
-
 
         rect_args = list(inspect.signature(matplotlib.patches.Rectangle).parameters)
         rect_dict = {k: kwargs.pop(k) for k in dict(kwargs) if k in rect_args}
@@ -177,12 +264,14 @@ class CoveragePlot(Plotter):
                          linewidth=linewidth, edgecolor = edgecolor,
                          label=label,**rect_dict)
         
+
         text_args = list(inspect.signature(matplotlib.text.Text.set).parameters)+list(inspect.signature(matplotlib.text.Text).parameters)
         text_dict = {k: kwargs.pop(k) for k in dict(kwargs) if k in text_args}
         
-        self.ax.text(*rect.get_center(),s=label,ha='center',va='center',fontsize=fontsize,**text_dict)
+        text = matplotlib.text.Text(*rect.get_center(),text=label,ha='center',va='center',**text_dict)
+        
+        self.patches.append([rect,text])
 
-        self.ax.add_patch(rect)
 
     def add_hlines(self,y_values,**kwargs):
         zorder = kwargs.pop('zorder',0)
@@ -203,13 +292,31 @@ class CoveragePlot(Plotter):
         Turn off the label on top of the coverage, but keep the label in the legend, pass `visible = False`
         '''
         # Init test values
-        len_x_range = len(x_range)
-        len_y_range = len(y_range)
+        if not isinstance(x_range,list):
+            x_range = [x_range]
+        if not isinstance(y_range,list):
+            y_range = [y_range]
+
+        if len(x_range)==1:
+            x_range.extend(x_range)
+        if len(y_range)==1:
+            y_range.extend(y_range)
 
         # If both x_range and y_range contain the same number of values, we will plot and return early
-        if len_x_range == len_y_range:
-            self.add_rectangle(x_range,y_range,**kwargs)
+        if len(x_range) == len(y_range):
+            self.make_rectangle(x_range,y_range,**kwargs)
             return
         else:
-            raise ValueError(f'x-range and y_range must both be the same length')
+            raise ValueError(f'x_range and y_range must both be the same length {x_range = }, {y_range = }')
+
+
+    def plot(self):
+        '''
+        Only call after you have added all of your coverages
+        '''
+        self.set_up_plot()  
+        for rect,text in self.patches:
+            self.ax.add_patch(rect)
+            self.ax.add_artist(text)
+
 
