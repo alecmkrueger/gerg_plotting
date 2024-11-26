@@ -1,9 +1,42 @@
 import numpy as np
 import pandas as pd
 import xarray as xr
+from itertools import combinations
 
 from gerg_plotting.data_classes.Data import Data
 
+
+def create_combinations_with_underscore(strings):
+    """
+    Generate all pairwise combinations of strings with an underscore.
+
+    Args:
+        strings (list): A list of strings.
+
+    Returns:
+        list: A list of combinations joined by an underscore.
+    """
+    # Generate all pairwise combinations
+    pairs = combinations(strings, 2)
+    # Join each pair with an underscore
+    combination= ["_".join(pair) for pair in pairs]
+    combination.extend(strings)
+    return combination
+
+def custom_legend_handles(labels:list[str],colors):
+    '''
+    Create Legend handles from the provided lables and colors
+    '''
+    import matplotlib.patches as mpatches
+
+    assert len(labels) == len(colors)
+
+    labels = [label.replace('_','/') for label in labels]
+
+    # Create custom legend handles
+    legend_handles = [mpatches.Patch(color=color, label=label) for color, label in zip(colors, labels)]
+
+    return legend_handles
 
 def _map_variables(keys:list[str], values:list[str], synonyms:dict[str,list[str]]|None=None, blocklist:dict[str,list[str]]|None=None):
     """
