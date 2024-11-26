@@ -7,7 +7,7 @@ import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FixedLocator
-from matplotlib.patches import Rectangle
+from matplotlib.patches import Rectangle,FancyArrow,FancyArrowPatch
 from attrs import define,field
 import itertools
 import inspect
@@ -77,17 +77,29 @@ class CoveragePlot(Plotter):
     # Default Coverage Parameters
     figsize:tuple = field(default=(10,6))
     coverage_alpha:float = field(default=0.85)
-    coverage_linewidth:float = field(default=1.0)
+    coverage_linewidth:float = field(default=1)
     coverage_edgecolor:str|tuple = field(default='k')
     coverage_label:str|None = field(default=None)
     coverage_fontsize:float|int = field(default=11)
     coverage_color_default:str|tuple = field(default=None)
     coverage_min_rectangle_height:float = field(default=0.25)
+    coverage_outline_alpha:float = field(default=1)
+    coverage_outline_color:str|tuple = field(default='k')
 
     # Default Grid Parameters
     grid_linestyle:str = field(default='--')
     grid_linewidth:float = field(default=1)
     grid_color:str|tuple = field(default='gray')
+
+    # Default Arrow Parameters
+    arrow_width:float = field(default=0.001)
+    arrow_facecolor:str|tuple = field(default='k')  # If == "coverage_facecolor" then the arrow's facecolor will be the color of the corresponding coverage's facecolor
+    arrow_edge_color:str|tuple = field(default='k')
+    arrow_linewidth:float = field(default=0)
+    arrow_head_width:float = field(default=None)
+    arrow_length_includes_head:bool = field(default=True)
+    arrow_zorder:float = field(default=2.9)
+    arrow_text_padding:float = field(default=0.05)
 
 
     def __attrs_post_init__(self):
@@ -177,17 +189,6 @@ class CoveragePlot(Plotter):
             self.fig = fig
             self.ax = ax
 
-    def add_grid(self,show_grid,grid_kwargs):
-        if show_grid:
-            defaults = {('linewidth','lw'): self.grid_linewidth,
-                        ('color','c'): self.grid_color,('linestyle','ls'): self.grid_linestyle}
-
-            linewidth, color, linestyle  = extract_kwargs_with_aliases(grid_kwargs, defaults).values()
-            n_hlines = len(self.y_labels)
-            n_vlines = len(self.x_labels)
-            self.add_hlines(np.arange(-0.5,n_hlines+0.5,1),linewidth=linewidth,ls=linestyle,color=color)
-            self.add_vlines(np.arange(0,n_vlines+1,1),linewidth=linewidth,ls=linestyle,color=color)
-
 
     def set_up_plot(self,fig=None,ax=None,show_grid:bool=True,**grid_kwargs):
         # Init figure
@@ -221,7 +222,6 @@ class CoveragePlot(Plotter):
                 if idx == 1:
                     x_range[1]+=1
 
-                
         for idx,y in enumerate(y_range):
             if isinstance(y,str):
                 y = normalize_string(y)
@@ -234,8 +234,10 @@ class CoveragePlot(Plotter):
         return x_range,y_range
 
 
-
     def make_rectangle(self,x_range,y_range,**kwargs):
+        '''
+        Rectangle z-order:
+        '''
 
         x_range,y_range = self.handle_ranges(x_range,y_range)
 
@@ -251,37 +253,111 @@ class CoveragePlot(Plotter):
 
         defaults = {'alpha': self.coverage_alpha,('linewidth','lw'): self.coverage_linewidth,
                     ('edgecolor','ec'): self.coverage_edgecolor,'label': self.coverage_label,
-                    ('facecolor','fc'):self.coverage_color(),
+                    ('facecolor','fc'):self.coverage_color(),'coverage_outline_alpha':self.coverage_outline_alpha,
                     ('fontsize','label_fontsize'):self.coverage_fontsize}
 
-        alpha, linewidth, edgecolor, label, fc, fontsize  = extract_kwargs_with_aliases(kwargs, defaults).values()
+        alpha, linewidth, edgecolor, label, fc, coverage_outline_alpha, fontsize  = extract_kwargs_with_aliases(kwargs, defaults).values()
 
         rect_args = list(inspect.signature(matplotlib.patches.Rectangle).parameters)
         rect_dict = {k: kwargs.pop(k) for k in dict(kwargs) if k in rect_args}
 
         rect = Rectangle(anchor_point,width=width,height=height,
                          fc=fc,alpha=alpha,
-                         linewidth=linewidth, edgecolor = edgecolor,
+                         linewidth=linewidth, edgecolor = None,
                          label=label,**rect_dict)
+        
+        rect_outline = Rectangle(anchor_point,width=width,height=height,fc=None,fill=False,alpha=coverage_outline_alpha,
+                         linewidth=linewidth, edgecolor = edgecolor,
+                         label=label,zorder=rect.get_zorder()+0.25,**rect_dict)
         
 
         text_args = list(inspect.signature(matplotlib.text.Text.set).parameters)+list(inspect.signature(matplotlib.text.Text).parameters)
         text_dict = {k: kwargs.pop(k) for k in dict(kwargs) if k in text_args}
         
-        text = matplotlib.text.Text(*rect.get_center(),text=label,ha='center',va='center',**text_dict)
+        label_position = kwargs.pop('label_position',rect.get_center())
+
+        text = matplotlib.text.Text(*label_position,text=label,ha='center',va='center',zorder=5,**text_dict)
         
-        self.patches.append([rect,text])
+        self.patches.append([rect,rect_outline,text])
+
+
+    def format_coverage_label(self,text:matplotlib.text.Text,rect:Rectangle):
+        text.set_bbox(dict(facecolor=rect.get_facecolor(),pad=0.05,linewidth=0,alpha=1))
+
+    
+    def calculate_arrow_length(self,rect,text_left,text_right):
+        rect_bbox = self.ax.transData.inverted().transform(rect.get_window_extent())
+
+        rect_left, rect_bottom = rect_bbox[0]
+        rect_right, rect_top = rect_bbox[1]
+
+        left_arrow_length = rect_left-text_left-0.01
+        right_arrow_length = rect_right-text_right-0.01
+
+        return left_arrow_length,right_arrow_length
+
+
+    def add_range_arrows(self,text:matplotlib.text.Text,rect:Rectangle,**arrow_kwargs):
+
+        defaults = {'arrow_width': self.arrow_width,
+                    'arrow_facecolor': self.arrow_facecolor,
+                    'arrow_head_width': self.arrow_head_width,
+                    'arrow_length_includes_head':self.arrow_length_includes_head,
+                    'arrow_zorder':self.arrow_zorder,
+                    'arrow_edge_color':self.arrow_edge_color,
+                    'arrow_linewidth':self.arrow_linewidth}
+
+        arrow_width,arrow_facecolor,arrow_head_width,arrow_length_includes_head,arrow_zorder,arrow_edge_color,arrow_linewidth = extract_kwargs_with_aliases(arrow_kwargs, defaults).values()
+
+        if arrow_facecolor=='coverage_facecolor':
+            arrow_facecolor = rect.get_facecolor()
+
+        text_bbox = self.ax.transData.inverted().transform(text.get_window_extent())
+
+        # Calculate the left and right bounds of the text in data coordinates
+        text_left, text_bottom = text_bbox[0]
+        text_right, text_top = text_bbox[1]
+        text_y_center = (text_bottom + text_top) / 2  # The vertical center of the text
+
+        arrow_props = {'width': arrow_width, 'facecolor': arrow_facecolor,'head_width':arrow_head_width,
+                       "length_includes_head":arrow_length_includes_head,'zorder':arrow_zorder,
+                       'edgecolor':arrow_edge_color,'linewidth':arrow_linewidth}
+
+        left_arrow_length,right_arrow_length = (self.calculate_arrow_length(rect,text_left=text_left,text_right=text_right))
+
+        left_arrow_left_bound = text_left - self.arrow_text_padding
+        left_arrow_right_bound = left_arrow_length + self.arrow_text_padding
+
+        right_arrow_left_bound = text_right + self.arrow_text_padding
+        right_arrow_right_bound = right_arrow_length - self.arrow_text_padding
+
+        left_arrow = FancyArrow(left_arrow_left_bound, text_y_center, left_arrow_right_bound, 0, **arrow_props)
+        right_arrow = FancyArrow(right_arrow_left_bound, text_y_center, right_arrow_right_bound, 0, **arrow_props)
+
+        self.ax.add_artist(left_arrow)
+        self.ax.add_artist(right_arrow)
 
 
     def add_hlines(self,y_values,**kwargs):
-        zorder = kwargs.pop('zorder',0)
+        zorder = kwargs.pop('zorder',1.15)
         for y_value in y_values:
             self.ax.axhline(y_value,zorder=zorder,**kwargs)
 
     def add_vlines(self,x_values,**kwargs):
-        zorder = kwargs.pop('zorder',0)
+        zorder = kwargs.pop('zorder',1.15)
         for x_value in x_values:
             self.ax.axvline(x_value,zorder=zorder,**kwargs)
+
+    def add_grid(self,show_grid,grid_kwargs):
+        if show_grid:
+            defaults = {('linewidth','lw'): self.grid_linewidth,
+                        ('color','c'): self.grid_color,('linestyle','ls'): self.grid_linestyle}
+
+            linewidth, color, linestyle  = extract_kwargs_with_aliases(grid_kwargs, defaults).values()
+            n_hlines = len(self.y_labels)
+            n_vlines = len(self.x_labels)
+            self.add_hlines(np.arange(-0.5,n_hlines+0.5,1),linewidth=linewidth,ls=linestyle,color=color)
+            self.add_vlines(np.arange(0,n_vlines+1,1),linewidth=linewidth,ls=linestyle,color=color)
 
 
     def add_coverage(self,x_range,y_range,**kwargs):
@@ -315,8 +391,11 @@ class CoveragePlot(Plotter):
         Only call after you have added all of your coverages
         '''
         self.set_up_plot()  
-        for rect,text in self.patches:
+        for rect,rect_outline,text in self.patches:
             self.ax.add_patch(rect)
-            self.ax.add_artist(text)
+            self.ax.add_patch(rect_outline)
+            text = self.ax.add_artist(text)
+            self.format_coverage_label(text=text,rect=rect)
+            self.add_range_arrows(text=text,rect=rect)
 
 
