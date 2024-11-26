@@ -262,3 +262,16 @@ class ScatterPlot(Plotter):
             _ = [self.ax.axvline(highlight_freq, color=plt.get_cmap('tab10')(idx), linestyle='--', linewidth=1, label=f'{highlight_freq:.3f} cpd') for idx,highlight_freq in enumerate(highlight_freqs)]
             self.ax.legend()
         self.fig.suptitle(f'Power Spectra Density',fontsize=22)
+
+    def tricontourf(self,x:str,y:str,z:str,fig=None,ax=None):
+        '''Create contourf of irregularly gridded data'''
+        # Check if vars are present
+        self.data.check_for_vars([x,y,z])
+        self.init_figure(fig=None,ax=None)
+        self.ax.tricontourf(self.data[x].data,self.data[y].data,self.data[z].data,cmap=self.data[z].cmap)
+        self.format_axes(xlabel=self.data[x].get_label(),ylabel=self.data[y].get_label())
+
+
+
+
+
