@@ -48,7 +48,6 @@ def coverage_plot_example():
 
     plotter.fig.tight_layout()
 
-    plotter.show()
     plotter.fig.savefig('example_plots/coverage_plot_example.png',dpi=600)
 
 
