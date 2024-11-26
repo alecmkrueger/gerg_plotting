@@ -7,50 +7,16 @@ import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FixedLocator
-from matplotlib.patches import Rectangle,FancyArrow,FancyArrowPatch
+from matplotlib.patches import Rectangle,FancyArrow
 from attrs import define,field
 import itertools
 import inspect
-import re
 
 
 from gerg_plotting.plotting_classes.Plotter import Plotter
 from gerg_plotting.modules.utilities import extract_kwargs_with_aliases
+from gerg_plotting.tools import normalize_string
 
-
-def normalize_string(input_string: str) -> str:
-    """
-    Normalizes a string by performing the following actions:
-    - Converts the string to lowercase.
-    - Replaces spaces, newlines, and other specified characters with underscores.
-    - Removes leading and trailing underscores.
-    - Collapses multiple consecutive underscores into a single underscore.
-
-    Parameters:
-    input_string (str): The string to normalize.
-
-    Returns:
-    str: The normalized string.
-    """
-    if not isinstance(input_string, str):
-        raise ValueError("Input must be a string.")
-    
-    # Define the characters to be replaced by underscores
-    replace_pattern = r"[ \t\n\r\f\v.,;:!@#$%^&*()+=?/<>|\\\"'`~\[\]{}]"
-    
-    # Convert to lowercase
-    normalized = input_string.lower()
-    
-    # Replace specified characters with underscores
-    normalized = re.sub(replace_pattern, "_", normalized)
-    
-    # Collapse multiple underscores into one
-    normalized = re.sub(r"__+", "_", normalized)
-    
-    # Remove leading and trailing underscores
-    normalized = normalized.strip("_")
-    
-    return normalized
 
 
 @define
