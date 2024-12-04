@@ -3,11 +3,9 @@ import unittest
 import pandas as pd
 import numpy as np
 import xarray as xr
-from io import StringIO
 import os
 from pathlib import Path
 
-from gerg_plotting.data_classes.Data import Data
 from gerg_plotting.tools import _map_variables, _get_var_mapping, interp_glider_lat_lon, data_from_df, data_from_csv
 
 
