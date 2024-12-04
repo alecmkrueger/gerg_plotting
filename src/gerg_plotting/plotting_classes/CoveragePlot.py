@@ -295,7 +295,7 @@ class CoveragePlot(Plotter):
 
         left_arrow_length,right_arrow_length = (self.calculate_arrow_length(rect,text_left=text_left,text_right=text_right))
 
-        left_arrow_left_bound = text_left - self.arrow_text_padding
+        left_arrow_left_bound = text_left - (self.arrow_text_padding-0.03)  # Subtract a bit because arrow spills over a bit further than expected
         left_arrow_right_bound = left_arrow_length + self.arrow_text_padding
 
         right_arrow_left_bound = text_right + self.arrow_text_padding
@@ -356,7 +356,59 @@ class CoveragePlot(Plotter):
             raise ValueError(f'x_range and y_range must both be the same length {x_range = }, {y_range = }')
 
 
-    def plot(self):
+    def calculate_intersection_multiple(self,rectangles:list[Rectangle]):
+        """Calculate the intersection of multiple rectangles."""
+        x_overlap_min = max(rect.get_x() for rect in rectangles)
+        y_overlap_min = max(rect.get_y() for rect in rectangles)
+        x_overlap_max = min(rect.get_x() + rect.get_width() for rect in rectangles)
+        y_overlap_max = min(rect.get_y() + rect.get_height() for rect in rectangles)
+        
+        # Check if there is a valid overlap
+        if x_overlap_min < x_overlap_max and y_overlap_min < y_overlap_max:
+            width = x_overlap_max - x_overlap_min
+            height = y_overlap_max - y_overlap_min
+            return x_overlap_min, y_overlap_min, width, height
+        return None
+
+    def find_and_draw_intersections_with_hatching(self):
+        """Find intersections of n overlapping rectangles and draw them with hatching."""
+        rectangles = [rect for rect in self.ax.patches if isinstance(rect, Rectangle)]
+
+        rectangle_labels = {rect.get_label() for rect in rectangles}
+
+        rectangle_colors = [rect.get_facecolor() for rect in rectangles]
+
+        hatch_styles = ['/', '\\', '|', '-', 'o', 'O', '.', '*',
+        '//', '\\\\', '||', '--', '++', 'xx', 'oo', 'OO', '..', '**',
+        '/o', '\\|', '|*', '-\\', '+o', 'x*', 'o-', 'O|', 'O.', '*-']  # List of hatching styles
+
+        label_to_color = {key:value for key,value in zip(rectangle_labels,rectangle_colors)}
+
+        color_to_hatch = {key:value for key,value in zip(set(rectangle_colors),hatch_styles)}
+
+        for r in range(2, len(rectangles) + 1):  # Start with pairs
+            for subset in itertools.combinations(rectangles, r):
+                # Check if facecolors are not all identical
+                facecolors = {rect.get_facecolor() for rect in subset}
+                rect_labels = {rect.get_label() for rect in subset}
+                if len(facecolors) > 1:  # Proceed if facecolors are different
+                    intersection = self.calculate_intersection_multiple(subset)
+                    if intersection:
+                        x, y, width, height = intersection                    
+                        # Create a PathPatch with hatching
+                        for idx,rect_label in enumerate(rect_labels):
+                            intersection_patch = Rectangle(
+                                (x, y), width, height,
+                                facecolor=('w' if idx==0 else 'none'),  # Set the background to white
+                                edgecolor=label_to_color[rect_label],
+                                hatch=color_to_hatch[label_to_color[rect_label]],
+                                lw=0,
+                                zorder = (1.1 if idx==0 else 1.2)  # Put the background at zorder 1.1, then put the hatches on 1.2
+                            )
+                            self.ax.add_patch(intersection_patch)
+
+
+    def plot(self,with_hatches:bool=False):
         '''
         Only call after you have added all of your coverages
         '''
@@ -367,5 +419,7 @@ class CoveragePlot(Plotter):
             text = self.ax.add_artist(text)
             self.format_coverage_label(text=text,rect=rect)
             self.add_range_arrows(text=text,rect=rect)
+        if with_hatches:
+            self.find_and_draw_intersections_with_hatching()
 
 
