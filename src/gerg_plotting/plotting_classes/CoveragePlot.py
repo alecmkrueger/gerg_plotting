@@ -51,6 +51,9 @@ class CoveragePlot(Plotter):
     coverage_min_rectangle_height:float = field(default=0.25)
     coverage_outline_alpha:float = field(default=1)
     coverage_outline_color:str|tuple = field(default='k')
+    coverage_label_background_pad:float = field(default=1)
+    coverage_label_background_linewidth:float = field(default=0)
+    coverage_label_background_alpha:float = field(default=1)
 
     # Default Grid Parameters
     grid_linestyle:str = field(default='--')
@@ -59,7 +62,7 @@ class CoveragePlot(Plotter):
 
     # Default Arrow Parameters
     arrow_width:float = field(default=0.001)
-    arrow_facecolor:str|tuple = field(default='k')  # If == "coverage_facecolor" then the arrow's facecolor will be the color of the corresponding coverage's facecolor
+    arrow_facecolor:str|tuple = field(default='k')  # If "coverage_facecolor" then the arrow's facecolor will be the color of the corresponding coverage's facecolor
     arrow_edge_color:str|tuple = field(default='k')
     arrow_linewidth:float = field(default=0)
     arrow_head_width:float = field(default=None)
@@ -217,12 +220,11 @@ class CoveragePlot(Plotter):
         if height == 0:
             height = self.coverage_min_rectangle_height
 
-        defaults = {'alpha': self.coverage_alpha,('linewidth','lw'): self.coverage_linewidth,
+        rect_defaults = {'alpha': self.coverage_alpha,('linewidth','lw'): self.coverage_linewidth,
                     ('edgecolor','ec'): self.coverage_edgecolor,'label': self.coverage_label,
-                    ('facecolor','fc'):self.coverage_color(),'coverage_outline_alpha':self.coverage_outline_alpha,
-                    ('fontsize','label_fontsize'):self.coverage_fontsize}
+                    ('facecolor','fc'):self.coverage_color(),'coverage_outline_alpha':self.coverage_outline_alpha}
 
-        alpha, linewidth, edgecolor, label, fc, coverage_outline_alpha, fontsize  = extract_kwargs_with_aliases(kwargs, defaults).values()
+        alpha, linewidth, edgecolor, label, fc, coverage_outline_alpha  = extract_kwargs_with_aliases(kwargs, rect_defaults).values()
 
         rect_args = list(inspect.signature(matplotlib.patches.Rectangle).parameters)
         rect_dict = {k: kwargs.pop(k) for k in dict(kwargs) if k in rect_args}
@@ -240,15 +242,17 @@ class CoveragePlot(Plotter):
         text_args = list(inspect.signature(matplotlib.text.Text.set).parameters)+list(inspect.signature(matplotlib.text.Text).parameters)
         text_dict = {k: kwargs.pop(k) for k in dict(kwargs) if k in text_args}
         
+        fontsize = text_dict.pop('fontsize',self.coverage_fontsize)
         label_position = kwargs.pop('label_position',rect.get_center())
 
-        text = matplotlib.text.Text(*label_position,text=label,ha='center',va='center',zorder=5,**text_dict)
+        text = matplotlib.text.Text(*label_position,text=label,fontsize=fontsize,ha='center',va='center',zorder=5,**text_dict)
         
         self.patches.append([rect,rect_outline,text])
 
 
     def format_coverage_label(self,text:matplotlib.text.Text,rect:Rectangle):
-        text.set_bbox(dict(facecolor=rect.get_facecolor(),pad=0.05,linewidth=0,alpha=1))
+        text.set_bbox(dict(facecolor=rect.get_facecolor(),pad=self.coverage_label_background_pad,
+                           linewidth=self.coverage_label_background_linewidth,alpha=self.coverage_label_background_alpha))
 
     
     def calculate_arrow_length(self,rect,text_left,text_right):
