@@ -14,6 +14,8 @@ import inspect
 
 
 from gerg_plotting.plotting_classes.Plotter import Plotter
+from gerg_plotting.plotting_classes.Coverage import Coverage
+
 from gerg_plotting.modules.utilities import extract_kwargs_with_aliases
 from gerg_plotting.tools import normalize_string
 
@@ -38,10 +40,9 @@ class CoveragePlot(Plotter):
     y_label_dict:dict = field(init=False)
 
     colormap:matplotlib.colors.Colormap = field(default=None)
-    n_colors:int = field(default=None)
     color_iterator:itertools.cycle = field(init=False)
 
-    patches:list = field(init=False)
+    coverages:list[Coverage] = field(init=False)
 
     # Default figure/axes Parameters
     horizontal_padding:float = field(default=0.25)
@@ -80,7 +81,7 @@ class CoveragePlot(Plotter):
 
     def __attrs_post_init__(self):
         """
-        Initializes the ColorCycler.
+        Initializes the ColorCycler and the coverages container
 
         :param colormap_name: Name of the matplotlib colormap to use.
         :param n_colors: Number of discrete colors to divide the colormap into.
@@ -91,16 +92,15 @@ class CoveragePlot(Plotter):
             self.colormap = plt.get_cmap(self.colormap)
         elif isinstance(self.colormap,matplotlib.colors.Colormap):
             self.colormap = self.colormap
-        if self.n_colors is None:
-            self.n_colors = self.colormap.N
+        n_colors = self.colormap.N
         self.color_iterator = itertools.cycle(
-            (self.colormap(i / (self.n_colors - 1)) for i in range(self.n_colors))
+            (self.colormap(i / (n_colors - 1)) for i in range(n_colors))
         )
 
         self.x_label_dict = {normalize_string(value):idx for idx,value in enumerate(self.x_labels)}
         self.y_label_dict = {normalize_string(value):idx for idx,value in enumerate(self.y_labels)}
 
-        self.patches = list([])
+        self.coverages = list([])
 
 
     def coverage_color(self):
@@ -256,7 +256,7 @@ class CoveragePlot(Plotter):
 
         text = matplotlib.text.Text(*label_position,text=label,fontsize=fontsize,ha='center',va='center',zorder=5,**text_dict)
         
-        self.patches.append([rect,rect_outline,text])
+        self.coverages.append([rect,rect_outline,text])
 
 
     def format_coverage_label(self,text:matplotlib.text.Text,rect:Rectangle):
@@ -396,7 +396,7 @@ class CoveragePlot(Plotter):
         Only call after you have added all of your coverages
         '''
         self.set_up_plot()  
-        for rect,rect_outline,text in self.patches:
+        for rect,rect_outline,text in self.coverages:
             self.ax.add_patch(rect)
             self.ax.add_patch(rect_outline)
             text = self.ax.add_artist(text)
