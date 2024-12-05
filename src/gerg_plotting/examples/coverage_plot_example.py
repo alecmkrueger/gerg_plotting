@@ -1,4 +1,4 @@
-from gerg_plotting.plotting_classes.CoveragePlot import CoveragePlot
+from gerg_plotting.plotting_classes.Coverage_Plot_Classes import CoveragePlot
 from gerg_plotting.tools import custom_legend_handles
 
 import matplotlib.pyplot as plt
@@ -52,7 +52,7 @@ def coverage_plot_example():
 
     plotter.fig.tight_layout()
 
-    plotter.fig.savefig('example_plots/coverage_plot_example_with_hatches1.png',dpi=600)
+    # plotter.fig.savefig('example_plots/coverage_plot_example_with_hatches1.png',dpi=600)
 
 
 if __name__ == "__main__":

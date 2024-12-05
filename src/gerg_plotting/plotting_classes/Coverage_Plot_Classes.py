@@ -1,29 +1,26 @@
 # Coverage_Plot_Classes.py
 
 import numpy as np
+import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
 from matplotlib.axes import Axes
 from matplotlib.colors import Colormap
 from matplotlib.ticker import FixedLocator
 from matplotlib.text import Text
-from matplotlib.patches import Rectangle,FancyArrow
+from matplotlib.patches import Rectangle,FancyArrow,Patch
 from attrs import define,field,asdict
 from pprint import pformat
 import itertools
 import inspect
 
 from gerg_plotting.modules.utilities import extract_kwargs_with_aliases
-from gerg_plotting.tools import normalize_string
+from gerg_plotting.tools import normalize_string,custom_legend_handles
 
 
 
 @define
 class Base:
-
-    def check_empty_kwargs(self,**kwargs):
-        if kwargs:
-            raise ValueError(f'Unused key word arguments: {kwargs}')
 
     def _has_var(self, key) -> bool:
         '''Check if object has var'''
@@ -63,13 +60,13 @@ class Base:
 @define
 class ExtentArrows(Base):
     # Defaults
-    facecolor:str|tuple = field(default='black') # If "coverage_facecolor" then the arrow's facecolor will be the color of the corresponding coverage's facecolor
-    edgecolor:str|tuple = field(default='black')
-    width:float = field(default=0.05)
-    head_width:float = field(default=0.12)
-    zorder:float = field(default=2.9)
-    linewidth:float = field(default=0)
-    text_padding:float = field(default=0.05)
+    arrow_facecolor:str|tuple = field(default='black') # If "coverage_color" then the arrow's facecolor will be the color of the corresponding coverage's facecolor
+    arrow_edgecolor:str|tuple = field(default='black')
+    arrow_tail_width:float = field(default=0.05)
+    arrow_head_width:float = field(default=0.12)
+    arrow_zorder:float = field(default=2.9)
+    arrow_linewidth:float = field(default=0)
+    arrow_text_padding:float = field(default=0.05)
     # Add other defaults too
     # Arrows
     left_arrow:FancyArrow = field(default=None)
@@ -91,8 +88,8 @@ class ExtentArrows(Base):
 
     def add_range_arrows(self,ax:Axes,text:Text,rect:Rectangle):
         
-        if self.facecolor=='coverage_facecolor':
-            self.facecolor = rect.get_facecolor()
+        if self.arrow_facecolor=='coverage_color':
+            self.arrow_facecolor = rect.get_facecolor()
 
         text_bbox = ax.transData.inverted().transform(text.get_window_extent())
 
@@ -101,17 +98,17 @@ class ExtentArrows(Base):
         text_right, text_top = text_bbox[1]
         text_y_center = (text_bottom + text_top) / 2  # The vertical center of the text
 
-        arrow_props = {'width': self.width, 'facecolor': self.facecolor,'head_width':self.head_width,
-                       "length_includes_head":True,'zorder':self.zorder,
-                       'edgecolor':self.edgecolor,'linewidth':self.linewidth}
+        arrow_props = {'width': self.arrow_tail_width, 'facecolor': self.arrow_facecolor,'head_width':self.arrow_head_width,
+                       "length_includes_head":True,'zorder':self.arrow_zorder,
+                       'edgecolor':self.arrow_edgecolor,'linewidth':self.arrow_linewidth}
 
         left_arrow_length,right_arrow_length = (self.calculate_arrow_length(ax,rect,text_left=text_left,text_right=text_right))
 
-        left_arrow_left_bound = text_left - self.text_padding
-        left_arrow_right_bound = left_arrow_length + self.text_padding
+        left_arrow_left_bound = text_left - self.arrow_text_padding
+        left_arrow_right_bound = left_arrow_length + self.arrow_text_padding
 
-        right_arrow_left_bound = text_right + self.text_padding
-        right_arrow_right_bound = right_arrow_length - self.text_padding
+        right_arrow_left_bound = text_right + self.arrow_text_padding
+        right_arrow_right_bound = right_arrow_length - self.arrow_text_padding
 
         left_arrow = FancyArrow(left_arrow_left_bound, text_y_center, left_arrow_right_bound, 0, **arrow_props)
         right_arrow = FancyArrow(right_arrow_left_bound, text_y_center, right_arrow_right_bound, 0, **arrow_props)
@@ -125,24 +122,24 @@ class Grid(Base):
     xlabels:list
     ylabels:list
     # Defaults
-    linewidth:float = field(default=1)
-    linestyle:str = field(default='--')
-    color:str|tuple = field(default='black')
-    zorder:float = field(default=1.15)
+    grid_linewidth:float = field(default=1)
+    grid_linestyle:str = field(default='--')
+    grid_color:str|tuple = field(default='black')
+    grid_zorder:float = field(default=1.15)
 
     def add_hlines(self,ax:Axes,y_values,**kwargs):
-        zorder = kwargs.pop('zorder',self.zorder)
+        zorder = kwargs.pop('zorder',self.grid_zorder)
         for y_value in y_values:
             ax.axhline(y_value,zorder=zorder,**kwargs)
 
     def add_vlines(self,ax:Axes,x_values,**kwargs):
-        zorder = kwargs.pop('zorder',self.zorder)
+        zorder = kwargs.pop('zorder',self.grid_zorder)
         for x_value in x_values:
             ax.axvline(x_value,zorder=zorder,**kwargs)
 
     def add_grid(self,ax,**grid_kwargs):
-        defaults = {'linewidth': self.linewidth,
-                    'color': self.color,('linestyle','ls'): self.linestyle}
+        defaults = {'grid_linewidth': self.grid_linewidth,
+                    'grid_color': self.grid_color,'grid_linestyle': self.grid_linestyle}
 
         linewidth, color, linestyle  = extract_kwargs_with_aliases(grid_kwargs, defaults).values()
         n_hlines = len(self.ylabels)
@@ -164,22 +161,158 @@ class Coverage(Base):
     body_linewidth:float = field(default=1)
     body_color:str|tuple = field(default='none')
     body_hatch:str = field(default=None)
+    body_hatch_color:str = field(default=None)
+    hatch_linewidth:float = field(default=0.5)
     # Outline Default Parameters
     outline_edgecolor:str|tuple = field(default='k')
     outline_alpha:float = field(default=1)
     # Label Default Parameters
-    label_fontsize:float = field(default=11)
+    label_fontsize:float = field(default=12)
+    label_background_pad:float = field(default=2)
+    label_background_linewidth:float = field(default=0)
+    label_background_alpha:float = field(default=1)
+    label_background_color:float = field(default=None)
+
+    def create(self,xrange,yrange,label,**kwargs):
+        ''''''
+        # xrange,yrange = self.handle_ranges(xrange,yrange)
+
+        # Bottom left corner
+        anchor_point = (xrange[0],yrange[0])
+
+        width = (xrange[1] - xrange[0])
+
+        height = (yrange[1] - yrange[0])
+
+        if height == 0:
+            height = self.min_body_height
+
+        rect_defaults = {('body_alpha'): self.body_alpha,('body_linewidth'): self.body_linewidth,
+                    ('outline_edgecolor'): self.outline_edgecolor,'label': label,
+                    ('body_color'):self.body_color,'body_outline_alpha':self.outline_alpha,
+                    ('hatch','body_hatch'):self.body_hatch,('body_hatch_color','hatch_color'):self.body_hatch_color,
+                    'hatch_linewidth':self.hatch_linewidth,'label_background_color':self.label_background_color}
+        
+
+        alpha,linewidth,outline_edgecolor,label,fc,coverage_outline_alpha,hatch,body_hatch_color,hatch_linewidth,label_background_color  = extract_kwargs_with_aliases(kwargs, rect_defaults).values()
+
+
+        self.label_background_color=label_background_color
+
+        matplotlib.rcParams['hatch.linewidth'] = hatch_linewidth
+
+        # Init body
+        body = Rectangle(anchor_point,width=width,height=height,
+                         fc=fc,alpha=alpha,
+                         linewidth=linewidth, edgecolor = body_hatch_color,
+                         label=label,hatch=hatch)
+        
+        # Init outline
+        outline = Rectangle(anchor_point,width=width,height=height,fc=None,fill=False,alpha=coverage_outline_alpha,
+                         linewidth=linewidth, edgecolor = outline_edgecolor,
+                         label=None,zorder=body.get_zorder()+0.25)
+        
+
+        text_args = list(inspect.signature(Text.set).parameters)+list(inspect.signature(Text).parameters)
+        text_dict = {k: kwargs.pop(k) for k in dict(kwargs) if k in text_args}
+        
+        fontsize = text_dict.pop('fontsize',self.label_fontsize)
+        label_position = kwargs.pop('label_position',body.get_center())
+
+        text = Text(*label_position,text=label,fontsize=fontsize,ha='center',va='center',zorder=5,**text_dict)
+
+        self.body = body
+        self.outline = outline
+        self.label = text
+
+        self.extent_arrows = ExtentArrows(**kwargs)
+
+        return self
+    
+    def add_label_background(self,text:Text,background_color):
+        text.set_bbox(dict(facecolor=background_color,pad=self.label_background_pad,
+                           linewidth=self.label_background_linewidth,alpha=self.label_background_alpha))
+
+    def plot(self,ax:Axes,**kwargs):
+        ''''''
+        ax.add_artist(self.body)
+        ax.add_artist(self.outline)
+        ax.add_artist(self.label)
+        self.add_label_background(self.label,(self.body.get_facecolor() if self.label_background_color is None else self.label_background_color))
+        self.extent_arrows.add_range_arrows(ax=ax,text=self.label,rect=self.body,**kwargs)
 
 
 
+
+@define
+class CoveragePlot(Base):
+    fig:Figure = field(default=None)
+    ax:Axes = field(default=None)
+    figsize:tuple = field(default=None)
+
+    horizontal_padding:float = field(default=0.25)
+    vertical_padding:float = field(default=0.75)
+
+    xlabels:list = field(default=None)
+    ylabels:list = field(default=None)
+
+    cmap:str|Colormap = field(default='tab10')
+    color_iterator:itertools.cycle = field(init=False)
+
+    coverages:list[Coverage] = field(factory=list)
+    coverage_color_default = field(default=None)
+
+    grid:Grid = field(init=False)
+
+
+    # Figure wide defaults
+    
+    # Coverage defaults
+    coverage_fontsize:float = field(default=None)
+
+
+
+
+    def __attrs_post_init__(self):
+        """
+        Initializes the ColorCycler and the coverages container
+
+        :param colormap_name: Name of the matplotlib colormap to use.
+        :param n_colors: Number of discrete colors to divide the colormap into.
+        """
+        if self.cmap is None:
+            self.cmap = plt.get_cmap('tab10')
+        elif isinstance(self.cmap,str):
+            self.cmap = plt.get_cmap(self.cmap)
+        elif isinstance(self.cmap,Colormap):
+            self.cmap = self.cmap
+        n_colors = self.cmap.N
+        self.color_iterator = itertools.cycle(
+            (self.cmap(i / (n_colors - 1)) for i in range(n_colors))
+        )
+
+        self.grid = Grid(xlabels=self.xlabels,ylabels=self.ylabels)
+
+
+    def coverage_color(self):
+        """
+        A generator that yields the next color in the colormap cycle.
+
+        :yield: A tuple representing an RGBA color.
+        """
+        if self.coverage_color_default is None:
+            return next(self.color_iterator)
+        else:
+            return self.coverage_color_default
+        
     def handle_ranges(self,xrange,yrange):
         '''
         If the user used label names/strings to identify the x and y ranges,
         we need to convert those to numeric so we can plot it
         '''
 
-        xlabel_dict = {normalize_string(value):idx for idx,value in enumerate(xlabels)}
-        ylabel_dict = {normalize_string(value):idx for idx,value in enumerate(ylabels)}
+        xlabel_dict = {normalize_string(value):idx for idx,value in enumerate(self.xlabels)}
+        ylabel_dict = {normalize_string(value):idx for idx,value in enumerate(self.ylabels)}
 
         # Handle using labels for position
         for idx,x in enumerate(xrange):
@@ -204,98 +337,6 @@ class Coverage(Base):
 
         return xrange,yrange
 
-    def create(self,xrange,yrange,label,**kwargs):
-        ''''''
-
-        xrange,yrange = self.handle_ranges(xrange,yrange)
-
-        # Bottom left corner
-        anchor_point = (xrange[0],yrange[0])
-
-        width = (xrange[1] - xrange[0])
-
-        height = (yrange[1] - yrange[0])
-
-        if height == 0:
-            height = self.min_body_height
-
-        rect_defaults = {('alpha','body_alpha'): self.body_alpha,('linewidth','lw','body_linewidth'): self.body_linewidth,
-                    ('edgecolor','ec','outline_edgecolor'): self.outline_edgecolor,'label': label,
-                    ('facecolor','fc'):self.body_color,'body_outline_alpha':self.outline_alpha,
-                    ('hatch','body_hatch'):self.body_hatch}
-
-        alpha, linewidth, outline_edgecolor, label, fc, coverage_outline_alpha, hatch  = extract_kwargs_with_aliases(kwargs, rect_defaults).values()
-
-        rect_args = list(inspect.signature(Rectangle).parameters)
-        rect_dict = {k: kwargs.pop(k) for k in dict(kwargs) if k in rect_args}
-
-        # Init body
-        body = Rectangle(anchor_point,width=width,height=height,
-                         fc=fc,alpha=alpha,
-                         linewidth=linewidth, edgecolor = None,
-                         label=label,hatch=hatch,**rect_dict)
-        
-        # Init outline
-        outline = Rectangle(anchor_point,width=width,height=height,fc=None,fill=False,alpha=coverage_outline_alpha,
-                         linewidth=linewidth, edgecolor = outline_edgecolor,
-                         label=None,zorder=body.get_zorder()+0.25,**rect_dict)
-        
-
-        text_args = list(inspect.signature(Text.set).parameters)+list(inspect.signature(Text).parameters)
-        text_dict = {k: kwargs.pop(k) for k in dict(kwargs) if k in text_args}
-        
-        fontsize = text_dict.pop('fontsize',self.label_fontsize)
-        label_position = kwargs.pop('label_position',body.get_center())
-
-        text = Text(*label_position,text=label,fontsize=fontsize,ha='center',va='center',zorder=5,**text_dict)
-
-        self.body = body
-        self.outline = outline
-        self.label = text
-
-        self.extent_arrows = ExtentArrows()
-        self.check_empty_kwargs(**kwargs)
-        return self
-
-    def plot(self,ax:Axes,**kwargs):
-        ''''''
-        ax.add_artist(self.body)
-        ax.add_artist(self.outline)
-        ax.add_artist(self.label)
-        self.extent_arrows.add_range_arrows(ax=ax,text=self.label,rect=self.body,**kwargs)
-
-
-
-
-@define
-class CoveragePlot(Base):
-    fig:Figure = field(default=None)
-    ax:Axes = field(default=None)
-    figsize:tuple = field(default=None)
-
-    horizontal_padding:float = field(default=0.25)
-    vertical_padding:float = field(default=0.75)
-
-    xlabels:list = field(default=None)
-    ylabels:list = field(default=None)
-
-    cmap:str|Colormap = field(default='tab10')
-    color_iterator:itertools.cycle = field(init=False)
-
-    coverages:list[Coverage] = field(factory=list)
-
-    grid:Grid = field(init=False)
-
-
-    # Figure wide defaults
-    
-    # Coverage defaults
-
-
-
-    def __attrs_post_init__(self):
-        self.grid = Grid(xlabels=self.xlabels,ylabels=self.ylabels)
-
 
     def add_coverage(self,xrange,yrange,label,**kwargs):
         '''
@@ -317,8 +358,10 @@ class CoveragePlot(Base):
 
         # If both xrange and yrange contain the same number of values
         if len(xrange) == len(yrange):
+            xrange,yrange = self.handle_ranges(xrange=xrange,yrange=yrange)
             # Init the coverage and add it to the list
-            coverage = Coverage().create(xrange=xrange,yrange=yrange,label=label,**kwargs)
+            body_color = kwargs.pop('body_color',self.coverage_color())
+            coverage = Coverage().create(xrange=xrange,yrange=yrange,label=label,body_color=body_color,**kwargs)
             self.coverages.extend([coverage])
             return
         else:
@@ -418,14 +461,49 @@ class CoveragePlot(Base):
 cmap = plt.get_cmap('tab20')
 domains = ['Regional_Local', 'All', 'Local', 'Basin_Regional', 'Basin_Local', 'Basin', 'Regional']
 colors_light = [cmap(15),cmap(5),cmap(3),cmap(1),'yellow','pink','gold']
+colors_dark = [cmap(14),cmap(4),cmap(2),cmap(0),'yellow','pink','gold']
 
 colors = colors_light
 domain_colors = {key:value for key,value in zip(domains,colors)}
+
+hatch_styles = ['/', '\\', '|', '-', 'o', 'O', '.', '*', 
+                '//', '\\\\', '||', '--', '++', 'xx', 'oo', 'OO', '..', '**', '/o', 
+                '\\|', '|*', '-\\', '+o', 'x*', 'o-', 'O|', 'O.', '*-']
+
+domain_hatches = {key:value for key,value in zip(domains,hatch_styles)}
 # Define the x and y labels
 xlabels = ['Seconds','Minutes','Hours','Days','Weeks','Months','Years','Decades']
 ylabels = ['Surface','10-100\nMeters','100-500\nMeters','Below 500\nMeters','Benthic']
 # Init the coverage plotter
+# plotter = CoveragePlot(figsize=(12,6),xlabels=xlabels,ylabels=ylabels,
+#                        arrow_facecolor='coverage_facecolor',arrow_linewidth=0.75,arrow_width=0.05,arrow_head_width=0.12,
+#                        coverage_fontsize=12,coverage_linewidth=0.75,coverage_alpha=1,coverage_min_rectangle_height=0.25,
+#                        coverage_label_background_pad=1,coverage_hatch_linewidth=1.5)
 plotter = CoveragePlot(figsize=(12,6),xlabels=xlabels,ylabels=ylabels)
-plotter.add_coverage(['Hours','Decades'],['Surface','Benthic'],label='Agency',label_position=(4,3.3),hatch='/')
-plotter.add_coverage(['Days','Months'],['Surface','Benthic'],label='Marine Services',hatch='-')
+# All Depths
+plotter.add_coverage(['Hours','Decades'],['Surface','Benthic'],label='Agency',label_position=(4,3.3),body_color='none',label_background_color='none',hatch_color=domain_colors['All'],hatch=domain_hatches['All'])
+plotter.add_coverage(['Seconds','Decades'],['Surface','Benthic'],label='Academic',label_position=(3.5,2),body_color='none',label_background_color='none',hatch_color=domain_colors['All'],hatch=domain_hatches['All'])
+plotter.add_coverage(['Days','Months'],['Surface','Benthic'],label='Marine Services',label_position=(4.5,1.7),body_color='none',label_background_color='none',hatch_color=domain_colors['Regional_Local'],hatch=domain_hatches['Regional_Local'])
+plotter.add_coverage(['Days','Years'],['Surface','Benthic'],label='Regulatory',label_position=(4.5,2.3),body_color='none',label_background_color='none',hatch_color=domain_colors['Regional_Local'],hatch=domain_hatches['Regional_Local'])
+plotter.add_coverage(['Days','Decades'],['Surface','Benthic'],label='Oil and Gas',label_position=(4.5,3),body_color='none',label_background_color='none',hatch_color=domain_colors['All'],hatch=domain_hatches['All'])
+plotter.add_coverage(['Months','Years'],['Surface','Benthic'],label='Fisheries',label_position=(6,2.75),body_color='none',label_background_color='none',hatch_color=domain_colors['Regional_Local'],hatch=domain_hatches['Regional_Local'])
+plotter.add_coverage(['Hours','Weeks'],['Surface','Benthic'],label='Disaster',label_position=(4,2.75),body_color='none',label_background_color='none',hatch_color=domain_colors['All'],hatch=domain_hatches['All'])
+# Surface
+plotter.add_coverage(['Hours','Days'],[-0.5,-0.5],label='Search and Rescue',body_color='none',label_background_color='none',hatch_color=domain_colors['Local'],hatch=domain_hatches['Local'])
+plotter.add_coverage(['Days','Decades'],[0.25,0.25],label='Wind and Algal Blooms',body_color='none',label_background_color='none',hatch_color=domain_colors['Local'],hatch=domain_hatches['Local'])
+# 10-100m
+plotter.add_coverage(['Months','Decades'],['Surface','100-500 Meters'],label='CCUS',label_position=(6,0.775),body_color='none',label_background_color='none',hatch_color=domain_colors['Local'],hatch=domain_hatches['Local'])
+plotter.add_coverage(['Hours','Weeks'],[0.65,0.65],label='Hurricane Forcasting',body_color='none',label_background_color='none',hatch_color=domain_colors['All'],hatch=domain_hatches['All'])
+plotter.add_coverage(['Days','Years'],[1,1],label='Hypoxia',body_color='none',label_background_color='none',hatch_color=domain_colors['Regional_Local'],hatch=domain_hatches['Regional_Local'])
+
+plotter.add_coverage('Decades',['Surface','Benthic'],label='Climate\nScience',label_position=(7.5,1.7),body_color='none',label_background_color='none',hatch_color=domain_colors['Basin_Regional'],hatch=domain_hatches['Basin_Regional'])
+plotter.add_coverage(['Weeks','Months'],[-0.5,-0.5],label='Shipping',body_color='none',label_background_color='none',hatch_color=domain_colors['Basin'],hatch=domain_hatches['Basin'])
+plotter.add_coverage(['Days','Years'],[-0.15,-0.15],label='Recreational',label_position=(4.5,-0.025),body_color='none',label_background_color='none',hatch_color=domain_colors['Basin'],hatch=domain_hatches['Basin'])
+
+
 plotter.plot()
+
+handles = custom_legend_handles(domain_colors.keys(),domain_colors.values())
+plotter.fig.legend(handles=handles,bbox_to_anchor=(0.25, 0.39),framealpha=1,title='Domains')
+
+plotter.fig.tight_layout()
