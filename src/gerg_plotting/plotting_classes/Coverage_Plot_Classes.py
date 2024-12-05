@@ -20,6 +20,11 @@ from gerg_plotting.tools import normalize_string
 
 @define
 class Base:
+
+    def check_empty_kwargs(self,**kwargs):
+        if kwargs:
+            raise ValueError(f'Unused key word arguments: {kwargs}')
+
     def _has_var(self, key) -> bool:
         '''Check if object has var'''
         return key in asdict(self).keys()
@@ -78,13 +83,13 @@ class ExtentArrows(Base):
         rect_left, rect_bottom = rect_bbox[0]
         rect_right, rect_top = rect_bbox[1]
 
-        left_arrow_length = rect_left-text_left-0.01
-        right_arrow_length = rect_right-text_right-0.01
+        left_arrow_length = rect_left-text_left
+        right_arrow_length = rect_right-text_right
 
         return left_arrow_length,right_arrow_length
 
 
-    def add_range_arrows(self,ax:Axes,text:Text,rect:Rectangle,**arrow_kwargs):
+    def add_range_arrows(self,ax:Axes,text:Text,rect:Rectangle):
         
         if self.facecolor=='coverage_facecolor':
             self.facecolor = rect.get_facecolor()
@@ -102,7 +107,7 @@ class ExtentArrows(Base):
 
         left_arrow_length,right_arrow_length = (self.calculate_arrow_length(ax,rect,text_left=text_left,text_right=text_right))
 
-        left_arrow_left_bound = text_left - (self.text_padding-0.03)  # Subtract a bit because arrow spills over a bit further than expected
+        left_arrow_left_bound = text_left - self.text_padding
         left_arrow_right_bound = left_arrow_length + self.text_padding
 
         right_arrow_left_bound = text_right + self.text_padding
@@ -136,8 +141,8 @@ class Grid(Base):
             ax.axvline(x_value,zorder=zorder,**kwargs)
 
     def add_grid(self,ax,**grid_kwargs):
-        defaults = {('linewidth','lw'): self.linewidth,
-                    ('color','c'): self.color,('linestyle','ls'): self.linestyle}
+        defaults = {'linewidth': self.linewidth,
+                    'color': self.color,('linestyle','ls'): self.linestyle}
 
         linewidth, color, linestyle  = extract_kwargs_with_aliases(grid_kwargs, defaults).values()
         n_hlines = len(self.ylabels)
@@ -157,7 +162,7 @@ class Coverage(Base):
     min_body_height:float = field(default=0.25)
     body_alpha:float = field(default=1)
     body_linewidth:float = field(default=1)
-    body_color:str|tuple = field(default=None)
+    body_color:str|tuple = field(default='none')
     body_hatch:str = field(default=None)
     # Outline Default Parameters
     outline_edgecolor:str|tuple = field(default='k')
@@ -249,7 +254,7 @@ class Coverage(Base):
         self.label = text
 
         self.extent_arrows = ExtentArrows()
-        
+        self.check_empty_kwargs(**kwargs)
         return self
 
     def plot(self,ax:Axes,**kwargs):
@@ -280,6 +285,12 @@ class CoveragePlot(Base):
     coverages:list[Coverage] = field(factory=list)
 
     grid:Grid = field(init=False)
+
+
+    # Figure wide defaults
+    
+    # Coverage defaults
+
 
 
     def __attrs_post_init__(self):
@@ -374,18 +385,18 @@ class CoveragePlot(Base):
         self.ax.set_xlim(xmin,xmax)
         self.ax.set_ylim(ymin,ymax)
 
-    def add_grid(self,show_grid:bool,**grid_kwargs):
+    def add_grid(self,show_grid:bool):
         if show_grid:
-            self.grid.add_grid(ax=self.ax,**grid_kwargs)
+            self.grid.add_grid(ax=self.ax)
 
-    def set_up_plot(self,show_grid:bool=True,**grid_kwargs):
+    def set_up_plot(self,show_grid:bool=True):
         # Init figure
         self.init_figure()
         # Set custom ticks and labels
         self.custom_ticks(labels=self.ylabels,axis='y')
         self.custom_ticks(labels=self.xlabels,axis='x')
         # Show the grid
-        self.add_grid(show_grid,**grid_kwargs)
+        self.add_grid(show_grid)
         # Add padding to the border
         self.set_padding()
         # invert the y-xais
@@ -395,13 +406,13 @@ class CoveragePlot(Base):
         # Set layout to tight
         self.fig.tight_layout()
 
-    def plot_coverages(self,**kwargs):
+    def plot_coverages(self):
         for coverage in self.coverages:
-            coverage.plot(self.ax,**kwargs)
+            coverage.plot(self.ax)
 
-    def plot(self,show_grid=True,**kwargs):
-        self.set_up_plot(show_grid=show_grid,**kwargs)
-        self.plot_coverages(**kwargs)
+    def plot(self,show_grid=True):
+        self.set_up_plot(show_grid=show_grid)
+        self.plot_coverages()
         
 
 cmap = plt.get_cmap('tab20')
@@ -415,6 +426,6 @@ xlabels = ['Seconds','Minutes','Hours','Days','Weeks','Months','Years','Decades'
 ylabels = ['Surface','10-100\nMeters','100-500\nMeters','Below 500\nMeters','Benthic']
 # Init the coverage plotter
 plotter = CoveragePlot(figsize=(12,6),xlabels=xlabels,ylabels=ylabels)
-plotter.add_coverage(['Hours','Decades'],['Surface','Benthic'],label='Agency',label_position=(4,3.3),fc=domain_colors['All'])
-plotter.add_coverage(['Days','Months'],['Surface','Benthic'],label='Marine Services',fc=domain_colors['Regional_Local'])
+plotter.add_coverage(['Hours','Decades'],['Surface','Benthic'],label='Agency',label_position=(4,3.3),hatch='/')
+plotter.add_coverage(['Days','Months'],['Surface','Benthic'],label='Marine Services',hatch='-')
 plotter.plot()
