@@ -17,6 +17,13 @@ from gerg_plotting.plotting_classes.Plotter import Plotter
 from gerg_plotting.modules.utilities import extract_kwargs_with_aliases
 from gerg_plotting.tools import normalize_string
 
+def show_color_swatch(color,title):
+    fig, ax = plt.subplots(figsize=(1, 1))
+    ax.add_patch(Rectangle((0, 0), 1, 1, color=color))
+    ax.axis('off')
+    ax.set_title(title)
+    fig.show()
+
 
 
 @define
@@ -26,6 +33,7 @@ class CoveragePlot(Plotter):
     '''
     x_labels:list = field(default=None)
     y_labels:list = field(default=None)
+    figsize:tuple = field(default=(10,6))
 
     x_label_dict:dict = field(init=False)
     y_label_dict:dict = field(init=False)
@@ -41,7 +49,6 @@ class CoveragePlot(Plotter):
     vertical_padding:float = field(default=0.75)
 
     # Default Coverage Parameters
-    figsize:tuple = field(default=(10,6))
     coverage_alpha:float = field(default=0.85)
     coverage_linewidth:float = field(default=1)
     coverage_edgecolor:str|tuple = field(default='k')
@@ -54,6 +61,7 @@ class CoveragePlot(Plotter):
     coverage_label_background_pad:float = field(default=1)
     coverage_label_background_linewidth:float = field(default=0)
     coverage_label_background_alpha:float = field(default=1)
+    coverage_hatch_linewidth:float = field(default=0.5)
 
     # Default Grid Parameters
     grid_linestyle:str = field(default='--')
@@ -222,9 +230,10 @@ class CoveragePlot(Plotter):
 
         rect_defaults = {'alpha': self.coverage_alpha,('linewidth','lw'): self.coverage_linewidth,
                     ('edgecolor','ec'): self.coverage_edgecolor,'label': self.coverage_label,
-                    ('facecolor','fc'):self.coverage_color(),'coverage_outline_alpha':self.coverage_outline_alpha}
+                    ('facecolor','fc'):self.coverage_color(),'coverage_outline_alpha':self.coverage_outline_alpha,
+                    'hatch':None}
 
-        alpha, linewidth, edgecolor, label, fc, coverage_outline_alpha  = extract_kwargs_with_aliases(kwargs, rect_defaults).values()
+        alpha, linewidth, edgecolor, label, fc, coverage_outline_alpha,hatch  = extract_kwargs_with_aliases(kwargs, rect_defaults).values()
 
         rect_args = list(inspect.signature(matplotlib.patches.Rectangle).parameters)
         rect_dict = {k: kwargs.pop(k) for k in dict(kwargs) if k in rect_args}
@@ -232,11 +241,12 @@ class CoveragePlot(Plotter):
         rect = Rectangle(anchor_point,width=width,height=height,
                          fc=fc,alpha=alpha,
                          linewidth=linewidth, edgecolor = None,
-                         label=label,**rect_dict)
+                         label=label,hatch=hatch,**rect_dict)
         
+        # Set label to none
         rect_outline = Rectangle(anchor_point,width=width,height=height,fc=None,fill=False,alpha=coverage_outline_alpha,
                          linewidth=linewidth, edgecolor = edgecolor,
-                         label=label,zorder=rect.get_zorder()+0.25,**rect_dict)
+                         label=None,zorder=rect.get_zorder()+0.25,**rect_dict)
         
 
         text_args = list(inspect.signature(matplotlib.text.Text.set).parameters)+list(inspect.signature(matplotlib.text.Text).parameters)
@@ -370,43 +380,35 @@ class CoveragePlot(Plotter):
             return x_overlap_min, y_overlap_min, width, height
         return None
 
-    def find_and_draw_intersections_with_hatching(self):
-        """Find intersections of n overlapping rectangles and draw them with hatching."""
+    def draw_rectangles_with_hatching(self):
+        """Convert rectangles' representation to be hatches instead of a solid color"""
         rectangles = [rect for rect in self.ax.patches if isinstance(rect, Rectangle)]
 
         rectangle_labels = {rect.get_label() for rect in rectangles}
 
         rectangle_colors = [rect.get_facecolor() for rect in rectangles]
 
-        hatch_styles = ['/', '\\', '|', '-', 'o', 'O', '.', '*',
-        '//', '\\\\', '||', '--', '++', 'xx', 'oo', 'OO', '..', '**',
+        hatch_styles = ['/', '\\', '|', '-', 'o', 'O', '.',
+        '//', '\\\\', '||', '--', '++', 'xx', 'oo', 'OO', '..',
         '/o', '\\|', '|*', '-\\', '+o', 'x*', 'o-', 'O|', 'O.', '*-']  # List of hatching styles
 
         label_to_color = {key:value for key,value in zip(rectangle_labels,rectangle_colors)}
 
         color_to_hatch = {key:value for key,value in zip(set(rectangle_colors),hatch_styles)}
 
-        for r in range(2, len(rectangles) + 1):  # Start with pairs
-            for subset in itertools.combinations(rectangles, r):
-                # Check if facecolors are not all identical
-                facecolors = {rect.get_facecolor() for rect in subset}
-                rect_labels = {rect.get_label() for rect in subset}
-                if len(facecolors) > 1:  # Proceed if facecolors are different
-                    intersection = self.calculate_intersection_multiple(subset)
-                    if intersection:
-                        x, y, width, height = intersection                    
-                        # Create a PathPatch with hatching
-                        for idx,rect_label in enumerate(rect_labels):
-                            intersection_patch = Rectangle(
-                                (x, y), width, height,
-                                facecolor=('w' if idx==0 else 'none'),  # Set the background to white
-                                edgecolor=label_to_color[rect_label],
-                                hatch=color_to_hatch[label_to_color[rect_label]],
-                                lw=0,
-                                zorder = (1.1 if idx==0 else 1.2)  # Put the background at zorder 1.1, then put the hatches on 1.2
-                            )
-                            self.ax.add_patch(intersection_patch)
 
+        matplotlib.rcParams['hatch.linewidth'] = self.coverage_hatch_linewidth
+
+        for idx,rect in enumerate(rectangles):
+            rect_label = rect.get_label()
+            if rect_label is not None:
+                if rect.get_hatch():
+                    continue
+                rect_fc = rect.get_facecolor()
+                rect.set_facecolor('none')
+                rect.set_hatch(color_to_hatch[rect_fc])
+                rect.set_edgecolor(rect_fc)
+                rect.set_linewidth(self.coverage_hatch_linewidth)
 
     def plot(self,with_hatches:bool=False):
         '''
@@ -420,6 +422,6 @@ class CoveragePlot(Plotter):
             self.format_coverage_label(text=text,rect=rect)
             self.add_range_arrows(text=text,rect=rect)
         if with_hatches:
-            self.find_and_draw_intersections_with_hatching()
+            self.draw_rectangles_with_hatching()
 
 
