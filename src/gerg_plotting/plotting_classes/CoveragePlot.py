@@ -23,8 +23,7 @@ def show_color_swatch(color,title):
     ax.axis('off')
     ax.set_title(title)
     fig.show()
-
-
+    
 
 @define
 class CoveragePlot(Plotter):
@@ -384,22 +383,18 @@ class CoveragePlot(Plotter):
         """Convert rectangles' representation to be hatches instead of a solid color"""
         rectangles = [rect for rect in self.ax.patches if isinstance(rect, Rectangle)]
 
-        rectangle_labels = {rect.get_label() for rect in rectangles}
-
         rectangle_colors = [rect.get_facecolor() for rect in rectangles]
 
         hatch_styles = ['/', '\\', '|', '-', 'o', 'O', '.',
         '//', '\\\\', '||', '--', '++', 'xx', 'oo', 'OO', '..',
         '/o', '\\|', '|*', '-\\', '+o', 'x*', 'o-', 'O|', 'O.', '*-']  # List of hatching styles
 
-        label_to_color = {key:value for key,value in zip(rectangle_labels,rectangle_colors)}
-
         color_to_hatch = {key:value for key,value in zip(set(rectangle_colors),hatch_styles)}
 
 
         matplotlib.rcParams['hatch.linewidth'] = self.coverage_hatch_linewidth
 
-        for idx,rect in enumerate(rectangles):
+        for rect in rectangles:
             rect_label = rect.get_label()
             if rect_label is not None:
                 if rect.get_hatch():
