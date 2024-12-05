@@ -23,7 +23,7 @@ def show_color_swatch(color,title):
     ax.axis('off')
     ax.set_title(title)
     fig.show()
-    
+
 
 @define
 class CoveragePlot(Plotter):
@@ -363,21 +363,6 @@ class CoveragePlot(Plotter):
             return
         else:
             raise ValueError(f'x_range and y_range must both be the same length {x_range = }, {y_range = }')
-
-
-    def calculate_intersection_multiple(self,rectangles:list[Rectangle]):
-        """Calculate the intersection of multiple rectangles."""
-        x_overlap_min = max(rect.get_x() for rect in rectangles)
-        y_overlap_min = max(rect.get_y() for rect in rectangles)
-        x_overlap_max = min(rect.get_x() + rect.get_width() for rect in rectangles)
-        y_overlap_max = min(rect.get_y() + rect.get_height() for rect in rectangles)
-        
-        # Check if there is a valid overlap
-        if x_overlap_min < x_overlap_max and y_overlap_min < y_overlap_max:
-            width = x_overlap_max - x_overlap_min
-            height = y_overlap_max - y_overlap_min
-            return x_overlap_min, y_overlap_min, width, height
-        return None
 
     def draw_rectangles_with_hatching(self):
         """Convert rectangles' representation to be hatches instead of a solid color"""

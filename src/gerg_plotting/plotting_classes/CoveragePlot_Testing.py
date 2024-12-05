@@ -23,141 +23,7 @@ def show_color_swatch(color,title):
     ax.axis('off')
     ax.set_title(title)
     fig.show()
-
-@define(auto_attribs=True)
-class Coverage:
-    """
-    Encapsulates a rectangle, its outline, associated text, and range arrows.
-    """
-    rect: Rectangle
-    rect_outline: Rectangle
-    text: matplotlib.text.Text
-    left_arrow: FancyArrow
-    right_arrow: FancyArrow
-
-    @staticmethod
-    def create(anchor_point, width, height, label, 
-               alpha, linewidth, edgecolor, fc, coverage_outline_alpha, 
-               hatch, fontsize, label_position, ax:matplotlib.axes.Axes,
-               arrow_width, arrow_facecolor, arrow_head_width, 
-               arrow_length_includes_head, arrow_zorder, arrow_edge_color, 
-               arrow_linewidth, arrow_text_padding, text_padding, **kwargs):
-        """
-        Factory method to create a Coverage instance.
-        
-        Args:
-            anchor_point (tuple): Bottom-left corner of the rectangle.
-            width (float): Width of the rectangle.
-            height (float): Height of the rectangle.
-            label (str): Text label for the rectangle.
-            alpha (float): Alpha value for rectangle fill.
-            linewidth (float): Line width for outline.
-            edgecolor (str): Color of the outline.
-            fc (str): Fill color for the rectangle.
-            coverage_outline_alpha (float): Alpha value for the outline rectangle.
-            hatch (str): Hatch pattern for the rectangle.
-            fontsize (int): Font size for the label text.
-            label_position (tuple): Position for the label text.
-            ax (matplotlib.axes.Axes): The axes on which the elements are drawn.
-            arrow_width (float): Width of the arrows.
-            arrow_facecolor (str): Fill color for the arrows.
-            arrow_head_width (float): Width of the arrowhead.
-            arrow_length_includes_head (bool): Whether the arrow length includes the head.
-            arrow_zorder (float): Z-order for the arrows.
-            arrow_edge_color (str): Edge color for the arrows.
-            arrow_linewidth (float): Line width for the arrows.
-            arrow_text_padding (float): Padding between the arrows and the text.
-            text_padding (float): Additional text padding.
-            **kwargs: Additional keyword arguments for the rectangle and text.
-
-        Returns:
-            Coverage: A new instance of the class.
-        """
-        # Separate kwargs for rect and text
-        rect_args = list(Rectangle.__init__.__code__.co_varnames)
-        text_args = list(matplotlib.text.Text.__init__.__code__.co_varnames)
-
-        rect_kwargs = {k: kwargs.pop(k) for k in list(kwargs) if k in rect_args}
-        text_kwargs = {k: kwargs.pop(k) for k in list(kwargs) if k in text_args}
-
-        rect = Rectangle(anchor_point, width=width, height=height,
-                         fc=fc, alpha=alpha, linewidth=linewidth,
-                         edgecolor=None, label=label, hatch=hatch, **rect_kwargs)
-
-        rect_outline = Rectangle(anchor_point, width=width, height=height, 
-                                 fc=None, fill=False, alpha=coverage_outline_alpha,
-                                 linewidth=linewidth, edgecolor=edgecolor,
-                                 label=None, zorder=rect.get_zorder() + 0.25, **rect_kwargs)
-
-        text = matplotlib.text.Text(*label_position, text=label, fontsize=fontsize,
-                                    ha='center', va='center', zorder=5, **text_kwargs)
-
-        if arrow_facecolor == 'coverage_facecolor':
-            arrow_facecolor = rect.get_facecolor()
-
-        text_bbox = ax.transData.inverted().transform(text.get_window_extent())
-
-        text_left, text_bottom = text_bbox[0]
-        text_right, text_top = text_bbox[1]
-        text_y_center = (text_bottom + text_top) / 2
-
-        arrow_props = {
-            'width': arrow_width,
-            'facecolor': arrow_facecolor,
-            'head_width': arrow_head_width,
-            'length_includes_head': arrow_length_includes_head,
-            'zorder': arrow_zorder,
-            'edgecolor': arrow_edge_color,
-            'linewidth': arrow_linewidth
-        }
-
-        rect_bbox = ax.transData.inverted().transform(rect.get_window_extent())
-
-        rect_left, _ = rect_bbox[0]
-        rect_right, _ = rect_bbox[1]
-
-        left_arrow_length = rect_left - text_left - 0.01
-        right_arrow_length = rect_right - text_right - 0.01
-
-        left_arrow_left_bound = text_left - (arrow_text_padding - 0.03)
-        left_arrow_right_bound = left_arrow_length + arrow_text_padding
-
-        right_arrow_left_bound = text_right + arrow_text_padding
-        right_arrow_right_bound = right_arrow_length - arrow_text_padding
-
-        left_arrow = FancyArrow(left_arrow_left_bound, text_y_center, left_arrow_right_bound, 0, **arrow_props)
-        right_arrow = FancyArrow(right_arrow_left_bound, text_y_center, right_arrow_right_bound, 0, **arrow_props)
-
-        # ax.add_artist(left_arrow)
-        # ax.add_artist(right_arrow)
-
-        return Coverage(rect, rect_outline, text, left_arrow, right_arrow)
-
-    def format_coverage_label(self, text: matplotlib.text.Text, pad, linewidth, alpha):
-        """
-        Formats the coverage label with a background matching the rectangle's face color.
-
-        Args:
-            text (matplotlib.text.Text): The label text.
-            pad (float): Padding around the text.
-            linewidth (float): Line width for the text background.
-            alpha (float): Alpha value for the text background.
-        """
-        text.set_bbox({
-            'facecolor': self.rect.get_facecolor(),
-            'pad': pad,
-            'linewidth': linewidth,
-            'alpha': alpha
-        })
-
-
-
-
     
-
-
-
-
 
 @define
 class CoveragePlot(Plotter):
@@ -175,7 +41,7 @@ class CoveragePlot(Plotter):
     n_colors:int = field(default=None)
     color_iterator:itertools.cycle = field(init=False)
 
-    patches:list[Coverage] = field(init=False)
+    patches:list = field(init=False)
 
     # Default figure/axes Parameters
     horizontal_padding:float = field(default=0.25)
@@ -344,160 +210,111 @@ class CoveragePlot(Plotter):
         return x_range,y_range
 
 
-    # def make_rectangle(self,x_range,y_range,**kwargs):
-    #     '''
-    #     Rectangle z-order:
-    #     '''
+    def make_rectangle(self,x_range,y_range,**kwargs):
+        '''
+        Rectangle z-order:
+        '''
 
-    #     x_range,y_range = self.handle_ranges(x_range,y_range)
+        x_range,y_range = self.handle_ranges(x_range,y_range)
 
-    #     # Bottom left corner
-    #     anchor_point = (x_range[0],y_range[0])
+        # Bottom left corner
+        anchor_point = (x_range[0],y_range[0])
 
-    #     width = (x_range[1] - x_range[0])
+        width = (x_range[1] - x_range[0])
 
-    #     height = (y_range[1] - y_range[0])
+        height = (y_range[1] - y_range[0])
 
-    #     if height == 0:
-    #         height = self.coverage_min_rectangle_height
-
-    #     rect_defaults = {'alpha': self.coverage_alpha,('linewidth','lw'): self.coverage_linewidth,
-    #                 ('edgecolor','ec'): self.coverage_edgecolor,'label': self.coverage_label,
-    #                 ('facecolor','fc'):self.coverage_color(),'coverage_outline_alpha':self.coverage_outline_alpha,
-    #                 'hatch':None}
-
-    #     alpha, linewidth, edgecolor, label, fc, coverage_outline_alpha,hatch  = extract_kwargs_with_aliases(kwargs, rect_defaults).values()
-
-    #     rect_args = list(inspect.signature(matplotlib.patches.Rectangle).parameters)
-    #     rect_dict = {k: kwargs.pop(k) for k in dict(kwargs) if k in rect_args}
-
-    #     rect = Rectangle(anchor_point,width=width,height=height,
-    #                      fc=fc,alpha=alpha,
-    #                      linewidth=linewidth, edgecolor = None,
-    #                      label=label,hatch=hatch,**rect_dict)
-        
-    #     # Set label to none
-    #     rect_outline = Rectangle(anchor_point,width=width,height=height,fc=None,fill=False,alpha=coverage_outline_alpha,
-    #                      linewidth=linewidth, edgecolor = edgecolor,
-    #                      label=None,zorder=rect.get_zorder()+0.25,**rect_dict)
-        
-
-    #     text_args = list(inspect.signature(matplotlib.text.Text.set).parameters)+list(inspect.signature(matplotlib.text.Text).parameters)
-    #     text_dict = {k: kwargs.pop(k) for k in dict(kwargs) if k in text_args}
-        
-    #     fontsize = text_dict.pop('fontsize',self.coverage_fontsize)
-    #     label_position = kwargs.pop('label_position',rect.get_center())
-
-    #     text = matplotlib.text.Text(*label_position,text=label,fontsize=fontsize,ha='center',va='center',zorder=5,**text_dict)
-        
-    #     self.patches.append([rect,rect_outline,text])
-
-    def make_rectangle(self, x_range, y_range, **kwargs):
-        """
-        Creates a rectangle, its outline, and associated text, and adds them to the patches.
-
-        Args:
-            x_range (tuple): The x-coordinate range for the rectangle.
-            y_range (tuple): The y-coordinate range for the rectangle.
-            **kwargs: Additional keyword arguments to customize the rectangle and text.
-        """
-        x_range, y_range = self.handle_ranges(x_range, y_range)
-
-        # Define bottom-left corner, width, and height
-        anchor_point = (x_range[0], y_range[0])
-        width = x_range[1] - x_range[0]
-        height = y_range[1] - y_range[0]
         if height == 0:
             height = self.coverage_min_rectangle_height
 
-        # Default parameters for the rectangle
-        rect_defaults = {
-            'alpha': self.coverage_alpha,
-            ('linewidth', 'lw'): self.coverage_linewidth,
-            ('edgecolor', 'ec'): self.coverage_edgecolor,
-            'label': self.coverage_label,
-            ('facecolor', 'fc'): self.coverage_color(),
-            'coverage_outline_alpha': self.coverage_outline_alpha,
-            'hatch': None
-        }
+        rect_defaults = {'alpha': self.coverage_alpha,('linewidth','lw'): self.coverage_linewidth,
+                    ('edgecolor','ec'): self.coverage_edgecolor,'label': self.coverage_label,
+                    ('facecolor','fc'):self.coverage_color(),'coverage_outline_alpha':self.coverage_outline_alpha,
+                    'hatch':None}
 
-        # Extract required values and manage kwargs
-        alpha, linewidth, edgecolor, label, fc, coverage_outline_alpha, hatch = \
-            extract_kwargs_with_aliases(kwargs, rect_defaults).values()
+        alpha, linewidth, edgecolor, label, fc, coverage_outline_alpha,hatch  = extract_kwargs_with_aliases(kwargs, rect_defaults).values()
 
-        # Font size and label position for the text
-        fontsize = kwargs.pop('fontsize', self.coverage_fontsize)
-        label_position = kwargs.pop('label_position', (anchor_point[0] + width / 2, anchor_point[1] + height / 2))
+        rect_args = list(inspect.signature(matplotlib.patches.Rectangle).parameters)
+        rect_dict = {k: kwargs.pop(k) for k in dict(kwargs) if k in rect_args}
 
-        # Create Coverage instance
-        annotated_rect = Coverage.create(
-            anchor_point, width, height, label,
-            alpha, linewidth, edgecolor, fc, coverage_outline_alpha,
-            hatch, fontsize, label_position, **kwargs
-        )
+        rect = Rectangle(anchor_point,width=width,height=height,
+                         fc=fc,alpha=alpha,
+                         linewidth=linewidth, edgecolor = None,
+                         label=label,hatch=hatch,**rect_dict)
+        
+        # Set label to none
+        rect_outline = Rectangle(anchor_point,width=width,height=height,fc=None,fill=False,alpha=coverage_outline_alpha,
+                         linewidth=linewidth, edgecolor = edgecolor,
+                         label=None,zorder=rect.get_zorder()+0.25,**rect_dict)
+        
 
-        # Append to the patches list
-        self.patches.extend([annotated_rect])
+        text_args = list(inspect.signature(matplotlib.text.Text.set).parameters)+list(inspect.signature(matplotlib.text.Text).parameters)
+        text_dict = {k: kwargs.pop(k) for k in dict(kwargs) if k in text_args}
+        
+        fontsize = text_dict.pop('fontsize',self.coverage_fontsize)
+        label_position = kwargs.pop('label_position',rect.get_center())
+
+        text = matplotlib.text.Text(*label_position,text=label,fontsize=fontsize,ha='center',va='center',zorder=5,**text_dict)
+        
+        self.patches.append([rect,rect_outline,text])
 
 
-
-
-    # def format_coverage_label(self,text:matplotlib.text.Text,rect:Rectangle):
-    #     text.set_bbox(dict(facecolor=rect.get_facecolor(),pad=self.coverage_label_background_pad,
-    #                        linewidth=self.coverage_label_background_linewidth,alpha=self.coverage_label_background_alpha))
+    def format_coverage_label(self,text:matplotlib.text.Text,rect:Rectangle):
+        text.set_bbox(dict(facecolor=rect.get_facecolor(),pad=self.coverage_label_background_pad,
+                           linewidth=self.coverage_label_background_linewidth,alpha=self.coverage_label_background_alpha))
 
     
-    # def calculate_arrow_length(self,rect:Rectangle,text_left,text_right):
-    #     rect_bbox = self.ax.transData.inverted().transform(rect.get_window_extent())
+    def calculate_arrow_length(self,rect,text_left,text_right):
+        rect_bbox = self.ax.transData.inverted().transform(rect.get_window_extent())
 
-    #     rect_left, rect_bottom = rect_bbox[0]
-    #     rect_right, rect_top = rect_bbox[1]
+        rect_left, rect_bottom = rect_bbox[0]
+        rect_right, rect_top = rect_bbox[1]
 
-    #     left_arrow_length = rect_left-text_left-0.01
-    #     right_arrow_length = rect_right-text_right-0.01
+        left_arrow_length = rect_left-text_left-0.01
+        right_arrow_length = rect_right-text_right-0.01
 
-    #     return left_arrow_length,right_arrow_length
+        return left_arrow_length,right_arrow_length
 
 
-    # def add_range_arrows(self,text:matplotlib.text.Text,rect:Rectangle,**arrow_kwargs):
+    def add_range_arrows(self,text:matplotlib.text.Text,rect:Rectangle,**arrow_kwargs):
 
-    #     defaults = {'arrow_width': self.arrow_width,
-    #                 'arrow_facecolor': self.arrow_facecolor,
-    #                 'arrow_head_width': self.arrow_head_width,
-    #                 'arrow_length_includes_head':self.arrow_length_includes_head,
-    #                 'arrow_zorder':self.arrow_zorder,
-    #                 'arrow_edge_color':self.arrow_edge_color,
-    #                 'arrow_linewidth':self.arrow_linewidth}
+        defaults = {'arrow_width': self.arrow_width,
+                    'arrow_facecolor': self.arrow_facecolor,
+                    'arrow_head_width': self.arrow_head_width,
+                    'arrow_length_includes_head':self.arrow_length_includes_head,
+                    'arrow_zorder':self.arrow_zorder,
+                    'arrow_edge_color':self.arrow_edge_color,
+                    'arrow_linewidth':self.arrow_linewidth}
 
-    #     arrow_width,arrow_facecolor,arrow_head_width,arrow_length_includes_head,arrow_zorder,arrow_edge_color,arrow_linewidth = extract_kwargs_with_aliases(arrow_kwargs, defaults).values()
+        arrow_width,arrow_facecolor,arrow_head_width,arrow_length_includes_head,arrow_zorder,arrow_edge_color,arrow_linewidth = extract_kwargs_with_aliases(arrow_kwargs, defaults).values()
 
-    #     if arrow_facecolor=='coverage_facecolor':
-    #         arrow_facecolor = rect.get_facecolor()
+        if arrow_facecolor=='coverage_facecolor':
+            arrow_facecolor = rect.get_facecolor()
 
-    #     text_bbox = self.ax.transData.inverted().transform(text.get_window_extent())
+        text_bbox = self.ax.transData.inverted().transform(text.get_window_extent())
 
-    #     # Calculate the left and right bounds of the text in data coordinates
-    #     text_left, text_bottom = text_bbox[0]
-    #     text_right, text_top = text_bbox[1]
-    #     text_y_center = (text_bottom + text_top) / 2  # The vertical center of the text
+        # Calculate the left and right bounds of the text in data coordinates
+        text_left, text_bottom = text_bbox[0]
+        text_right, text_top = text_bbox[1]
+        text_y_center = (text_bottom + text_top) / 2  # The vertical center of the text
 
-    #     arrow_props = {'width': arrow_width, 'facecolor': arrow_facecolor,'head_width':arrow_head_width,
-    #                    "length_includes_head":arrow_length_includes_head,'zorder':arrow_zorder,
-    #                    'edgecolor':arrow_edge_color,'linewidth':arrow_linewidth}
+        arrow_props = {'width': arrow_width, 'facecolor': arrow_facecolor,'head_width':arrow_head_width,
+                       "length_includes_head":arrow_length_includes_head,'zorder':arrow_zorder,
+                       'edgecolor':arrow_edge_color,'linewidth':arrow_linewidth}
 
-    #     left_arrow_length,right_arrow_length = (self.calculate_arrow_length(rect,text_left=text_left,text_right=text_right))
+        left_arrow_length,right_arrow_length = (self.calculate_arrow_length(rect,text_left=text_left,text_right=text_right))
 
-    #     left_arrow_left_bound = text_left - (self.arrow_text_padding-0.03)  # Subtract a bit because arrow spills over a bit further than expected
-    #     left_arrow_right_bound = left_arrow_length + self.arrow_text_padding
+        left_arrow_left_bound = text_left - (self.arrow_text_padding-0.03)  # Subtract a bit because arrow spills over a bit further than expected
+        left_arrow_right_bound = left_arrow_length + self.arrow_text_padding
 
-    #     right_arrow_left_bound = text_right + self.arrow_text_padding
-    #     right_arrow_right_bound = right_arrow_length - self.arrow_text_padding
+        right_arrow_left_bound = text_right + self.arrow_text_padding
+        right_arrow_right_bound = right_arrow_length - self.arrow_text_padding
 
-    #     left_arrow = FancyArrow(left_arrow_left_bound, text_y_center, left_arrow_right_bound, 0, **arrow_props)
-    #     right_arrow = FancyArrow(right_arrow_left_bound, text_y_center, right_arrow_right_bound, 0, **arrow_props)
+        left_arrow = FancyArrow(left_arrow_left_bound, text_y_center, left_arrow_right_bound, 0, **arrow_props)
+        right_arrow = FancyArrow(right_arrow_left_bound, text_y_center, right_arrow_right_bound, 0, **arrow_props)
 
-    #     self.ax.add_artist(left_arrow)
-    #     self.ax.add_artist(right_arrow)
+        self.ax.add_artist(left_arrow)
+        self.ax.add_artist(right_arrow)
 
 
     def add_hlines(self,y_values,**kwargs):
@@ -552,22 +369,18 @@ class CoveragePlot(Plotter):
         """Convert rectangles' representation to be hatches instead of a solid color"""
         rectangles = [rect for rect in self.ax.patches if isinstance(rect, Rectangle)]
 
-        rectangle_labels = {rect.get_label() for rect in rectangles}
-
         rectangle_colors = [rect.get_facecolor() for rect in rectangles]
 
         hatch_styles = ['/', '\\', '|', '-', 'o', 'O', '.',
         '//', '\\\\', '||', '--', '++', 'xx', 'oo', 'OO', '..',
         '/o', '\\|', '|*', '-\\', '+o', 'x*', 'o-', 'O|', 'O.', '*-']  # List of hatching styles
 
-        label_to_color = {key:value for key,value in zip(rectangle_labels,rectangle_colors)}
-
         color_to_hatch = {key:value for key,value in zip(set(rectangle_colors),hatch_styles)}
 
 
         matplotlib.rcParams['hatch.linewidth'] = self.coverage_hatch_linewidth
 
-        for idx,rect in enumerate(rectangles):
+        for rect in rectangles:
             rect_label = rect.get_label()
             if rect_label is not None:
                 if rect.get_hatch():
@@ -583,22 +396,12 @@ class CoveragePlot(Plotter):
         Only call after you have added all of your coverages
         '''
         self.set_up_plot()  
-        self.init_coverages()
-        for annotated_rect in self.patches:
-            rect_outline = annotated_rect.rect_outline
-            text = annotated_rect.text
-            rect = annotated_rect.rect
-
+        for rect,rect_outline,text in self.patches:
             self.ax.add_patch(rect)
             self.ax.add_patch(rect_outline)
             text = self.ax.add_artist(text)
-
-            self.ax.add_artist(annotated_rect.left_arrow)
-            self.ax.add_artist(annotated_rect.right_arrow)
-
-            # self.format_coverage_label(text=text,rect=rect)
-            # self.add_range_arrows(text=text,rect=rect)
-
+            self.format_coverage_label(text=text,rect=rect)
+            self.add_range_arrows(text=text,rect=rect)
         if with_hatches:
             self.draw_rectangles_with_hatching()
 
