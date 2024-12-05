@@ -58,18 +58,61 @@ class Base:
 @define
 class ExtentArrows(Base):
     # Defaults
-    default_facecolor:str|tuple = field(default='black')
-    default_edgecolor:str|tuple = field(default='black')
-    default_width:float = field(default=0.05)
-    default_head_width:float = field(default=0.12)
-    default_zorder:float = field(default=2.9)
-    default_linewidth:float = field(default=0)
+    facecolor:str|tuple = field(default='black') # If "coverage_facecolor" then the arrow's facecolor will be the color of the corresponding coverage's facecolor
+    edgecolor:str|tuple = field(default='black')
+    width:float = field(default=0.05)
+    head_width:float = field(default=0.12)
+    zorder:float = field(default=2.9)
+    linewidth:float = field(default=0)
+    text_padding:float = field(default=0.05)
     # Add other defaults too
     # Arrows
-    left:FancyArrow = field(init=False)
-    right:FancyArrow = field(init=False)
-    top:FancyArrow = field(init=False)
-    bottom:FancyArrow = field(init=False)
+    left_arrow:FancyArrow = field(default=None)
+    right_arrow:FancyArrow = field(default=None)
+    top_arrow:FancyArrow = field(default=None)
+    bottom_arrow:FancyArrow = field(default=None)
+
+    def calculate_arrow_length(self,ax:Axes,rect,text_left,text_right):
+        rect_bbox = ax.transData.inverted().transform(rect.get_window_extent())
+
+        rect_left, rect_bottom = rect_bbox[0]
+        rect_right, rect_top = rect_bbox[1]
+
+        left_arrow_length = rect_left-text_left-0.01
+        right_arrow_length = rect_right-text_right-0.01
+
+        return left_arrow_length,right_arrow_length
+
+
+    def add_range_arrows(self,ax:Axes,text:Text,rect:Rectangle,**arrow_kwargs):
+        
+        if self.facecolor=='coverage_facecolor':
+            self.facecolor = rect.get_facecolor()
+
+        text_bbox = ax.transData.inverted().transform(text.get_window_extent())
+
+        # Calculate the left and right bounds of the text in data coordinates
+        text_left, text_bottom = text_bbox[0]
+        text_right, text_top = text_bbox[1]
+        text_y_center = (text_bottom + text_top) / 2  # The vertical center of the text
+
+        arrow_props = {'width': self.width, 'facecolor': self.facecolor,'head_width':self.head_width,
+                       "length_includes_head":True,'zorder':self.zorder,
+                       'edgecolor':self.edgecolor,'linewidth':self.linewidth}
+
+        left_arrow_length,right_arrow_length = (self.calculate_arrow_length(ax,rect,text_left=text_left,text_right=text_right))
+
+        left_arrow_left_bound = text_left - (self.text_padding-0.03)  # Subtract a bit because arrow spills over a bit further than expected
+        left_arrow_right_bound = left_arrow_length + self.text_padding
+
+        right_arrow_left_bound = text_right + self.text_padding
+        right_arrow_right_bound = right_arrow_length - self.text_padding
+
+        left_arrow = FancyArrow(left_arrow_left_bound, text_y_center, left_arrow_right_bound, 0, **arrow_props)
+        right_arrow = FancyArrow(right_arrow_left_bound, text_y_center, right_arrow_right_bound, 0, **arrow_props)
+
+        ax.add_artist(left_arrow)
+        ax.add_artist(right_arrow)
 
 
 @define
@@ -110,8 +153,6 @@ class Coverage(Base):
     label:Text = field(init=False)
     extent_arrows:ExtentArrows = field(init=False)
 
-
-
     # Body Default Parameters
     min_body_height:float = field(default=0.25)
     body_alpha:float = field(default=1)
@@ -119,10 +160,11 @@ class Coverage(Base):
     body_color:str|tuple = field(default=None)
     body_hatch:str = field(default=None)
     # Outline Default Parameters
-    outline_edgecolor:str|tuple = field('k')
-    outline_alpha:float = field(1)
+    outline_edgecolor:str|tuple = field(default='k')
+    outline_alpha:float = field(default=1)
     # Label Default Parameters
     label_fontsize:float = field(default=11)
+
 
 
     def handle_ranges(self,xrange,yrange):
@@ -173,7 +215,7 @@ class Coverage(Base):
             height = self.min_body_height
 
         rect_defaults = {('alpha','body_alpha'): self.body_alpha,('linewidth','lw','body_linewidth'): self.body_linewidth,
-                    ('edgecolor','ec','outline_edgecolor'): self.outline_edgecolor,'label': self.label,
+                    ('edgecolor','ec','outline_edgecolor'): self.outline_edgecolor,'label': label,
                     ('facecolor','fc'):self.body_color,'body_outline_alpha':self.outline_alpha,
                     ('hatch','body_hatch'):self.body_hatch}
 
@@ -210,8 +252,12 @@ class Coverage(Base):
         
         return self
 
-    def plot(self,fig,ax):
+    def plot(self,ax:Axes,**kwargs):
         ''''''
+        ax.add_artist(self.body)
+        ax.add_artist(self.outline)
+        ax.add_artist(self.label)
+        self.extent_arrows.add_range_arrows(ax=ax,text=self.label,rect=self.body,**kwargs)
 
 
 
@@ -231,7 +277,7 @@ class CoveragePlot(Base):
     cmap:str|Colormap = field(default='tab10')
     color_iterator:itertools.cycle = field(init=False)
 
-    coverages:list[Coverage] = field(factory=[])
+    coverages:list[Coverage] = field(factory=list)
 
     grid:Grid = field(init=False)
 
@@ -240,7 +286,7 @@ class CoveragePlot(Base):
         self.grid = Grid(xlabels=self.xlabels,ylabels=self.ylabels)
 
 
-    def add_coverage(self,xrange,yrange,**kwargs):
+    def add_coverage(self,xrange,yrange,label,**kwargs):
         '''
         xrange (list): A list of values containing the x coverage range
         yrange (list): A list of values containing the y coverage range
@@ -258,9 +304,11 @@ class CoveragePlot(Base):
         if len(yrange)==1:
             yrange.extend(yrange)
 
-        # If both xrange and yrange contain the same number of values, we will return early
+        # If both xrange and yrange contain the same number of values
         if len(xrange) == len(yrange):
-            self.coverages.extend(Coverage.create(xrange,yrange,**kwargs))
+            # Init the coverage and add it to the list
+            coverage = Coverage().create(xrange=xrange,yrange=yrange,label=label,**kwargs)
+            self.coverages.extend([coverage])
             return
         else:
             raise ValueError(f'xrange and yrange must both be the same length {xrange = }, {yrange = }')
@@ -347,13 +395,13 @@ class CoveragePlot(Base):
         # Set layout to tight
         self.fig.tight_layout()
 
-    def plot_coverages(self):
+    def plot_coverages(self,**kwargs):
         for coverage in self.coverages:
-            coverage.plot()
+            coverage.plot(self.ax,**kwargs)
 
-    def plot(self):
-        self.set_up_plot()
-        self.plot_coverages()
+    def plot(self,show_grid=True,**kwargs):
+        self.set_up_plot(show_grid=show_grid,**kwargs)
+        self.plot_coverages(**kwargs)
         
 
 cmap = plt.get_cmap('tab20')
@@ -368,4 +416,5 @@ ylabels = ['Surface','10-100\nMeters','100-500\nMeters','Below 500\nMeters','Ben
 # Init the coverage plotter
 plotter = CoveragePlot(figsize=(12,6),xlabels=xlabels,ylabels=ylabels)
 plotter.add_coverage(['Hours','Decades'],['Surface','Benthic'],label='Agency',label_position=(4,3.3),fc=domain_colors['All'])
+plotter.add_coverage(['Days','Months'],['Surface','Benthic'],label='Marine Services',fc=domain_colors['Regional_Local'])
 plotter.plot()
