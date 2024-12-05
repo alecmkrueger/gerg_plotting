@@ -41,9 +41,6 @@ def coverage_plot_example():
     plotter.add_coverage(['Days','Years'],[1,1],label='Hypoxia',fc=domain_colors['Regional_Local'])
 
     plotter.add_coverage('Decades',['Surface','Benthic'],label='Climate\nScience',label_position=(7.5,1.7),fc=domain_colors['Basin_Regional'])
-    # plotter.patches[-1].rect.set_facecolor('none')
-    # plotter.patches[-1].text.set_color('w')
-    # print(plotter.patches[-1].rect.get_facecolor())
     plotter.add_coverage(['Weeks','Months'],[-0.5,-0.5],label='Shipping',fc=domain_colors['Basin'])
     plotter.add_coverage(['Days','Years'],[-0.15,-0.15],label='Recreational',label_position=(4.5,-0.025),fc=domain_colors['Basin'])
 
