@@ -1,4 +1,4 @@
-from gerg_plotting.plotting_classes.Coverage_Plot_Classes import CoveragePlot
+from gerg_plotting.plotting_classes.CoveragePlot import CoveragePlot
 from gerg_plotting.tools import custom_legend_handles
 
 import matplotlib.pyplot as plt
