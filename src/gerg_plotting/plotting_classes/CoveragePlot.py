@@ -156,6 +156,7 @@ class Coverage(Base):
     extent_arrows:ExtentArrows = field(init=False)
 
     # Body Default Parameters
+    body_min_height:float = field(default=0.25)
     body_alpha:float = field(default=1)
     body_linewidth:float = field(default=1)
     body_color:str|tuple = field(default='none')
@@ -184,7 +185,7 @@ class Coverage(Base):
         body_defaults = {('body_alpha'): self.body_alpha,('body_linewidth'): self.body_linewidth,
                          ('body_color'):self.body_color,('hatch','body_hatch'):self.body_hatch,
                          ('body_hatch_color','hatch_color'):self.body_hatch_color,'hatch_linewidth':self.hatch_linewidth,
-                         'min_body_height':0.25}
+                         'body_min_height':self.body_min_height}
         
         outline_defaults = {('outline_edgecolor'): self.outline_edgecolor,'body_outline_alpha':self.outline_alpha,'outline_linewidth':self.outline_linewidth}
         
@@ -193,37 +194,39 @@ class Coverage(Base):
                           'label_background_color':self.label_background_color}
         
 
-        body_alpha,body_linewidth,body_color,body_hatch,body_hatch_color,hatch_linewidth,min_body_height = extract_kwargs_with_aliases(kwargs, body_defaults).values()
+        self.body_alpha,self.body_linewidth,self.body_color,self.body_hatch,self.body_hatch_color,self.hatch_linewidth,self.body_min_height = extract_kwargs_with_aliases(kwargs, body_defaults).values()
 
-        outline_edgecolor,outline_alpha,outline_linewidth = extract_kwargs_with_aliases(kwargs, outline_defaults).values()
+        self.outline_edgecolor,self.outline_alpha,self.outline_linewidth = extract_kwargs_with_aliases(kwargs, outline_defaults).values()
 
-        label,label_fontsize,self.label_background_pad,self.label_background_linewidth,self.label_background_alpha,label_background_color = extract_kwargs_with_aliases(kwargs, label_defaults).values()
+        self.label,self.label_fontsize,self.label_background_pad,self.label_background_linewidth,self.label_background_alpha,self.label_background_color = extract_kwargs_with_aliases(kwargs, label_defaults).values()
         
         if height == 0:
-            height = min_body_height
+            height = self.body_min_height
 
-        if label_background_color=='hatch_color':
-            self.label_background_color=body_hatch_color
-        elif label_background_color=='body_color':
-            self.label_background_color=body_color
+        if self.label_background_color=='hatch_color':
+            self.label_background_color=self.body_hatch_color
+        elif self.label_background_color=='body_color':
+            self.label_background_color=self.body_color
+        else:
+            self.label_background_color = self.label_background_color
 
-        matplotlib.rcParams['hatch.linewidth'] = hatch_linewidth
+        matplotlib.rcParams['hatch.linewidth'] = self.hatch_linewidth
 
         # Init body
         body = Rectangle(anchor_point,width=width,height=height,
-                         fc=body_color,alpha=body_alpha,
-                         linewidth=body_linewidth,edgecolor=body_hatch_color,
-                         label=label,hatch=body_hatch)
+                         fc=self.body_color,alpha=self.body_alpha,
+                         linewidth=self.body_linewidth,edgecolor=self.body_hatch_color,
+                         label=label,hatch=self.body_hatch)
         
         # Init outline
-        outline = Rectangle(anchor_point,width=width,height=height,fc=None,fill=False,alpha=outline_alpha,
-                         linewidth=outline_linewidth, edgecolor = outline_edgecolor,
+        outline = Rectangle(anchor_point,width=width,height=height,fc=None,fill=False,alpha=self.outline_alpha,
+                         linewidth=self.outline_linewidth, edgecolor = self.outline_edgecolor,
                          label=None,zorder=body.get_zorder()+0.1)  # put outline on top of body
         
 
         label_position = kwargs.pop('label_position',body.get_center())
 
-        text = Text(*label_position,text=label,fontsize=label_fontsize,ha='center',va='center',zorder=5)
+        text = Text(*label_position,text=label,fontsize=self.label_fontsize,ha='center',va='center',zorder=5)
 
         self.body = body
         self.outline = outline
@@ -233,15 +236,15 @@ class Coverage(Base):
 
         return self
     
-    def add_label_background(self,text:Text,background_color):
-        text.set_bbox(dict(facecolor=background_color,pad=self.label_background_pad,
+    def add_label_background(self,text:Text):
+        text.set_bbox(dict(facecolor=self.label_background_color,pad=self.label_background_pad,
                            linewidth=self.label_background_linewidth,alpha=self.label_background_alpha))
 
     def plot(self,ax:Axes,**kwargs):
         ax.add_artist(self.body)
         ax.add_artist(self.outline)
         ax.add_artist(self.label)
-        self.add_label_background(self.label,(self.body.get_facecolor() if self.label_background_color is None else self.label_background_color))
+        self.add_label_background(self.label)
         self.extent_arrows.add_range_arrows(ax=ax,text=self.label,rect=self.body,**kwargs)
 
 
@@ -259,7 +262,7 @@ class CoveragePlot(Base):
     xlabels:list = field(default=None)
     ylabels:list = field(default=None)
 
-    cmap:str|Colormap = field(default='tab10')
+    cmap:str|Colormap = field(default=None)
     color_iterator:itertools.cycle = field(init=False)
 
     coverages:list[Coverage] = field(factory=list)

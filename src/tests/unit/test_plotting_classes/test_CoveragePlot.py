@@ -154,7 +154,7 @@ class TestExtentArrows(unittest.TestCase):
         self.assertEqual(left_arrow.get_zorder(),  self.extent_arrows.arrow_zorder)
         self.assertEqual(right_arrow.get_zorder(),  self.extent_arrows.arrow_zorder)
 
-    def test_add_range_arrows_facecolor_from_rectangle(self):
+    def test_add_range_arrows_facecolor_from_rectangle_facecolor(self):
         """Test arrow facecolor is derived from rectangle facecolor when set to 'coverage_color'."""
         self.extent_arrows.arrow_facecolor = 'coverage_color'
         self.extent_arrows.add_range_arrows(self.ax, self.text, self.rect)
@@ -169,6 +169,22 @@ class TestExtentArrows(unittest.TestCase):
         # Check facecolor matches rectangle facecolor
         self.assertEqual(left_arrow.get_facecolor(), self.rect.get_facecolor())
         self.assertEqual(right_arrow.get_facecolor(), self.rect.get_facecolor())
+
+    def test_add_range_arrows_facecolor_from_hatch(self):
+        """Test arrow facecolor is derived from rectangle facecolor when set to 'coverage_color'."""
+        self.extent_arrows.arrow_facecolor = 'hatch_color'
+        self.extent_arrows.add_range_arrows(self.ax, self.text, self.rect)
+
+        # Ensure arrows are added to the axes
+        artists = self.ax.get_children()
+        arrows = [artist for artist in artists if isinstance(artist, FancyArrow)]
+        
+        self.assertEqual(len(arrows), 2)
+        left_arrow, right_arrow = arrows
+
+        # Check facecolor matches rectangle facecolor
+        self.assertEqual(left_arrow.get_facecolor(), self.rect.get_edgecolor())
+        self.assertEqual(right_arrow.get_facecolor(), self.rect.get_edgecolor())
 
     def tearDown(self):
         """Close the plot after each test to avoid resource leaks."""
@@ -193,6 +209,17 @@ class TestCoverage(unittest.TestCase):
         self.assertEqual(coverage.body.get_width(), self.xrange[1] - self.xrange[0])
         self.assertEqual(coverage.body.get_height(), self.yrange[1] - self.yrange[0])
 
+    def test_create_body_height_is_zero(self):
+        coverage = Coverage()
+        self.yrange = (1,1)
+        coverage.create(self.xrange, self.yrange, self.label)
+
+        # Validate body properties
+        self.assertIsInstance(coverage.body, Rectangle)
+        self.assertEqual(coverage.body.get_xy(), (self.xrange[0], self.yrange[0]))
+        self.assertEqual(coverage.body.get_width(), self.xrange[1] - self.xrange[0])
+        self.assertEqual(coverage.body.get_height(), coverage.body_min_height)
+
     def test_create_outline(self):
         coverage = Coverage()
         coverage.create(self.xrange, self.yrange, self.label)
@@ -216,15 +243,30 @@ class TestCoverage(unittest.TestCase):
 
     def test_add_label_background(self):
         coverage = Coverage()
-        coverage.create(self.xrange, self.yrange, self.label)
+        background_color = "yellow"
+        coverage.create(self.xrange, self.yrange, self.label,label_background_color=background_color)
         
         # Set a specific background color and test
-        background_color = "yellow"
-        coverage.add_label_background(coverage.label, background_color)
+        coverage.add_label_background(coverage.label)
 
         bbox = coverage.label.get_bbox_patch()
         self.assertIsNotNone(bbox)
         self.assertEqual(bbox.get_facecolor(), matplotlib.colors.to_rgba(background_color))
+
+    def test_add_label_background_hatch(self):
+        coverage = Coverage()
+        body_hatch_color = 'yellow'
+        background_color = "hatch_color"
+        coverage.create(self.xrange, self.yrange, self.label,label_background_color=background_color,body_hatch_color=body_hatch_color)
+
+        self.assertEqual(coverage.label_background_color,coverage.body_hatch_color)
+        
+        # Set a specific background color and test
+        coverage.add_label_background(coverage.label)
+
+        bbox = coverage.label.get_bbox_patch()
+        self.assertIsNotNone(bbox)
+        self.assertEqual(bbox.get_facecolor(),  matplotlib.colors.to_rgba(coverage.body_hatch_color))
 
     def test_create_with_extent_arrows(self):
         coverage = Coverage()
@@ -264,6 +306,34 @@ class TestCoveragePlot(unittest.TestCase):
             plotting_kwargs={"body_alpha": 0.5}
         )
 
+    def test_post_init_cmap_str(self):
+        self.fig, self.ax = plt.subplots()
+        self.xlabels = ["Label1", "Label2", "Label3"]
+        self.ylabels = ["LabelA", "LabelB", "LabelC"]
+        self.coverage_plot = CoveragePlot(
+            fig=self.fig,
+            ax=self.ax,
+            xlabels=self.xlabels,
+            ylabels=self.ylabels,
+            cmap='tab20',
+            figsize=(10, 6),
+            plotting_kwargs={"body_alpha": 0.5}
+        )   
+
+    def test_post_init_cmap_cmap(self):
+        self.fig, self.ax = plt.subplots()
+        self.xlabels = ["Label1", "Label2", "Label3"]
+        self.ylabels = ["LabelA", "LabelB", "LabelC"]
+        self.coverage_plot = CoveragePlot(
+            fig=self.fig,
+            ax=self.ax,
+            xlabels=self.xlabels,
+            ylabels=self.ylabels,
+            cmap=plt.get_cmap('tab20'),
+            figsize=(10, 6),
+            plotting_kwargs={"body_alpha": 0.5}
+        )   
+
     def test_post_init_color_iterator(self):
         """Test that the color iterator is initialized correctly."""
         self.assertIsInstance(self.coverage_plot.color_iterator, itertools.cycle)
@@ -300,6 +370,23 @@ class TestCoveragePlot(unittest.TestCase):
         coverage = self.coverage_plot.coverages[0]
         self.assertIsInstance(coverage, Coverage)
         self.assertEqual(coverage.label.get_text(), "Test Coverage")
+
+    def test_add_coverage_one_string_xrange_yrange_value(self):
+        """Test adding a coverage to the plot."""
+        xrange = "Label1"
+        yrange = "LabelA"
+        self.coverage_plot.add_coverage(xrange, yrange, "Test Coverage", body_alpha=0.8)
+        self.assertEqual(len(self.coverage_plot.coverages), 1)
+        coverage = self.coverage_plot.coverages[0]
+        self.assertIsInstance(coverage, Coverage)
+        self.assertEqual(coverage.label.get_text(), "Test Coverage")
+
+    def test_add_coverage_missmatched_yrange_xrange(self):
+        """Test adding a coverage to the plot."""
+        xrange = ["Label1","Label2","Label3","Label4"]
+        yrange = "LabelA"
+        with self.assertRaises(ValueError):
+            self.coverage_plot.add_coverage(xrange, yrange, "Test Coverage", body_alpha=0.8)
 
     def test_init_figure(self):
         """Test initializing a figure if none exists."""
@@ -345,14 +432,28 @@ class TestCoveragePlot(unittest.TestCase):
         self.coverage_plot.plot_coverages()
         self.assertEqual(len(self.ax.patches), 4)  # Ensure the body, outline, left, and right arrows were added
 
-    def test_save(self):
+    def test_plot(self):
+        """Test plot."""
+        xrange = ["Label1", "Label2"]
+        yrange = ["LabelA", "LabelB"]
+        self.coverage_plot.add_coverage(xrange, yrange, "Test Coverage")
+        self.coverage_plot.plot()
+        self.assertEqual(len(self.ax.patches), 4)  # Ensure the body, outline, left, and right arrows were added
+
+    def test_vaild_save(self):
         """Test saving the figure."""
         output_filepath = Path("test_output.png")
         self.coverage_plot.save(output_filepath)
         self.assertTrue(output_filepath.exists())
         if output_filepath.exists():
             os.remove("test_output.png")
-        
+
+    def test_invaid_save(self):
+        """Test saving an invalid figure."""
+        self.coverage_plot.fig = None
+        with self.assertRaises(ValueError):
+            self.coverage_plot.save('test_output.png')
+
 
     def test_show(self):
         self.coverage_plot.show(block=False)
