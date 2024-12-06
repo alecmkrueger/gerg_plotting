@@ -58,6 +58,36 @@ class Base:
 
 
 @define
+class Grid(Base):
+    xlabels:list
+    ylabels:list
+    # Defaults
+    grid_linewidth:float = field(default=1)
+    grid_linestyle:str = field(default='--')
+    grid_color:str|tuple = field(default='black')
+    grid_zorder:float = field(default=1.15)
+
+    def add_hlines(self,ax:Axes,y_values,**kwargs):
+        zorder = kwargs.pop('zorder',self.grid_zorder)
+        for y_value in y_values:
+            ax.axhline(y_value,zorder=zorder,**kwargs)
+
+    def add_vlines(self,ax:Axes,x_values,**kwargs):
+        zorder = kwargs.pop('zorder',self.grid_zorder)
+        for x_value in x_values:
+            ax.axvline(x_value,zorder=zorder,**kwargs)
+
+    def add_grid(self,ax,**grid_kwargs):
+        defaults = {'grid_linewidth': self.grid_linewidth,
+                    'grid_color': self.grid_color,'grid_linestyle': self.grid_linestyle}
+
+        linewidth, color, linestyle  = extract_kwargs_with_aliases(grid_kwargs, defaults).values()
+        n_hlines = len(self.ylabels)
+        n_vlines = len(self.xlabels)
+        self.add_hlines(ax=ax,y_values=np.arange(-0.5,n_hlines+0.5,1),linewidth=linewidth,ls=linestyle,color=color)
+        self.add_vlines(ax=ax,x_values=np.arange(0,n_vlines+1,1),linewidth=linewidth,ls=linestyle,color=color)
+
+@define
 class ExtentArrows(Base):
     # Defaults
     arrow_facecolor:str|tuple = field(default='black') # If "coverage_color" then the arrow's facecolor will be the color of the corresponding coverage's facecolor
@@ -118,37 +148,6 @@ class ExtentArrows(Base):
 
 
 @define
-class Grid(Base):
-    xlabels:list
-    ylabels:list
-    # Defaults
-    grid_linewidth:float = field(default=1)
-    grid_linestyle:str = field(default='--')
-    grid_color:str|tuple = field(default='black')
-    grid_zorder:float = field(default=1.15)
-
-    def add_hlines(self,ax:Axes,y_values,**kwargs):
-        zorder = kwargs.pop('zorder',self.grid_zorder)
-        for y_value in y_values:
-            ax.axhline(y_value,zorder=zorder,**kwargs)
-
-    def add_vlines(self,ax:Axes,x_values,**kwargs):
-        zorder = kwargs.pop('zorder',self.grid_zorder)
-        for x_value in x_values:
-            ax.axvline(x_value,zorder=zorder,**kwargs)
-
-    def add_grid(self,ax,**grid_kwargs):
-        defaults = {'grid_linewidth': self.grid_linewidth,
-                    'grid_color': self.grid_color,'grid_linestyle': self.grid_linestyle}
-
-        linewidth, color, linestyle  = extract_kwargs_with_aliases(grid_kwargs, defaults).values()
-        n_hlines = len(self.ylabels)
-        n_vlines = len(self.xlabels)
-        self.add_hlines(ax=ax,y_values=np.arange(-0.5,n_hlines+0.5,1),linewidth=linewidth,ls=linestyle,color=color)
-        self.add_vlines(ax=ax,x_values=np.arange(0,n_vlines+1,1),linewidth=linewidth,ls=linestyle,color=color)
-
-
-@define
 class Coverage(Base):
     body:Rectangle = field(init=False)
     outline:Rectangle = field(init=False)
@@ -174,9 +173,6 @@ class Coverage(Base):
     label_background_color:float = field(default=None)
 
     def create(self,xrange,yrange,label,**kwargs):
-        ''''''
-        # xrange,yrange = self.handle_ranges(xrange,yrange)
-
         # Bottom left corner
         anchor_point = (xrange[0],yrange[0])
 
@@ -263,14 +259,6 @@ class CoveragePlot(Base):
     coverage_color_default = field(default=None)
 
     grid:Grid = field(init=False)
-
-
-    # Figure wide defaults
-    
-    # Coverage defaults
-    coverage_fontsize:float = field(default=None)
-
-
 
 
     def __attrs_post_init__(self):
