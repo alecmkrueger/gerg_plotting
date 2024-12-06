@@ -42,6 +42,17 @@ def normalize_string(input_string: str) -> str:
     return normalized
 
 
+def merge_dicts(*dict_args):
+    """
+    Given any number of dictionaries, shallow copy and merge into a new dict,
+    precedence goes to key-value pairs in latter dictionaries.
+    """
+    result = {}
+    for dictionary in dict_args:
+        result.update(dictionary)
+    return result
+
+
 def create_combinations_with_underscore(strings):
     """
     Generate all pairwise combinations of strings with an underscore.
@@ -59,7 +70,7 @@ def create_combinations_with_underscore(strings):
     combination.extend(strings)
     return combination
 
-def custom_legend_handles(labels:list[str],colors):
+def custom_legend_handles(labels:list[str],colors,hatches=None,color_hatch_not_background:bool=False):
     '''
     Create Legend handles from the provided lables and colors
     '''
@@ -69,8 +80,15 @@ def custom_legend_handles(labels:list[str],colors):
 
     labels = [label.replace('_','/') for label in labels]
 
-    # Create custom legend handles
-    legend_handles = [mpatches.Patch(color=color, label=label) for color, label in zip(colors, labels)]
+    if hatches is None:
+        hatches = [None for _ in labels]
+
+    if color_hatch_not_background:
+        legend_handles = [mpatches.Patch(edgecolor=color, facecolor='none', label=label, hatch=hatch) for color, label, hatch in zip(colors, labels, hatches)]
+
+    else:
+        # Create custom legend handles
+        legend_handles = [mpatches.Patch(facecolor=color, label=label, hatch=hatch) for color, label, hatch in zip(colors, labels, hatches)]
 
     return legend_handles
 
