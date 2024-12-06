@@ -1,11 +1,14 @@
 import unittest
 from attrs import define, field
+import matplotlib.colors
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle, FancyArrow
 from matplotlib.text import Text
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 import itertools
+from pathlib import Path
+import os
 
 from gerg_plotting.plotting_classes.CoveragePlot import Base,Grid,ExtentArrows,Coverage,CoveragePlot
 
@@ -55,11 +58,9 @@ class TestBase(unittest.TestCase):
 
     def test_repr(self):
         """Test __repr__ returns a pretty-printed string representation."""
-        expected_repr = """{
- 'attr1': 10,
- 'attr2': 'test'
-}"""
-        self.assertEqual(repr(self.test_instance), expected_repr)
+        expected_repr = """{'attr1': 10,
+ 'attr2': 'test'}"""
+        self.assertEqual(str(self.test_instance), expected_repr)
 
 
 class TestGrid(unittest.TestCase):
@@ -147,11 +148,11 @@ class TestExtentArrows(unittest.TestCase):
         self.assertEqual(len(arrows), 2)
         left_arrow, right_arrow = arrows
 
-        # Check the properties of the arrows
-        self.assertEqual(left_arrow.get_facecolor(), self.extent_arrows.arrow_facecolor)
-        self.assertEqual(right_arrow.get_facecolor(), self.extent_arrows.arrow_facecolor)
-        self.assertEqual(left_arrow.get_zorder(), self.extent_arrows.arrow_zorder)
-        self.assertEqual(right_arrow.get_zorder(), self.extent_arrows.arrow_zorder)
+        # Check the properties of the arrows matplotlib.colors.to_rgb(c)
+        self.assertEqual(left_arrow.get_facecolor(),  matplotlib.colors.to_rgba(self.extent_arrows.arrow_facecolor))
+        self.assertEqual(right_arrow.get_facecolor(),  matplotlib.colors.to_rgba(self.extent_arrows.arrow_facecolor))
+        self.assertEqual(left_arrow.get_zorder(),  self.extent_arrows.arrow_zorder)
+        self.assertEqual(right_arrow.get_zorder(),  self.extent_arrows.arrow_zorder)
 
     def test_add_range_arrows_facecolor_from_rectangle(self):
         """Test arrow facecolor is derived from rectangle facecolor when set to 'coverage_color'."""
@@ -223,7 +224,7 @@ class TestCoverage(unittest.TestCase):
 
         bbox = coverage.label.get_bbox_patch()
         self.assertIsNotNone(bbox)
-        self.assertEqual(bbox.get_facecolor(), plt.colors.to_rgba(background_color))
+        self.assertEqual(bbox.get_facecolor(), matplotlib.colors.to_rgba(background_color))
 
     def test_create_with_extent_arrows(self):
         coverage = Coverage()
@@ -260,7 +261,7 @@ class TestCoveragePlot(unittest.TestCase):
             xlabels=self.xlabels,
             ylabels=self.ylabels,
             figsize=(10, 6),
-            plotting_kwargs={"alpha": 0.5}
+            plotting_kwargs={"body_alpha": 0.5}
         )
 
     def test_post_init_color_iterator(self):
@@ -294,11 +295,11 @@ class TestCoveragePlot(unittest.TestCase):
         """Test adding a coverage to the plot."""
         xrange = ["Label1", "Label2"]
         yrange = ["LabelA", "LabelB"]
-        self.coverage_plot.add_coverage(xrange, yrange, "Test Coverage", alpha=0.8)
+        self.coverage_plot.add_coverage(xrange, yrange, "Test Coverage", body_alpha=0.8)
         self.assertEqual(len(self.coverage_plot.coverages), 1)
         coverage = self.coverage_plot.coverages[0]
         self.assertIsInstance(coverage, Coverage)
-        self.assertEqual(coverage.label, "Test Coverage")
+        self.assertEqual(coverage.label.get_text(), "Test Coverage")
 
     def test_init_figure(self):
         """Test initializing a figure if none exists."""
@@ -342,13 +343,18 @@ class TestCoveragePlot(unittest.TestCase):
         yrange = ["LabelA", "LabelB"]
         self.coverage_plot.add_coverage(xrange, yrange, "Test Coverage")
         self.coverage_plot.plot_coverages()
-        self.assertEqual(len(self.ax.patches), 1)  # Ensure a patch was added
+        self.assertEqual(len(self.ax.patches), 4)  # Ensure the body, outline, left, and right arrows were added
 
     def test_save(self):
         """Test saving the figure."""
-        self.coverage_plot.save("test_output.png")
+        output_filepath = Path("test_output.png")
+        self.coverage_plot.save(output_filepath)
+        self.assertTrue(output_filepath.exists())
+        if output_filepath.exists():
+            os.remove("test_output.png")
+        
 
     def test_show(self):
-        """Test showing the plot (visual verification required)."""
-        self.coverage_plot.show()
+        self.coverage_plot.show(block=False)
+        plt.close('all')
 

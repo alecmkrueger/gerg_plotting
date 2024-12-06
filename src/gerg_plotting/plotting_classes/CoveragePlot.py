@@ -50,7 +50,7 @@ class Base:
         else:
             raise KeyError(f"Variable '{key}' not found. Must be one of {self.get_vars()}")
 
-    def __repr__(self) -> None:
+    def __str__(self) -> None:
         '''Return a pretty-printed string representation of the class attributes.'''
         return pformat(asdict(self),width=1)
 
@@ -156,7 +156,6 @@ class Coverage(Base):
     extent_arrows:ExtentArrows = field(init=False)
 
     # Body Default Parameters
-    # min_body_height:float = field(default=0.25)
     body_alpha:float = field(default=1)
     body_linewidth:float = field(default=1)
     body_color:str|tuple = field(default='none')
@@ -377,11 +376,11 @@ class CoveragePlot(Base):
         else:
             raise ValueError('No figure to save')
         
-    def show(self):
+    def show(self,**kwargs):
         '''
         Show all open figures
         '''
-        plt.show()
+        plt.show(**kwargs)
 
     def init_figure(self) -> None:
         '''
