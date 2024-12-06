@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle, FancyArrow
 from matplotlib.text import Text
 from matplotlib.axes import Axes
+from matplotlib.figure import Figure
+import itertools
 
 from gerg_plotting.plotting_classes.CoveragePlot import Base,Grid,ExtentArrows,Coverage,CoveragePlot
 
@@ -242,4 +244,111 @@ class TestCoverage(unittest.TestCase):
         self.assertIn(coverage.body, self.ax.patches)
         self.assertIn(coverage.outline, self.ax.patches)
         self.assertIn(coverage.label, self.ax.texts)
+
+
+
+class TestCoveragePlot(unittest.TestCase):
+
+    def setUp(self):
+        """Set up a basic CoveragePlot instance for testing."""
+        self.fig, self.ax = plt.subplots()
+        self.xlabels = ["Label1", "Label2", "Label3"]
+        self.ylabels = ["LabelA", "LabelB", "LabelC"]
+        self.coverage_plot = CoveragePlot(
+            fig=self.fig,
+            ax=self.ax,
+            xlabels=self.xlabels,
+            ylabels=self.ylabels,
+            figsize=(10, 6),
+            plotting_kwargs={"alpha": 0.5}
+        )
+
+    def test_post_init_color_iterator(self):
+        """Test that the color iterator is initialized correctly."""
+        self.assertIsInstance(self.coverage_plot.color_iterator, itertools.cycle)
+        color = next(self.coverage_plot.color_iterator)
+        self.assertTrue(isinstance(color, tuple) and len(color) == 4)  # RGBA color
+
+    def test_post_init_grid(self):
+        """Test that the grid is initialized correctly."""
+        self.assertIsInstance(self.coverage_plot.grid, Grid)
+        self.assertEqual(self.coverage_plot.grid.xlabels, self.xlabels)
+        self.assertEqual(self.coverage_plot.grid.ylabels, self.ylabels)
+
+    def test_coverage_color(self):
+        """Test the color generation for coverages."""
+        default_color = self.coverage_plot.coverage_color()
+        self.coverage_plot.coverage_color_default = (0.1, 0.2, 0.3, 0.4)
+        self.assertEqual(self.coverage_plot.coverage_color(), (0.1, 0.2, 0.3, 0.4))
+        self.assertNotEqual(self.coverage_plot.coverage_color(), default_color)
+
+    def test_handle_ranges_with_labels(self):
+        """Test converting string labels to numeric values."""
+        xrange = ["Label1", "Label2"]
+        yrange = ["LabelA", "LabelB"]
+        numeric_xrange, numeric_yrange = self.coverage_plot.handle_ranges(xrange, yrange)
+        self.assertEqual(numeric_xrange, [0, 2])  # Adjusted for padding
+        self.assertEqual(numeric_yrange, [-0.5, 1.5])  # Adjusted for padding
+
+    def test_add_coverage(self):
+        """Test adding a coverage to the plot."""
+        xrange = ["Label1", "Label2"]
+        yrange = ["LabelA", "LabelB"]
+        self.coverage_plot.add_coverage(xrange, yrange, "Test Coverage", alpha=0.8)
+        self.assertEqual(len(self.coverage_plot.coverages), 1)
+        coverage = self.coverage_plot.coverages[0]
+        self.assertIsInstance(coverage, Coverage)
+        self.assertEqual(coverage.label, "Test Coverage")
+
+    def test_init_figure(self):
+        """Test initializing a figure if none exists."""
+        self.coverage_plot.fig = None
+        self.coverage_plot.ax = None
+        self.coverage_plot.init_figure()
+        self.assertIsInstance(self.coverage_plot.fig, Figure)
+        self.assertIsInstance(self.coverage_plot.ax, Axes)
+
+    def test_custom_ticks(self):
+        """Test setting custom ticks for the x-axis and y-axis."""
+        self.coverage_plot.custom_ticks(labels=self.xlabels, axis='x')
+        xtick_labels = [tick.get_text() for tick in self.ax.get_xticklabels()]
+        self.assertEqual(xtick_labels, self.xlabels)
+        self.coverage_plot.custom_ticks(labels=self.ylabels, axis='y')
+        ytick_labels = [tick.get_text() for tick in self.ax.get_yticklabels()]
+        self.assertEqual(ytick_labels, self.ylabels)
+
+    def test_set_padding(self):
+        """Test setting axis padding."""
+        self.coverage_plot.set_padding()
+        xmin, xmax = self.ax.get_xlim()
+        ymin, ymax = self.ax.get_ylim()
+        self.assertAlmostEqual(xmin, -0.25)
+        self.assertAlmostEqual(xmax, len(self.xlabels) + 0.25)
+        self.assertAlmostEqual(ymin, -0.75)
+        self.assertAlmostEqual(ymax, len(self.ylabels) - 1 + 0.75)
+
+    def test_set_up_plot(self):
+        """Test setting up the plot."""
+        self.coverage_plot.set_up_plot(show_grid=True)
+        xtick_labels = [tick.get_text() for tick in self.ax.get_xticklabels()]
+        ytick_labels = [tick.get_text() for tick in self.ax.get_yticklabels()]
+        self.assertEqual(xtick_labels, self.xlabels)
+        self.assertEqual(ytick_labels, self.ylabels)
+        self.assertTrue(self.coverage_plot.ax.get_xaxis().get_label_position(), "top")
+
+    def test_plot_coverages(self):
+        """Test plotting coverages."""
+        xrange = ["Label1", "Label2"]
+        yrange = ["LabelA", "LabelB"]
+        self.coverage_plot.add_coverage(xrange, yrange, "Test Coverage")
+        self.coverage_plot.plot_coverages()
+        self.assertEqual(len(self.ax.patches), 1)  # Ensure a patch was added
+
+    def test_save(self):
+        """Test saving the figure."""
+        self.coverage_plot.save("test_output.png")
+
+    def test_show(self):
+        """Test showing the plot (visual verification required)."""
+        self.coverage_plot.show()
 
