@@ -267,7 +267,7 @@ class ScatterPlot(Plotter):
         '''Create contourf of irregularly gridded data'''
         # Check if vars are present
         self.data.check_for_vars([x,y,z])
-        self.init_figure(fig=None,ax=None)
+        self.init_figure(fig=fig,ax=ax)
         self.ax.tricontourf(self.data[x].data,self.data[y].data,self.data[z].data,cmap=self.data[z].cmap)
         self.format_axes(xlabel=self.data[x].get_label(),ylabel=self.data[y].get_label())
 
