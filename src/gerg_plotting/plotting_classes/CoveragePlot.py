@@ -173,6 +173,8 @@ class Coverage(Base):
     label_background_linewidth:float = field(default=0)
     label_background_alpha:float = field(default=1)
     label_background_color:float = field(default='body_color')
+    # Arrow Default Parameters
+    show_arrows:bool = field(default=True)
 
     def create(self,xrange,yrange,label,**kwargs):
         # Bottom left corner
@@ -193,12 +195,16 @@ class Coverage(Base):
                           'label_background_linewidth':self.label_background_linewidth,'label_background_alpha':self.label_background_alpha,
                           'label_background_color':self.label_background_color}
         
+        arrow_defaults = {'show_arrows':self.show_arrows,'arrow_facecolor':'none'}
+        
 
         self.body_alpha,self.body_linewidth,self.body_color,self.body_hatch,self.body_hatch_color,self.hatch_linewidth,self.body_min_height = extract_kwargs_with_aliases(kwargs, body_defaults).values()
 
         self.outline_edgecolor,self.outline_alpha,self.outline_linewidth = extract_kwargs_with_aliases(kwargs, outline_defaults).values()
 
         self.label,self.label_fontsize,self.label_background_pad,self.label_background_linewidth,self.label_background_alpha,self.label_background_color = extract_kwargs_with_aliases(kwargs, label_defaults).values()
+
+        self.show_arrows,arrow_facecolor = extract_kwargs_with_aliases(kwargs, arrow_defaults).values()
         
         if height == 0:
             height = self.body_min_height
@@ -232,7 +238,9 @@ class Coverage(Base):
         self.outline = outline
         self.label = text
 
-        self.extent_arrows = ExtentArrows(**kwargs)
+        if self.show_arrows:
+            print(self.show_arrows)
+            self.extent_arrows = ExtentArrows(**kwargs)
 
         return self
     
@@ -245,7 +253,8 @@ class Coverage(Base):
         ax.add_artist(self.outline)
         ax.add_artist(self.label)
         self.add_label_background(self.label)
-        self.extent_arrows.add_range_arrows(ax=ax,text=self.label,rect=self.body,**kwargs)
+        if self.show_arrows:
+            self.extent_arrows.add_range_arrows(ax=ax,text=self.label,rect=self.body,**kwargs)
 
 
 
@@ -338,7 +347,7 @@ class CoveragePlot(Base):
         return xrange,yrange
 
 
-    def add_coverage(self,xrange,yrange,label,**kwargs):
+    def add_coverage(self,xrange,yrange,label=None,**kwargs):
         '''
         xrange (list): A list of values containing the x coverage range
         yrange (list): A list of values containing the y coverage range

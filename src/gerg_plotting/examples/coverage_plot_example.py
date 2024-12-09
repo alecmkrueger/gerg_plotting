@@ -22,8 +22,9 @@ def coverage_plot_example():
     ylabels = ['Surface','10-100\nMeters','100-500\nMeters','Below 500\nMeters','Benthic']
 
     # Define the default plotting parameters
-    plotting_kwargs = {'arrow_facecolor':'hatch_color','body_color':'none','label_fontsize':12,'label_background_pad':0.75,
-                    'label_background_color':'hatch_color','arrow_linewidth':0.75,'hatch_linewidth':4,'outline_linewidth':1.25}
+    plotting_kwargs = {'arrow_facecolor':'hatch_color','body_color':'none','label_fontsize':9,'label_background_pad':0.75,
+                    'label_background_color':'hatch_color','arrow_linewidth':0.75,'hatch_linewidth':4,'outline_linewidth':1.25,
+                    'show_arrows':False}
 
     # Init the coverage plotter
     plotter = CoveragePlot(figsize=(12,6),xlabels=xlabels,ylabels=ylabels,plotting_kwargs=plotting_kwargs)
