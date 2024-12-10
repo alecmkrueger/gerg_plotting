@@ -302,6 +302,51 @@ class CoveragePlot(Base):
 
         self.grid = Grid(xlabels=self.xlabels,ylabels=self.ylabels)
 
+    def add_coverage(self,xrange,yrange,label=None,**kwargs):
+        '''
+        xrange (list): A list of values containing the x coverage range
+        yrange (list): A list of values containing the y coverage range
+
+        Turn off the label on top of the coverage, but keep the label in the legend, pass `visible = False`
+        '''
+        # Init test values
+        if not isinstance(xrange,list):
+            xrange = [xrange]
+        if not isinstance(yrange,list):
+            yrange = [yrange]
+
+        if len(xrange)==1:
+            xrange.extend(xrange)
+        if len(yrange)==1:
+            yrange.extend(yrange)
+
+        # If both xrange and yrange contain the same number of values
+        if len(xrange) == len(yrange):
+            xrange,yrange = self.handle_ranges(xrange=xrange,yrange=yrange)
+            # Init the coverage and add it to the list
+            # Add figure wide kwargs to coverage wide kwargs
+            kwargs = merge_dicts(self.plotting_kwargs,kwargs)
+            body_color = kwargs.pop('body_color',self.coverage_color())
+            coverage = Coverage().create(xrange=xrange,yrange=yrange,label=label,body_color=body_color,**kwargs)
+            self.coverages.extend([coverage])
+            return
+        else:
+            raise ValueError(f'xrange and yrange must both be the same length {xrange = }, {yrange = }')
+
+    def save(self,filename,**kwargs):
+        '''
+        Save the current figure
+        '''
+        if self.fig is not None:
+            self.fig.savefig(fname=filename,**kwargs)
+        else:
+            raise ValueError('No figure to save')
+        
+    def show(self,**kwargs):
+        '''
+        Show all open figures
+        '''
+        plt.show(**kwargs)
 
     def coverage_color(self):
         """
@@ -345,54 +390,6 @@ class CoveragePlot(Base):
                     yrange[0]-=0.5
 
         return xrange,yrange
-
-
-    def add_coverage(self,xrange,yrange,label=None,**kwargs):
-        '''
-        xrange (list): A list of values containing the x coverage range
-        yrange (list): A list of values containing the y coverage range
-
-        Turn off the label on top of the coverage, but keep the label in the legend, pass `visible = False`
-        '''
-        # Init test values
-        if not isinstance(xrange,list):
-            xrange = [xrange]
-        if not isinstance(yrange,list):
-            yrange = [yrange]
-
-        if len(xrange)==1:
-            xrange.extend(xrange)
-        if len(yrange)==1:
-            yrange.extend(yrange)
-
-        # If both xrange and yrange contain the same number of values
-        if len(xrange) == len(yrange):
-            xrange,yrange = self.handle_ranges(xrange=xrange,yrange=yrange)
-            # Init the coverage and add it to the list
-            # Add figure wide kwargs to coverage wide kwargs
-            kwargs = merge_dicts(self.plotting_kwargs,kwargs)
-            body_color = kwargs.pop('body_color',self.coverage_color())
-            coverage = Coverage().create(xrange=xrange,yrange=yrange,label=label,body_color=body_color,**kwargs)
-            self.coverages.extend([coverage])
-            return
-        else:
-            raise ValueError(f'xrange and yrange must both be the same length {xrange = }, {yrange = }')
-    
-
-    def save(self,filename,**kwargs):
-        '''
-        Save the current figure
-        '''
-        if self.fig is not None:
-            self.fig.savefig(fname=filename,**kwargs)
-        else:
-            raise ValueError('No figure to save')
-        
-    def show(self,**kwargs):
-        '''
-        Show all open figures
-        '''
-        plt.show(**kwargs)
 
     def init_figure(self) -> None:
         '''
