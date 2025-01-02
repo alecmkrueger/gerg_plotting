@@ -195,7 +195,7 @@ class Coverage(Base):
                           'label_background_linewidth':self.label_background_linewidth,'label_background_alpha':self.label_background_alpha,
                           'label_background_color':self.label_background_color}
         
-        arrow_defaults = {'show_arrows':self.show_arrows,'arrow_facecolor':'none'}
+        arrow_defaults = {'show_arrows':self.show_arrows}
         
 
         self.body_alpha,self.body_linewidth,self.body_color,self.body_hatch,self.body_hatch_color,self.hatch_linewidth,self.body_min_height = extract_kwargs_with_aliases(kwargs, body_defaults).values()
@@ -204,7 +204,7 @@ class Coverage(Base):
 
         self.label,self.label_fontsize,self.label_background_pad,self.label_background_linewidth,self.label_background_alpha,self.label_background_color = extract_kwargs_with_aliases(kwargs, label_defaults).values()
 
-        self.show_arrows,arrow_facecolor = extract_kwargs_with_aliases(kwargs, arrow_defaults).values()
+        self.show_arrows = extract_kwargs_with_aliases(kwargs, arrow_defaults).values()
         
         if height == 0:
             height = self.body_min_height
