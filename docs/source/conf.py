@@ -23,6 +23,8 @@ extensions = [
 
 autoapi_dirs = ['../../src/gerg_plotting']
 
+autodoc_default_options = {'inherited-members': True}
+
 autoapi_member_order = ['groupwise']
 
 templates_path = ['_templates']
