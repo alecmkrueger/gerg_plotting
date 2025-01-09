@@ -17,7 +17,7 @@ from gerg_plotting.data_classes.Variable import Variable
 @define
 class ScatterPlot(Plotter):
     """
-    ScatterPlot class for creating various scatter plots from a SpatialInstrument's data.
+    ScatterPlot class for creating various scatter plots from a Data's data.
 
     Inherits from the Plotter class to leverage figure, axis, and colorbar management functionalities.
     This class specifically deals with scatter plots that visualize relationships between different variables

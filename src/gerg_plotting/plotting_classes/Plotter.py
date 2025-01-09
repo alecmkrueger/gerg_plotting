@@ -19,7 +19,7 @@ class Plotter:
     Base class for creating plots of data.
     
     Attributes:
-        data (SpatialInstrument): The instrument holding spatial data (lat, lon, etc.).
+        data (Data): The instrument holding spatial data (lat, lon, etc.).
         bounds (Bounds, optional): Geographic boundaries of the data.
         bounds_padding (float): Padding to be applied to the detected bounds.
         fig (matplotlib.figure.Figure, optional): Matplotlib figure object.

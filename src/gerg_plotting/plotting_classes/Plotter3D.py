@@ -11,10 +11,10 @@ from gerg_plotting.data_classes.Bathy import Bathy
 @define
 class Plotter3D:
     """
-    Base class providing 3D plotting functionalities using Mayavi for SpatialInstrument data.
+    Base class providing 3D plotting functionalities using Mayavi for Data data.
 
     Attributes:
-        data (SpatialInstrument): Spatial data object containing longitude, latitude, and variable data.
+        data (Data): Spatial data object containing longitude, latitude, and variable data.
         bathy (Bathy): Bathymetry data used for adding depth information to 3D plots.
         fig (mayavi.core.scene.Scene): Figure object for 3D visualizations.
         figsize (tuple): Size of the figure window in pixels (width, height).
