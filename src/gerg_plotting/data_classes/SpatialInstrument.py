@@ -14,6 +14,44 @@ from gerg_plotting.modules.utilities import calculate_pad
 
 @define(slots=False)
 class SpatialInstrument:
+    """
+    A class representing spatial instrument data with geographic coordinates and measurements.
+
+    This class handles spatial data with latitude, longitude, depth, and time dimensions,
+    along with custom variables. It provides methods for data access, manipulation, and bounds detection.
+
+    Parameters
+    ----------
+    lat : Iterable | Variable | None
+        Latitude values or Variable object containing latitude data
+    lon : Iterable | Variable | None
+        Longitude values or Variable object containing longitude data
+    depth : Iterable | Variable | None
+        Depth values or Variable object containing depth data
+    time : Iterable | Variable | None
+        Time values or Variable object containing temporal data
+    bounds : Bounds, optional
+        Geographic and depth bounds for the dataset
+    custom_variables : dict
+        Dictionary to store additional custom variables
+
+    Methods
+    -------
+    copy()
+        Creates a deep copy of the instrument object
+    slice_var(var: str, slice: slice)
+        Slices data for a specific variable
+    get_vars()
+        Returns list of all available variables
+    check_for_vars(vars: list)
+        Verifies presence of required variables
+    detect_bounds(bounds_padding=0)
+        Automatically detects data bounds with optional padding
+    add_custom_variable(variable: Variable, exist_ok: bool)
+        Adds a new custom variable to the instrument
+    remove_custom_variable(variable_name)
+        Removes a custom variable from the instrument
+    """
     # Dims
     lat: Iterable|Variable|None = field(default=None)
     lon: Iterable|Variable|None = field(default=None)
@@ -28,24 +66,29 @@ class SpatialInstrument:
 
 
     def __attrs_post_init__(self) -> None:
+        """Initializes the instrument with standard dimensions and formats datetime data."""
         self._init_dims()
         self._format_datetime()
 
 
     def copy(self):
+        """Creates a deep copy of the instrument object."""
         self_copy = copy.deepcopy(self)
         return self_copy
     
 
     def slice_var(self,var:str,slice:slice) -> np.ndarray:
+        """Slices data for a specific variable."""
         return self[var].data[slice]
 
 
     def _has_var(self, key) -> bool:
+        """Checks if a variable exists in the instrument."""
         return key in asdict(self).keys() or key in self.custom_variables
     
 
     def get_vars(self) -> list:
+        """Gets a list of all available variables."""
         vars = list(asdict(self).keys()) + list(self.custom_variables.keys())
         vars = [var for var in vars if var!='custom_variables']
         return vars
@@ -81,14 +124,35 @@ class SpatialInstrument:
     
 
     def _init_dims(self):
+        """Initialize standard dimensions (lat, lon, depth, time) as Variable objects."""
         self._init_variable(var='lat', cmap=cmocean.cm.haline, units='°N', vmin=None, vmax=None)
         self._init_variable(var='lon', cmap=cmocean.cm.thermal, units='°E', vmin=None, vmax=None)
         self._init_variable(var='depth', cmap=cmocean.cm.deep, units='m', vmin=None, vmax=None)
         self._init_variable(var='time', cmap=cmocean.cm.thermal, units=None, vmin=None, vmax=None)
 
+    def _format_datetime(self) -> None:
+        """Format datetime data as numpy datetime64 objects."""
+        if self.time is not None:
+            if self.time.data is not None:
+                self.time.data = self.time.data.astype('datetime64[ns]')
 
     def _init_variable(self, var: str, cmap, units, vmin, vmax) -> None:
-        """Initializes standard variables if they are not None and of type np.ndarray."""
+        """
+        Initialize a standard variable as a Variable object.
+
+        Parameters
+        ----------
+        var : str
+            Name of the variable to initialize
+        cmap : matplotlib.colors.Colormap
+            Colormap for variable visualization
+        units : str
+            Units of the variable
+        vmin : float | None
+            Minimum value for visualization
+        vmax : float | None
+            Maximum value for visualization
+        """        
         if self._has_var(var):
             if not isinstance(self[var],Variable):
                 if self[var] is not None:    
@@ -104,12 +168,26 @@ class SpatialInstrument:
             raise ValueError(f'{var} does not exist, try using the add_custom_variable method')
         
 
-    def _format_datetime(self) -> None:
-        if self.time is not None:
-            if self.time.data is not None:
-                self.time.data = self.time.data.astype('datetime64[ns]')
 
     def check_for_vars(self,vars:list) -> bool:
+        """
+        Verify that all required variables exist in the dataset.
+
+        Parameters
+        ----------
+        vars : list
+            List of variable names to check
+
+        Returns
+        -------
+        bool
+            True if all variables exist
+
+        Raises
+        ------
+        ValueError
+            If any required variables are missing
+        """
         vars = [var for var in vars if var is not None]
         vars = [var for var in vars if self[var] is None]
         if vars:
@@ -121,6 +199,7 @@ class SpatialInstrument:
 
 
     def date2num(self) -> list:
+        """Converts time data to numerical values."""
         if self.time is not None:
             if self.time.data is not None:
                 return list(mdates.date2num(self.time.data))
@@ -137,10 +216,18 @@ class SpatialInstrument:
             this will also ensure that the bounds is not repeatedly calculated unless desired
             can recalculate self.bounds using a new bounds_padding value if self.bounds is set to None
 
-        The depth bounds are not affected by the bounds padding, so the max and min values of the depth data are used
+        The depth bounds are not affected by the bounds padding, therfore the max and min values of the depth data are used
 
-        Returns:
-            self.bounds (Bounds): Bounds passed by the user or generated from this function
+        Parameters
+        ----------
+        bounds_padding : float, optional
+            Padding to add to the detected bounds, by default 0
+
+        Returns
+        -------
+        Bounds
+            Object containing the detected geographic and depth bounds
+        """
 
         '''
         # If the user did not pass bounds
