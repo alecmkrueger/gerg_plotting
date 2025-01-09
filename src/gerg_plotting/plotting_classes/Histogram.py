@@ -7,21 +7,31 @@ from gerg_plotting.modules.utilities import calculate_range
 @define
 class Histogram(Plotter):
     """
-    A class for plotting histograms (1D, 2D, and 3D) from instrument data using 
-    matplotlib. Inherits from Plotter and provides methods for 1D, 2D, and 3D histograms.
+    A class for plotting histograms from instrument data using matplotlib.
+
+    This class provides methods for creating 1D, 2D, and 3D histograms from data.
+    Inherits from Plotter class for basic plotting functionality.
     """
 
     def get_2d_range(self, x: str, y: str, **kwargs) -> tuple[list,dict]:
         """
         Calculate or retrieve the range for 2D histograms.
 
-        Parameters:
-        x (str): The name of the x-axis variable.
-        y (str): The name of the y-axis variable.
-        kwargs: Optional keyword arguments. Can include 'range' to set a custom range.
+        Parameters
+        ----------
+        x : str
+            Name of the x-axis variable
+        y : str
+            Name of the y-axis variable
+        **kwargs : dict
+            Optional keyword arguments including 'range' for custom ranges
 
-        Returns:
-        tuple: A tuple containing the range and updated kwargs.
+        Returns
+        -------
+        tuple
+            (range_list, modified_kwargs)
+            - range_list : calculated or provided range values
+            - modified_kwargs : kwargs with 'range' removed if present
         """
         # If 'range' is not in kwargs, calculate it based on the instrument data
         if 'range' not in kwargs.keys():
@@ -40,11 +50,16 @@ class Histogram(Plotter):
         """
         Plot a 1D histogram of the given variable.
 
-        Parameters:
-        var (str): The name of the variable to plot.
-        fig: Optional matplotlib figure object.
-        ax: Optional matplotlib axis object.
-        kwargs: Additional keyword arguments passed to the hist function.
+        Parameters
+        ----------
+        var : str
+            Name of the variable to plot
+        fig : matplotlib.figure.Figure, optional
+            Figure object to use for plotting
+        ax : matplotlib.axes.Axes, optional
+            Axes object to use for plotting
+        **kwargs : dict
+            Additional keyword arguments passed to matplotlib.pyplot.hist
         """
         # Initialize the figure and axis
         self.init_figure(fig, ax)
@@ -59,12 +74,18 @@ class Histogram(Plotter):
         """
         Plot a 2D histogram for the x and y variables.
 
-        Parameters:
-        x (str): The name of the x-axis variable.
-        y (str): The name of the y-axis variable.
-        fig: Optional matplotlib figure object.
-        ax: Optional matplotlib axis object.
-        kwargs: Additional keyword arguments passed to hist2d.
+        Parameters
+        ----------
+        x : str
+            Name of the x-axis variable
+        y : str
+            Name of the y-axis variable
+        fig : matplotlib.figure.Figure, optional
+            Figure object to use for plotting
+        ax : matplotlib.axes.Axes, optional
+            Axes object to use for plotting
+        **kwargs : dict
+            Additional keyword arguments passed to matplotlib.pyplot.hist2d
         """
         # Initialize the figure and axis
         self.init_figure(fig, ax)
@@ -81,14 +102,20 @@ class Histogram(Plotter):
 
     def plot3d(self, x: str, y: str, fig=None, ax=None, **kwargs) -> None:
         """
-        Plot a 3D surface plot based on a 2D histogram of the x and y variables.
+        Plot a 3D surface plot based on a 2D histogram.
 
-        Parameters:
-        x (str): The name of the x-axis variable.
-        y (str): The name of the y-axis variable.
-        fig: Optional matplotlib figure object.
-        ax: Optional matplotlib axis object.
-        kwargs: Additional keyword arguments passed to histogram2d.
+        Parameters
+        ----------
+        x : str
+            Name of the x-axis variable
+        y : str
+            Name of the y-axis variable
+        fig : matplotlib.figure.Figure, optional
+            Figure object to use for plotting
+        ax : matplotlib.axes.Axes, optional
+            Axes object to use for plotting
+        **kwargs : dict
+            Additional keyword arguments passed to numpy.histogram2d
         """
         # Import the colormap from matplotlib
         from matplotlib import cm
