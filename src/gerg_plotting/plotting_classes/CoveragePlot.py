@@ -20,25 +20,71 @@ from gerg_plotting.tools import normalize_string,merge_dicts
 
 @define
 class Base:
+    """
+    Base class providing common functionality for attribute access and variable management.
 
+    Methods
+    -------
+    _has_var(key)
+        Check if object has a specific variable.
+    get_vars()
+        Get list of all object variables/attributes.
+    __getitem__(key)
+        Enable dictionary-style access to class attributes.
+    __setitem__(key, value)
+        Enable dictionary-style setting of class attributes.
+    __str__()
+        Return formatted string representation of class attributes.
+    """
     def _has_var(self, key) -> bool:
-        '''Check if object has var'''
+        """
+        Base class providing common functionality for attribute access and variable management.
+
+        Methods
+        -------
+        _has_var(key)
+            Check if object has a specific variable.
+        get_vars()
+            Get list of all object variables/attributes.
+        __getitem__(key)
+            Enable dictionary-style access to class attributes.
+        __setitem__(key, value)
+            Enable dictionary-style setting of class attributes.
+        __str__()
+            Return formatted string representation of class attributes.
+        """
         return key in asdict(self).keys()
     
     def get_vars(self) -> list:
-        '''Get list of object variables/attributes'''
+        """
+        Get list of all object variables/attributes.
+
+        Returns
+        -------
+        list
+            List of all variable names in the object.
+        """
         return list(asdict(self).keys())
 
     def __getitem__(self, key: str):
-        '''
-        Allow dictionary-style access to class attributes.
-        
-        Args:
-            key (str): The attribute name to access.
-        
-        Returns:
+        """
+        Enable dictionary-style access to class attributes.
+
+        Parameters
+        ----------
+        key : str
+            The name of the attribute to access.
+
+        Returns
+        -------
+        Any
             The value of the specified attribute.
-        '''
+
+        Raises
+        ------
+        KeyError
+            If the specified attribute doesn't exist.
+        """
         if self._has_var(key):
             return getattr(self, key)
         raise KeyError(f"Variable '{key}' not found. Must be one of {self.get_vars()}")  
@@ -58,6 +104,24 @@ class Base:
 
 @define
 class Grid(Base):
+    """
+    A class for managing and drawing grid lines on a plot.
+
+    Parameters
+    ----------
+    xlabels : list
+        Labels for x-axis grid lines.
+    ylabels : list
+        Labels for y-axis grid lines.
+    grid_linewidth : float, optional
+        Width of grid lines. Default is 1.
+    grid_linestyle : str, optional
+        Style of grid lines. Default is '--'.
+    grid_color : str or tuple, optional
+        Color of grid lines. Default is 'black'.
+    grid_zorder : float, optional
+        Z-order of grid lines. Default is 1.15.
+    """
     xlabels:list
     ylabels:list
     # Defaults
@@ -67,16 +131,53 @@ class Grid(Base):
     grid_zorder:float = field(default=1.15)
 
     def add_hlines(self,ax:Axes,y_values,**kwargs):
+        """
+        Add horizontal lines to the plot.
+
+        Parameters
+        ----------
+        ax : matplotlib.axes.Axes
+            The axes to draw the lines on.
+        y_values : array-like
+            Y-coordinates where horizontal lines should be drawn.
+        **kwargs
+            Additional keyword arguments passed to axhline.
+        """
         zorder = kwargs.pop('zorder',self.grid_zorder)
         for y_value in y_values:
             ax.axhline(y_value,zorder=zorder,**kwargs)
 
     def add_vlines(self,ax:Axes,x_values,**kwargs):
+        """
+        Add vertical lines to the plot.
+
+        Parameters
+        ----------
+        ax : matplotlib.axes.Axes
+            The axes to draw the lines on.
+        x_values : array-like
+            X-coordinates where vertical lines should be drawn.
+        **kwargs
+            Additional keyword arguments passed to axvline.
+        """
         zorder = kwargs.pop('zorder',self.grid_zorder)
         for x_value in x_values:
             ax.axvline(x_value,zorder=zorder,**kwargs)
 
     def add_grid(self,ax,**grid_kwargs):
+        """
+        Add complete grid to the plot with both horizontal and vertical lines.
+
+        Parameters
+        ----------
+        ax : matplotlib.axes.Axes
+            The axes to draw the grid on.
+        **grid_kwargs
+            Additional keyword arguments for grid customization including:
+            - grid_linewidth: Width of grid lines
+            - grid_color: Color of grid lines
+            - grid_linestyle: Style of grid lines
+        """
         defaults = {'grid_linewidth': self.grid_linewidth,
                     'grid_color': self.grid_color,'grid_linestyle': self.grid_linestyle}
 
@@ -88,6 +189,37 @@ class Grid(Base):
 
 @define
 class ExtentArrows(Base):
+    """
+    A class for managing and drawing arrows that indicate coverage extents.
+
+    Parameters
+    ----------
+    arrow_facecolor : str or tuple
+        Color of arrow fill. Use 'coverage_color' to match coverage color. Default is 'black'.
+    arrow_edgecolor : str or tuple
+        Color of arrow edges. Default is 'black'.
+    arrow_tail_width : float
+        Width of arrow tail. Default is 0.05.
+    arrow_head_width : float
+        Width of arrow head. Default is 0.12.
+    arrow_zorder : float
+        Z-order for arrow drawing. Default is 2.9.
+    arrow_linewidth : float
+        Width of arrow lines. Default is 0.
+    arrow_text_padding : float
+        Padding between arrow and text. Default is 0.05.
+
+    Attributes
+    ----------
+    left_arrow : FancyArrow
+        Arrow object for left extent.
+    right_arrow : FancyArrow
+        Arrow object for right extent.
+    top_arrow : FancyArrow
+        Arrow object for top extent.
+    bottom_arrow : FancyArrow
+        Arrow object for bottom extent.
+    """
     # Defaults
     arrow_facecolor:str|tuple = field(default='black') # If "coverage_color" then the arrow's facecolor will be the color of the corresponding coverage's facecolor
     arrow_edgecolor:str|tuple = field(default='black')
@@ -104,6 +236,25 @@ class ExtentArrows(Base):
     bottom_arrow:FancyArrow = field(default=None)
 
     def calculate_arrow_length(self,ax:Axes,rect,text_left,text_right):
+        """
+        Calculate the lengths needed for extent arrows.
+
+        Parameters
+        ----------
+        ax : matplotlib.axes.Axes
+            The axes containing the arrows.
+        rect : Rectangle
+            Rectangle object representing coverage area.
+        text_left : float
+            Left boundary of text.
+        text_right : float
+            Right boundary of text.
+
+        Returns
+        -------
+        tuple
+            (left_arrow_length, right_arrow_length)
+        """
         rect_bbox = ax.transData.inverted().transform(rect.get_window_extent())
 
         rect_left, rect_bottom = rect_bbox[0]
@@ -116,6 +267,18 @@ class ExtentArrows(Base):
 
 
     def add_range_arrows(self,ax:Axes,text:Text,rect:Rectangle):
+        """
+        Add arrows indicating the range of coverage.
+
+        Parameters
+        ----------
+        ax : matplotlib.axes.Axes
+            The axes to draw arrows on.
+        text : matplotlib.text.Text
+            Text object to position arrows around.
+        rect : matplotlib.patches.Rectangle
+            Rectangle representing coverage area.
+        """
         
         if self.arrow_facecolor=='coverage_color':
             self.arrow_facecolor = rect.get_facecolor()
@@ -150,6 +313,56 @@ class ExtentArrows(Base):
 
 @define
 class Coverage(Base):
+    """
+    A class for creating and managing coverage representations including body, outline, label, and extent arrows.
+
+    Parameters
+    ----------
+    body_min_height : float
+        Minimum height for coverage body. Default is 0.25.
+    body_alpha : float
+        Transparency of coverage body. Default is 1.
+    body_linewidth : float
+        Line width of coverage body. Default is 1.
+    body_color : str or tuple
+        Fill color of coverage body. Default is 'none'.
+    body_hatch : str
+        Hatch pattern for coverage body. Default is None.
+    body_hatch_color : str
+        Color of hatch pattern. Default is None.
+    hatch_linewidth : float
+        Width of hatch lines. Default is 0.5.
+    outline_edgecolor : str or tuple
+        Color of outline. Default is 'k'.
+    outline_alpha : float
+        Transparency of outline. Default is 1.
+    outline_linewidth : float
+        Width of outline. Default is 1.
+    label_fontsize : float
+        Font size for label. Default is 12.
+    label_background_pad : float
+        Padding around label background. Default is 2.
+    label_background_linewidth : float
+        Width of label background border. Default is 0.
+    label_background_alpha : float
+        Transparency of label background. Default is 1.
+    label_background_color : float
+        Color of label background. Default is 'body_color'.
+    show_arrows : bool
+        Whether to show extent arrows. Default is True.
+
+    Attributes
+    ----------
+    body : Rectangle
+        The main coverage area rectangle.
+    outline : Rectangle
+        The outline rectangle.
+    label : Text
+        The coverage label.
+    extent_arrows : ExtentArrows
+        Arrows showing coverage extent.
+    """
+
     body:Rectangle = field(init=False)
     outline:Rectangle = field(init=False)
     label:Text = field(init=False)
@@ -177,6 +390,25 @@ class Coverage(Base):
     show_arrows:bool = field(default=True)
 
     def create(self,xrange,yrange,label,**kwargs):
+        """
+        Create a new coverage object with specified range and label.
+
+        Parameters
+        ----------
+        xrange : list
+            Range of x-axis coverage [start, end].
+        yrange : list
+            Range of y-axis coverage [start, end].
+        label : str
+            Label text for the coverage.
+        **kwargs
+            Additional keyword arguments for customizing appearance.
+
+        Returns
+        -------
+        Coverage
+            The created coverage object.
+        """
         # Bottom left corner
         anchor_point = (xrange[0],yrange[0])
 
@@ -245,10 +477,28 @@ class Coverage(Base):
         return self
     
     def add_label_background(self,text:Text):
+        """
+        Add background to coverage label.
+
+        Parameters
+        ----------
+        text : matplotlib.text.Text
+            The text object to add background to.
+        """
         text.set_bbox(dict(facecolor=self.label_background_color,pad=self.label_background_pad,
                            linewidth=self.label_background_linewidth,alpha=self.label_background_alpha))
 
     def plot(self,ax:Axes,**kwargs):
+        """
+        Plot the coverage on given axes.
+
+        Parameters
+        ----------
+        ax : matplotlib.axes.Axes
+            The axes to plot on.
+        **kwargs
+            Additional keyword arguments for plotting.
+        """
         ax.add_artist(self.body)
         ax.add_artist(self.outline)
         ax.add_artist(self.label)
@@ -258,9 +508,43 @@ class Coverage(Base):
 
 
 
-
 @define
 class CoveragePlot(Base):
+    """
+    A class for creating and managing plots showing multiple coverage areas.
+
+    Parameters
+    ----------
+    fig : Figure, optional
+        Matplotlib figure object.
+    ax : Axes, optional
+        Matplotlib axes object.
+    figsize : tuple, optional
+        Size of the figure (width, height).
+    horizontal_padding : float
+        Padding on left and right of plot. Default is 0.25.
+    vertical_padding : float
+        Padding on top and bottom of plot. Default is 0.75.
+    xlabels : list
+        Labels for x-axis ticks.
+    ylabels : list
+        Labels for y-axis ticks.
+    cmap : str or Colormap
+        Colormap for coverage areas.
+    coverage_color_default : str or tuple
+        Default color for coverages if specified.
+
+    Attributes
+    ----------
+    color_iterator : itertools.cycle
+        Iterator for cycling through colors.
+    coverages : list
+        List of Coverage objects.
+    grid : Grid
+        Grid object for the plot.
+    plotting_kwargs : dict
+        Default keyword arguments for plotting.
+    """
     fig:Figure = field(default=None)
     ax:Axes = field(default=None)
     figsize:tuple = field(default=None)
@@ -303,12 +587,25 @@ class CoveragePlot(Base):
         self.grid = Grid(xlabels=self.xlabels,ylabels=self.ylabels)
 
     def add_coverage(self,xrange,yrange,label=None,**kwargs):
-        '''
-        xrange (list): A list of values containing the x coverage range
-        yrange (list): A list of values containing the y coverage range
+        """
+        Add a new coverage area to the plot.
 
-        Turn off the label on top of the coverage, but keep the label in the legend, pass `visible = False`
-        '''
+        Parameters
+        ----------
+        xrange : list or scalar
+            Range or single value for x-axis coverage.
+        yrange : list or scalar
+            Range or single value for y-axis coverage.
+        label : str, optional
+            Label for the coverage area.
+        **kwargs
+            Additional keyword arguments for coverage customization.
+
+        Raises
+        ------
+        ValueError
+            If xrange and yrange are not the same length.
+        """
         # Init test values
         if not isinstance(xrange,list):
             xrange = [xrange]
@@ -334,25 +631,45 @@ class CoveragePlot(Base):
             raise ValueError(f'xrange and yrange must both be the same length {xrange = }, {yrange = }')
 
     def save(self,filename,**kwargs):
-        '''
-        Save the current figure
-        '''
+        """
+        Save the current figure to a file.
+
+        Parameters
+        ----------
+        filename : str
+            Path to save the figure.
+        **kwargs
+            Additional keyword arguments passed to savefig.
+
+        Raises
+        ------
+        ValueError
+            If no figure exists to save.
+        """
         if self.fig is not None:
             self.fig.savefig(fname=filename,**kwargs)
         else:
             raise ValueError('No figure to save')
         
     def show(self,**kwargs):
-        '''
-        Show all open figures
-        '''
+        """
+        Display the plot.
+
+        Parameters
+        ----------
+        **kwargs
+            Additional keyword arguments passed to plt.show().
+        """
         plt.show(**kwargs)
 
     def coverage_color(self):
         """
-        A generator that yields the next color in the colormap cycle.
+        Get the next color for a coverage area.
 
-        :yield: A tuple representing an RGBA color.
+        Returns
+        -------
+        tuple or str
+            RGBA color tuple or specified default color.
         """
         if self.coverage_color_default is None:
             return next(self.color_iterator)
@@ -360,10 +677,21 @@ class CoveragePlot(Base):
             return self.coverage_color_default
         
     def handle_ranges(self,xrange,yrange):
-        '''
-        If the user used label names/strings to identify the x and y ranges,
-        we need to convert those to numeric so we can plot it
-        '''
+        """
+        Convert string labels to numeric indices for plotting.
+
+        Parameters
+        ----------
+        xrange : list
+            Range values for x-axis.
+        yrange : list
+            Range values for y-axis.
+
+        Returns
+        -------
+        tuple
+            Processed (xrange, yrange) with numeric values.
+        """
 
         xlabel_dict = {normalize_string(value):idx for idx,value in enumerate(self.xlabels)}
         ylabel_dict = {normalize_string(value):idx for idx,value in enumerate(self.ylabels)}
@@ -392,26 +720,25 @@ class CoveragePlot(Base):
         return xrange,yrange
 
     def init_figure(self) -> None:
-        '''
-        Initialize the figure and axes if they are not provided.
-        
-        Args:
-            fig (matplotlib.figure.Figure, optional): Pre-existing figure.
-            ax (matplotlib.axes.Axes, optional): Pre-existing axes.
-            three_d (bool, optional): Flag to initialize a 3D plot.
-            geography (bool, optional): Flag to initialize a map projection (Cartopy).
-        
-        Raises:
-            ValueError: If both 'three_d' and 'geography' are set to True.
-        '''
+        """
+        Initialize figure and axes if not provided.
+        """
 
         if self.fig is None and self.ax is None:
             # Standard 2D Matplotlib figure
             self.fig, self.ax = plt.subplots(figsize=self.figsize)
 
     def custom_ticks(self,labels,axis:str):
-        # Set custom ticks and labels
+        """
+        Set custom tick labels for specified axis.
 
+        Parameters
+        ----------
+        labels : list
+            List of tick labels.
+        axis : str
+            Axis to customize ('x' or 'y').
+        """
         if axis.lower() == 'x':
             major_locator = self.ax.xaxis.set_major_locator
             label_setter = self.ax.set_xticklabels
@@ -427,6 +754,9 @@ class CoveragePlot(Base):
         self.ax.tick_params('both',length=0)
 
     def set_padding(self):
+        """
+        Set plot limits with padding.
+        """
         xmin = 0 - self.horizontal_padding
         xmax = len(self.xlabels)+self.horizontal_padding
 
@@ -437,10 +767,27 @@ class CoveragePlot(Base):
         self.ax.set_ylim(ymin,ymax)
 
     def add_grid(self,show_grid:bool):
+        """
+        Add grid to the plot if requested.
+
+        Parameters
+        ----------
+        show_grid : bool
+            Whether to show the grid.
+        """
         if show_grid:
             self.grid.add_grid(ax=self.ax)
 
     def set_up_plot(self,show_grid:bool=True):
+        """
+        Configure the plot with all necessary components.
+
+        Parameters
+        ----------
+        show_grid : bool, optional
+            Whether to show grid lines. Default is True.
+        """
+        
         # Init figure
         self.init_figure()
         # Set custom ticks and labels
@@ -458,9 +805,20 @@ class CoveragePlot(Base):
         self.fig.tight_layout()
 
     def plot_coverages(self):
+        """
+        Plot all coverage areas on the figure.
+        """
         for coverage in self.coverages:
             coverage.plot(self.ax)
 
     def plot(self,show_grid=True):
+        """
+        Create the complete coverage plot.
+
+        Parameters
+        ----------
+        show_grid : bool, optional
+            Whether to show grid lines. Default is True.
+        """
         self.set_up_plot(show_grid=show_grid)
         self.plot_coverages()
