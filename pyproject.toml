@@ -56,7 +56,3 @@ markers = [
 exclude_lines = [
     "if __name__ == .__main__.:"
 ]
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
