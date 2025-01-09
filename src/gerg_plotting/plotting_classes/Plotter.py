@@ -15,20 +15,31 @@ from gerg_plotting.modules.plotting import  colorbar
 
 @define
 class Plotter:
-    '''
+    """
     Base class for creating plots of data.
-    
-    Attributes:
-        data (Data): The instrument holding spatial data (lat, lon, etc.).
-        bounds (Bounds, optional): Geographic boundaries of the data.
-        bounds_padding (float): Padding to be applied to the detected bounds.
-        fig (matplotlib.figure.Figure, optional): Matplotlib figure object.
-        ax (matplotlib.axes.Axes, optional): Matplotlib axes object.
-        nrows (int): Number of rows in the figure.
-        cbar (matplotlib.colorbar.Colorbar, optional): Colorbar object.
-        cbar_nbins (int): Number of bins for colorbar tick marks.
-        cbar_kwargs (dict): Keyword arguments for colorbar customization.
-    '''
+
+    Parameters
+    ----------
+    data : Data
+        Data object containing variables to plot
+    bounds_padding : float
+        Padding to be applied to detected bounds
+    fig : matplotlib.figure.Figure, optional
+        Matplotlib figure object
+    ax : matplotlib.axes.Axes, optional
+        Matplotlib axes object
+    nrows : int
+        Number of rows in figure, default is 1
+    cbar_nbins : int
+        Number of bins for colorbar ticks, default is 5
+    cbar_kwargs : dict
+        Keyword arguments for colorbar customization
+
+    Attributes
+    ----------
+    cbar : matplotlib.colorbar.Colorbar
+        Colorbar object for the plot
+    """
     
     data: Data = field(default=None)
     bounds_padding: float = field(default=0)
@@ -43,18 +54,27 @@ class Plotter:
     cbar_kwargs: dict = field(default={})
 
     def init_figure(self, fig=None, ax=None, figsize=(6.4, 4.8), three_d=False, geography=False) -> None:
-        '''
-        Initialize the figure and axes if they are not provided.
-        
-        Args:
-            fig (matplotlib.figure.Figure, optional): Pre-existing figure.
-            ax (matplotlib.axes.Axes, optional): Pre-existing axes.
-            three_d (bool, optional): Flag to initialize a 3D plot.
-            geography (bool, optional): Flag to initialize a map projection (Cartopy).
-        
-        Raises:
-            ValueError: If both 'three_d' and 'geography' are set to True.
-        '''
+        """
+        Initialize figure and axes objects.
+
+        Parameters
+        ----------
+        fig : matplotlib.figure.Figure, optional
+            Pre-existing figure
+        ax : matplotlib.axes.Axes, optional
+            Pre-existing axes
+        figsize : tuple, optional
+            Figure dimensions (width, height)
+        three_d : bool, optional
+            Whether to create 3D plot
+        geography : bool, optional
+            Whether to create map projection
+
+        Raises
+        ------
+        ValueError
+            If both three_d and geography are True
+        """
         
         # Guard clause: Ensure three_d and geography are not both True
         if three_d and geography:
@@ -93,14 +113,12 @@ class Plotter:
 
     def adjust_datetime_labels(self, rotation=30):
         """
-        Dynamically adjust the datetime labels on the x-axis.
-        Rotates labels only if they overlap.
+        Adjust datetime labels on x-axis to prevent overlap.
 
-        Parameters:
-        ax : matplotlib.axes.Axes
-            The Axes object to adjust.
-        rotation : int
-            Rotation angle to apply if labels overlap.
+        Parameters
+        ----------
+        rotation : int, optional
+            Rotation angle for labels if overlap detected, default 30
         """
         # Get tick labels
         labels = self.ax.get_xticklabels()
@@ -124,10 +142,16 @@ class Plotter:
 
     def format_axes(self,xlabel,ylabel,invert_yaxis:bool=False) -> None:
         """
-        Method to format the axes.
+        Format plot axes with labels and options.
 
-        This method can be extended to apply more specific formatting to the axes, like setting labels, 
-        tick formatting, gridlines, etc.
+        Parameters
+        ----------
+        xlabel : str
+            Label for x-axis
+        ylabel : str
+            Label for y-axis
+        invert_yaxis : bool, optional
+            Whether to invert y-axis, default False
         """
         self.ax.set_xlabel(xlabel=xlabel)
         self.ax.set_ylabel(ylabel=ylabel)
@@ -136,15 +160,19 @@ class Plotter:
         self.adjust_datetime_labels()
 
     def get_cmap(self, color_var: str) -> Colormap:
-        '''
-        Retrieve the colormap for a specified variable.
-        
-        Args:
-            color_var (str): The name of the variable for which to retrieve the colormap.
-        
-        Returns:
-            Colormap: The colormap for the variable, or 'viridis' if none is assigned.
-        '''
+        """
+        Get colormap for specified variable.
+
+        Parameters
+        ----------
+        color_var : str
+            Name of variable for colormap
+
+        Returns
+        -------
+        matplotlib.colors.Colormap
+            Colormap for variable
+        """
         # Return the variable's assigned colormap, or the default 'viridis' if none exists
         if self.data[color_var].cmap is not None:
             cmap = self.data[color_var].cmap
@@ -153,18 +181,25 @@ class Plotter:
         return cmap
     
     def add_colorbar(self, mappable: matplotlib.axes.Axes, var: str | None, divider=None, total_cbars: int = 2) -> None:
-        '''
-        Add a colorbar to the plot.
-        
-        Args:
-            mappable (matplotlib.axes.Axes): The mappable object (e.g., scatter plot) to associate with the colorbar.
-            var (str | None): The variable for which the colorbar is created.
-            divider (optional): Axes divider for better colorbar positioning.
-            total_cbars (int): The total number of colorbars in the plot.
-        
-        Returns:
-            matplotlib.colorbar.Colorbar: The created colorbar.
-        '''
+        """
+        Add colorbar to plot.
+
+        Parameters
+        ----------
+        mappable : matplotlib.axes.Axes
+            Plot object to create colorbar for
+        var : str or None
+            Variable name for colorbar
+        divider : optional
+            Axes divider for colorbar positioning
+        total_cbars : int, optional
+            Total number of colorbars in plot, default 2
+
+        Returns
+        -------
+        matplotlib.colorbar.Colorbar
+            Created colorbar object
+        """
         if var is not None:
             # Get the label for the colorbar
             cbar_label = self.data[var].get_label()
@@ -187,9 +222,21 @@ class Plotter:
             return self.cbar
         
     def save(self,filename,**kwargs):
-        '''
-        Save the current figure
-        '''
+        """
+        Save figure to file.
+
+        Parameters
+        ----------
+        filename : str
+            Path to save figure
+        **kwargs
+            Additional arguments for savefig
+
+        Raises
+        ------
+        ValueError
+            If no figure exists
+        """
         if self.fig is not None:
             self.fig.savefig(fname=filename,**kwargs)
         else:
@@ -202,34 +249,83 @@ class Plotter:
         matplotlib.pyplot.show()
         
     def _has_var(self, key) -> bool:
-        '''Check if object has var'''
+        """
+        Check if object has specified variable.
+
+        Parameters
+        ----------
+        key : str
+            Name of variable to check
+
+        Returns
+        -------
+        bool
+            True if variable exists, False otherwise
+        """
         return key in asdict(self).keys()
     
     def get_vars(self) -> list:
-        '''Get list of object variables/attributes'''
+        """
+        Get list of all object variables.
+
+        Returns
+        -------
+        list
+            List of variable names
+        """
         return list(asdict(self).keys())
 
     def __getitem__(self, key: str):
-        '''
-        Allow dictionary-style access to class attributes.
-        
-        Args:
-            key (str): The attribute name to access.
-        
-        Returns:
-            The value of the specified attribute.
-        '''
+        """
+        Enable dictionary-style access to class attributes.
+
+        Parameters
+        ----------
+        key : str
+            Name of attribute to access
+
+        Returns
+        -------
+        Any
+            Value of specified attribute
+
+        Raises
+        ------
+        KeyError
+            If attribute doesn't exist
+        """
         if self._has_var(key):
             return getattr(self, key)
         raise KeyError(f"Variable '{key}' not found. Must be one of {self.get_vars()}")  
 
     def __setitem__(self, key, value) -> None:
-        """Allows setting standard and custom variables via indexing."""
+        """
+        Enable dictionary-style setting of class attributes.
+
+        Parameters
+        ----------
+        key : str
+            Name of attribute to set
+        value : Any
+            Value to assign to attribute
+
+        Raises
+        ------
+        KeyError
+            If attribute doesn't exist
+        """
         if self._has_var(key):
             setattr(self, key, value)
         else:
             raise KeyError(f"Variable '{key}' not found. Must be one of {self.get_vars()}")
 
     def __repr__(self) -> None:
-        '''Return a pretty-printed string representation of the class attributes.'''
+        """
+        Create string representation of class attributes.
+
+        Returns
+        -------
+        str
+            Formatted string of all attributes
+        """
         return pformat(asdict(self),width=1)

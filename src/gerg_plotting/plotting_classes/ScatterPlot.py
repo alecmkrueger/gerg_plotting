@@ -17,30 +17,45 @@ from gerg_plotting.data_classes.Variable import Variable
 @define
 class ScatterPlot(Plotter):
     """
-    ScatterPlot class for creating various scatter plots from a Data's data.
+    Class for creating scatter plots from Data objects.
 
-    Inherits from the Plotter class to leverage figure, axis, and colorbar management functionalities.
-    This class specifically deals with scatter plots that visualize relationships between different variables
-    (e.g., temperature vs salinity, time vs depth) in the provided instrument data.
-    
-    Attributes:
-        markersize (int | float): The size of the scatter plot markers.
+    Inherits from Plotter class for basic plotting functionality. Provides methods
+    for various scatter plot types including T-S diagrams, hovmoller plots, and
+    velocity vector plots.
+
+    Parameters
+    ----------
+    markersize : int or float
+        Size of scatter plot markers, default is 10
     """
     
     markersize: int | float = field(default=10)
 
     def scatter(self, x: str, y: str, color_var: str | None = None, invert_yaxis:bool=False, fig=None, ax=None, **kwargs) -> None:
         """
-        Create a scatter plot of two variables `x` and `y`, with optional coloring by a third variable.
-        
-        Args:
-            x (str): The variable to plot on the x-axis.
-            y (str): The variable to plot on the y-axis.
-            color_var (str | None, optional): The variable to map to color (default is None).
-            fig (matplotlib.figure.Figure, optional): The figure to use.
-            ax (matplotlib.axes.Axes, optional): The axes to use.
-        
-        This method creates a scatter plot of the variables `x` and `y`, with optional coloring by `color_var`.
+        Create scatter plot of two variables with optional color mapping.
+
+        Parameters
+        ----------
+        x : str
+            Variable name for x-axis
+        y : str
+            Variable name for y-axis
+        color_var : str or None, optional
+            Variable name for color mapping
+        invert_yaxis : bool, optional
+            Whether to invert y-axis
+        fig : matplotlib.figure.Figure, optional
+            Figure to plot on
+        ax : matplotlib.axes.Axes, optional
+            Axes to plot on
+        **kwargs
+            Additional arguments for scatter plot
+
+        Returns
+        -------
+        matplotlib.collections.PathCollection
+            Scatter plot object
         """
         self.data.check_for_vars([x,y,color_var])
         self.init_figure(fig, ax)  # Initialize figure and axes
@@ -71,14 +86,16 @@ class ScatterPlot(Plotter):
     
     def hovmoller(self, var: str, fig=None, ax=None) -> None:
         """
-        Create a scatter plot of depth vs time, with color representing the given variable `var`.
-        
-        Args:
-            var (str): The variable to plot as color.
-            fig (matplotlib.figure.Figure, optional): The figure to use for the plot. If None, a new figure is created.
-            ax (matplotlib.axes.Axes, optional): The axes to use for the plot. If None, new axes are created.
-        
-        This method initializes a figure and axes, creates a scatter plot of depth vs. time, and adds a colorbar.
+        Create depth vs time plot colored by variable.
+
+        Parameters
+        ----------
+        var : str
+            Variable name for color mapping
+        fig : matplotlib.figure.Figure, optional
+            Figure to plot on
+        ax : matplotlib.axes.Axes, optional
+            Axes to plot on
         """
         sc = self.scatter(x='time',
                           y='depth',
@@ -96,14 +113,18 @@ class ScatterPlot(Plotter):
 
     def TS(self, color_var=None, fig=None, ax=None, contours: bool = True) -> None:
         """
-        Create a temperature vs salinity scatter plot, with optional contours.
-        
-        Args:
-            fig (matplotlib.figure.Figure, optional): The figure to use.
-            ax (matplotlib.axes.Axes, optional): The axes to use.
-            contours (bool, optional): Whether to include sigma-theta contour lines (default is True).
-        
-        This method plots salinity vs. temperature, with optional sigma-theta contour lines.
+        Create temperature-salinity diagram.
+
+        Parameters
+        ----------
+        color_var : str or None, optional
+            Variable name for color mapping
+        fig : matplotlib.figure.Figure, optional
+            Figure to plot on
+        ax : matplotlib.axes.Axes, optional
+            Axes to plot on
+        contours : bool, optional
+            Whether to show sigma-theta contours, default True
         """
         sc = self.scatter('salinity','temperature',color_var=color_var,fig=fig,ax=ax,zorder=3)  # zorder to put the scatter on top of contours
 
@@ -125,16 +146,17 @@ class ScatterPlot(Plotter):
 
     def get_density_color_data(self, color_var: str) -> np.ndarray:
         """
-        Retrieve the color data for a variable, or calculate density if requested.
-        
-        Args:
-            color_var (str): The variable for which to retrieve color data.
-        
-        Returns:
-            np.ndarray: The color data for the scatter plot.
-        
-        If the color variable is 'density' and the instrument does not already have density data, this method 
-        calculates it from salinity and temperature.
+        Get color data for density plotting.
+
+        Parameters
+        ----------
+        color_var : str
+            Variable name for color data
+
+        Returns
+        -------
+        np.ndarray
+            Array of color values
         """
         if color_var == 'density':
             if not isinstance(self.data['density'], Variable):  # If density is not already provided
@@ -164,17 +186,39 @@ class ScatterPlot(Plotter):
     
     def calculate_quiver_step(self,num_points,quiver_density) -> int:
         """
-        Function to calculate the quiver step from the quiver_density
+        Calculate step size for quiver plot density.
+
+        Parameters
+        ----------
+        num_points : int
+            Total number of data points
+        quiver_density : int
+            Desired density of quiver arrows
+
+        Returns
+        -------
+        int
+            Step size for data sampling
         """
         step = round(num_points/quiver_density)
         return step
     
     def quiver1d(self,x:str,quiver_density:int=None,quiver_scale:float=None,fig=None,ax=None) -> None:
         """
-        Method for plotting 1-d quivers. Example: ocean current data at a single location and depth through time.
+        Create 1D quiver plot for velocity data.
 
-        Args:
-            x: x-axis variable for the quiver.
+        Parameters
+        ----------
+        x : str
+            Variable name for x-axis
+        quiver_density : int, optional
+            Density of quiver arrows
+        quiver_scale : float, optional
+            Scaling factor for arrow length
+        fig : matplotlib.figure.Figure, optional
+            Figure to plot on
+        ax : matplotlib.axes.Axes, optional
+            Axes to plot on
         """
         self.data.calculate_speed()
         self.data.check_for_vars([x,'u','v','speed'])
@@ -198,15 +242,22 @@ class ScatterPlot(Plotter):
 
     def quiver2d(self,x:str,y:str,quiver_density:int=None,quiver_scale:float=None,fig=None,ax=None) -> None:
         """
-        Method for plotting 2-d quivers. Example: ocean current data at a single location through depth and time.
+        Create 2D quiver plot for velocity data.
 
-        Args:
-            x (str): x-axis variable for the quiver.
-            y (str): y-axis variable for the quiver.
-            quiver_density (int): density of quiver arrows. The higher the value the more dense the quivers
-            quiver_scale (float|int): Scales the length of the arrow inversely.
-            fig (matplotlib.figure.Figure|None): figure to draw the quiver on, if None a new figure will be generated
-            ax (matplotlib.axes.Axes|None): axes to draw the quiver on, if None, a new axes will be generated
+        Parameters
+        ----------
+        x : str
+            Variable name for x-axis
+        y : str
+            Variable name for y-axis
+        quiver_density : int, optional
+            Density of quiver arrows
+        quiver_scale : float, optional
+            Scaling factor for arrow length
+        fig : matplotlib.figure.Figure, optional
+            Figure to plot on
+        ax : matplotlib.axes.Axes, optional
+            Axes to plot on
         """
         self.data.calculate_speed()
         self.data.check_for_vars([x,y,'u','v','speed'])
@@ -230,14 +281,35 @@ class ScatterPlot(Plotter):
     def power_spectra_density(self,psd_freq=None,psd=None,
                               var_name:str=None, sampling_freq=None,segment_length=None,theta_rad=None,
                               highlight_freqs:list=None,fig=None,ax=None) -> None:
-        '''
-        Plot of power spectra density
+        """
+        Create power spectral density plot.
 
-        You can either pass psd_freq and psd that you calculated
-        or 
-        You can pass the var_name (string of the variable name), sampling_freq, segment_length, and theta_rad (optional) and let the data.calculate_PSD function calculate it for you
+        Parameters
+        ----------
+        psd_freq : array-like, optional
+            Frequency values
+        psd : array-like, optional
+            Power spectral density values
+        var_name : str, optional
+            Variable name for PSD calculation
+        sampling_freq : float, optional
+            Sampling frequency
+        segment_length : int, optional
+            Length of segments for PSD calculation
+        theta_rad : float, optional
+            Angle in radians
+        highlight_freqs : list, optional
+            Frequencies to highlight
+        fig : matplotlib.figure.Figure, optional
+            Figure to plot on
+        ax : matplotlib.axes.Axes, optional
+            Axes to plot on
 
-        '''
+        Raises
+        ------
+        ValueError
+            If neither PSD values nor calculation parameters are provided
+        """
         # Check if all variables are None         
         if all(var is None for var in [psd_freq, psd, sampling_freq, segment_length]):
             raise ValueError('You must pass either [psd_freq and psd] or [sampling_freq, segment_length, and theta_rad (optional)]')  
@@ -264,7 +336,22 @@ class ScatterPlot(Plotter):
         self.fig.suptitle(f'Power Spectra Density',fontsize=22)
 
     def tricontourf(self,x:str,y:str,z:str,fig=None,ax=None):
-        '''Create contourf of irregularly gridded data'''
+        """
+        Create filled contour plot of irregular grid data.
+
+        Parameters
+        ----------
+        x : str
+            Variable name for x-axis
+        y : str
+            Variable name for y-axis
+        z : str
+            Variable name for contour values
+        fig : matplotlib.figure.Figure, optional
+            Figure to plot on
+        ax : matplotlib.axes.Axes, optional
+            Axes to plot on
+        """
         # Check if vars are present
         self.data.check_for_vars([x,y,z])
         self.init_figure(fig=fig,ax=ax)

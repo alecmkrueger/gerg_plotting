@@ -18,16 +18,25 @@ from gerg_plotting.data_classes.Bathy import Bathy
 @define
 class MapPlot(Plotter):
     """
-    A class for plotting geographic data on a map using Cartopy and Matplotlib.
-    It provides functionality to plot bathymetry, scatter plots, and configure the map with coastlines, grids, and colorbars.
-    
-    Attributes:
-    - bathy (Bathy): Object containing bathymetric data for the map.
-    - sc (PathCollection): Matplotlib object for scatter plots.
-    - gl (Gridliner): Object for managing gridlines on the map.
-    - cbar_var (Colorbar): Colorbar for the variable being visualized (e.g., temperature, salinity).
-    - cbar_bathy (Colorbar): Colorbar for the bathymetry.
-    - grid_spacing (int): Spacing for the gridlines on the map (default is 1 degree).
+    A class for plotting geographic data on maps using Cartopy and Matplotlib.
+
+    Parameters
+    ----------
+    bathy : Bathy, optional
+        Bathymetric data object
+    grid_spacing : int, optional
+        Spacing between gridlines in degrees, default is 1
+
+    Attributes
+    ----------
+    sc : matplotlib.collections.PathCollection
+        Scatter plot collection
+    gl : cartopy.mpl.gridliner.Gridliner
+        Gridliner for map coordinates
+    cbar_var : matplotlib.colorbar.Colorbar
+        Colorbar for plotted variable
+    cbar_bathy : matplotlib.colorbar.Colorbar
+        Colorbar for bathymetry
     """
     
     bathy: Bathy = field(default=None)  # Bathymetry data object
@@ -40,25 +49,36 @@ class MapPlot(Plotter):
 
     def init_bathy(self) -> None:
         """
-        Initializes the bathymetry object if it's not already provided.
-        If no bathymetry object is passed, it creates one based on the current map bounds.
+        Initialize bathymetry object based on map bounds.
+
+        Creates a new Bathy object if none exists, using current map bounds.
         """
         if not isinstance(self.bathy, Bathy):
             self.bathy = Bathy(bounds=self.data.bounds)
 
     def set_up_map(self, fig=None, ax=None, var=None) -> tuple[str,Colormap,AxesDivider]|tuple[np.ndarray,Colormap,AxesDivider]:
         """
-        Sets up the figure and axis for the map plot, including axis limits, color maps, and dividers for colorbars.
-        
-        Parameters:
-        - fig (Figure): Matplotlib figure object.
-        - ax (Axes): Matplotlib axes object for the map.
-        - var (str | None): Variable name for color mapping (e.g., temperature, salinity).
+        Set up the base map with figure, axes, and color settings.
 
-        Returns:
-        - color (str | np.ndarray): Color values for scatter plot points.
-        - cmap (Colormap | None): Colormap for the scatter plot.
-        - divider (AxesDivider): Divider object for placing colorbars.
+        Parameters
+        ----------
+        fig : matplotlib.figure.Figure, optional
+            Figure to plot on
+        ax : matplotlib.axes.Axes, optional
+            Axes to plot on
+        var : str, optional
+            Variable name for color mapping
+
+        Returns
+        -------
+        tuple
+            (color, cmap, divider)
+            - color : str or ndarray
+                Color values for plotting
+            - cmap : matplotlib.colors.Colormap
+                Colormap for variable
+            - divider : mpl_toolkits.axes_grid1.axes_divider.AxesDivider
+                Divider for colorbar placement
         """
         # Ensure the bounds exists
         self.data.detect_bounds(self.bounds_padding)
@@ -85,13 +105,30 @@ class MapPlot(Plotter):
 
     def add_coasts(self,show_coastlines) -> None:
         """
-        Adds coastlines to the map.
+        Add coastlines to the map.
+
+        Parameters
+        ----------
+        show_coastlines : bool
+            Whether to display coastlines
         """
         if show_coastlines:
             self.ax.coastlines()
 
     def get_quiver_step(self,quiver_density) -> int|None:
-        """Calculate the step size for slicing the data to change the density of the quiver plot"""
+        """
+        Calculate step size for quiver plot density.
+
+        Parameters
+        ----------
+        quiver_density : int or None
+            Desired density of quiver arrows
+
+        Returns
+        -------
+        int or None
+            Step size for data slicing
+        """
         if quiver_density is not None:
             step = round(len(self.data.u.data)/quiver_density)
         else:
@@ -99,6 +136,16 @@ class MapPlot(Plotter):
         return step
 
     def add_grid(self,grid:bool,show_coords:bool=True) -> None:
+        """
+        Add gridlines and coordinate labels to map.
+
+        Parameters
+        ----------
+        grid : bool
+            Whether to show gridlines
+        show_coords : bool, optional
+            Whether to show coordinate labels, default True
+        """
         # Add gridlines if requested
         if grid:
             self.gl = self.ax.gridlines(draw_labels=True, linewidth=1, color='gray',
@@ -123,11 +170,14 @@ class MapPlot(Plotter):
 
     def add_bathy(self, show_bathy, divider) -> None:
         """
-        Adds bathymetric data to the map as a filled contour plot, and creates a colorbar for it.
-        
-        Parameters:
-        - show_bathy (bool): Whether to display bathymetric data.
-        - divider (AxesDivider): Divider object for placing the bathymetry colorbar.
+        Add bathymetric contours to map.
+
+        Parameters
+        ----------
+        show_bathy : bool
+            Whether to display bathymetry
+        divider : mpl_toolkits.axes_grid1.axes_divider.AxesDivider
+            Divider for colorbar placement
         """
         if show_bathy:
             self.init_bathy()
@@ -138,18 +188,31 @@ class MapPlot(Plotter):
             self.cbar_bathy = self.bathy.add_colorbar(mappable=bathy_contourf, divider=divider,
                                                       fig=self.fig, nrows=self.nrows)
 
-    def scatter(self, var: str | None = None, show_bathy: bool = True, show_coastlines:bool=True, pointsize=3, linewidths=0, grid=True,show_coords=True, fig=None, ax=None) -> None:
+    def scatter(self, var: str | None = None, show_bathy: bool = True, show_coastlines:bool=True, pointsize=3, 
+                linewidths=0, grid=True,show_coords=True, fig=None, ax=None) -> None:
         """
-        Plots a scatter plot of points on the map, optionally including bathymetry and gridlines.
-        
-        Parameters:  
-        - var (str | None): The name of the variable to plot as color (e.g., temperature).
-        - show_bathy (bool): Whether to show bathymetric data.
-        - pointsize (int): Size of scatter plot points (default is 3).
-        - linewidths (int): Line width of scatter plot points (default is 0).
-        - grid (bool): Whether to display gridlines on the map (default is True).
-        - fig (Figure): Matplotlib figure object (optional).
-        - ax (Axes): Matplotlib axes object (optional).
+        Create scatter plot of points on map.
+
+        Parameters
+        ----------
+        var : str or None, optional
+            Variable name for color mapping
+        show_bathy : bool, optional
+            Whether to show bathymetry, default True
+        show_coastlines : bool, optional
+            Whether to show coastlines, default True
+        pointsize : int, optional
+            Size of scatter points, default 3
+        linewidths : int, optional
+            Width of point edges, default 0
+        grid : bool, optional
+            Whether to show grid, default True
+        show_coords : bool, optional
+            Whether to show coordinates, default True
+        fig : matplotlib.figure.Figure, optional
+            Figure to plot on
+        ax : matplotlib.axes.Axes, optional
+            Axes to plot on
         """
         color, cmap, divider = self.set_up_map(fig=fig, ax=ax, var=var)
         
@@ -170,13 +233,28 @@ class MapPlot(Plotter):
 
     def quiver(self,x:str='lon',y:str='lat',quiver_density:int=None,quiver_scale:float=None,grid:bool=True,show_bathy:bool=True,show_coastlines:bool=True,fig=None,ax=None) -> None:
         """
-        Method for plotting 2-d quivers. Example: ocean current data at a single location through depth and time.
+        Create quiver plot for vector data.
 
-        Args:
-            x (str): x-axis variable for the quiver.
-            y (str): y-axis variable for the quiver.
-            quiver_density (int): density of quiver arrows. The higher the value the more dense the quivers
-            quiver_scale (float|int): Scales the length of the arrow inversely.
+        Parameters
+        ----------
+        x : str, optional
+            X-axis variable name, default 'lon'
+        y : str, optional
+            Y-axis variable name, default 'lat'
+        quiver_density : int, optional
+            Density of quiver arrows
+        quiver_scale : float, optional
+            Scaling factor for arrow length
+        grid : bool, optional
+            Whether to show grid, default True
+        show_bathy : bool, optional
+            Whether to show bathymetry, default True
+        show_coastlines : bool, optional
+            Whether to show coastlines, default True
+        fig : matplotlib.figure.Figure, optional
+            Figure to plot on
+        ax : matplotlib.axes.Axes, optional
+            Axes to plot on
         """
         # Ensure that data has speed
         self.data.calculate_speed(include_w=False)

@@ -9,21 +9,26 @@ from gerg_plotting.data_classes.Bathy import Bathy
 @define
 class ScatterPlot3D(Plotter3D):
     """
-    A class for creating 3D scatter plots using Mayavi, including optional
-    bathymetric data and customizable color mapping for variable visualization.
-    Inherits from Plotter3D.
+    Class for creating 3D scatter plots using Mayavi.
+
+    Inherits from Plotter3D to provide advanced 3D visualization capabilities
+    with optional bathymetric data and variable-based color mapping.
     """
 
 
     def _check_var(self, var) -> None:
         """
-        Check if the provided variable exists in the data object.
-        
-        Parameters:
-            var (str or None): Variable name to check in the data object.
-        
-        Raises:
-            ValueError: If the variable does not exist in the data.
+        Verify variable exists in data object.
+
+        Parameters
+        ----------
+        var : str or None
+            Variable name to check
+
+        Raises
+        ------
+        ValueError
+            If variable doesn't exist in data
         """
         # Proceed only if a variable is specified
         if var is not None:
@@ -34,16 +39,23 @@ class ScatterPlot3D(Plotter3D):
 
     def _points3d(self, var, point_size, fig, vertical_scalar) -> None:
         """
-        Plot 3D scatter points for spatial data, with an optional color map for a variable.
+        Create 3D scatter plot with optional color mapping.
 
-        Parameters:
-            var (str or None): Variable name to use for color mapping.
-            point_size (float): Scale factor for point size.
-            fig (mayavi.core.scene.Scene): Figure to plot on.
-            vertical_scalar (float or None): Scalar to adjust depth scaling.
-        
-        Raises:
-            ValueError: If the variable is invalid.
+        Parameters
+        ----------
+        var : str or None
+            Variable name for color mapping
+        point_size : float
+            Size of scatter points
+        fig : mayavi.core.scene.Scene
+            Figure to plot on
+        vertical_scalar : float or None
+            Scaling factor for depth values
+
+        Raises
+        ------
+        ValueError
+            If invalid variable name provided
         """
         # Rescale depth data if a vertical scalar is specified
         if vertical_scalar is not None:
@@ -84,12 +96,16 @@ class ScatterPlot3D(Plotter3D):
 
     def _add_bathy(self, fig, bounds_padding, vertical_scaler=None) -> None:
         """
-        Add bathymetric data to the 3D plot using a mesh.
+        Add bathymetric surface to 3D plot.
 
-        Parameters:
-            fig (mayavi.core.scene.Scene): Figure to plot on.
-            bounds_padding (float): Padding for bathymetric bounds.
-            vertical_scaler (float or None): Scalar for vertical scaling of bathymetric depth.
+        Parameters
+        ----------
+        fig : mayavi.core.scene.Scene
+            Figure to plot on
+        bounds_padding : float
+            Padding for bathymetric bounds
+        vertical_scaler : float, optional
+            Scaling factor for bathymetric depth
         """
         # Detect bathymetric bounds if bathy data is not already initialized
         if self.bathy is None:
@@ -124,14 +140,20 @@ class ScatterPlot3D(Plotter3D):
 
     def scatter(self, var: str | None = None, point_size: int | float = 0.05, vertical_scalar=None, fig=None, show: bool = True) -> None:
         """
-        Create a 3D scatter plot with optional color scaling and depth adjustments.
+        Create 3D scatter plot.
 
-        Parameters:
-            var (str or None): Variable to map color. Defaults to None.
-            point_size (int or float): Size of scatter points. Defaults to 0.05.
-            vertical_scalar (float or None): Scalar for vertical scaling. Defaults to None.
-            fig (mayavi.core.scene.Scene or None): Figure to plot on. Defaults to None.
-            show (bool): If True, show the plot. Defaults to True.
+        Parameters
+        ----------
+        var : str or None, optional
+            Variable name for color mapping
+        point_size : int or float, optional
+            Size of scatter points, default 0.05
+        vertical_scalar : float, optional
+            Scaling factor for depth values
+        fig : mayavi.core.scene.Scene, optional
+            Figure to plot on
+        show : bool, optional
+            Whether to display plot, default True
         """
         # Initialize the figure or reuse the provided figure
         self.fig = self.init_figure(fig=fig)
@@ -149,16 +171,25 @@ class ScatterPlot3D(Plotter3D):
 
     def map(self, var: str | None = None, point_size: int | float = 0.05, bounds_padding=0, vertical_scalar=None, fig=None, show: bool = True) -> None:
         """
-        Generate a 3D map with bathymetric data and scatter points.
+        Create 3D map with bathymetry and scatter points.
 
-        Parameters:
-            var (str or None): Variable to map color. Defaults to None.
-            point_size (int or float): Size of scatter points. Defaults to 0.05.
-            bounds_padding (float): Padding for bathymetric bounds. Defaults to 0.
-            vertical_scalar (float or None): Scalar for vertical scaling. Defaults to None.
-            fig (mayavi.core.scene.Scene or None): Figure to plot on. Defaults to None.
-            show (bool): If True, show the plot. Defaults to True.
+        Parameters
+        ----------
+        var : str or None, optional
+            Variable name for color mapping
+        point_size : int or float, optional
+            Size of scatter points, default 0.05
+        bounds_padding : float, optional
+            Padding for map bounds, default 0
+        vertical_scalar : float, optional
+            Scaling factor for depth values
+        fig : mayavi.core.scene.Scene, optional
+            Figure to plot on
+        show : bool, optional
+            Whether to display plot, default True
         """
+
+
         # Initialize the figure or reuse the provided figure
         self.fig = self.init_figure(fig=fig)
 

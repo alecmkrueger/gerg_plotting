@@ -11,13 +11,18 @@ from gerg_plotting.data_classes.Bathy import Bathy
 @define
 class Plotter3D:
     """
-    Base class providing 3D plotting functionalities using Mayavi for Data data.
+    Base class for 3D plotting using Mayavi.
 
-    Attributes:
-        data (Data): Spatial data object containing longitude, latitude, and variable data.
-        bathy (Bathy): Bathymetry data used for adding depth information to 3D plots.
-        fig (mayavi.core.scene.Scene): Figure object for 3D visualizations.
-        figsize (tuple): Size of the figure window in pixels (width, height).
+    Parameters
+    ----------
+    data : Data
+        Spatial data object containing coordinates and variables
+    bathy : Bathy, optional
+        Bathymetry data for depth visualization
+    fig : mayavi.core.scene.Scene, optional
+        Mayavi figure object
+    figsize : tuple
+        Size of figure window in pixels (width, height), default (1920, 1080)
     """
     data: Data
     bathy: Bathy = field(default=None)
@@ -27,13 +32,22 @@ class Plotter3D:
 
     def init_figure(self, fig=None):
         """
-        Initialize a new Mayavi figure or use an existing one if provided.
+        Initialize Mayavi figure.
 
-        Args:
-            fig (mayavi.core.scene.Scene, optional): Existing figure to use. If None, a new figure is created.
+        Parameters
+        ----------
+        fig : mayavi.core.scene.Scene, optional
+            Existing figure to use
 
-        Returns:
-            mayavi.core.scene.Scene: The initialized figure for plotting.
+        Returns
+        -------
+        mayavi.core.scene.Scene
+            Initialized figure for plotting
+
+        Raises
+        ------
+        ValueError
+            If fig is not None or a mayavi.core.scene.Scene object
         """
         # Check if a new figure needs to be created
         if fig is None:
@@ -47,13 +61,17 @@ class Plotter3D:
 
     def _has_var(self, key) -> bool:
         """
-        Check if the object has an attribute with the specified key.
+        Check for existence of attribute.
 
-        Args:
-            key (str): Attribute name to check for.
+        Parameters
+        ----------
+        key : str
+            Attribute name to check
 
-        Returns:
-            bool: True if attribute exists, False otherwise.
+        Returns
+        -------
+        bool
+            True if attribute exists, False otherwise
         """
         # Check if key exists in the object's dictionary representation
         return key in asdict(self).keys()
@@ -61,10 +79,12 @@ class Plotter3D:
 
     def get_vars(self) -> list:
         """
-        Retrieve a list of all object attributes.
+        Get list of object attributes.
 
-        Returns:
-            list: List of attribute names for this object.
+        Returns
+        -------
+        list
+            List of attribute names
         """
         # Get list of attributes by converting object to dictionary
         return list(asdict(self).keys())
@@ -113,26 +133,32 @@ class Plotter3D:
     
 
     def show(self):
-        """Display the 3D plot in a Mayavi window."""
+        """
+        Display the 3D plot in Mayavi window.
+        """
         mlab.show()
 
 
     def save(self,filename,size=None,**kwargs):
-        '''
-        To save the scene you must do so before you show the scene.
+        """
+        Save the 3D scene to file.
 
-        When saving the scene, set show=False in the plotting method
-        Example:
-        ```
-        # Init the plotter
-        three_d = ScatterPlot3D(data)
-        three_d.map(show=False)
-        three_d.save('map.png')
-        # If you would like to see the scene:
-        three_d.show()
-        ```
+        Must be called before show() with show=False in plotting method.
 
-        '''
+        Parameters
+        ----------
+        filename : str
+            Output filename
+        size : tuple, optional
+            Image size in pixels
+        **kwargs
+            Additional arguments for scene.save()
+
+        Raises
+        ------
+        ValueError
+            If no scene exists
+        """
         if isinstance(self.fig,mayavi.core.scene.Scene):
             scene = self.fig.scene
             if scene is not None:
@@ -143,16 +169,21 @@ class Plotter3D:
 
     def convert_colormap(self, colormap, over_color=None, under_color=None) -> np.ndarray:
         """
-        Converts a colormap to a color array scaled to 0-255 (uint8) format, allowing customization
-        of the first (under_color) and last (over_color) colors in the array.
+        Convert colormap to uint8 color array.
 
-        Args:
-            colormap (Callable): A function generating colors, usually a Matplotlib colormap function.
-            over_color (tuple, optional): Color for the highest value in the colormap (e.g., (255, 0, 0) for red).
-            under_color (tuple, optional): Color for the lowest value in the colormap.
+        Parameters
+        ----------
+        colormap : Callable
+            Function generating colors (matplotlib colormap)
+        over_color : tuple, optional
+            Color for highest value
+        under_color : tuple, optional
+            Color for lowest value
 
-        Returns:
-            np.ndarray: An array of RGBA colors scaled to 0-255, formatted as uint8.
+        Returns
+        -------
+        np.ndarray
+            Array of RGBA colors scaled to 0-255
         """
         # Create color array by evaluating colormap across 256 points
         colormap_array = np.array([colormap(i) for i in range(256)])
@@ -172,10 +203,25 @@ class Plotter3D:
 
     def format_colorbar(self, colorbar, x_pos1_offset, y_pos1_offset, x_pos2_offset, y_pos2_offset):
         """
-        Format the colorbar with adaptive font sizes and offsets for enhanced readability.
+        Format colorbar appearance.
 
-        Args:
-            colorbar (mayavi.modules.scalarbar.ScalarBar): The colorbar object to be formatted.
+        Parameters
+        ----------
+        colorbar : mayavi.modules.scalarbar.ScalarBar
+            Colorbar to format
+        x_pos1_offset : float
+            X offset for position
+        y_pos1_offset : float
+            Y offset for position
+        x_pos2_offset : float
+            X offset for position2
+        y_pos2_offset : float
+            Y offset for position2
+
+        Returns
+        -------
+        mayavi.modules.scalarbar.ScalarBar
+            Formatted colorbar
         """
         # Calculate font size based on figure height for adaptive scaling
         fontsize = round(((self.figsize[1] / 400) ** 1.8) + 11)
@@ -205,17 +251,31 @@ class Plotter3D:
     def add_colorbar(self, mappable, cmap_title, over_color=None, x_pos1_offset=None, y_pos1_offset=None,
                      x_pos2_offset=None, y_pos2_offset=None, cmap=None):
         """
-        Adds a colorbar to a 3D plot with a custom colormap and formatting.
+        Add colorbar to 3D plot.
 
-        Args:
-            mappable (mayavi.modules.glyph.Glyph): The 3D data to which the colormap applies.
-            cmap_title (str): Title for the colorbar, indicating the data variable it represents.
-            cmap (Callable, optional): Custom colormap function. Defaults to default colormap if None.
-            over_color (tuple, optional): Color for highest colormap value. Defaults to None.
-            x_pos1_offset (float, optional): Horizontal offset for colorbar position. Defaults to None.
-            y_pos1_offset (float, optional): Vertical offset for colorbar position. Defaults to None.
-            x_pos2_offset (float, optional): Horizontal offset for colorbar end position. Defaults to None.
-            y_pos2_offset (float, optional): Vertical offset for colorbar end position. Defaults to None.
+        Parameters
+        ----------
+        mappable : mayavi.modules.glyph.Glyph
+            3D plot object
+        cmap_title : str
+            Title for colorbar
+        over_color : tuple, optional
+            Color for highest value
+        x_pos1_offset : float, optional
+            X offset for position
+        y_pos1_offset : float, optional
+            Y offset for position
+        x_pos2_offset : float, optional
+            X offset for position2
+        y_pos2_offset : float, optional
+            Y offset for position2
+        cmap : Callable, optional
+            Custom colormap function
+
+        Returns
+        -------
+        mayavi.modules.scalarbar.ScalarBar
+            Created colorbar
         """
         # Apply custom colormap if provided, after conversion for compatibility
         if cmap is not None:
