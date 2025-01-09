@@ -15,6 +15,28 @@ from gerg_plotting.data_classes.Variable import Variable
 
 @define(slots=False,repr=False)
 class Data(SpatialInstrument):
+    """
+    Represents a spatial dataset with various oceanographic or atmospheric variables.
+
+    Attributes
+    ----------
+    temperature : Iterable, Variable, or None, optional
+        Temperature data, in °C, with optional colormap and range specifications.
+    salinity : Iterable, Variable, or None, optional
+        Salinity data with optional colormap and range specifications.
+    density : Iterable, Variable, or None, optional
+        Density data, in kg/m³, with optional colormap and range specifications.
+    u : Iterable, Variable, or None, optional
+        Zonal velocity (u-component) in m/s, with optional colormap and range specifications.
+    v : Iterable, Variable, or None, optional
+        Meridional velocity (v-component) in m/s, with optional colormap and range specifications.
+    w : Iterable, Variable, or None, optional
+        Vertical velocity (w-component) in m/s, with optional colormap and range specifications.
+    speed : Iterable, Variable, or None, optional
+        Speed data, derived or directly assigned, in m/s, with optional colormap and range specifications.
+    bounds : Bounds
+        Spatial bounds of the data.
+    """
     # Vars
     temperature: Iterable|Variable|None = field(default=None)
     salinity: Iterable|Variable|None = field(default=None)
@@ -29,13 +51,21 @@ class Data(SpatialInstrument):
 
 
     def __attrs_post_init__(self) -> None:
+        """
+        Post-initialization hook for setting up variables.
+
+        This method is automatically called after the class is instantiated.
+        """
         super().__attrs_post_init__()
         self._init_variables()  # Init variables
 
 
     def _init_variables(self) -> None:
-        '''Default Variable initialization.
-        If you would like a new variable to be included in the default init, contact the repo manager'''
+        """
+        Initialize default variables with predefined configurations.
+
+        Adds colormaps, units, and variable-specific ranges for default variables.
+        """
         self._init_variable(var='temperature', cmap=cmocean.cm.thermal, units='°C', vmin=None, vmax=None)
         self._init_variable(var='salinity', cmap=cmocean.cm.haline, units=None, vmin=None, vmax=None)
         self._init_variable(var='density', cmap=cmocean.cm.dense, units="kg/m\u00B3", vmin=None, vmax=None)
@@ -46,6 +76,15 @@ class Data(SpatialInstrument):
 
 
     def calculate_speed(self,include_w:bool=False) -> None:
+        """
+        Calculate the speed from velocity components.
+
+        Parameters
+        ----------
+        include_w : bool, optional
+            If True, includes the vertical velocity (w-component) in the speed calculation.
+            Defaults to False.
+        """
         if self.speed is None:
             if include_w:
                 if self.check_for_vars(['u','v','w']):
@@ -57,11 +96,24 @@ class Data(SpatialInstrument):
 
 
     def calcluate_PSD(self,sampling_freq,segment_length,theta_rad=None) -> tuple[np.ndarray,np.ndarray,np.ndarray]|tuple[np.ndarray,np.ndarray,np.ndarray,np.ndarray]:
-        '''
-        Calculate the power spectral density using Welch's method for currents
+        """
+        Calculate the power spectral density (PSD) using Welch's method.
 
-        segment_length (int): Length of each segment for Welch's method
-        '''
+        Parameters
+        ----------
+        sampling_freq : float
+            Sampling frequency of the data in Hz.
+        segment_length : int
+            Length of each segment for Welch's method.
+        theta_rad : float, optional
+            Angle of rotation in radians. Rotates the u and v components if specified.
+
+        Returns
+        -------
+        tuple
+            A tuple containing the frequency array and PSD values for the velocity components.
+            If the vertical component (w) is available, it is also included in the tuple.
+        """
 
         u = self.u.data
         v = self.v.data
