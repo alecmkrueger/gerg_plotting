@@ -9,17 +9,22 @@ from gerg_plotting.data_classes.Data import Data
 
 def normalize_string(input_string: str) -> str:
     """
-    Normalizes a string by performing the following actions:
-    - Converts the string to lowercase.
-    - Replaces spaces, newlines, and other specified characters with underscores.
-    - Removes leading and trailing underscores.
-    - Collapses multiple consecutive underscores into a single underscore.
+    Normalize string by converting to lowercase and standardizing special characters.
 
-    Parameters:
-    input_string (str): The string to normalize.
+    Parameters
+    ----------
+    input_string : str
+        String to normalize
 
-    Returns:
-    str: The normalized string.
+    Returns
+    -------
+    str
+        Normalized string with special characters replaced by underscores
+
+    Raises
+    ------
+    ValueError
+        If input is not a string
     """
     if not isinstance(input_string, str):
         raise ValueError("Input must be a string.")
@@ -44,8 +49,17 @@ def normalize_string(input_string: str) -> str:
 
 def merge_dicts(*dict_args):
     """
-    Given any number of dictionaries, shallow copy and merge into a new dict,
-    precedence goes to key-value pairs in latter dictionaries.
+    Merge multiple dictionaries with later dictionaries taking precedence.
+
+    Parameters
+    ----------
+    *dict_args : dict
+        Variable number of dictionaries to merge
+
+    Returns
+    -------
+    dict
+        New dictionary containing merged key-value pairs
     """
     result = {}
     for dictionary in dict_args:
@@ -55,13 +69,17 @@ def merge_dicts(*dict_args):
 
 def create_combinations_with_underscore(strings):
     """
-    Generate all pairwise combinations of strings with an underscore.
+    Generate pairwise combinations of strings joined by underscores.
 
-    Args:
-        strings (list): A list of strings.
+    Parameters
+    ----------
+    strings : list
+        List of strings to combine
 
-    Returns:
-        list: A list of combinations joined by an underscore.
+    Returns
+    -------
+    list
+        List of combined strings including original strings
     """
     # Generate all pairwise combinations
     pairs = combinations(strings, 2)
@@ -71,9 +89,25 @@ def create_combinations_with_underscore(strings):
     return combination
 
 def custom_legend_handles(labels:list[str],colors,hatches=None,color_hatch_not_background:bool=False):
-    '''
-    Create Legend handles from the provided lables and colors
-    '''
+    """
+    Create custom legend handles with specified colors and patterns.
+
+    Parameters
+    ----------
+    labels : list[str]
+        List of legend labels
+    colors : list
+        List of colors for patches
+    hatches : list, optional
+        List of hatch patterns
+    color_hatch_not_background : bool, optional
+        Whether to color hatch instead of background
+
+    Returns
+    -------
+    list
+        List of matplotlib patch objects for legend
+    """
     import matplotlib.patches as mpatches
 
     assert len(labels) == len(colors)
@@ -94,17 +128,23 @@ def custom_legend_handles(labels:list[str],colors,hatches=None,color_hatch_not_b
 
 def _map_variables(keys:list[str], values:list[str], synonyms:dict[str,list[str]]|None=None, blocklist:dict[str,list[str]]|None=None):
     """
-    Maps each key from the keys list to the most likely corresponding value from the values list,
-    using optional synonyms and blocklist terms for flexible and precise matching.
-    
-    Parameters:
-    - keys (list): List of keys to be used in the dictionary.
-    - values (list): List of possible values to map to keys.
-    - synonyms (dict, optional): Dictionary where each key has a list of synonyms to assist in matching.
-    - blocklist (dict, optional): Dictionary where each key has a list of words to avoid for that key.
-    
-    Returns:
-    - dict: Dictionary mapping each key to a corresponding value or None if no match is found.
+    Map variable names to their corresponding values using flexible matching.
+
+    Parameters
+    ----------
+    keys : list[str]
+        List of target variable names
+    values : list[str]
+        List of available variable names
+    synonyms : dict, optional
+        Dictionary of variable synonyms
+    blocklist : dict, optional
+        Dictionary of terms to avoid for each variable
+
+    Returns
+    -------
+    dict
+        Mapping of variables to their matched values
     """
     # Initialize the dictionary with None for each key
     mapped_dict = {key: None for key in keys}
@@ -153,6 +193,19 @@ def _map_variables(keys:list[str], values:list[str], synonyms:dict[str,list[str]
 
 
 def _get_var_mapping(df:pd.DataFrame) -> dict:
+    """
+    Create variable mapping from DataFrame columns.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        DataFrame containing data columns
+
+    Returns
+    -------
+    dict
+        Mapping of standard variable names to DataFrame columns
+    """
     keys = ['lat', 'lon', 'depth', 'time', 'temperature', 'salinity', 'density', 'u', 'v','w', 'speed']
     values = df.columns.tolist()
     synonyms = {
@@ -175,6 +228,19 @@ def _get_var_mapping(df:pd.DataFrame) -> dict:
 
 
 def interp_glider_lat_lon(ds:xr.Dataset) -> xr.Dataset:
+    """
+    Interpolate glider latitude and longitude data.
+
+    Parameters
+    ----------
+    ds : xarray.Dataset
+        Dataset containing glider data
+
+    Returns
+    -------
+    xarray.Dataset
+        Dataset with interpolated lat/lon coordinates
+    """
     # Convert time and m_time to float64 for interpolation
     new_time_values = ds['time'].values.astype('datetime64[ns]').astype('float64')
     new_mtime_values = ds['m_time'].values.astype('datetime64[ns]').astype('float64')
@@ -201,7 +267,23 @@ def interp_glider_lat_lon(ds:xr.Dataset) -> xr.Dataset:
 
 
 def data_from_df(df:pd.DataFrame,mapped_variables:dict|None=None,**kwargs):
+    """
+    Create Data object from DataFrame.
 
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Source DataFrame
+    mapped_variables : dict, optional
+        Custom variable mapping
+    **kwargs
+        Additional arguments for Data initialization
+
+    Returns
+    -------
+    Data
+        Initialized Data object
+    """
     # If the user does not pass mapped_variables
     if mapped_variables is None:
         mapped_variables = _get_var_mapping(df)
@@ -214,7 +296,23 @@ def data_from_df(df:pd.DataFrame,mapped_variables:dict|None=None,**kwargs):
 
 
 def data_from_csv(filename:str,mapped_variables:dict|None=None,**kwargs):
+    """
+    Create Data object from CSV file.
 
+    Parameters
+    ----------
+    filename : str
+        Path to CSV file
+    mapped_variables : dict, optional
+        Custom variable mapping
+    **kwargs
+        Additional arguments for Data initialization
+
+    Returns
+    -------
+    Data
+        Initialized Data object
+    """
     df = pd.read_csv(filename)
 
     data = data_from_df(df,mapped_variables=mapped_variables,**kwargs)
