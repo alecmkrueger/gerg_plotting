@@ -6,33 +6,74 @@ import datetime
 
 
 def to_numpy_array(values) -> np.ndarray:
-    # convert set to list for pandas can convert to numpy array
+    """
+    Convert various data types to a numpy array using pandas Series as parser.
 
-    # Early return if values is None
+    Parameters
+    ----------
+    values : array_like
+        Input data that can be converted to a numpy array (lists, tuples, sets, etc.)
+
+    Returns
+    -------
+    np.ndarray or None
+        Numpy array of the input values, or None if input is None
+
+    Raises
+    ------
+    TypeError
+        If input is a dictionary
+    """
     if values is None:
         return None
-    # Return early if values are already a numpy array
     elif isinstance(values, np.ndarray):
         return values
     if isinstance(values,dict):
         raise TypeError(f"Cannot convert a dict with values of '{values}' to a NumPy array")
-    # Convert set to list before attempting to convert
     elif isinstance(values,set):
         values = list(values)
-    # Try to convert to numpy using pandas series as the parser
     array = pd.Series(values).to_numpy()
     return array
 
 
 def calculate_range(var) -> list[float,float]:
+    """
+    Calculate the range of values in an array, ignoring NaN values.
+
+    Parameters
+    ----------
+    var : array_like
+        Input array to calculate range from
+
+    Returns
+    -------
+    list[float, float]
+        List containing [minimum, maximum] values
+    """
     return [np.nanmin(var), np.nanmax(var)]
 
 
 def calculate_pad(var, pad=0.0) -> tuple[float,float]:
+    """
+    Calculate padded range of values in an array.
+
+    Parameters
+    ----------
+    var : array_like
+        Input array to calculate padded range from
+    pad : float, optional
+        Amount of padding to add to both ends of the range, default is 0.0
+
+    Returns
+    -------
+    tuple[float, float]
+        Tuple of (min_value - pad, max_value + pad)
+    """
     start, stop = calculate_range(var)
     start_with_pad = start - pad
     stop_with_pad = stop + pad
     return float(start_with_pad), float(stop_with_pad)
+
 
 
 def extract_kwargs(kwargs:dict, defaults:dict):
