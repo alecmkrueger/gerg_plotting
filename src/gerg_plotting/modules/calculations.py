@@ -73,10 +73,43 @@ def get_sigma_theta(salinity, temperature, cnt=False) -> tuple[np.ndarray,np.nda
 
 
 def get_density(salinity, temperature) -> np.ndarray:
+    """
+    Calculate seawater density (sigma-0) from salinity and temperature.
+
+    Parameters
+    ----------
+    salinity : array_like
+        Practical salinity [PSU]
+    temperature : array_like
+        Temperature [°C]
+
+    Returns
+    -------
+    np.ndarray
+        Potential density [kg/m³] referenced to 0 dbar pressure
+    """
     return np.array(gsw.sigma0(salinity, temperature))
 
 
-def rotate_vector(u, v, theta_rad) -> tuple[np.ndarray,np.ndarray]:
+def rotate_vector(u, v, theta_rad) -> tuple[np.ndarray, np.ndarray]:
+    """
+    Rotate velocity vectors by a given angle.
+
+    Parameters
+    ----------
+    u : array_like
+        Zonal (east-west) velocity component
+    v : array_like
+        Meridional (north-south) velocity component
+    theta_rad : float
+        Rotation angle in radians
+
+    Returns
+    -------
+    tuple[np.ndarray, np.ndarray]
+        Rotated u and v components (u_rotated, v_rotated)
+    """
     u_rotated = u * np.cos(theta_rad) - v * np.sin(theta_rad)
     v_rotated = u * np.sin(theta_rad) + v * np.cos(theta_rad)
     return u_rotated, v_rotated
+
