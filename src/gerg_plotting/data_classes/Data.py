@@ -206,6 +206,12 @@ class Data:
                 if isinstance(self_copy[var_name],Variable):
                     self_copy[var_name].data = self.slice_var(var=var_name,slice=key)
             return self_copy
+        elif isinstance(key,list):
+            self_copy = self.copy()
+            for var_name in self.get_vars():
+                if isinstance(self_copy[var_name],Variable):
+                    self_copy[var_name].data = self[var_name].data[key]
+            return self_copy
         elif self._has_var(key):
             return getattr(self, key, self.custom_variables.get(key))
         raise KeyError(f"Variable '{key}' not found. Must be one of {self.get_vars()}")    
