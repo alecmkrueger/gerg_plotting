@@ -140,7 +140,7 @@ class Plotter:
             # Ensure labels are not rotated
             matplotlib.pyplot.setp(labels, rotation=0, ha='center')
 
-    def format_axes(self,xlabel,ylabel,invert_yaxis:bool=False) -> None:
+    def format_axes(self,xlabel,ylabel,zlabel=None,invert_yaxis:bool=False) -> None:
         """
         Format plot axes with labels and options.
 
@@ -155,6 +155,8 @@ class Plotter:
         """
         self.ax.set_xlabel(xlabel=xlabel)
         self.ax.set_ylabel(ylabel=ylabel)
+        if zlabel is not None:
+            self.ax.set_zlabel(zlabel=zlabel)
         if invert_yaxis:
             self.ax.invert_yaxis()
         self.adjust_datetime_labels()
