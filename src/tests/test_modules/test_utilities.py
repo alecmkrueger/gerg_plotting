@@ -1,4 +1,4 @@
-from gerg_plotting.modules.utilities import to_numpy_array,calculate_range,calculate_pad,print_time,print_datetime
+from gerg_plotting.modules.utilities import to_numpy_array,calculate_range,calculate_pad,print_time,print_datetime,extract_kwargs,extract_kwargs_with_aliases
 
 import unittest
 import numpy as np
@@ -64,8 +64,84 @@ class TestCalculatePad(unittest.TestCase):
         result = calculate_pad(input_array, pad=0.1)
         self.assertAlmostEqual(result[0], 0.9)
         self.assertAlmostEqual(result[1], 5.1)
+        
+class TestExtractKwargs(unittest.TestCase):
+    def test_extract_kwargs_with_defaults(self):
+        # Test case with both provided and default values
+        kwargs = {'color': 'blue', 'size': 10}
+        defaults = {'color': 'red', 'shape': 'circle', 'size': 5}
+        
+        result = extract_kwargs(kwargs, defaults)
+        
+        self.assertEqual(result['color'], 'blue')  # Should use provided value
+        self.assertEqual(result['shape'], 'circle')  # Should use default value
+        self.assertEqual(result['size'], 10)  # Should use provided value
+        self.assertEqual(kwargs, {})  # Original kwargs should be modified
+
+    def test_extract_kwargs_empty(self):
+        # Test case with empty kwargs
+        kwargs = {}
+        defaults = {'color': 'red', 'size': 5}
+        
+        result = extract_kwargs(kwargs, defaults)
+        
+        self.assertEqual(result, defaults)  # Should return all default values
+        self.assertEqual(kwargs, {})  # Original kwargs should remain empty
+
+    def test_extract_kwargs_no_defaults(self):
+        # Test case with no defaults
+        kwargs = {'color': 'blue', 'size': 10}
+        defaults = {}
+        
+        result = extract_kwargs(kwargs, defaults)
+        
+        self.assertEqual(result, {})  # Should return empty dict
+        self.assertEqual(kwargs, {'color': 'blue', 'size': 10})  # Original kwargs should be unchanged
 
 
+class TestExtractKwargsWithAliases(unittest.TestCase):
+    def test_basic_extraction(self):
+        kwargs = {'color': 'blue', 'size': 10}
+        defaults = {('color', 'colour'): 'red', 'size': 5}
+        
+        result = extract_kwargs_with_aliases(kwargs, defaults)
+        
+        self.assertEqual(result['color'], 'blue')
+        self.assertEqual(result['size'], 10)
+        self.assertEqual(kwargs, {})
+
+    def test_alias_extraction(self):
+        kwargs = {'colour': 'green'}
+        defaults = {('color', 'colour'): 'red'}
+        
+        result = extract_kwargs_with_aliases(kwargs, defaults)
+        
+        self.assertEqual(result['color'], 'green')
+        self.assertEqual(kwargs, {})
+
+    def test_default_values(self):
+        kwargs = {}
+        defaults = {('color', 'colour'): 'red', ('size', 'dimension'): 5}
+        
+        result = extract_kwargs_with_aliases(kwargs, defaults)
+        
+        self.assertEqual(result['color'], 'red')
+        self.assertEqual(result['size'], 5)
+
+    def test_mixed_single_and_tuple_keys(self):
+        kwargs = {'width': 100}
+        defaults = {
+            ('color', 'colour'): 'red',
+            'width': 50,
+            ('height', 'h'): 30
+        }
+        
+        result = extract_kwargs_with_aliases(kwargs, defaults)
+        
+        self.assertEqual(result['color'], 'red')
+        self.assertEqual(result['width'], 100)
+        self.assertEqual(result['height'], 30)
+        
 class TestPrintTime(unittest.TestCase):
     @patch('sys.stdout', new_callable=io.StringIO)
     @patch('datetime.datetime')  # Mock datetime.datetime
