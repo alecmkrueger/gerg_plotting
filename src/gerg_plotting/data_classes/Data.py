@@ -405,4 +405,7 @@ class Data:
         variable_name : str
             Name of the variable to remove
         """
-        delattr(self,variable_name)
+        if variable_name in self.custom_variables:
+            del self.custom_variables[variable_name]
+        else:
+            raise KeyError(f"Variable '{variable_name}' not found in custom variables. Must be one of {self.custom_variables.keys()}")

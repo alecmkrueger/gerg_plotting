@@ -46,6 +46,11 @@ class TestData(unittest.TestCase):
         self.data.add_custom_variable(new_var)
         self.data.remove_custom_variable('custom_var')
         self.assertNotIn('custom_var', self.data.custom_variables)
+        
+    def test_remove_invalid_custom_variable(self):
+        """Test removing custom variables."""
+        with self.assertRaises(KeyError):
+            self.data.remove_custom_variable('lat')
 
     def test_slice_var(self):
         """Test variable slicing."""
