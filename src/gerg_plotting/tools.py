@@ -174,12 +174,8 @@ def _map_variables(keys:list[str], values:list[str], synonyms:dict[str,list[str]
             
             # Check if this is a single-letter key (like 'u', 'v', 'w', or 's')
             if len(key) == 1:
-                # Check the synonyms first
-                if any(match.lower() == value.lower() for match in possible_matches):
-                    mapped_dict[key] = value
-                    break
-                # Ensure the key appears only at the start or end of the value string
-                elif value.lower().startswith(key.lower()) or value.lower().endswith(key.lower()):
+                # Ensure the key appears only at the start or end of the value string with an underscore
+                if value.lower().startswith(f"{key.lower()}_") or value.lower().endswith(f"_{key.lower()}"):
                     mapped_dict[key] = value
                     break
             else:

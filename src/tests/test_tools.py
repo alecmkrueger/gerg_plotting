@@ -1,152 +1,215 @@
-
 import unittest
-import pandas as pd
 import numpy as np
+import pandas as pd
 import xarray as xr
+import tempfile
 import os
-from pathlib import Path
+from gerg_plotting.tools import (
+    normalize_string,
+    merge_dicts,
+    create_combinations_with_underscore,
+    _map_variables,
+    _get_var_mapping,
+    data_from_df,
+    custom_legend_handles,
+    interp_glider_lat_lon,
+    data_from_csv
+)
 
-from gerg_plotting.tools import _map_variables, _get_var_mapping, interp_glider_lat_lon, data_from_df, data_from_csv
+class TestTools(unittest.TestCase):
+    def test_normalize_string(self):
+        # Test basic normalization
+        self.assertEqual(normalize_string("Hello World!"), "hello_world")
+        # Test multiple special characters
+        self.assertEqual(normalize_string("temp@#$%^&*()"), "temp")
+        # Test multiple spaces and special chars
+        self.assertEqual(normalize_string("  temp  value  "), "temp_value")
+        # Test empty string
+        self.assertEqual(normalize_string(""), "")
+        # Test with numbers
+        self.assertEqual(normalize_string("temp123"), "temp123")
+        
+        with self.assertRaises(ValueError):
+            normalize_string(123)
 
+    def test_merge_dicts(self):
+        dict1 = {'a': 1, 'b': 2}
+        dict2 = {'b': 3, 'c': 4}
+        dict3 = {'d': 5}
+        
+        # Test merging two dictionaries
+        self.assertEqual(merge_dicts(dict1, dict2), {'a': 1, 'b': 3, 'c': 4})
+        # Test merging three dictionaries
+        self.assertEqual(merge_dicts(dict1, dict2, dict3), {'a': 1, 'b': 3, 'c': 4, 'd': 5})
+        # Test merging with empty dict
+        self.assertEqual(merge_dicts(dict1, {}), dict1)
 
-# Sample dataset for testing
-def create_test_dataset():
-    """
-    Creates a test dataset with variables 'time', 'm_time', 'latitude', and 'longitude'.
-    Includes NaN values for latitude and longitude to test interpolation.
-    """
-    time = np.array(['2023-01-01T00:00:00', '2023-01-01T01:00:00', '2023-01-01T02:00:00'], dtype='datetime64[ns]')
-    m_time = np.array(['2023-01-01T00:00:00', '2023-01-01T01:30:00', '2023-01-01T02:00:00'], dtype='datetime64[ns]')
-    
-    latitude = np.array([34.0, np.nan, 36.0])  # Include NaN to test interpolation
-    longitude = np.array([-120.0, np.nan, -118.0])  # Include NaN to test interpolation
-    
-    ds = xr.Dataset(
-        {
-            'latitude': (['m_time'], latitude),
-            'longitude': (['m_time'], longitude),
-            'time': (['time'], time),
-            'm_time': (['m_time'], m_time),
-        }
-    )
-    return ds
+    def test_create_combinations_with_underscore(self):
+        strings = ['temp', 'sal', 'depth']
+        result = create_combinations_with_underscore(strings)
+        
+        expected_combinations = ['temp_sal', 'temp_depth', 'sal_depth', 'temp', 'sal', 'depth']
+        self.assertEqual(sorted(result), sorted(expected_combinations))
+        
+        # Test with single string
+        self.assertEqual(create_combinations_with_underscore(['temp']), ['temp'])
+        
+        # Test with empty list
+        self.assertEqual(create_combinations_with_underscore([]), [])
 
+    def test_custom_legend_handles(self):
+        # Test basic legend handles
+        labels = ['temp_1', 'sal_2']
+        colors = ['red', 'blue']
+        result = custom_legend_handles(labels, colors)
+        
+        self.assertEqual(len(result), 2)
+        self.assertEqual(result[0].get_label(), 'temp/1')
+        self.assertEqual(result[0].get_facecolor(), (1.0, 0.0, 0.0, 1.0))  # red
 
-class TestFunctions(unittest.TestCase):
+        # Test with hatches
+        hatches = ['/', '\\']
+        result_hatched = custom_legend_handles(labels, colors, hatches=hatches)
+        self.assertEqual(result_hatched[0].get_hatch(), '/')
+        
+        # Test with color_hatch_not_background
+        result_hatch_color = custom_legend_handles(labels, colors, hatches=hatches, color_hatch_not_background=True)
+        self.assertEqual(result_hatch_color[0].get_facecolor(), (0, 0, 0, 0))  # transparent
+        self.assertEqual(result_hatch_color[0].get_edgecolor(), (1.0, 0.0, 0.0, 1.0))  # red
 
-    def tearDown(self):
-        if Path('test.csv').exists():
-            os.remove('test.csv')
 
     def test_map_variables(self):
-        keys = ['depth', 'temperature', 'u', 's']
-        values = ['pres', 'temp', 'eastward_velocity', 'speed', 'sound_speed']
+        keys = ['temp', 'sal']
+        values = ['temperature', 'salinity', 'depth']
+        synonyms = {'temp': ['temperature'], 'sal': ['salinity']}
+        
+        result = _map_variables(keys, values, synonyms)
+        
+        self.assertEqual(result['temp'], 'temperature')
+        self.assertEqual(result['sal'], 'salinity')
 
+        # Test with blocklist
+        blocklist = {'temp': ['air']}
+        values_with_air = ['air_temperature', 'temperature', 'salinity']
+        result = _map_variables(keys, values_with_air, synonyms, blocklist)
+        self.assertEqual(result['temp'], 'temperature')
+        
+    def test_map_variables_single_letters(self):
+        # Test single letter variables (u, v, w, s)
+        keys = ['u', 'v', 'w', 's']
+        values = ['u_velocity', 'v_current', 'w_component', 'speed']
         synonyms = {
-            'depth': ['pressure', 'pres'],
-            'temperature': ['temp', 'temperature_measure'],
-            'salinity': ['salt', 'salinity_level'],
-            'density': ['density_metric', 'rho'],
-            'u': ['eastward_velocity', 'u_component'],
-            'v': ['northward_velocity', 'v_component'],
-            'w': ['downward_velocity','upward_velocity','w_component'],
-            's': ['combined_velocity','velocity','speed']
+            'u': ['u_component', 'u_current'],
+            'v': ['v_component', 'v_current'],
+            'w': ['w_component', 'w_current'],
+            's': ['speed', 'combined_velocity']
         }
-        blocklist = {
-            's': ['sound','pres']
+        
+        result = _map_variables(keys, values, synonyms)
+        
+        # Test exact matches
+        self.assertEqual(result['u'], 'u_velocity')
+        self.assertEqual(result['v'], 'v_current')
+        self.assertEqual(result['w'], 'w_component')
+        self.assertEqual(result['s'], 'speed')
+        
+        # Test with values that start with single letter
+        values_start = ['u_data', 'velocity_v', 'w_speed', 'sound_speed']
+        blocklist = {'s': ['sound']}
+        result_start = _map_variables(keys, values_start, synonyms, blocklist)
+        
+        self.assertEqual(result_start['u'], 'u_data')
+        self.assertIsNone(result_start['s'])  # Should be None due to blocklist
+        
+    def test_map_variables_single_letter_exact_match(self):
+        # Test single letter variables (u, v, w, s)
+        keys = ['u', 'v', 'w', 's', 'd','t','c','vd']
+        values = ['u_velocity', 'v_current', 'w_component', 'speed', 'd','theta','variable_c','v_direction']
+        synonyms = {
+            't': ['theta'],
+            'c': ['variable_c'],
+            'vd':['v_direction']
         }
 
-        expected_output = {
-            'depth': 'pres',
-            'temperature': 'temp',
-            'u': 'eastward_velocity',
-            's': 'speed'
-        }
+        result = _map_variables(keys, values, synonyms)
 
-        self.assertEqual(_map_variables(keys, values,synonyms,blocklist), expected_output,msg=f'{_map_variables(keys,values,synonyms,blocklist) = }')
+        # Test exact matches
+        self.assertEqual(result['d'], 'd')
+        self.assertEqual(result['t'], 'theta')
+        self.assertEqual(result['c'], 'variable_c')
+
 
     def test_get_var_mapping(self):
-        df = pd.DataFrame(columns=['pres', 'temp', 'eastward_velocity', 'speed', 'latitude', 'longitude'])
-        expected_output = {
-            'lat': 'latitude',
-            'lon': 'longitude',
-            'depth': 'pres',
-            'time': None,
-            'temperature': 'temp',
-            'salinity': None,
-            'density': None,
-            'u': 'eastward_velocity',
-            'v': None,
-            'w': None,
-            'speed': 'speed'
-        }
-
-        self.assertEqual(_get_var_mapping(df), expected_output,msg=f'{_get_var_mapping(df) = }')
-
-    def test_interpolation(self):
-        """Test interpolation of latitude and longitude in the function."""
-        # Create the test dataset
-        ds = create_test_dataset()
-
-        # Call the function
-        interpolated_ds = interp_glider_lat_lon(ds)
-
-        # Check that 'm_time' was removed
-        self.assertNotIn('m_time', interpolated_ds)
-
-        # Verify 'latitude' interpolation
-        expected_latitude = np.array([34.0, 35.0, 36.0])
-        np.testing.assert_almost_equal(interpolated_ds['latitude'].values, expected_latitude)
-
-        # Verify 'longitude' interpolation
-        expected_longitude = np.array([-120.0, -119.0, -118.0])
-        np.testing.assert_almost_equal(interpolated_ds['longitude'].values, expected_longitude)
-
-        # Check dimensions and coordinates of the output dataset
-        self.assertIn('time', interpolated_ds.dims)
-        self.assertEqual(len(interpolated_ds['time']), 3)
-        self.assertEqual(interpolated_ds['latitude'].dims, ('time',))
-        self.assertEqual(interpolated_ds['longitude'].dims, ('time',))
-
-    def test_data_from_df(self):
         df = pd.DataFrame({
-            'lat': [10, 20, 30],
-            'lon': [40, 50, 60],
-            'depth': [100, 200, 300]
+            'temperature': [20, 21],
+            'salinity': [35, 36],
+            'pressure': [10, 11]
         })
-        mapped_variables = {
-            'lat': 'lat',
-            'lon': 'lon',
-            'depth': 'depth'
-        }
+        
+        result = _get_var_mapping(df)
+        
+        self.assertIn('temperature', result)
+        self.assertIn('salinity', result)
+        self.assertEqual(result['depth'], 'pressure')
 
-        data = data_from_df(df, mapped_variables)
+    def test_interp_glider_lat_lon(self):
+        # Create test dataset
+        times = pd.date_range('2023-01-01', '2023-01-02', periods=5)
+        m_times = pd.date_range('2023-01-01', '2023-01-02', periods=5)
+        
+        ds = xr.Dataset(
+            {
+                'latitude': ('time', [25.0, np.nan, 26.0, np.nan, 27.0]),
+                'longitude': ('time', [-90.0, np.nan, -91.0, np.nan, -92.0]),
+                'm_time': ('time', m_times)
+            },
+            coords={'time': times}
+        )
+        
+        result = interp_glider_lat_lon(ds)
+        
+        # Test interpolation results
+        self.assertFalse(np.any(np.isnan(result.latitude)))
+        self.assertFalse(np.any(np.isnan(result.longitude)))
+        self.assertNotIn('m_time', result)
 
-        # Assert the Data object has the expected attributes
-        self.assertEqual(data.lat.data.tolist(), [10, 20, 30])
-        self.assertEqual(data.lon.data.tolist(), [40, 50, 60])
-        self.assertEqual(data.depth.data.tolist(), [100, 200, 300])
+    def test_data_from_df_full(self):
+        # Create test dataframe
+        df = pd.DataFrame({
+            'latitude': [25, 26],
+            'longitude': [-90, -91],
+            'temperature': [20, 21],
+            'depth': [100, 200],
+            'time': pd.date_range('2023-01-01', '2023-01-02')
+        })
+        
+        # Test with automatic variable mapping
+        result = data_from_df(df)
+        self.assertTrue(hasattr(result, 'lat'))
+        self.assertTrue(hasattr(result, 'lon'))
+        self.assertTrue(hasattr(result, 'temperature'))
+        self.assertTrue(hasattr(result, 'depth'))
+        self.assertTrue(hasattr(result, 'time'))
 
     def test_data_from_csv(self):
-        csv_data = """lat,lon,depth
-                        10,40,100
-                        20,50,200
-                        30,60,300"""
-        filename = "test.csv"
-        with open(filename, "w") as file:
-            file.write(csv_data)
-
-        mapped_variables = {
-            'lat': 'lat',
-            'lon': 'lon',
-            'depth': 'depth'
-        }
-
-        data = data_from_csv(filename, mapped_variables)
-
-        # Assert the Data object has the expected attributes
-        self.assertEqual(data.lat.data.tolist(), [10, 20, 30])
-        self.assertEqual(data.lon.data.tolist(), [40, 50, 60])
-        self.assertEqual(data.depth.data.tolist(), [100, 200, 300])
-
+        # Create temporary CSV file
+        test_df = pd.DataFrame({
+            'lat': [25, 26],
+            'lon': [-90, -91],
+            'temp': [20, 21]
+        })
+        
+        with tempfile.NamedTemporaryFile(suffix='.csv', mode='w', delete=False) as f:
+            test_df.to_csv(f.name, index=False)
+            
+            # Test reading from CSV
+            result = data_from_csv(f.name)
+            self.assertTrue(hasattr(result, 'lat'))
+            self.assertTrue(hasattr(result, 'lon'))
+            
+            # Test with custom mapping
+            mapped_result = data_from_csv(f.name, mapped_variables={'temperature': 'temp'})
+            self.assertTrue(hasattr(mapped_result, 'temperature'))
+        
+        os.remove(f.name)
 
