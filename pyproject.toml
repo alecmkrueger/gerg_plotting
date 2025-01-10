@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "gerg_plotting"
-version = "0.0.25"
+version = "0.0.26"
 description = ""
 authors = ["Alec Krueger <alecmkrueger@tamu.edu>"]
 readme = "README.md"
