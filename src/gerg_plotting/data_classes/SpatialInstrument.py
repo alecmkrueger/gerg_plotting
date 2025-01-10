@@ -212,8 +212,8 @@ class SpatialInstrument:
 
         An intentional effect of this function:
             will only calculate the bounds when self.bounds is None,
-            so that it does not overwrite the user's custom bounds passed,
-            this will also ensure that the bounds is not repeatedly calculated unless desired
+            so that it does not overwrite the user's custom bounds,
+            this will also ensure that the bounds is not repeatedly calculated unless desired,
             can recalculate self.bounds using a new bounds_padding value if self.bounds is set to None
 
         The depth bounds are not affected by the bounds padding, therfore the max and min values of the depth data are used
