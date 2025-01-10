@@ -74,10 +74,10 @@ class Bathy:
     vmin: int | float = field(default=0)
     cmap: Colormap = field(default=matplotlib.colormaps.get_cmap('Blues'))
     cbar_show: bool = field(default=True)
-    cbar: matplotlib.colorbar.Colorbar = field(init=False)
+    cbar: matplotlib.colorbar.Colorbar = field(default=None)
     cbar_nbins: int = field(default=5)
     cbar_kwargs: dict = field(default={})
-    center_of_mass: tuple = field(init=False)
+    center_of_mass: tuple = field(default=None)
     label: str = field(default='Bathymetry')
 
     def __attrs_post_init__(self) -> None:
