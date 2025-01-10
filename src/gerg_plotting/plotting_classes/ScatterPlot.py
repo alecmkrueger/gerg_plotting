@@ -84,6 +84,60 @@ class ScatterPlot(Plotter):
 
         return sc
     
+    def scatter3d(self, x: str, y: str, z:str, color_var: str | None = None, invert_yaxis:bool=False, fig=None, ax=None, **kwargs) -> None:
+        """
+        Create scatter plot of two variables with optional color mapping.
+
+        Parameters
+        ----------
+        x : str
+            Variable name for x-axis
+        y : str
+            Variable name for y-axis
+        color_var : str or None, optional
+            Variable name for color mapping
+        invert_yaxis : bool, optional
+            Whether to invert y-axis
+        fig : matplotlib.figure.Figure, optional
+            Figure to plot on
+        ax : matplotlib.axes.Axes, optional
+            Axes to plot on
+        **kwargs
+            Additional arguments for scatter plot
+
+        Returns
+        -------
+        matplotlib.collections.PathCollection
+            Scatter plot object
+        """
+        self.data.check_for_vars([x,y,color_var])
+        self.init_figure(fig, ax, three_d=True)  # Initialize figure and axes
+
+        # If color_var is passed
+        if color_var is not None:
+            if color_var == "time":
+                color_data = self.data.date2num()
+            else:
+                color_data = self.data[color_var].data
+            sc = self.ax.scatter(
+                self.data[x].data,
+                self.data[y].data,
+                self.data[z].data,
+                c=color_data,
+                cmap=self.get_cmap(color_var),
+                vmin = self.data[color_var].vmin,
+                vmax = self.data[color_var].vmax, **kwargs
+            )
+            self.add_colorbar(sc, var=color_var)  # Add colorbar
+
+        # If color_var is not passed 
+        else:
+            sc = self.ax.scatter(self.data[x].data, self.data[y].data, self.data[z].data, **kwargs)
+
+        self.format_axes(xlabel=self.data[x].get_label(),ylabel=self.data[y].get_label(),zlabel=self.data[z].get_label(),invert_yaxis=invert_yaxis)
+
+        return sc   
+    
     def hovmoller(self, var: str, fig=None, ax=None) -> None:
         """
         Create depth vs time plot colored by variable.
