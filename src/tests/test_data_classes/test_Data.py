@@ -3,6 +3,7 @@ import numpy as np
 from unittest.mock import MagicMock
 import cmocean
 from datetime import datetime
+import pytest
 
 from gerg_plotting.data_classes.Data import Data
 from gerg_plotting.data_classes.Variable import Variable
@@ -67,6 +68,18 @@ class TestData(unittest.TestCase):
         self.data.add_custom_variable(new_var)
         self.assertIn('custom_var', self.data.custom_variables)
         self.assertEqual(self.data.custom_var, new_var)
+        
+    def test_add_custom_variable_invaild_type(self):
+        """Test adding custom variables."""
+        with pytest.raises(TypeError,match='The provided object is not an instance of the Variable class.'):
+            self.data.add_custom_variable('invalid_type')
+            
+    def test_add_custom_variable_already_exists(self):
+        """Test adding custom variables."""
+        new_var = Variable(data=np.array([1.0, 2.0]), name='custom_var')
+        self.data.add_custom_variable(new_var)
+        with pytest.raises(AttributeError,match="The variable 'custom_var' already exists."):
+            self.data.add_custom_variable(new_var)
 
     def test_remove_custom_variable(self):
         """Test removing custom variables."""
@@ -111,6 +124,12 @@ class TestData(unittest.TestCase):
         result = self.data.date2num()
         self.assertIsInstance(result, list)
         self.assertEqual(len(result), 2)
+        
+    def test_date2num_not_time_present(self):
+        """Test datetime conversion to numerical values when time is not present."""
+        self.data.time = None
+        with self.assertRaises(ValueError):
+            self.data.date2num()
 
     def test_detect_bounds(self):
         """Test bounds detection."""
@@ -118,6 +137,27 @@ class TestData(unittest.TestCase):
         self.assertIsInstance(bounds, Bounds)
         self.assertIsNotNone(bounds.lat_min)
         self.assertIsNotNone(bounds.lat_max)
+
+    def test_detect_bounds_no_lat(self):
+        """Test bounds detection when latitude is not present."""
+        self.data.lat = None
+        self.data.detect_bounds()
+        self.assertIsNone(self.data.bounds.lat_min)
+        self.assertIsNone(self.data.bounds.lat_max)
+
+    def test_detect_bounds_no_lon(self):
+        """Test bounds detection when latitude is not present."""
+        self.data.lon = None
+        self.data.detect_bounds()
+        self.assertIsNone(self.data.bounds.lon_min)
+        self.assertIsNone(self.data.bounds.lon_max)
+
+    def test_detect_bounds_no_depth(self):
+        """Test bounds detection when latitude is not present."""
+        self.data.depth = None
+        self.data.detect_bounds()
+        self.assertIsNone(self.data.bounds.depth_top)
+        self.assertIsNone(self.data.bounds.depth_bottom )
 
     def test_getitem(self):
         """Test variable access via indexing."""
@@ -129,7 +169,6 @@ class TestData(unittest.TestCase):
         """Test variable slicing via indexing."""
         result = self.data[0:2]
         np.testing.assert_array_equal(result.lat.data, self.test_data[0:2],f'{result.lat}')
-
 
     def test_setitem(self):
         """Test variable assignment via indexing."""
