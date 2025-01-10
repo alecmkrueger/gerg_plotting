@@ -4,7 +4,7 @@ import pandas as pd
 import xarray as xr
 import tempfile
 import os
-from gerg_plotting.tools import (
+from gerg_plotting.tools.tools import (
     normalize_string,
     merge_dicts,
     create_combinations_with_underscore,
