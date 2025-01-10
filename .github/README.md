@@ -12,7 +12,7 @@
   <p align="center">
     Data plotting package for GERG
     <br />
-    <a href="https://github.com/alecmkrueger/gerg_plotting"><strong>Explore the docs »</strong></a>
+    <a href="https://gerg-plotting.readthedocs.io/en/latest/"><strong>Explore the docs »</strong></a>
     <br />
     <br />
     <a href="https://github.com/alecmkrueger/gerg_plotting/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
