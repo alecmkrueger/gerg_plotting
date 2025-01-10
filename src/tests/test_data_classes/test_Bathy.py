@@ -81,7 +81,7 @@ class TestBathy(unittest.TestCase):
     def test_vertical_scaler(self):
         """Test that the vertical_scaler adjusts the depth correctly."""
         initial_depth = self.bathy.depth.copy() if hasattr(self.bathy, 'depth') else None
-        self.bathy.vertical_scaler = 2
+        self.bathy.bounds.vertical_scaler = 2
         self.bathy.__attrs_post_init__()  # Reapply initialization logic
         if initial_depth is not None:
             np.testing.assert_array_equal(self.bathy.depth, initial_depth * 2)
