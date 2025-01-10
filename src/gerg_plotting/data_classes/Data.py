@@ -291,6 +291,8 @@ class Data:
         ValueError
             If any required variables are missing
         """
+        if len(vars) == 0:
+            raise ValueError('No variables provided')
         vars = [var for var in vars if var is not None]
         vars = [var for var in vars if self[var] is None]
         if vars:
