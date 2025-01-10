@@ -36,10 +36,6 @@ class Bathy:
         Depth values or Variable object containing depth data
     time : Iterable | Variable | None
         Time values or Variable object containing temporal data
-    bounds : Bounds, optional
-        Geographic and depth bounds for the dataset
-    custom_variables : dict
-        Dictionary to store additional custom variables
     bounds : Bounds
         Object containing spatial and vertical boundaries for the dataset.
     resolution_level : float or int, optional
@@ -88,8 +84,6 @@ class Bathy:
         """
         Post-initialization method to process bathymetry data and adjust colormap.
         """
-        self._init_dims()
-        self._format_datetime()
         # Load bathymetry data based on bounds
         self.get_bathy()
         # Scale depth values if a vertical scaler is provided
@@ -114,13 +108,12 @@ class Bathy:
 
     def _has_var(self, key) -> bool:
         """Checks if a variable exists in the instrument."""
-        return key in asdict(self).keys() or key in self.custom_variables
+        return key in self.get_vars()
     
 
     def get_vars(self) -> list:
         """Gets a list of all available variables."""
-        vars = list(asdict(self).keys()) + list(self.custom_variables.keys())
-        vars = [var for var in vars if var!='custom_variables']
+        vars = list(asdict(self).keys())
         return vars
 
 
@@ -133,17 +126,14 @@ class Bathy:
                     self_copy[var_name].data = self.slice_var(var=var_name,slice=key)
             return self_copy
         elif self._has_var(key):
-            return getattr(self, key, self.custom_variables.get(key))
+            return getattr(self, key)
         raise KeyError(f"Variable '{key}' not found. Must be one of {self.get_vars()}")    
 
 
     def __setitem__(self, key, value) -> None:
         """Allows setting standard and custom variables via indexing."""
         if self._has_var(key):
-            if key in asdict(self):
-                setattr(self, key, value)
-            else:
-                self.custom_variables[key] = value
+            setattr(self, key, value)
         else:
             raise KeyError(f"Variable '{key}' not found. Must be one of {self.get_vars()}")
 
@@ -152,52 +142,6 @@ class Bathy:
         '''Pretty printing'''
         return pformat(asdict(self),width=1)
     
-
-    def _init_dims(self):
-        """Initialize standard dimensions (lat, lon, depth, time) as Variable objects."""
-        self._init_variable(var='lat', cmap=cmocean.cm.haline, units='°N', vmin=None, vmax=None)
-        self._init_variable(var='lon', cmap=cmocean.cm.thermal, units='°E', vmin=None, vmax=None)
-        self._init_variable(var='depth', cmap=cmocean.cm.deep, units='m', vmin=None, vmax=None)
-        self._init_variable(var='time', cmap=cmocean.cm.thermal, units=None, vmin=None, vmax=None)
-
-    def _format_datetime(self) -> None:
-        """Format datetime data as numpy datetime64 objects."""
-        if self.time is not None:
-            if self.time.data is not None:
-                self.time.data = self.time.data.astype('datetime64[ns]')
-
-    def _init_variable(self, var: str, cmap, units, vmin, vmax) -> None:
-        """
-        Initialize a standard variable as a Variable object.
-
-        Parameters
-        ----------
-        var : str
-            Name of the variable to initialize
-        cmap : matplotlib.colors.Colormap
-            Colormap for variable visualization
-        units : str
-            Units of the variable
-        vmin : float | None
-            Minimum value for visualization
-        vmax : float | None
-            Maximum value for visualization
-        """        
-        if self._has_var(var):
-            if not isinstance(self[var],Variable):
-                if self[var] is not None:    
-                    self[var] = Variable(
-                        data=self[var],
-                        name=var,
-                        cmap=cmap,
-                        units=units,
-                        vmin=vmin,
-                        vmax=vmax
-                    )
-        else:
-            raise ValueError(f'{var} does not exist, try using the add_custom_variable method')
-        
-
 
     def check_for_vars(self,vars:list) -> bool:
         """
@@ -218,6 +162,7 @@ class Bathy:
         ValueError
             If any required variables are missing
         """
+        # Filter out None values and variables that are already set
         vars = [var for var in vars if var is not None]
         vars = [var for var in vars if self[var] is None]
         if vars:
@@ -226,14 +171,6 @@ class Bathy:
                 "Please ensure the Data object includes data for all listed variables."
             )
         return True
-
-
-    def date2num(self) -> list:
-        """Converts time data to numerical values."""
-        if self.time is not None:
-            if self.time.data is not None:
-                return list(mdates.date2num(self.time.data))
-        else: raise ValueError('time variable not present')
 
 
     def detect_bounds(self,bounds_padding=0) -> Bounds:
