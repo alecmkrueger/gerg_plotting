@@ -1,5 +1,6 @@
 import unittest
 import numpy as np
+from pprint import pformat
 from matplotlib.colors import Colormap
 from unittest.mock import MagicMock
 
@@ -39,13 +40,29 @@ class TestBathy(unittest.TestCase):
         """Test that class init raises error when bounds not set."""
         with self.assertRaises(ValueError):
             Bathy(bounds=None)
-
-    def test_slice_var(self):
-        """Test variable slicing functionality."""
-        test_slice = slice(0, 5)
-        self.bathy.depth = np.array([1, 2, 3, 4, 5, 6])
-        result = self.bathy.slice_var('depth', test_slice)
-        np.testing.assert_array_equal(result, np.array([1, 2, 3, 4, 5]))
+        
+    def test_getitem(self):
+        """Test getting attribute values."""
+        self.assertEqual(self.bathy['resolution_level'], 5)
+        with self.assertRaises(KeyError):
+            self.bathy['nonexistent_var']
+    
+    def test_setitem(self):
+        """Test setting attribute values."""
+        self.bathy['resolution_level'] = 10
+        self.assertEqual(self.bathy.resolution_level, 10)
+        with self.assertRaises(KeyError):
+            self.bathy['nonexistent_var'] = 10
+            
+    def test_repr(self):
+        """Test string representation of Bathy object."""
+        repr_str = repr(self.bathy)
+        self.assertIsInstance(repr_str, str)
+        self.assertTrue(len(repr_str) > 0)
+        # Verify key attributes are included in the string representation
+        self.assertIn('resolution_level', repr_str)
+        self.assertIn('contour_levels', repr_str)
+        self.assertIn('bounds', repr_str)
 
     def test_has_var(self):
         """Test variable existence checking."""
