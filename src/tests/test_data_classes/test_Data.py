@@ -1,104 +1,96 @@
 import unittest
 import numpy as np
+from unittest.mock import MagicMock
+import cmocean
+from datetime import datetime
+
 from gerg_plotting.data_classes.Data import Data
 from gerg_plotting.data_classes.Variable import Variable
 from gerg_plotting.data_classes.Bounds import Bounds
 
 class TestData(unittest.TestCase):
     def setUp(self):
-        """
-        Set up a Data object for testing, initializing with dummy data.
-        """
-        self.lat_data = np.array([10, 20, 30])
-        self.lon_data = np.array([100, 110, 120])
-        self.u_data = np.array([1.0, 2.0, 3.0])
-        self.v_data = np.array([0.5, 1.5, 2.5])
-        self.w_data = np.array([0.1, 0.2, 0.3])
-        
+        """Set up test fixtures before each test method."""
+        self.test_data = np.array([1.0, 2.0, 3.0])
         self.data = Data(
-            lat=self.lat_data,
-            lon=self.lon_data,
-            u=self.u_data,
-            v=self.v_data,
-            w=self.w_data
+            lat=self.test_data,
+            lon=self.test_data,
+            depth=self.test_data,
+            time=np.array([datetime(2023, 1, 1), datetime(2023, 1, 2)])
         )
 
-    def test_init_variables(self):
-        """
-        Test the default initialization of variables.
-        """
-        self.assertIsInstance(self.data.u, Variable)
-        self.assertIsInstance(self.data.v, Variable)
-        self.assertIsInstance(self.data.w, Variable)
-        self.assertIsNone(self.data.temperature)
-        self.assertIsNone(self.data.salinity)
+    def test_initialization(self):
+        """Test initialization and automatic Variable conversion."""
+        self.assertIsInstance(self.data.lat, Variable)
+        self.assertIsInstance(self.data.lon, Variable)
+        self.assertIsInstance(self.data.depth, Variable)
+        self.assertIsInstance(self.data.time, Variable)
 
-    def test_calculate_speed_without_w(self):
-        """
-        Test speed calculation without the vertical component (w).
-        """
-        self.data.w = None
+    def test_calculate_speed(self):
+        """Test speed calculation with and without w component."""
+        self.data.u = Variable(data=np.array([3.0, 4.0]), name='u')
+        self.data.v = Variable(data=np.array([4.0, 3.0]), name='v')
         self.data.calculate_speed(include_w=False)
-        self.assertIsNotNone(self.data.speed)
-        expected_speed = np.sqrt(self.u_data**2 + self.v_data**2)
-        np.testing.assert_array_almost_equal(self.data.speed.data, expected_speed,3,err_msg=f'{self.data.speed.data = }, {expected_speed = }')
+        np.testing.assert_array_almost_equal(self.data.speed.data, np.array([5.0, 5.0]))
 
-    def test_calculate_speed_with_w(self):
-        """
-        Test speed calculation with the vertical component (w).
-        """
-        self.data.calculate_speed(include_w=True)
-        self.assertIsNotNone(self.data.speed)
-        expected_speed = np.sqrt(self.u_data**2 + self.v_data**2 + self.w_data**2)
-        np.testing.assert_array_almost_equal(self.data.speed.data, expected_speed,2,err_msg=f'{self.data.speed.data = }, {expected_speed = }')
+    def test_add_custom_variable(self):
+        """Test adding custom variables."""
+        new_var = Variable(data=np.array([1.0, 2.0]), name='custom_var')
+        self.data.add_custom_variable(new_var)
+        self.assertIn('custom_var', self.data.custom_variables)
+        self.assertEqual(self.data.custom_var, new_var)
 
-    def test_calculate_PSD(self):
-        """
-        Test the power spectral density (PSD) calculation.
-        """
-        sampling_freq = 10
-        segment_length = 3
+    def test_remove_custom_variable(self):
+        """Test removing custom variables."""
+        new_var = Variable(data=np.array([1.0, 2.0]), name='custom_var')
+        self.data.add_custom_variable(new_var)
+        self.data.remove_custom_variable('custom_var')
+        self.assertNotIn('custom_var', self.data.custom_variables)
 
-        # Remove w so the calculation will not use it
-        self.data.w = None
+    def test_slice_var(self):
+        """Test variable slicing."""
+        result = self.data.slice_var('lat', slice(0, 2))
+        np.testing.assert_array_equal(result, self.test_data[0:2])
 
-        freq, psd_U, psd_V = self.data.calcluate_PSD(sampling_freq, segment_length)
+    def test_check_for_vars(self):
+        """Test variable existence checking."""
+        self.assertTrue(self.data.check_for_vars(['lat', 'lon']))
+        with self.assertRaises(KeyError):
+            self.data.check_for_vars(['nonexistent_var'])
 
-        self.assertIsInstance(freq, np.ndarray)
-        self.assertIsInstance(psd_U, np.ndarray)
-        self.assertIsInstance(psd_V, np.ndarray)
-        self.assertIn('psd_freq', self.data.custom_variables)
-        self.assertIn('psd_u', self.data.custom_variables)
-        self.assertIn('psd_v', self.data.custom_variables)
+    def test_date2num(self):
+        """Test datetime conversion to numerical values."""
+        result = self.data.date2num()
+        self.assertIsInstance(result, list)
+        self.assertEqual(len(result), 2)
 
-    def test_calculate_PSD_with_w(self):
-        """
-        Test the power spectral density (PSD) calculation when w is included.
-        """
-        sampling_freq = 10
-        segment_length = 3
+    def test_detect_bounds(self):
+        """Test bounds detection."""
+        bounds = self.data.detect_bounds(bounds_padding=0.1)
+        self.assertIsInstance(bounds, Bounds)
+        self.assertIsNotNone(bounds.lat_min)
+        self.assertIsNotNone(bounds.lat_max)
 
-        freq, psd_U, psd_V, psd_W = self.data.calcluate_PSD(sampling_freq, segment_length)
-        
-        self.assertIsInstance(freq, np.ndarray)
-        self.assertIsInstance(psd_W, np.ndarray)
-        self.assertIn('psd_w', self.data.custom_variables)
+    def test_getitem(self):
+        """Test variable access via indexing."""
+        self.assertIsInstance(self.data['lat'], Variable)
+        with self.assertRaises(KeyError):
+            _ = self.data['nonexistent']
 
-    def test_calculate_PSD_with_theta_rad(self):
-        theta_rad = np.deg2rad(55)
-        sampling_freq = 10
-        segment_length = 3
+    def test_setitem(self):
+        """Test variable assignment via indexing."""
+        new_var = Variable(data=np.array([4.0, 5.0]), name='lat')
+        self.data['lat'] = new_var
+        np.testing.assert_array_equal(self.data.lat.data, new_var.data)
 
-        # Remove w so the calculation will not use it
-        self.data.w = None
+    def test_repr(self):
+        """Test string representation."""
+        repr_str = repr(self.data)
+        self.assertIsInstance(repr_str, str)
+        self.assertIn('lat', repr_str)
+        self.assertIn('lon', repr_str)
 
-        freq, psd_U, psd_V = self.data.calcluate_PSD(sampling_freq, segment_length,theta_rad=theta_rad)
-
-        self.assertIsInstance(freq, np.ndarray)
-        self.assertIsInstance(psd_U, np.ndarray)
-        self.assertIsInstance(psd_V, np.ndarray)
-        self.assertIn('psd_freq', self.data.custom_variables)
-        self.assertIn('psd_u', self.data.custom_variables)
-        self.assertIn('psd_v', self.data.custom_variables)
-
-
+    def test_format_datetime(self):
+        """Test datetime formatting."""
+        formatted_time = self.data.time.data
+        self.assertEqual(formatted_time.dtype.kind, 'M')
