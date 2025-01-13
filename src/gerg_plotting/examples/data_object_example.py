@@ -45,7 +45,7 @@ def data_object_example():
     # Create a new variable for Turner angle
     Turner_angle = Variable(
         name='Turner_angle',
-        data=df['Turner_angle'].values,
+        data=df['Turner_angle'],
         units='degrees',
     )
     
@@ -57,7 +57,7 @@ def data_object_example():
     from gerg_plotting.plotting_classes.Histogram import Histogram
     plot = Histogram(custom_data)
     plot.plot('temperature')
-    plot.save('example_plots/simple_temperature_histogram.png')
+    plot.save('example_plots/data_object_example.png')
     print("Created example plot: simple_temperature_histogram.png")
 
 if __name__ == "__main__":
