@@ -22,10 +22,21 @@ extensions = [
 ]
 
 autoapi_dirs = ['../../src/gerg_plotting']
+autoapi_root = '.'  
+
+autoapi_options = [
+    "members",
+    "undoc-members",
+    "show-inheritance",
+    "show-module-summary",
+    "imported-members",
+]
 
 autodoc_default_options = {'inherited-members': True}
 
-autoapi_member_order = ['groupwise']
+autodoc_typehints = "signature"
+
+autoapi_member_order = 'alphabetical'
 
 templates_path = ['_templates']
 exclude_patterns = []
