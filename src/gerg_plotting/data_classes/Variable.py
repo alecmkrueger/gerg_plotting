@@ -3,6 +3,7 @@ from matplotlib.colors import Colormap
 from typing import Iterable
 import numpy as np
 from pprint import pformat
+from datetime import datetime
 
 from gerg_plotting.modules.validations import is_flat_numpy_array
 from gerg_plotting.modules.utilities import to_numpy_array
@@ -94,7 +95,69 @@ class Variable():
             setattr(self, key, value)
         else:
             raise KeyError(f"Attribute '{key}' not found")
+
+    def format_value(self,value):
+        if isinstance(value, float):
+            return f"{value:.6f}"
+        elif isinstance(value, np.datetime64):
+            value = value.astype('M8[ms]').astype(datetime)
+            return f"{value:%y-%m-%d %H:%M:%S}"
+        elif isinstance(value, datetime):
+            return f"{value:%y-%m-%d %H:%M:%S}"
+        elif isinstance(value,Colormap):
+            return f"{value.name}"
+        else:
+            return str(value)
+                    
+    def _repr_html_(self) -> str:
+        # Get all attributes except data
+        attrs = self.get_attrs()
+        attrs.remove('data')
         
+        # Calculate width needed for data column
+        sample_data = [self.format_value(x) for x in self.data[:5]]
+        max_data_width = max(len(str(x)) for x in sample_data) if sample_data else 0
+        # Add padding and constrain between min and max values
+        data_width = min(max(max_data_width * 8, 100), 200)  # Min 100px, Max 200px
+        
+        html = f'<td style="padding:0 0px;vertical-align:top">'
+        html += f'<table style="table-layout:fixed;width:{data_width + 90}px"><tbody>'
+        
+        # Add subheaders
+        html += f'''
+        <tr>
+            <th style="width:80px;padding:0;text-align:center;border-bottom:1px solid #ddd">Attribute</th>
+            <th style="width:{data_width}px;padding:0;text-align:center;border-bottom:1px solid #ddd">Value</th>
+        </tr>
+        '''
+        
+        # Add attributes in two columns with dynamic width
+        for attr in attrs:
+            value = getattr(self, attr)
+            html += f'''
+            <tr>
+                <td style="padding-right:10px;width:80px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><strong>{attr}</strong></td>
+                <td style="text-align:center;width:{data_width}px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{self.format_value(value)}</td>
+            </tr>
+            '''
+        
+        html += f'''<tr><td colspan="2" style="text-align:center"><strong>Data</strong></td></tr>'''
+        
+        # Add data values with indices
+        for i in range(min(5, len(self.data))):
+            html += f'''
+            <tr>
+                <td style="padding-right:10px;width:80px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><strong>{i}</strong></td>
+                <td style="text-align:left;width:{data_width}px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{self.format_value(self.data[i])}</td>
+            </tr>
+            '''
+        
+        html += f'<tr><td colspan="2">... Length: {len(self.data)}</td></tr>'
+        html += '</tbody></table></td>'
+        
+        return html
+
+
 
     def __repr__(self) -> None:
         '''Pretty printing'''
@@ -131,6 +194,9 @@ class Variable():
             if self.vmax is None or ignore_existing:
                 self.vmax = np.nanpercentile(self.data, 99)  # 99th percentile (upper 1%)
 
+    def reset_label(self) -> None:
+        """Reset the label to the variable name."""
+        self.label = None
 
     def get_label(self) -> str:
         """

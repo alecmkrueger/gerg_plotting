@@ -56,7 +56,7 @@ class Data:
     cdom : Iterable, Variable, or None, optional
         CDOM data, in ppb, with optional colormap and range specifications.
     turbidity : Iterable, Variable, or None, optional
-        Turbidity data, in m-1 sr-1, with optional colormap and range specifications.
+        Turbidity data, dimensionless, with optional colormap and range specifications.
     bounds : Bounds
         Spatial bounds of the data.
     """
@@ -110,7 +110,7 @@ class Data:
         self._init_variable(var='speed', cmap=cmocean.cm.speed, units="m/s", vmin=None, vmax=None)
         self._init_variable(var='cdom', cmap=cmocean.cm.matter, units="ppb", vmin=None, vmax=None)
         self._init_variable(var='chlor', cmap=cmocean.cm.algae, units="μg/L", vmin=None, vmax=None)
-        self._init_variable(var='turbidity', cmap=cmocean.cm.turbid, units="m-1 sr-1", vmin=None, vmax=None)
+        self._init_variable(var='turbidity', cmap=cmocean.cm.turbid, units=None, vmin=None, vmax=None)
 
 
     def calculate_speed(self,include_w:bool=False) -> None:
@@ -203,10 +203,18 @@ class Data:
         return key in asdict(self).keys() or key in self.custom_variables
     
 
-    def get_vars(self) -> list:
+    def get_vars(self,have_data:bool|None=None) -> list:
         """Gets a list of all available variables."""
         vars = list(asdict(self).keys()) + list(self.custom_variables.keys())
         vars = [var for var in vars if var!='custom_variables']
+        # Skip checking if have_data is None
+        if have_data is None:
+            return vars
+        # Filter based on if the variable has data or not
+        if have_data:
+            vars = [var for var in vars if isinstance(self[var],Variable)]
+        elif not have_data:
+            vars = [var for var in vars if self[var] is None]
         return vars
 
 
@@ -226,7 +234,7 @@ class Data:
             return self_copy
         elif self._has_var(key):
             return getattr(self, key, self.custom_variables.get(key))
-        raise KeyError(f"Variable '{key}' not found. Must be one of {self.get_vars()}")    
+        raise KeyError(f"Variable '{key}' not found. Must be one of {self.get_vars()}, a slice, or list of indices")    
 
 
     def __setitem__(self, key, value) -> None:
@@ -244,6 +252,31 @@ class Data:
         '''Pretty printing'''
         return pformat(asdict(self),width=1)
     
+
+    def _repr_html_(self) -> str:
+        vars_to_show = [var for var in self.get_vars() 
+                        if isinstance(self[var], Variable)]
+        
+        html = '''
+        <div style="max-height:1000px;max-width:1500px;overflow:auto;">
+        <table style="border:none;border-collapse:collapse">
+        <thead><tr>
+        '''
+        
+        # Add variable names as headers
+        for var in vars_to_show:
+            html += f'<th style="padding:0;text-align:center;border-bottom:2px solid #ddd">{var}</th>'
+        
+        html += '</tr></thead><tbody><tr>'
+        
+        # Add variable contents
+        for var in vars_to_show:
+            html += self[var]._repr_html_()
+        
+        html += '</tr></tbody></table></div>'
+        return html
+
+
 
     def _init_dims(self):
         """Initialize standard dimensions (lat, lon, depth, time) as Variable objects."""
