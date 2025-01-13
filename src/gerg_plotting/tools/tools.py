@@ -188,7 +188,7 @@ def _map_variables(keys:list[str], values:list[str], synonyms:dict[str,list[str]
 
 
 
-def _get_var_mapping(column_names:list,provided_map:None|dict) -> dict:
+def _get_var_mapping(column_names:list,provided_map:None|dict=None) -> dict:
     """
     Create variable mapping from DataFrame columns.
 
