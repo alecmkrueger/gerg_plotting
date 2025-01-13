@@ -139,7 +139,7 @@ class ScatterPlot(Plotter):
         return sc   
   
     
-    def hovmoller(self, var: str, fig=None, ax=None) -> None:
+    def hovmoller(self, var: str, fig=None, ax=None,**kwargs) -> None:
         """
         Create depth vs time plot colored by variable.
 
@@ -151,12 +151,14 @@ class ScatterPlot(Plotter):
             Figure to plot on
         ax : matplotlib.axes.Axes, optional
             Axes to plot on
+        **kwargs
+            Additional arguments for scatter plot
         """
         sc = self.scatter(x='time',
                           y='depth',
                           color_var=var,
                           invert_yaxis=True,
-                          ax=ax, fig=fig)
+                          ax=ax, fig=fig,**kwargs)
         
         locator = mdates.AutoDateLocator()
         formatter = mdates.AutoDateFormatter(locator)
@@ -198,7 +200,6 @@ class ScatterPlot(Plotter):
         self.ax.yaxis.set_major_locator(MaxNLocator(nbins=8))
 
         
-
     def get_density_color_data(self, color_var: str) -> np.ndarray:
         """
         Get color data for density plotting.
@@ -390,7 +391,7 @@ class ScatterPlot(Plotter):
             self.ax.legend()
         self.fig.suptitle(f'Power Spectra Density',fontsize=22)
 
-    def tricontourf(self,x:str,y:str,z:str,fig=None,ax=None):
+    def tricontourf(self,x:str,y:str,z:str,fig=None,ax=None,levels=None):
         """
         Create filled contour plot of irregular grid data.
 
@@ -406,11 +407,13 @@ class ScatterPlot(Plotter):
             Figure to plot on
         ax : matplotlib.axes.Axes, optional
             Axes to plot on
+        levels : int, optional
+            Number of contour levels
         """
         # Check if vars are present
         self.data.check_for_vars([x,y,z])
         self.init_figure(fig=fig,ax=ax)
-        self.ax.tricontourf(self.data[x].data,self.data[y].data,self.data[z].data,cmap=self.data[z].cmap)
+        self.ax.tricontourf(self.data[x].data,self.data[y].data,self.data[z].data,cmap=self.data[z].cmap,levels=levels)
         self.format_axes(xlabel=self.data[x].get_label(),ylabel=self.data[y].get_label())
 
 
