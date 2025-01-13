@@ -188,7 +188,7 @@ def _map_variables(keys:list[str], values:list[str], synonyms:dict[str,list[str]
 
 
 
-def _get_var_mapping(df:pd.DataFrame) -> dict:
+def _get_var_mapping(column_names:list,provided_map:None|dict) -> dict:
     """
     Create variable mapping from DataFrame columns.
 
@@ -202,8 +202,8 @@ def _get_var_mapping(df:pd.DataFrame) -> dict:
     dict
         Mapping of standard variable names to DataFrame columns
     """
-    keys = ['lat', 'lon', 'depth', 'time', 'temperature', 'salinity', 'density', 'u', 'v','w', 'speed']
-    values = df.columns.tolist()
+    keys = ['lat', 'lon', 'depth', 'time', 'temperature', 'salinity', 'density', 'u', 'v','w', 'speed','cdom','chlor','turbidity']
+    values = column_names
     synonyms = {
         'depth': ['pressure', 'pres'],
         'temperature': ['temp', 'temperature_measure'],
@@ -212,13 +212,21 @@ def _get_var_mapping(df:pd.DataFrame) -> dict:
         'u': ['eastward_velocity', 'u_component', 'u_current', 'current_u'],
         'v': ['northward_velocity', 'v_component', 'v_current', 'current_v'],
         'w': ['downward_velocity','upward_velocity','w_component', 'w_current', 'current_w'],
-        's': ['combined_velocity','velocity','speed', 's_current', 'current_s']
+        's': ['combined_velocity','velocity','speed', 's_current', 'current_s'],
+        'cdom': ['cdom_concentration','cdom_concentration_measure','sci_flbbcd_cdom_units'],
+        'chlor': ['chlorophyll_concentration','chlorophyll_concentration_measure','sci_flbbcd_chlor_units'],
+        'turbidity': ['turbidity_measure','turbidity_units','turbidity','sci_flbbcd_bb_units'],
     }
     blocklist = {
-        's': ['sound','pres']
+        's': ['sound','pres'],
+        'lat':['platform']
     }
 
     mapped_variables = _map_variables(keys, values, synonyms, blocklist)
+    
+    # Update the mapping with provided values
+    if provided_map is not None:
+        mapped_variables.update(provided_map)
 
     return mapped_variables
 
@@ -280,9 +288,8 @@ def data_from_df(df:pd.DataFrame,mapped_variables:dict|None=None,**kwargs):
     Data
         Initialized Data object
     """
-    # If the user does not pass mapped_variables
-    if mapped_variables is None:
-        mapped_variables = _get_var_mapping(df)
+    # Get variable mapping
+    mapped_variables = _get_var_mapping(df.columns.tolist(),mapped_variables)
 
     mapped_variables = {key:df[value] for key,value in mapped_variables.items() if value is not None}
 
@@ -313,4 +320,33 @@ def data_from_csv(filename:str,mapped_variables:dict|None=None,**kwargs):
 
     data = data_from_df(df,mapped_variables=mapped_variables,**kwargs)
 
+    return data
+
+
+def data_from_ds(ds:xr.Dataset,mapped_variables:dict|None=None,**kwargs):
+    """
+    Create Data object from xarray Dataset.
+    """
+    mapped_variables = _get_var_mapping(ds.variables.keys(),mapped_variables)
+            
+    # Extract the data from the dataset    
+    mapped_variables = {key:ds[value].values for key,value in mapped_variables.items() if value is not None}
+    
+    
+    data = Data(**mapped_variables,**kwargs)
+    
+    return data
+
+
+def data_from_netcdf(filename:str,mapped_variables:dict|None=None,interp_glider:bool=False,**kwargs):
+    """
+    Create Data object from NetCDF file.
+    """
+    ds = xr.open_dataset(filename)
+    
+    if interp_glider:
+        ds = interp_glider_lat_lon(ds)
+    
+    data = data_from_ds(ds,mapped_variables=mapped_variables,**kwargs)
+    
     return data
