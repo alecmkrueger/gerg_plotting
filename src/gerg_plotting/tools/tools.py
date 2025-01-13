@@ -323,30 +323,53 @@ def data_from_csv(filename:str,mapped_variables:dict|None=None,**kwargs):
     return data
 
 
-def data_from_ds(ds:xr.Dataset,mapped_variables:dict|None=None,**kwargs):
+def data_from_ds(ds: xr.Dataset, mapped_variables: dict | None = None, **kwargs):
     """
     Create Data object from xarray Dataset.
+
+    Parameters
+    ----------
+    ds : xarray.Dataset
+        Input dataset to convert
+    mapped_variables : dict or None, optional
+        Dictionary mapping variable names to dataset variables
+    **kwargs
+        Additional keyword arguments passed to Data constructor
+
+    Returns
+    -------
+    Data
+        New Data object containing the dataset variables
     """
-    mapped_variables = _get_var_mapping(ds.variables.keys(),mapped_variables)
-            
-    # Extract the data from the dataset    
-    mapped_variables = {key:ds[value].values for key,value in mapped_variables.items() if value is not None}
-    
-    
-    data = Data(**mapped_variables,**kwargs)
-    
+    mapped_variables = _get_var_mapping(ds.variables.keys(), mapped_variables)
+    mapped_variables = {key: ds[value].values for key, value in mapped_variables.items() if value is not None}
+    data = Data(**mapped_variables, **kwargs)
     return data
 
 
-def data_from_netcdf(filename:str,mapped_variables:dict|None=None,interp_glider:bool=False,**kwargs):
+def data_from_netcdf(filename: str, mapped_variables: dict | None = None, interp_glider: bool = False, **kwargs):
     """
     Create Data object from NetCDF file.
+
+    Parameters
+    ----------
+    filename : str
+        Path to NetCDF file
+    mapped_variables : dict or None, optional
+        Dictionary mapping variable names to dataset variables  
+    interp_glider : bool, optional
+        Whether to interpolate glider lat/lon positions
+    **kwargs
+        Additional keyword arguments passed to Data constructor
+
+    Returns
+    -------
+    Data
+        New Data object containing the NetCDF variables
     """
     ds = xr.open_dataset(filename)
-    
     if interp_glider:
         ds = interp_glider_lat_lon(ds)
-    
-    data = data_from_ds(ds,mapped_variables=mapped_variables,**kwargs)
-    
+    data = data_from_ds(ds, mapped_variables=mapped_variables, **kwargs)
     return data
+
