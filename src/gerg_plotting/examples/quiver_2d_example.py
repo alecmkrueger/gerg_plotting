@@ -1,5 +1,5 @@
-from gerg_plotting import data_from_csv,ScatterPlot
-import matplotlib.pyplot as plt
+from gerg_plotting.plotting_classes import ScatterPlot
+from gerg_plotting.tools import data_from_csv
 
 
 def quiver_2d_example():

@@ -1,4 +1,5 @@
-from gerg_plotting import Data, Variable, data_from_csv
+from gerg_plotting.data_classes import Data, Variable
+from gerg_plotting.tools import data_from_csv
 import pandas as pd
 import cmocean
 

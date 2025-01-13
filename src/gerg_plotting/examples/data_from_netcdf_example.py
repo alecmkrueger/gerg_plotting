@@ -1,6 +1,5 @@
 from gerg_plotting.tools.tools import data_from_netcdf
-from gerg_plotting.plotting_classes.Histogram import Histogram
-from gerg_plotting.plotting_classes.ScatterPlot import ScatterPlot
+from gerg_plotting.plotting_classes import Histogram, ScatterPlot
 
 import xarray as xr
 

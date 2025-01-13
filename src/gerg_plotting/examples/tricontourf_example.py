@@ -1,5 +1,5 @@
-from gerg_plotting.plotting_classes.ScatterPlot import ScatterPlot
-from gerg_plotting.tools.tools import data_from_csv
+from gerg_plotting.plotting_classes import ScatterPlot
+from gerg_plotting.tools import data_from_csv
 
 
 def tricontourf_example():

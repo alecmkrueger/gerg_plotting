@@ -1,5 +1,5 @@
-from gerg_plotting import Data,Variable
-from gerg_plotting import Histogram
+from gerg_plotting.data_classes import Data,Variable
+from gerg_plotting.plotting_classes import Histogram
 import numpy as np
 
 

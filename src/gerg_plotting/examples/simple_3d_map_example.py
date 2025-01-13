@@ -1,4 +1,5 @@
-from gerg_plotting import ScatterPlot3D,data_from_csv
+from gerg_plotting.plotting_classes import ScatterPlot3D
+from gerg_plotting.tools import data_from_csv
 
 
 def simple_3d_map_example():

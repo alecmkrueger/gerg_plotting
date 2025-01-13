@@ -1,4 +1,6 @@
-from gerg_plotting import Histogram,Variable,data_from_df
+from gerg_plotting.plotting_classes import Histogram
+from gerg_plotting.data_classes import Variable
+from gerg_plotting.tools import data_from_df
 from gerg_plotting.modules.plotting import get_turner_cmap
 import pandas as pd
 from pathlib import Path

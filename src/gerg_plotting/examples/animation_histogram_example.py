@@ -1,4 +1,6 @@
-from gerg_plotting import Data,Histogram,Animator,cmocean
+from gerg_plotting.data_classes import Data
+from gerg_plotting.plotting_classes import Histogram, Animator
+import cmocean
 import numpy as np
 import matplotlib.pyplot as plt
 from pathlib import Path

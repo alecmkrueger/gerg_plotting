@@ -1,4 +1,6 @@
-from gerg_plotting import ScatterPlot3D,Bathy,data_from_csv
+from gerg_plotting.plotting_classes import ScatterPlot3D
+from gerg_plotting.data_classes import Bathy
+from gerg_plotting.tools import data_from_csv
 
 def custom_3d_bathy_example():
     # Let's read in the example data

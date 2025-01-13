@@ -1,4 +1,5 @@
-from gerg_plotting import ScatterPlot,data_from_csv
+from gerg_plotting.plotting_classes import ScatterPlot
+from gerg_plotting.tools import data_from_csv
 
 def TS_example():
     # Let's read in the example data

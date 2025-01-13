@@ -22,7 +22,7 @@ extensions = [
 ]
 
 autoapi_dirs = ['../../src/gerg_plotting']
-autoapi_root = '.'  
+# autoapi_root = '.'  
 
 autoapi_options = [
     "members",
@@ -38,14 +38,12 @@ autodoc_typehints = "signature"
 
 autoapi_member_order = 'alphabetical'
 
-templates_path = ['_templates']
 exclude_patterns = []
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
 html_theme = 'sphinx_rtd_theme'
-html_static_path = ['_static']
 
 # Napoleon settings
 napoleon_numpy_docstring = True
