@@ -168,7 +168,13 @@ class TestData(unittest.TestCase):
     def test_getitem_slice(self):
         """Test variable slicing via indexing."""
         result = self.data[0:2]
-        np.testing.assert_array_equal(result.lat.data, self.test_data[0:2],f'{result.lat}')
+        np.testing.assert_array_equal(result.lat.data, self.test_data[0:2])
+
+    def test_getitem_list(self):
+        """Test variable slicing via indexing."""
+        result = self.data[[0, 1]]
+        np.testing.assert_array_equal(result.lat.data, self.test_data[0:2])
+        np.testing.assert_array_equal(result.lon.data, self.test_data[0:2])
 
     def test_setitem(self):
         """Test variable assignment via indexing."""
