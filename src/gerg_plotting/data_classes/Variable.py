@@ -96,7 +96,7 @@ class Variable():
         else:
             raise KeyError(f"Attribute '{key}' not found")
 
-    def format_value(self,value):
+    def _format_value(self,value):
         if isinstance(value, float):
             return f"{value:.6f}"
         elif isinstance(value, np.datetime64):
@@ -115,7 +115,7 @@ class Variable():
         attrs.remove('data')
         
         # Calculate width needed for data column
-        sample_data = [self.format_value(x) for x in self.data[:5]]
+        sample_data = [self._format_value(x) for x in self.data[:5]]
         max_data_width = max(len(str(x)) for x in sample_data) if sample_data else 0
         # Add padding and constrain between min and max values
         data_width = min(max(max_data_width * 8, 100), 200)  # Min 100px, Max 200px
@@ -137,7 +137,7 @@ class Variable():
             html += f'''
             <tr>
                 <td style="padding-right:10px;width:80px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><strong>{attr}</strong></td>
-                <td style="text-align:center;width:{data_width}px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{self.format_value(value)}</td>
+                <td style="text-align:center;width:{data_width}px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{self._format_value(value)}</td>
             </tr>
             '''
         
@@ -148,7 +148,7 @@ class Variable():
             html += f'''
             <tr>
                 <td style="padding-right:10px;width:80px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><strong>{i}</strong></td>
-                <td style="text-align:left;width:{data_width}px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{self.format_value(self.data[i])}</td>
+                <td style="text-align:left;width:{data_width}px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{self._format_value(self.data[i])}</td>
             </tr>
             '''
         
