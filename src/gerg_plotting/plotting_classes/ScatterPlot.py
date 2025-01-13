@@ -137,6 +137,7 @@ class ScatterPlot(Plotter):
         self.format_axes(xlabel=self.data[x].get_label(),ylabel=self.data[y].get_label(),zlabel=self.data[z].get_label(),invert_yaxis=invert_yaxis)
 
         return sc   
+  
     
     def hovmoller(self, var: str, fig=None, ax=None) -> None:
         """
