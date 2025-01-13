@@ -51,6 +51,12 @@ class Data:
         Vertical velocity (w-component) in m/s, with optional colormap and range specifications.
     speed : Iterable, Variable, or None, optional
         Speed data, derived or directly assigned, in m/s, with optional colormap and range specifications.
+    chlor : Iterable, Variable, or None, optional
+        Chlorophyll data, in μg/L, with optional colormap and range specifications.
+    cdom : Iterable, Variable, or None, optional
+        CDOM data, in ppb, with optional colormap and range specifications.
+    turbidity : Iterable, Variable, or None, optional
+        Turbidity data, in m-1 sr-1, with optional colormap and range specifications.
     bounds : Bounds
         Spatial bounds of the data.
     """
@@ -67,6 +73,9 @@ class Data:
     v: Iterable|Variable|None = field(default=None)
     w: Iterable|Variable|None = field(default=None)
     speed: Iterable|Variable|None = field(default=None)
+    cdom: Iterable|Variable|None = field(default=None)
+    chlor: Iterable|Variable|None = field(default=None)
+    turbidity: Iterable|Variable|None = field(default=None)
 
     # Bounds
     bounds:Bounds = field(default=None)
@@ -99,6 +108,9 @@ class Data:
         self._init_variable(var='v', cmap=cmocean.cm.balance, units="m/s", vmin=None, vmax=None)
         self._init_variable(var='w', cmap=cmocean.cm.balance, units="m/s", vmin=None, vmax=None)
         self._init_variable(var='speed', cmap=cmocean.cm.speed, units="m/s", vmin=None, vmax=None)
+        self._init_variable(var='cdom', cmap=cmocean.cm.matter, units="ppb", vmin=None, vmax=None)
+        self._init_variable(var='chlor', cmap=cmocean.cm.algae, units="μg/L", vmin=None, vmax=None)
+        self._init_variable(var='turbidity', cmap=cmocean.cm.turbid, units="m-1 sr-1", vmin=None, vmax=None)
 
 
     def calculate_speed(self,include_w:bool=False) -> None:
