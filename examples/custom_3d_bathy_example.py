@@ -1,3 +1,10 @@
+"""
+Custom 3D Bathy Example
+===================================
+
+Example description
+
+"""
 from gerg_plotting.plotting_classes import ScatterPlot3D
 from gerg_plotting.data_classes import Bathy
 from gerg_plotting.tools import data_from_csv

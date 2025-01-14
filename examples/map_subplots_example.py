@@ -1,3 +1,10 @@
+"""
+Map Subplots Example
+===================================
+
+Example description
+
+"""
 from gerg_plotting.plotting_classes import MapPlot
 from gerg_plotting.data_classes import Bounds,Variable
 from gerg_plotting.tools import data_from_df

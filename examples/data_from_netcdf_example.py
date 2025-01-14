@@ -1,3 +1,10 @@
+"""
+Data From Netcdf Example
+===================================
+
+Example description
+
+"""
 from gerg_plotting.tools.tools import data_from_netcdf
 from gerg_plotting.plotting_classes import Histogram, ScatterPlot
 

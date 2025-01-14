@@ -1,3 +1,10 @@
+"""
+Data Object Example
+===================================
+
+Example description
+
+"""
 from gerg_plotting.data_classes import Data, Variable
 from gerg_plotting.tools import data_from_csv
 import pandas as pd

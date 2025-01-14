@@ -1,3 +1,10 @@
+"""
+Simple Scatter Plot Example
+===================================
+
+Example description
+
+"""
 from gerg_plotting.plotting_classes import ScatterPlot
 from gerg_plotting.tools import data_from_csv
 

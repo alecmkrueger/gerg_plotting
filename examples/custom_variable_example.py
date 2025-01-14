@@ -1,3 +1,10 @@
+"""
+Custom Variable Example
+===================================
+
+Example description
+
+"""
 from gerg_plotting.plotting_classes import Histogram
 from gerg_plotting.data_classes import Variable
 from gerg_plotting.tools import data_from_df

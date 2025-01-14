@@ -1,3 +1,10 @@
+"""
+Simple 3D Map Example
+===================================
+
+Example description
+
+"""
 from gerg_plotting.plotting_classes import ScatterPlot3D
 from gerg_plotting.tools import data_from_csv
 

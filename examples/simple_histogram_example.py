@@ -1,3 +1,10 @@
+"""
+Simple Histogram Example
+===================================
+
+Example description
+
+"""
 from gerg_plotting.plotting_classes import Histogram
 from gerg_plotting.data_classes import Data
 import numpy as np

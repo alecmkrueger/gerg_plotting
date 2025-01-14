@@ -1,3 +1,10 @@
+"""
+Coverage Plot Example
+===================================
+
+Example description
+
+"""
 from gerg_plotting.plotting_classes import CoveragePlot
 from gerg_plotting.tools.tools import custom_legend_handles
 
