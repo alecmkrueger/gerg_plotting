@@ -15,16 +15,29 @@ author = 'Alec Krueger'
 
 extensions = [
     'matplotlib.sphinxext.plot_directive',
+    'sphinx_gallery.gen_gallery',
     'autoapi.extension',
 ]
 
 # -- Plot settings -----------------------------------------------------------
-# Add matplotlib settings
-import matplotlib
-matplotlib.use('Agg')
+from sphinx.builders.html import StandaloneHTMLBuilder
+StandaloneHTMLBuilder.supported_image_types = [
+    'image/svg+xml',
+    'image/gif',
+    'image/png',
+    'image/jpeg'
+]
 plot_include_source = True
 plot_html_show_source_link = False
 plot_formats = ['png','gif']
+
+# -- Gallery settings ---------------------------------------------------------
+
+sphinx_gallery_conf = {
+    'image_scrapers': ('pyvista', 'matplotlib'),
+    'examples_dirs': '../../examples',   # path to your example scripts
+    'gallery_dirs': 'auto_examples',  # path to where to save gallery generated output
+}
 
 # -- AutoAPI settings -------------------------------------------------------
 autoapi_dirs = ['../../src/gerg_plotting','../../src/examples']
