@@ -14,15 +14,11 @@ author = 'Alec Krueger'
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
-    'sphinx.ext.autodoc',
-    'sphinx.ext.viewcode',
-    'sphinx.ext.todo',
     'autoapi.extension',
-    'sphinx.ext.inheritance_diagram'
 ]
 
 # -- AutoAPI settings -------------------------------------------------------
-autoapi_dirs = ['../../src/gerg_plotting']
+autoapi_dirs = ['../../src/gerg_plotting','../../src/examples']
 autoapi_template_dir = '../_templates'
 
 autoapi_options = [
@@ -39,7 +35,6 @@ autodoc_typehints = "signature"
 
 autoapi_member_order = 'alphabetical'
 
-exclude_patterns = []
 
 # Parse docstrings using the NumPy format
 napoleon_numpy_docstring = True

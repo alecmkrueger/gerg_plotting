@@ -9,13 +9,10 @@ def data_from_netcdf_example():
         
     hist = Histogram(data)
     hist.plot('lat')
-    hist.show()
 
     scatter = ScatterPlot(data)
     scatter.hovmoller('temperature')
-    scatter.show()
     scatter.hovmoller('chlor')
-    scatter.show()
 
 if __name__ == "__main__":
     data_from_netcdf_example()
