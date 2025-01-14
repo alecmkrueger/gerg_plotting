@@ -6,6 +6,17 @@ import cmocean
 def data_object_example():
     """
     Simple example showing the three main ways to create a data object
+
+    Source Code
+    ~~~~~~~~~~
+    .. literalinclude:: ../../../src\examples\data_object_example.py
+       :language: python
+
+    Output
+    ~~~~~~
+    .. image:: ../../../src\examples\data_object_example.png
+       :width: 600
+    
     """
     # Load data from CSV file
     df = pd.read_csv('example_data/sample_glider_data.csv')

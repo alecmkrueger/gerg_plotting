@@ -5,6 +5,20 @@ import matplotlib.pyplot as plt
 
 
 def coverage_plot_example():
+    """
+    Coverage Plot Example
+    -----------
+    Source Code
+    ~~~~~~~~~~
+    .. literalinclude:: ../../../src\examples\coverage_plot_example.py
+       :language: python
+
+    Output
+    ~~~~~~
+    .. image:: ../../../src\examples\coverage_plot_example.png
+       :width: 600
+    
+    """
     cmap = plt.get_cmap('tab20')
     domains = ['Regional_Local', 'All', 'Local', 'Basin_Regional', 'Basin_Local', 'Basin', 'Regional']
     colors_light = [cmap(15),cmap(5),cmap(3),cmap(1),'yellow','pink','gold']

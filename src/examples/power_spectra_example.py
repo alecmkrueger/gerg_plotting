@@ -6,6 +6,20 @@ import numpy as np
 
 
 def power_spectra_example():
+    """
+    Power Spectra Example
+    -----------
+    Source Code
+    ~~~~~~~~~~
+    .. literalinclude:: ../../../src\examples\power_spectra_example.py
+       :language: python
+
+    Output
+    ~~~~~~
+    .. image:: ../../../src\examples\power_spectra_example.png
+       :width: 600
+    
+    """
     # Let's read in the example data
     df = pd.read_csv('example_data/sample_tabs_data.csv')
 

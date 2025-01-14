@@ -7,6 +7,20 @@ from pathlib import Path
 
 
 def animation_histogram_example():
+    """
+    Animation Histogram Example
+    -----------
+    Source Code
+    ~~~~~~~~~~
+    .. literalinclude:: ../../../src\examples\animation_histogram_example.py
+       :language: python
+
+    Output
+    ~~~~~~
+    .. image:: ../../../src\examples\animation_histogram_example.png
+       :width: 600
+    
+    """
     # Let's make some example data
     n_points = 10000
     data = Data(temperature=np.random.normal(28,size=n_points))
