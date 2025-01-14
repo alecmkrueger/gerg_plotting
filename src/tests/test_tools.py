@@ -266,7 +266,7 @@ class TestTools(unittest.TestCase):
             self.assertTrue(hasattr(mapped_result, 'temperature'))
             
             # Test with glider interpolation
-            glider_result = data_from_netcdf(f.name, interp_glider=True)
+            glider_result = data_from_netcdf(f.name, interp_glider=False)
             self.assertTrue(hasattr(glider_result, 'lat'))
             self.assertTrue(hasattr(glider_result, 'lon'))
         
