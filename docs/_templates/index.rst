@@ -8,4 +8,12 @@ API Reference
    {{ page.include_path }}
    {% endfor %}
 
-.. [#f1] Created with `sphinx-autoapi <https://github.com/readthedocs/sphinx-autoapi>`_
+
+Examples
+=============
+
+.. toctree::
+   :titlesonly:
+   {% for page in pages|selectattr("is_example") %}
+   {{ page.include_path }}
+   {% endfor %}
