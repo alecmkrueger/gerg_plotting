@@ -14,8 +14,17 @@ author = 'Alec Krueger'
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
+    'matplotlib.sphinxext.plot_directive',
     'autoapi.extension',
 ]
+
+# -- Plot settings -----------------------------------------------------------
+# Add matplotlib settings
+import matplotlib
+matplotlib.use('Agg')
+plot_include_source = True
+plot_html_show_source_link = False
+plot_formats = ['png','gif']
 
 # -- AutoAPI settings -------------------------------------------------------
 autoapi_dirs = ['../../src/gerg_plotting','../../src/examples']
@@ -41,4 +50,3 @@ napoleon_numpy_docstring = True
 
 # -- Options for HTML output -------------------------------------------------
 html_theme = 'pydata_sphinx_theme'
-
