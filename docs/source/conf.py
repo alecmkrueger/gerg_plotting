@@ -21,8 +21,9 @@ extensions = [
     'sphinx.ext.inheritance_diagram'
 ]
 
+# -- AutoAPI settings -------------------------------------------------------
 autoapi_dirs = ['../../src/gerg_plotting']
-# autoapi_root = '.'  
+autoapi_template_dir = '../_templates'
 
 autoapi_options = [
     "members",
@@ -40,10 +41,9 @@ autoapi_member_order = 'alphabetical'
 
 exclude_patterns = []
 
-# -- Options for HTML output -------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
-
-html_theme = 'sphinx_rtd_theme'
-
-# Napoleon settings
+# Parse docstrings using the NumPy format
 napoleon_numpy_docstring = True
+
+# -- Options for HTML output -------------------------------------------------
+html_theme = 'pydata_sphinx_theme'
+
