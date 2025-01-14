@@ -13,7 +13,9 @@ from gerg_plotting.tools.tools import (
     data_from_df,
     custom_legend_handles,
     interp_glider_lat_lon,
-    data_from_csv
+    data_from_csv,
+    data_from_ds,
+    data_from_netcdf
 )
 
 class TestTools(unittest.TestCase):
@@ -212,4 +214,62 @@ class TestTools(unittest.TestCase):
             self.assertTrue(hasattr(mapped_result, 'temperature'))
         
         os.remove(f.name)
+        
+    def test_data_from_ds(self):
+        # Create test xarray dataset
+        ds = xr.Dataset(
+            {
+                'latitude': ('time', [25.0, 26.0, 27.0]),
+                'longitude': ('time', [-90.0, -91.0, -92.0]),
+                'temperature': ('time', [20.0, 21.0, 22.0]),
+                'depth': ('time', [100, 200, 300]),
+                'time': pd.date_range('2023-01-01', '2023-01-03')
+            }
+        )
+        
+        # Test with automatic variable mapping
+        result = data_from_ds(ds)
+        self.assertTrue(hasattr(result, 'lat'))
+        self.assertTrue(hasattr(result, 'lon'))
+        self.assertTrue(hasattr(result, 'temperature'))
+        self.assertTrue(hasattr(result, 'depth'))
+        self.assertTrue(hasattr(result, 'time'))
+        
+        # Test with custom mapping
+        custom_mapping = {'temperature': 'temperature', 'depth': 'depth'}
+        result_custom = data_from_ds(ds, mapped_variables=custom_mapping)
+        self.assertTrue(hasattr(result_custom, 'temperature'))
+        self.assertTrue(hasattr(result_custom, 'depth'))
+
+    def test_data_from_netcdf(self):
+        # Create temporary NetCDF file
+        ds = xr.Dataset(
+            {
+                'latitude': ('time', [25.0, 26.0, 27.0]),
+                'longitude': ('time', [-90.0, -91.0, -92.0]),
+                'temperature': ('time', [20.0, 21.0, 22.0])
+            },
+            coords={'time': pd.date_range('2023-01-01', '2023-01-03')}
+        )
+        
+        with tempfile.NamedTemporaryFile(suffix='.nc', delete=False) as f:
+            ds.to_netcdf(f.name)
+            
+            # Test reading from NetCDF
+            result = data_from_netcdf(f.name)
+            self.assertTrue(hasattr(result, 'lat'))
+            self.assertTrue(hasattr(result, 'lon'))
+            self.assertTrue(hasattr(result, 'temperature'))
+            
+            # Test with custom mapping
+            mapped_result = data_from_netcdf(f.name, mapped_variables={'temperature': 'temperature'})
+            self.assertTrue(hasattr(mapped_result, 'temperature'))
+            
+            # Test with glider interpolation
+            glider_result = data_from_netcdf(f.name, interp_glider=True)
+            self.assertTrue(hasattr(glider_result, 'lat'))
+            self.assertTrue(hasattr(glider_result, 'lon'))
+        
+        os.remove(f.name)
+
 

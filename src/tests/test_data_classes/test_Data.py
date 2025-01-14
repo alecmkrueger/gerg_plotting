@@ -196,6 +196,45 @@ class TestData(unittest.TestCase):
         new_var = Variable(data=np.array([4.0, 5.0]), name='lat')
         with self.assertRaises(KeyError):
             self.data['nonexistent'] = new_var
+                
+    def test_get_vars_all(self):
+        """Test getting all variables regardless of data status."""
+        vars_list = self.data.get_vars()
+        expected_vars = ['lat', 'lon', 'depth', 'time', 'temperature', 'salinity', 
+                        'density', 'u', 'v', 'w', 'speed', 'cdom', 'chlor', 'turbidity', 'bounds']
+        self.assertEqual(set(vars_list), set(expected_vars))
+
+    def test_get_vars_with_data(self):
+        """Test getting only variables that have data."""
+        vars_with_data = self.data.get_vars(have_data=True)
+        expected_vars = ['lat', 'lon', 'depth', 'time']  # Based on setUp data
+        self.assertEqual(set(vars_with_data), set(expected_vars))
+
+    def test_get_vars_without_data(self):
+        """Test getting only variables that don't have data."""
+        vars_without_data = self.data.get_vars(have_data=False)
+        expected_vars = ['temperature', 'salinity', 'density', 'u', 'v', 
+                        'w', 'speed', 'cdom', 'chlor', 'turbidity', 'bounds']
+        self.assertEqual(set(vars_without_data), set(expected_vars))
+
+    def test_repr_html(self):
+        """Test HTML representation of the Data object."""
+        html_output = self.data._repr_html_()
+        
+        # Test that the HTML output is a string
+        self.assertIsInstance(html_output, str)
+        
+        # Test that the HTML contains essential structural elements
+        self.assertIn('<table', html_output)
+        self.assertIn('</table>', html_output)
+        self.assertIn('<thead>', html_output.lower())
+        self.assertIn('<tbody>', html_output.lower())
+        
+        # Test that all variables with data are included in the HTML
+        vars_with_data = self.data.get_vars(have_data=True)
+        for var in vars_with_data:
+            self.assertIn(var, html_output)
+
 
     def test_repr(self):
         """Test string representation."""

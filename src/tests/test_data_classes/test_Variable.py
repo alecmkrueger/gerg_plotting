@@ -31,6 +31,61 @@ class TestVariable(unittest.TestCase):
         custom_label = "Custom Label"
         self.variable.label = custom_label
         self.assertEqual(self.variable.get_label(), custom_label)
+        
+    def test_get_and_reset_label(self):
+        """Test resetting the label to the default."""
+        self.variable.get_label()
+        self.assertEqual(self.variable.get_label(), f"{self.variable_name.capitalize()} ({self.units})")
+        self.variable.reset_label()
+        self.assertIsNone(self.variable.label)
+            
+    def test_format_value(self):
+        """Test _format_value method with different data types."""
+        # Test float formatting
+        self.assertEqual(self.variable._format_value(3.14159), "3.141590")
+        
+        # Test datetime formatting
+        test_date = np.datetime64('2023-01-15T14:30:45.123')
+        expected_date = "23-01-15 14:30:45"
+        self.assertEqual(self.variable._format_value(test_date), expected_date)
+        
+        # Test Python datetime
+        from datetime import datetime
+        py_date = datetime(2023, 1, 15, 14, 30, 45)
+        self.assertEqual(self.variable._format_value(py_date), "23-01-15 14:30:45")
+        
+        # Test colormap
+        from matplotlib.cm import viridis
+        self.assertEqual(self.variable._format_value(viridis), "viridis")
+        
+        # Test string
+        self.assertEqual(self.variable._format_value("test"), "test")
+
+    def test_repr_html(self):
+        """Test _repr_html_ method output structure."""
+        html_output = self.variable._repr_html_()
+        
+        # Test that HTML output is a string
+        self.assertIsInstance(html_output, str)
+        
+        # Test essential HTML elements are present
+        self.assertIn("<table", html_output)
+        self.assertIn("</table>", html_output)
+        self.assertIn("<tbody>", html_output)
+        self.assertIn("</tbody>", html_output)
+        
+        # Test that all attributes are represented
+        for attr in self.variable.get_attrs():
+            if attr != 'data':  # Skip data as it's handled separately
+                self.assertIn(attr, html_output)
+        
+        # Test data section exists
+        self.assertIn("Length: 5", html_output)  # Our test data has 5 elements
+        
+        # Test sample data values are present
+        for i in range(min(5, len(self.data))):
+            self.assertIn(str(self.data[i]), html_output)
+
 
     def test_getitem(self):
         """Test __getitem__ for accessing attributes."""
