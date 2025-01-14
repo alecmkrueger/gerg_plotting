@@ -4,20 +4,6 @@ import numpy as np
 
 
 def simple_histogram_example():
-    """
-    Simple Histogram Example
-    -----------
-    Source Code
-    ~~~~~~~~~~
-    .. literalinclude:: ../../../src\examples\simple_histogram_example.py
-       :language: python
-
-    Output
-    ~~~~~~
-    .. image:: ../../../src\examples\simple_histogram_example.png
-       :width: 600
-    
-    """
     # If you just want to look at the histogram:
     data = Data(temperature=np.random.normal(28,size=1000))
 

@@ -3,20 +3,6 @@ from gerg_plotting.tools import data_from_csv
 
 
 def tricontourf_example():
-    """
-    Tricontourf Example
-    -----------
-    Source Code
-    ~~~~~~~~~~
-    .. literalinclude:: ../../../src\examples\tricontourf_example.py
-       :language: python
-
-    Output
-    ~~~~~~
-    .. image:: ../../../src\examples\tricontourf_example.png
-       :width: 600
-    
-    """
     data = data_from_csv('example_data/sample_glider_data.csv')
 
     plotter = ScatterPlot(data=data)

@@ -6,20 +6,6 @@ import cartopy.crs as ccrs
 import pandas as pd
 
 def map_subplots_example():
-    """
-    Map Subplots Example
-    -----------
-    Source Code
-    ~~~~~~~~~~
-    .. literalinclude:: ../../../src\examples\map_subplots_example.py
-       :language: python
-
-    Output
-    ~~~~~~
-    .. image:: ../../../src\examples\map_subplots_example.png
-       :width: 600
-    
-    """
     # Define bounds
     bounds = Bounds(lat_min = 24,lat_max = 31,lon_min = -99,lon_max = -88,depth_top=-1,depth_bottom=500,vertical_scaler=1/1000,vertical_units='km')
     # Let's read in the example data

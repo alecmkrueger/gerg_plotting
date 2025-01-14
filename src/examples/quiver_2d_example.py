@@ -3,20 +3,6 @@ from gerg_plotting.tools import data_from_csv
 
 
 def quiver_2d_example():
-    """
-    Quiver 2D Example
-    -----------
-    Source Code
-    ~~~~~~~~~~
-    .. literalinclude:: ../../../src\examples\quiver_2d_example.py
-       :language: python
-
-    Output
-    ~~~~~~
-    .. image:: ../../../src\examples\quiver_2d_example.png
-       :width: 600
-    
-    """
     data = data_from_csv('example_data/sample_tabs_data.csv')
 
     data.calculate_speed()

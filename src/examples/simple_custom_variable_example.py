@@ -4,20 +4,6 @@ import numpy as np
 
 
 def simple_custom_variable_example():
-    """
-    Simple Custom Variable Example
-    -----------
-    Source Code
-    ~~~~~~~~~~
-    .. literalinclude:: ../../../src\examples\simple_custom_variable_example.py
-       :language: python
-
-    Output
-    ~~~~~~
-    .. image:: ../../../src\examples\simple_custom_variable_example.png
-       :width: 600
-    
-    """
     # Init Data object
     data = Data()
     # Init pH Variable object

@@ -3,20 +3,6 @@ from gerg_plotting.tools import data_from_csv
 
 
 def simple_3d_map_example():
-    """
-    Simple 3D Map Example
-    -----------
-    Source Code
-    ~~~~~~~~~~
-    .. literalinclude:: ../../../src\examples\simple_3d_map_example.py
-       :language: python
-
-    Output
-    ~~~~~~
-    .. image:: ../../../src\examples\simple_3d_map_example.png
-       :width: 600
-    
-    """
     # Let's read in the example data
     data = data_from_csv('example_data/sample_glider_data.csv')
 

@@ -7,20 +7,6 @@ from pathlib import Path
 
 
 def custom_variable_example():
-    """
-    Custom Variable Example
-    -----------
-    Source Code
-    ~~~~~~~~~~
-    .. literalinclude:: ../../../src\examples\custom_variable_example.py
-       :language: python
-
-    Output
-    ~~~~~~
-    .. image:: ../../../src\examples\custom_variable_example.png
-       :width: 600
-    
-    """
     # Let's read in the example data
     df = pd.read_csv('example_data/sample_glider_data.csv')
 

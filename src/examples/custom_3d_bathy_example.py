@@ -3,20 +3,6 @@ from gerg_plotting.data_classes import Bathy
 from gerg_plotting.tools import data_from_csv
 
 def custom_3d_bathy_example():
-    """
-    Custom 3D Bathy Example
-    -----------
-    Source Code
-    ~~~~~~~~~~
-    .. literalinclude:: ../../../src\examples\custom_3d_bathy_example.py
-       :language: python
-
-    Output
-    ~~~~~~
-    .. image:: ../../../src\examples\custom_3d_bathy_example.png
-       :width: 600
-    
-    """
     # Let's read in the example data
     data = data_from_csv('example_data/sample_glider_data.csv')
 
