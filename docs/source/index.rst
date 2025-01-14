@@ -11,4 +11,4 @@ Welcome to gerg_plotting's documentation!
 .. toctree::
    :maxdepth: 2
    
-   examples.rst
+   build/auto_examples/index

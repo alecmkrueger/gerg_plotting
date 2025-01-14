@@ -34,13 +34,12 @@ plot_formats = ['png','gif']
 # -- Gallery settings ---------------------------------------------------------
 
 sphinx_gallery_conf = {
-    'image_scrapers': ('pyvista', 'matplotlib'),
     'examples_dirs': '../../examples',   # path to your example scripts
-    'gallery_dirs': 'auto_examples',  # path to where to save gallery generated output
+    'gallery_dirs': '../build/auto_examples',  # path to where to save gallery generated output
 }
 
 # -- AutoAPI settings -------------------------------------------------------
-autoapi_dirs = ['../../src/gerg_plotting','../../src/examples']
+autoapi_dirs = ['../../src/gerg_plotting']
 autoapi_template_dir = '../_templates'
 
 autoapi_options = [
