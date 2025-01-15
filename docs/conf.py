@@ -38,12 +38,12 @@ plot_formats = ['png','gif']
 # -- Gallery settings ---------------------------------------------------------
 
 sphinx_gallery_conf = {
-    'examples_dirs': '../../examples',   # path to your example scripts
+    'examples_dirs': '../examples',   # path to your example scripts
 }
 
 # -- AutoAPI settings -------------------------------------------------------
-autoapi_dirs = ['../../src/gerg_plotting']
-autoapi_template_dir = '../_templates'
+autoapi_dirs = ['../src/gerg_plotting']
+autoapi_template_dir = '_templates'
 
 autoapi_options = [
     "members",
