@@ -1,11 +1,9 @@
 import unittest
-import numpy as np
-from pprint import pformat
 from matplotlib.colors import Colormap
 from unittest.mock import MagicMock
 
-from gerg_plotting.data_classes.Bathy import Bathy
-from gerg_plotting.data_classes.Bounds import Bounds
+from gerg_plotting.data_classes.bathy import Bathy
+from gerg_plotting.data_classes.bounds import Bounds
 
 class TestBathy(unittest.TestCase):
     def setUp(self):

@@ -7,7 +7,6 @@ import matplotlib.axes
 import matplotlib.pyplot
 import matplotlib.colorbar
 from matplotlib.colors import Colormap
-import matplotlib.dates as mdates
 import xarray as xr
 from pathlib import Path
 import cmocean
@@ -16,10 +15,9 @@ import copy
 
 from gerg_plotting.modules.calculations import get_center_of_mass
 from gerg_plotting.modules.plotting import colorbar
-from gerg_plotting.modules.utilities import calculate_pad
 
-from gerg_plotting.data_classes.Bounds import Bounds
-from gerg_plotting.data_classes.Variable import Variable
+from gerg_plotting.data_classes.bounds import Bounds
+from gerg_plotting.data_classes.variable import Variable
 
 @define(repr=False)
 class Bathy:

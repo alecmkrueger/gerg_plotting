@@ -4,10 +4,9 @@ from matplotlib.figure import Figure
 from matplotlib.axes import Axes
 from matplotlib.colorbar import Colorbar
 from matplotlib.colors import Colormap
-import numpy as np
 from attrs import define,field
 
-from gerg_plotting.plotting_classes.Plotter import Plotter
+from gerg_plotting.plotting_classes.plotter import Plotter
 
 @define
 class DummyVariable:

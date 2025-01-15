@@ -4,7 +4,7 @@ import xarray as xr
 from itertools import combinations
 import re
 
-from gerg_plotting.data_classes.Data import Data
+from gerg_plotting.data_classes.data import Data
 
 
 def normalize_string(input_string: str) -> str:

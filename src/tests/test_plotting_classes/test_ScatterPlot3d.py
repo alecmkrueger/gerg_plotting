@@ -1,2 +1,2 @@
-from gerg_plotting.plotting_classes import ScatterPlot3D
+from gerg_plotting.plotting_classes.scatter_plot_3d import ScatterPlot3D
 

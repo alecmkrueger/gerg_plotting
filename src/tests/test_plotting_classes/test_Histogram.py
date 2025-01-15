@@ -1,5 +1,5 @@
-from gerg_plotting.plotting_classes.Histogram import Histogram
-from gerg_plotting.data_classes.Data import Data
+from gerg_plotting.plotting_classes.histogram import Histogram
+from gerg_plotting.data_classes.data import Data
 
 import unittest
 import numpy as np

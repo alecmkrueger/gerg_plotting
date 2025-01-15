@@ -3,9 +3,9 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from gerg_plotting.data_classes.Data import Data
-from gerg_plotting.data_classes.Variable import Variable
-from gerg_plotting.plotting_classes.ScatterPlot import ScatterPlot
+from gerg_plotting.data_classes.data import Data
+from gerg_plotting.data_classes.variable import Variable
+from gerg_plotting.plotting_classes.scatter_plot import ScatterPlot
 
 
 class TestScatterPlot(unittest.TestCase):

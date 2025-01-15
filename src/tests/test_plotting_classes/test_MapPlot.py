@@ -4,9 +4,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import cartopy.crs as ccrs
-from gerg_plotting.data_classes.Bathy import Bathy
-from gerg_plotting.data_classes.Data import Data
-from gerg_plotting.plotting_classes.MapPlot import MapPlot
+from gerg_plotting.data_classes.bathy import Bathy
+from gerg_plotting.data_classes.data import Data
+from gerg_plotting.plotting_classes.map_plot import MapPlot
 
 
 class TestMapPlot(unittest.TestCase):

@@ -1,4 +1,4 @@
-from gerg_plotting.plotting_classes.Animator import Animator
+from gerg_plotting.plotting_classes.animator import Animator
 
 import unittest
 import pytest

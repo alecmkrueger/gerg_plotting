@@ -10,9 +10,9 @@ import numpy as np
 from attrs import define, field
 import cmocean
 
-from gerg_plotting.plotting_classes.Plotter import Plotter
+from gerg_plotting.plotting_classes.plotter import Plotter
 from gerg_plotting.modules.calculations import get_sigma_theta, get_density
-from gerg_plotting.data_classes.Variable import Variable
+from gerg_plotting.data_classes.variable import Variable
 
 @define
 class ScatterPlot(Plotter):

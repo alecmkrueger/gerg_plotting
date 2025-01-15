@@ -1,4 +1,4 @@
-from gerg_plotting.data_classes.Bounds import Bounds
+from gerg_plotting.data_classes.bounds import Bounds
 
 import unittest
 

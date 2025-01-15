@@ -5,9 +5,9 @@ import cmocean
 from datetime import datetime
 import pytest
 
-from gerg_plotting.data_classes.Data import Data
-from gerg_plotting.data_classes.Variable import Variable
-from gerg_plotting.data_classes.Bounds import Bounds
+from gerg_plotting.data_classes.data import Data
+from gerg_plotting.data_classes.variable import Variable
+from gerg_plotting.data_classes.bounds import Bounds
 
 class TestData(unittest.TestCase):
     def setUp(self):

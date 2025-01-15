@@ -5,8 +5,8 @@ import mayavi.core.lut_manager
 import mayavi.core.scene
 import mayavi.mlab as mlab
 
-from gerg_plotting.data_classes.Data import Data
-from gerg_plotting.data_classes.Bathy import Bathy
+from gerg_plotting.data_classes.data import Data
+from gerg_plotting.data_classes.bathy import Bathy
 
 @define
 class Plotter3D:

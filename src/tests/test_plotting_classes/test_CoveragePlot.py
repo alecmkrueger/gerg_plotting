@@ -10,7 +10,7 @@ import itertools
 from pathlib import Path
 import os
 
-from gerg_plotting.plotting_classes.CoveragePlot import Base,Grid,ExtentArrows,Coverage,CoveragePlot
+from gerg_plotting.plotting_classes.coverage_plot import Base,Grid,ExtentArrows,Coverage,CoveragePlot
 
 class TestBase(unittest.TestCase):
 

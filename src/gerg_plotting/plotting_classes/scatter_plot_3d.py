@@ -3,8 +3,8 @@ import mayavi.mlab as mlab
 import cmocean
 import matplotlib.pyplot as plt
 
-from gerg_plotting.plotting_classes.Plotter3D import Plotter3D
-from gerg_plotting.data_classes.Bathy import Bathy
+from gerg_plotting.plotting_classes.plotter_3d import Plotter3D
+from gerg_plotting.data_classes.bathy import Bathy
 
 @define
 class ScatterPlot3D(Plotter3D):

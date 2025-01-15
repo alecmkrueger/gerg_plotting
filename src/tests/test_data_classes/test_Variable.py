@@ -1,7 +1,6 @@
 import unittest
 import numpy as np
-from matplotlib.colors import Colormap
-from gerg_plotting.data_classes.Variable import Variable
+from gerg_plotting.data_classes.variable import Variable
 
 
 class TestVariable(unittest.TestCase):
