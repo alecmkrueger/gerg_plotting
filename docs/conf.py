@@ -19,6 +19,10 @@ extensions = [
     'autoapi.extension',
 ]
 
+
+templates_path = ['_templates']
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store','sg_execution_times.rst']
+
 # -- Plot settings -----------------------------------------------------------
 from sphinx.builders.html import StandaloneHTMLBuilder
 StandaloneHTMLBuilder.supported_image_types = [
@@ -35,7 +39,6 @@ plot_formats = ['png','gif']
 
 sphinx_gallery_conf = {
     'examples_dirs': '../../examples',   # path to your example scripts
-    'gallery_dirs': '../build/auto_examples',  # path to where to save gallery generated output
 }
 
 # -- AutoAPI settings -------------------------------------------------------
@@ -56,9 +59,11 @@ autodoc_typehints = "signature"
 
 autoapi_member_order = 'alphabetical'
 
-
 # Parse docstrings using the NumPy format
 napoleon_numpy_docstring = True
 
 # -- Options for HTML output -------------------------------------------------
+# https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
+
 html_theme = 'pydata_sphinx_theme'
+html_static_path = ['_static']

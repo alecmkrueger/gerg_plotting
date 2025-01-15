@@ -9,6 +9,7 @@ Welcome to gerg_plotting's documentation!
 
 
 .. toctree::
+   :titlesonly:
    :maxdepth: 2
-   
-   build/auto_examples/index
+
+   auto_examples/index
