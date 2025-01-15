@@ -7,7 +7,7 @@ readme = "README.md"
 packages = [{include = "gerg_plotting", from = "src"}]
 
 [tool.poetry.dependencies]
-python = "^3.12"
+python = ">=3.12,<3.14"
 numpy = "^2.0.0"
 pandas = "^2.2.2"
 matplotlib = "^3.9.1"
@@ -23,7 +23,7 @@ cartopy = "^0.23.0"
 notebook = "^7.2.2"
 configobj = "^5.0.9"
 opencv-python = "^4.10.0.84"
-wxpython = "^4.2.2"
+pyside6 = "^6.8.1.1"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -38,12 +38,14 @@ sphinx-autoapi = "^3.4.0"
 pydata-sphinx-theme = "^0.16.1"
 sphinx-gallery = "^0.18.0"
 pyvista = "^0.44.2"
+tox = "^4.23.2"
 
 
 [tool.poetry.group.test.dependencies]
 pytest = "^8.2.2"
 faker = "^26.0.0"
 pytest-cov = "^6.0.0"
+tox = "^4.23.2"
 
 [tool.pytest.ini_options]
 filterwarnings = [
