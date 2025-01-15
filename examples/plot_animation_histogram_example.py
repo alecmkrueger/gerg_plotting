@@ -30,5 +30,5 @@ cmap = plt.get_cmap('Greens')
 cmap = cmocean.tools.crop_by_percent(cmap,30,which='both')
 colors = [cmap((idx*2)+10) for idx in samples]
 
-gif_filename = Path(__file__).parent.joinpath('example_plots/animation_histogram_example.gif')
+gif_filename = Path('example_plots/animation_histogram_example.gif')
 Animator().animate(plotting_function=make_hists,param_dict={'sample':samples,'color':colors},fps=12,gif_filename=gif_filename)

@@ -59,7 +59,7 @@ custom_data.add_custom_variable(Turner_angle)
 print("3. Added custom variable to existing data object")
 
 # Make a simple plot to show our data
-from gerg_plotting.plotting_classes.Histogram import Histogram
+from gerg_plotting.plotting_classes.histogram import Histogram
 plot = Histogram(custom_data)
 plot.plot('temperature')
 plot.save('example_plots/data_object_example.png')
