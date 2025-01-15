@@ -1,4 +1,4 @@
-This is my gallery
+Examples Gallery
 ==================
 
 Below is a gallery of examples

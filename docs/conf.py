@@ -35,10 +35,13 @@ plot_include_source = True
 plot_html_show_source_link = False
 plot_formats = ['png','gif']
 
-# -- Gallery settings ---------------------------------------------------------
+# -- Examples gallery settings ---------------------------------------------------------
 
 sphinx_gallery_conf = {
-    'examples_dirs': '../examples',   # path to your example scripts
+    'examples_dirs': '../examples',
+    'gallery_dirs': 'auto_examples',
+    'image_scrapers': ('matplotlib',),
+    'filename_pattern': '../examples/*_example.py',
 }
 
 # -- AutoAPI settings -------------------------------------------------------
