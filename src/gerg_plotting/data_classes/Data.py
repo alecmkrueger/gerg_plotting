@@ -383,7 +383,6 @@ class Data:
         -------
         Bounds
             Object containing the detected geographic and depth bounds
-        """
 
         '''
         # If the user did not pass bounds

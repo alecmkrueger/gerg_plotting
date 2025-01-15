@@ -218,7 +218,7 @@ class Animator:
             Output path for the GIF
         fps : int, optional
             Frames per second, default is 24
-        **kwargs
+        ``**kwargs``
             Additional arguments passed to plotting_function
         """
 

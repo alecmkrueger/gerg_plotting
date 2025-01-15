@@ -49,7 +49,7 @@ class ScatterPlot(Plotter):
             Figure to plot on
         ax : matplotlib.axes.Axes, optional
             Axes to plot on
-        **kwargs
+        ``**kwargs``
             Additional arguments for scatter plot
 
         Returns
@@ -102,7 +102,7 @@ class ScatterPlot(Plotter):
             Figure to plot on
         ax : matplotlib.axes.Axes, optional
             Axes to plot on
-        **kwargs
+        ``**kwargs``
             Additional arguments for scatter plot
 
         Returns
@@ -151,7 +151,7 @@ class ScatterPlot(Plotter):
             Figure to plot on
         ax : matplotlib.axes.Axes, optional
             Axes to plot on
-        **kwargs
+        ``**kwargs``
             Additional arguments for scatter plot
         """
         sc = self.scatter(x='time',

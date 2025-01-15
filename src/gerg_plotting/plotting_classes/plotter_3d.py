@@ -151,7 +151,7 @@ class Plotter3D:
             Output filename
         size : tuple, optional
             Image size in pixels
-        **kwargs
+        ``**kwargs``
             Additional arguments for scene.save()
 
         Raises

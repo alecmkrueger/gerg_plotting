@@ -23,7 +23,7 @@ class Histogram(Plotter):
             Name of the x-axis variable
         y : str
             Name of the y-axis variable
-        **kwargs : dict
+        ``**kwargs`` : dict
             Optional keyword arguments including 'range' for custom ranges
 
         Returns
@@ -58,7 +58,7 @@ class Histogram(Plotter):
             Figure object to use for plotting
         ax : matplotlib.axes.Axes, optional
             Axes object to use for plotting
-        **kwargs : dict
+        ``**kwargs`` : dict
             Additional keyword arguments passed to matplotlib.pyplot.hist
         """
         # Initialize the figure and axis
@@ -84,7 +84,7 @@ class Histogram(Plotter):
             Figure object to use for plotting
         ax : matplotlib.axes.Axes, optional
             Axes object to use for plotting
-        **kwargs : dict
+        ``**kwargs`` : dict
             Additional keyword arguments passed to matplotlib.pyplot.hist2d
         """
         # Initialize the figure and axis
@@ -114,7 +114,7 @@ class Histogram(Plotter):
             Figure object to use for plotting
         ax : matplotlib.axes.Axes, optional
             Axes object to use for plotting
-        **kwargs : dict
+        ``**kwargs`` : dict
             Additional keyword arguments passed to numpy.histogram2d
         """
         # Import the colormap from matplotlib

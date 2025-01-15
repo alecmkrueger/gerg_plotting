@@ -231,7 +231,7 @@ class Plotter:
         ----------
         filename : str
             Path to save figure
-        **kwargs
+        ``**kwargs``
             Additional arguments for savefig
 
         Raises

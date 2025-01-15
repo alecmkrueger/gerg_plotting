@@ -15,8 +15,7 @@ def get_center_of_mass(lon: np.ndarray, lat: np.ndarray, pressure: np.ndarray) -
     - pressure (np.ndarray): Array of pressure values.
 
     Returns:
-    - tuple: A tuple containing the mean longitude, mean latitude, and mean pressure.
-             If an input is empty or all-NaN, the corresponding value in the tuple is np.nan.
+    - tuple: A tuple containing the mean longitude, mean latitude, and mean pressure. If an input is empty or all-NaN, the corresponding value in the tuple is np.nan.
     """
     def safe_nanmean(arr: np.ndarray) -> float:
         """

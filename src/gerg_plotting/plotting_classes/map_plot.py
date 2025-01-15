@@ -73,12 +73,9 @@ class MapPlot(Plotter):
         -------
         tuple
             (color, cmap, divider)
-            - color : str or ndarray
-                Color values for plotting
-            - cmap : matplotlib.colors.Colormap
-                Colormap for variable
-            - divider : mpl_toolkits.axes_grid1.axes_divider.AxesDivider
-                Divider for colorbar placement
+            - color : str or ndarray, Color values for plotting
+            - cmap : matplotlib.colors.Colormap, Colormap for variable
+            - divider : mpl_toolkits.axes_grid1.axes_divider.AxesDivider, Divider for colorbar placement
         """
         # Ensure the bounds exists
         self.data.detect_bounds(self.bounds_padding)

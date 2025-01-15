@@ -53,7 +53,7 @@ def merge_dicts(*dict_args):
 
     Parameters
     ----------
-    *dict_args : dict
+    ``*dict_args`` : dict
         Variable number of dictionaries to merge
 
     Returns
@@ -280,7 +280,7 @@ def data_from_df(df:pd.DataFrame,mapped_variables:dict|None=None,**kwargs):
         Source DataFrame
     mapped_variables : dict, optional
         Custom variable mapping
-    **kwargs
+    ``**kwargs`` : dict
         Additional arguments for Data initialization
 
     Returns
@@ -308,7 +308,7 @@ def data_from_csv(filename:str,mapped_variables:dict|None=None,**kwargs):
         Path to CSV file
     mapped_variables : dict, optional
         Custom variable mapping
-    **kwargs
+    ``**kwargs``
         Additional arguments for Data initialization
 
     Returns
@@ -333,7 +333,7 @@ def data_from_ds(ds: xr.Dataset, mapped_variables: dict | None = None, **kwargs)
         Input dataset to convert
     mapped_variables : dict or None, optional
         Dictionary mapping variable names to dataset variables
-    **kwargs
+    ``**kwargs``
         Additional keyword arguments passed to Data constructor
 
     Returns
@@ -359,7 +359,7 @@ def data_from_netcdf(filename: str, mapped_variables: dict | None = None, interp
         Dictionary mapping variable names to dataset variables  
     interp_glider : bool, optional
         Whether to interpolate glider lat/lon positions
-    **kwargs
+    ``**kwargs``
         Additional keyword arguments passed to Data constructor
 
     Returns

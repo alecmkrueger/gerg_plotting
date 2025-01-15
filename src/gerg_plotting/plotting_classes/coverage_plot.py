@@ -140,7 +140,7 @@ class Grid(Base):
             The axes to draw the lines on.
         y_values : array-like
             Y-coordinates where horizontal lines should be drawn.
-        **kwargs
+        ``**kwargs``
             Additional keyword arguments passed to axhline.
         """
         zorder = kwargs.pop('zorder',self.grid_zorder)
@@ -157,7 +157,7 @@ class Grid(Base):
             The axes to draw the lines on.
         x_values : array-like
             X-coordinates where vertical lines should be drawn.
-        **kwargs
+        ``**kwargs``
             Additional keyword arguments passed to axvline.
         """
         zorder = kwargs.pop('zorder',self.grid_zorder)
@@ -172,7 +172,7 @@ class Grid(Base):
         ----------
         ax : matplotlib.axes.Axes
             The axes to draw the grid on.
-        **grid_kwargs
+        ``**grid_kwargs``
             Additional keyword arguments for grid customization including:
             - grid_linewidth: Width of grid lines
             - grid_color: Color of grid lines
@@ -401,7 +401,7 @@ class Coverage(Base):
             Range of y-axis coverage [start, end].
         label : str
             Label text for the coverage.
-        **kwargs
+        ``**kwargs``
             Additional keyword arguments for customizing appearance.
 
         Returns
@@ -496,7 +496,7 @@ class Coverage(Base):
         ----------
         ax : matplotlib.axes.Axes
             The axes to plot on.
-        **kwargs
+        ``**kwargs``
             Additional keyword arguments for plotting.
         """
         ax.add_artist(self.body)
@@ -598,7 +598,7 @@ class CoveragePlot(Base):
             Range or single value for y-axis coverage.
         label : str, optional
             Label for the coverage area.
-        **kwargs
+        ``**kwargs``
             Additional keyword arguments for coverage customization.
 
         Raises
@@ -638,7 +638,7 @@ class CoveragePlot(Base):
         ----------
         filename : str
             Path to save the figure.
-        **kwargs
+        ``**kwargs``
             Additional keyword arguments passed to savefig.
 
         Raises
@@ -657,7 +657,7 @@ class CoveragePlot(Base):
 
         Parameters
         ----------
-        **kwargs
+        ``**kwargs``
             Additional keyword arguments passed to plt.show().
         """
         plt.show(**kwargs)
