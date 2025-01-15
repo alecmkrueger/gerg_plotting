@@ -42,6 +42,7 @@ sphinx_gallery_conf = {
     'gallery_dirs': 'auto_examples',
     'image_scrapers': ('matplotlib',),
     'filename_pattern': '../examples/*_example.py',
+    'remove_config_comments': True,
 }
 
 # -- AutoAPI settings -------------------------------------------------------

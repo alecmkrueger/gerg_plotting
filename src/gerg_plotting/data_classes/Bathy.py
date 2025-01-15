@@ -85,8 +85,8 @@ class Bathy:
         # Load bathymetry data based on bounds
         self.get_bathy()
         # Scale depth values if a vertical scaler is provided
-        if self.bounds.vertical_scaler is not None:
-            self.depth = self.depth * self.bounds.vertical_scaler
+        if self.bounds.vertical_scalar is not None:
+            self.depth = self.depth * self.bounds.vertical_scalar
         # Compute the center of mass of the bathymetry data
         self.center_of_mass = get_center_of_mass(self.lon, self.lat, self.depth)
         # Adjust the colormap for visualization
