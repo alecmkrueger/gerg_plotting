@@ -471,7 +471,6 @@ class Coverage(Base):
         self.label = text
 
         if self.show_arrows:
-            print(self.show_arrows)
             self.extent_arrows = ExtentArrows(**kwargs)
 
         return self
