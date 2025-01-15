@@ -137,6 +137,12 @@ class Plotter3D:
         Display the 3D plot in Mayavi window.
         """
         mlab.show()
+        
+    def close(self):
+        """
+        Close the Mayavi window.
+        """
+        mlab.close(all=True)
 
 
     def save(self,filename,size=None,**kwargs):
