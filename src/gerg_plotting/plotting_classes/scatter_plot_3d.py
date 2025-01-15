@@ -94,7 +94,7 @@ class ScatterPlot3D(Plotter3D):
             self.data['depth'].data = self.data['depth'].data * vertical_scalar
 
 
-    def _add_bathy(self, fig, bounds_padding, vertical_scaler=None) -> None:
+    def _add_bathy(self, fig, bounds_padding, vertical_scalar=None) -> None:
         """
         Add bathymetric surface to 3D plot.
 
@@ -104,7 +104,7 @@ class ScatterPlot3D(Plotter3D):
             Figure to plot on
         bounds_padding : float
             Padding for bathymetric bounds
-        vertical_scaler : float, optional
+        vertical_scalar : float, optional
             Scaling factor for bathymetric depth
         """
         # Detect bathymetric bounds if bathy data is not already initialized
@@ -116,8 +116,8 @@ class ScatterPlot3D(Plotter3D):
         x_bathy, y_bathy, z_bathy = self.bathy.get_bathy()
 
         # Scale z (depth) coordinates if vertical scaler is provided
-        if vertical_scaler is not None:
-            z_bathy = z_bathy / vertical_scaler
+        if vertical_scalar is not None:
+            z_bathy = z_bathy / vertical_scalar
 
         # Plot bathymetry mesh
         bathy = mlab.mesh(x_bathy, y_bathy, z_bathy, vmax=0, figure=fig)
@@ -194,7 +194,7 @@ class ScatterPlot3D(Plotter3D):
         self.fig = self.init_figure(fig=fig)
 
         # Add bathymetry to the plot with specified padding and scaling
-        self._add_bathy(fig=fig, bounds_padding=bounds_padding, vertical_scaler=vertical_scalar)
+        self._add_bathy(fig=fig, bounds_padding=bounds_padding, vertical_scalar=vertical_scalar)
 
         # Check if the specified variable exists
         self._check_var(var=var)

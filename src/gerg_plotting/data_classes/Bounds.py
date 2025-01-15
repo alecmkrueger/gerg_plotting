@@ -22,7 +22,7 @@ class Bounds:
         Maximum depth value (positive, in meters). Represents the bottom of the range.
     depth_top : float | int | None
         Minimum depth value (positive, in meters). Represents the top of the range (e.g., surface).
-    vertical_scaler : float | int | None
+    vertical_scalar : float | int | None
         A scaling factor applied to depth values. Default is 1.
     vertical_units : str | None
         Units for the vertical depth values. Default is "m".
@@ -43,7 +43,7 @@ class Bounds:
     depth_bottom: float | int | None = field(default=None)  # Maximum depth (in meters)
     depth_top: float | int | None = field(default=None)  # Minimum depth (in meters)
 
-    vertical_scaler: float | int | None = field(default=1)  # Depth scaling factor
+    vertical_scalar: float | int | None = field(default=1)  # Depth scaling factor
     vertical_units: str | None = field(default='m')  # Depth units
 
     def _has_var(self, key: str) -> bool:
