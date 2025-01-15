@@ -1,3 +1,4 @@
 pydata-sphinx-theme==0.16.1
 sphinx-autoapi==3.4.0
 pyvista==0.44.2
+matplotlib==3.10.0
