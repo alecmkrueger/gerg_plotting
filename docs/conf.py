@@ -6,6 +6,8 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
+import gerg_plotting
+
 project = 'gerg_plotting'
 copyright = '2025, Alec Krueger'
 author = 'Alec Krueger'
@@ -72,4 +74,4 @@ napoleon_numpy_docstring = True
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
 html_theme = 'pydata_sphinx_theme'
-html_static_path = ['_static']
+# html_static_path = ['_static']
