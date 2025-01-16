@@ -6,7 +6,6 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-import gerg_plotting
 
 project = 'gerg_plotting'
 copyright = '2025, Alec Krueger'
