@@ -2,4 +2,4 @@ pydata-sphinx-theme==0.16.1
 sphinx-autoapi==3.4.0
 pyvista==0.44.2
 sphinx_gallery==0.18.0
-# gerg_plotting>=0.0.28
+gerg_plotting>=0.0.28
