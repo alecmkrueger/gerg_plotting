@@ -23,6 +23,7 @@ extensions = [
 
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store','sg_execution_times.rst']
+autodoc_mock_imports = ['wxpython']
 
 # -- Plot settings -----------------------------------------------------------
 from sphinx.builders.html import StandaloneHTMLBuilder
