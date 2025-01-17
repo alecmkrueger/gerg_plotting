@@ -22,7 +22,7 @@ formats:
 python:
   install:
    - requirements: docs/requirements.txt
-   - method: pip
-     path: .
-     extra_requirements: 
-      - requirements.txt
+  #  - method: pip
+  #    path: .
+  #    extra_requirements: 
+  #     - requirements.txt

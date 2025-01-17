@@ -34,7 +34,7 @@ StandaloneHTMLBuilder.supported_image_types = [
     'image/jpeg'
 ]
 plot_include_source = True
-plot_html_show_source_link = False
+plot_html_show_source_link = True
 plot_formats = ['png','gif']
 
 # -- Examples gallery settings ---------------------------------------------------------
