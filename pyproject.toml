@@ -24,6 +24,7 @@ notebook = "^7.2.2"
 configobj = "^5.0.9"
 opencv-python = "^4.10.0.84"
 pyside6 = "^6.8.1.1"
+wxpython = "^4.2.2"
 
 
 [tool.poetry.group.dev.dependencies]
