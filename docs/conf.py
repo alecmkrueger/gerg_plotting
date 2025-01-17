@@ -39,12 +39,20 @@ plot_formats = ['png','gif']
 
 # -- Examples gallery settings ---------------------------------------------------------
 
+# sphinx_gallery_conf = {
+#     'examples_dirs': '../examples',
+#     'gallery_dirs': 'auto_examples',
+#     'image_scrapers': ('matplotlib',),
+#     'remove_config_comments': True,
+#     'example_extensions': {'.py'}
+# }
+
 sphinx_gallery_conf = {
-    'examples_dirs': '../examples',
-    'gallery_dirs': 'auto_examples',
-    'image_scrapers': ('matplotlib',),
-    'remove_config_comments': True,
-    'example_extensions': {'.py'}
+    'examples_dirs': '../examples',         # Directory with example scripts
+    'gallery_dirs': 'auto_examples',    # Where the gallery output will go
+    'image_scrapers': (),               # Disable plot generation during the build
+    'reset_modules_order': 'after',     # Reset modules after script execution
+    'plot_gallery': 'False',
 }
 
 # -- AutoAPI settings -------------------------------------------------------
