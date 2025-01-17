@@ -23,7 +23,6 @@ extensions = [
 
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store','sg_execution_times.rst']
-autodoc_mock_imports = ['wxpython']
 
 # -- Plot settings -----------------------------------------------------------
 from sphinx.builders.html import StandaloneHTMLBuilder
@@ -48,11 +47,11 @@ plot_formats = ['png','gif']
 # }
 
 sphinx_gallery_conf = {
-    'examples_dirs': '../examples',         # Directory with example scripts
+    'examples_dirs': 'examples',         # Directory with example scripts
     'gallery_dirs': 'auto_examples',    # Where the gallery output will go
     'image_scrapers': (),               # Disable plot generation during the build
     'reset_modules_order': 'after',     # Reset modules after script execution
-    'plot_gallery': 'False',
+    'plot_gallery': 'False'
 }
 
 # -- AutoAPI settings -------------------------------------------------------
@@ -64,7 +63,7 @@ autoapi_options = [
     "undoc-members",
     "show-inheritance",
     "show-module-summary",
-    "imported-members",
+    "imported-members"
 ]
 
 autodoc_default_options = {'inherited-members': True}

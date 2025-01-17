@@ -1,0 +1,20 @@
+{
+ "ScatterPlot": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting.plotting_classes",
+   "module_short": "gerg_plotting.plotting_classes",
+   "name": "ScatterPlot"
+  }
+ ],
+ "data_from_netcdf": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting.tools",
+   "module_short": "gerg_plotting.tools",
+   "name": "data_from_netcdf"
+  }
+ ]
+}

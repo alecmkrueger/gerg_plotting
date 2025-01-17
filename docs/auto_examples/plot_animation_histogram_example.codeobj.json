@@ -1,0 +1,74 @@
+{
+ "Animator": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting.plotting_classes",
+   "module_short": "gerg_plotting.plotting_classes",
+   "name": "Animator"
+  }
+ ],
+ "Data": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting.data_classes",
+   "module_short": "gerg_plotting.data_classes",
+   "name": "Data"
+  }
+ ],
+ "Histogram": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting.plotting_classes",
+   "module_short": "gerg_plotting.plotting_classes",
+   "name": "Histogram"
+  }
+ ],
+ "Path": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pathlib",
+   "module_short": "pathlib",
+   "name": "Path"
+  }
+ ],
+ "cmocean.tools.crop_by_percent": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cmocean.tools",
+   "module_short": "cmocean.tools",
+   "name": "crop_by_percent"
+  }
+ ],
+ "np.arange": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "arange"
+  }
+ ],
+ "np.random.normal": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy.random",
+   "module_short": "numpy.random",
+   "name": "normal"
+  }
+ ],
+ "plt.get_cmap": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.pyplot",
+   "module_short": "matplotlib.pyplot",
+   "name": "get_cmap"
+  }
+ ]
+}

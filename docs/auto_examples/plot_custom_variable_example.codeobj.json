@@ -1,0 +1,47 @@
+{
+ "Histogram": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting.plotting_classes",
+   "module_short": "gerg_plotting.plotting_classes",
+   "name": "Histogram"
+  }
+ ],
+ "Variable": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting.data_classes",
+   "module_short": "gerg_plotting.data_classes",
+   "name": "Variable"
+  }
+ ],
+ "data_from_df": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting.tools",
+   "module_short": "gerg_plotting.tools",
+   "name": "data_from_df"
+  }
+ ],
+ "get_turner_cmap": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting.modules.plotting",
+   "module_short": "gerg_plotting.modules.plotting",
+   "name": "get_turner_cmap"
+  }
+ ],
+ "pd.read_csv": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas",
+   "module_short": "pandas",
+   "name": "read_csv"
+  }
+ ]
+}

@@ -1,0 +1,65 @@
+{
+ "Data": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting.data_classes",
+   "module_short": "gerg_plotting.data_classes",
+   "name": "Data"
+  }
+ ],
+ "Histogram": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting.plotting_classes.histogram",
+   "module_short": "gerg_plotting.plotting_classes.histogram",
+   "name": "Histogram"
+  }
+ ],
+ "Variable": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting.data_classes",
+   "module_short": "gerg_plotting.data_classes",
+   "name": "Variable"
+  }
+ ],
+ "cmocean.cm.haline": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cmocean.cm",
+   "module_short": "cmocean.cm",
+   "name": "haline"
+  }
+ ],
+ "cmocean.cm.thermal": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cmocean.cm",
+   "module_short": "cmocean.cm",
+   "name": "thermal"
+  }
+ ],
+ "data_from_csv": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting.tools",
+   "module_short": "gerg_plotting.tools",
+   "name": "data_from_csv"
+  }
+ ],
+ "pd.read_csv": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas",
+   "module_short": "pandas",
+   "name": "read_csv"
+  }
+ ]
+}
