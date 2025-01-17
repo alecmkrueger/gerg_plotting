@@ -14,8 +14,13 @@ author = 'Alec Krueger'
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
+# extensions = [
+#     'matplotlib.sphinxext.plot_directive',
+#     'sphinx_gallery.gen_gallery',
+#     'autoapi.extension',
+# ]
+
 extensions = [
-    'matplotlib.sphinxext.plot_directive',
     'sphinx_gallery.gen_gallery',
     'autoapi.extension',
 ]
