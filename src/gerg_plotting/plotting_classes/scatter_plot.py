@@ -65,10 +65,10 @@ class ScatterPlot(Plotter):
             if color_var == "time":
                 color_data = self.data.date2num()
             else:
-                color_data = self.data[color_var].data
+                color_data = self.data[color_var].values
             sc = self.ax.scatter(
-                self.data[x].data,
-                self.data[y].data,
+                self.data[x].values,
+                self.data[y].values,
                 c=color_data,
                 cmap=self.get_cmap(color_var),
                 vmin = self.data[color_var].vmin,
@@ -78,7 +78,7 @@ class ScatterPlot(Plotter):
 
         # If color_var is not passed 
         else:
-            sc = self.ax.scatter(self.data[x].data, self.data[y].data, **kwargs)
+            sc = self.ax.scatter(self.data[x].values, self.data[y].values, **kwargs)
 
         self.format_axes(xlabel=self.data[x].get_label(),ylabel=self.data[y].get_label(),invert_yaxis=invert_yaxis)
 
@@ -118,11 +118,11 @@ class ScatterPlot(Plotter):
             if color_var == "time":
                 color_data = self.data.date2num()
             else:
-                color_data = self.data[color_var].data
+                color_data = self.data[color_var].values
             sc = self.ax.scatter(
-                self.data[x].data,
-                self.data[y].data,
-                self.data[z].data,
+                self.data[x].values,
+                self.data[y].values,
+                self.data[z].values,
                 c=color_data,
                 cmap=self.get_cmap(color_var),
                 vmin = self.data[color_var].vmin,
@@ -132,7 +132,7 @@ class ScatterPlot(Plotter):
 
         # If color_var is not passed 
         else:
-            sc = self.ax.scatter(self.data[x].data, self.data[y].data, self.data[z].data, **kwargs)
+            sc = self.ax.scatter(self.data[x].values, self.data[y].values, self.data[z].values, **kwargs)
 
         self.format_axes(xlabel=self.data[x].get_label(),ylabel=self.data[y].get_label(),zlabel=self.data[z].get_label(),invert_yaxis=invert_yaxis)
 
@@ -188,8 +188,8 @@ class ScatterPlot(Plotter):
         if contours:
             # Calculate sigma-theta contours
             Sg, Tg, sigma_theta = get_sigma_theta(
-                salinity=self.data['salinity'].data,
-                temperature=self.data['temperature'].data
+                salinity=self.data['salinity'].values,
+                temperature=self.data['temperature'].values
             )
             cs = self.ax.contour(Sg, Tg, sigma_theta, colors='grey', zorder=1, linestyles='dashed')
             matplotlib.pyplot.clabel(cs, fontsize=10, inline=True, fmt='%.1f')  # Add contour labels
@@ -217,13 +217,13 @@ class ScatterPlot(Plotter):
         if color_var == 'density':
             if not isinstance(self.data['density'], Variable):  # If density is not already provided
                 color_data = get_density(
-                    self.data['salinity'].data,
-                    self.data['temperature'].data
+                    self.data['salinity'].values,
+                    self.data['temperature'].values
                 )  # Calculate density from salinity and temperature
             else:
-                color_data = self.data[color_var].data
+                color_data = self.data[color_var].values
         else:
-            color_data = self.data[color_var].data  # Retrieve color data for the specified variable
+            color_data = self.data[color_var].values  # Retrieve color data for the specified variable
 
         return color_data
 
@@ -282,14 +282,14 @@ class ScatterPlot(Plotter):
         
         # Get the data slice step size using the quiver_density value
         if quiver_density is not None:
-            step = self.calculate_quiver_step(len(self.data.u.data),quiver_density)
+            step = self.calculate_quiver_step(len(self.data.u.values),quiver_density)
         elif quiver_density is None:
             step = 1
 
         # Create the quiver plot
-        mappable = self.ax.quiver(self.data[x].data[::step], 0, 
-                                        self.data.u.data[::step], self.data.v.data[::step], 
-                                        self.data.speed.data[::step], cmap=cmocean.cm.speed,
+        mappable = self.ax.quiver(self.data[x].values[::step], 0, 
+                                        self.data.u.values[::step], self.data.v.values[::step], 
+                                        self.data.speed.values[::step], cmap=cmocean.cm.speed,
                                         pivot='tail', scale=quiver_scale, units='height')
         # Add the colorbar
         self.add_colorbar(mappable,'speed')
@@ -321,14 +321,14 @@ class ScatterPlot(Plotter):
 
         # Get the data slice step size using the quiver_density value
         if quiver_density is not None:
-            step = self.calculate_quiver_step(len(self.data.u.data),quiver_density)
+            step = self.calculate_quiver_step(len(self.data.u.values),quiver_density)
         elif quiver_density is None:
             step = 1
 
         # Create the quiver plot
-        mappable = self.ax.quiver(self.data[x].data[::step], self.data[y].data[::step], 
-                                        self.data.u.data[::step], self.data.v.data[::step], 
-                                        self.data.speed.data[::step], cmap=cmocean.cm.speed,
+        mappable = self.ax.quiver(self.data[x].values[::step], self.data[y].values[::step], 
+                                        self.data.u.values[::step], self.data.v.values[::step], 
+                                        self.data.speed.values[::step], cmap=cmocean.cm.speed,
                                         pivot='tail', scale=quiver_scale, units='height')
         # Add the colorbar
         self.add_colorbar(mappable,'speed')
@@ -379,7 +379,7 @@ class ScatterPlot(Plotter):
             self.data.add_custom_variable(Variable(psd,name=f'psd_{var_name}',units='cm²/s²/cpd',label='Power Spectra Density V (cm²/s²/cpd)'),exist_ok=True)
 
         self.init_figure(fig=fig,ax=ax)
-        self.ax.plot(self.data.psd_freq.data, self.data[f'psd_{var_name}'].data, color='blue')
+        self.ax.plot(self.data.psd_freq.values, self.data[f'psd_{var_name}'].values, color='blue')
         self.ax.set_xlabel(self.data.psd_freq.get_label())
         self.ax.set_ylabel(self.data[f'psd_{var_name}'].get_label())
         self.ax.set_yscale("log")  # Log scale for PSD
@@ -413,7 +413,7 @@ class ScatterPlot(Plotter):
         # Check if vars are present
         self.data.check_for_vars([x,y,z])
         self.init_figure(fig=fig,ax=ax)
-        self.ax.tricontourf(self.data[x].data,self.data[y].data,self.data[z].data,cmap=self.data[z].cmap,levels=levels)
+        self.ax.tricontourf(self.data[x].values,self.data[y].values,self.data[z].values,cmap=self.data[z].cmap,levels=levels)
         self.format_axes(xlabel=self.data[x].get_label(),ylabel=self.data[y].get_label())
 
 

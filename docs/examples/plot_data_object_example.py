@@ -25,7 +25,7 @@ print("1. Created data object from CSV file")
 # Create temperature variable with specific settings
 temperature = Variable(
     name='temperature',
-    data=data['temperature'].data,
+    values=data['temperature'].values,
     units='°C',
     cmap=cmocean.cm.thermal,  # Color scheme for plotting
     vmin=-10,  # Minimum value for color scale
@@ -35,7 +35,7 @@ temperature = Variable(
 # Create salinity variable with specific settings
 salinity = Variable(
     name='salinity',
-    data=data['salinity'].data,
+    values=data['salinity'].values,
     units='PSU',
     cmap=cmocean.cm.haline,  # Special color scheme for salinity
     vmin=28,
@@ -53,7 +53,7 @@ print("2. Created data object with custom variables")
 # Create a new variable for Turner angle
 Turner_angle = Variable(
     name='Turner_angle',
-    data=df['Turner_angle'],
+    values=df['Turner_angle'],
     units='degrees',
 )
 

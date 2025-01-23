@@ -24,7 +24,7 @@ df = df[df.pressure<5]
 # Init the data object with the bounds
 data = data_from_df(df,bounds=bounds)
 # Add a custom variable
-data.add_custom_variable(variable=Variable(data=df['Turner_angle'],name='Turner_angle',label='Turner Angle (°)'))
+data.add_custom_variable(variable=Variable(values=df['Turner_angle'],name='Turner_angle',label='Turner Angle (°)'))
 
 # Init subplots
 fig,ax = plt.subplots(figsize=(10,24),nrows=6,subplot_kw={'projection': ccrs.PlateCarree()},layout='constrained')

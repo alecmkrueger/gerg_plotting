@@ -8,6 +8,7 @@ import imageio
 from PIL import Image, ImageFile
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.figure import Figure
 
 @define
 class Animator:
@@ -97,7 +98,7 @@ class Animator:
         # Use zip to iterate over values in parallel for all keys
         return [dict(zip(param_dict.keys(), values)) for values in zip(*param_dict.values())]
 
-    def _fig2img(self, fig) -> ImageFile:
+    def _fig2img(self, fig:Figure) -> ImageFile:
         """
         Convert a Matplotlib figure to a PIL Image.
 

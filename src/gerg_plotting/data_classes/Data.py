@@ -126,10 +126,10 @@ class Data:
         if self.speed is None:
             if include_w:
                 if self.check_for_vars(['u','v','w']):
-                    self.speed = np.sqrt(self.u.data**2 + self.v.data**2 + self.w.data**2)
+                    self.speed = np.sqrt(self.u.values**2 + self.v.values**2 + self.w.values**2)
                     self._init_variable(var='speed', cmap=cmocean.cm.speed, units="m/s", vmin=None, vmax=None)  
             if self.check_for_vars(['u','v']):
-                self.speed = np.sqrt(self.u.data**2 + self.v.data**2)
+                self.speed = np.sqrt(self.u.values**2 + self.v.values**2)
                 self._init_variable(var='speed', cmap=cmocean.cm.speed, units="m/s", vmin=None, vmax=None)
 
 
@@ -153,10 +153,10 @@ class Data:
             If the vertical component (w) is available, it is also included in the tuple.
         """
 
-        u = self.u.data
-        v = self.v.data
+        u = self.u.values
+        v = self.v.values
         if self.w is not None:
-            w = self.w.data
+            w = self.w.values
         else:
             w = None
 
@@ -176,14 +176,14 @@ class Data:
             _, psd_W = welch(w**2, fs=sampling_freq, nperseg=segment_length)
 
         # Register the new variables
-        self.add_custom_variable(Variable(name='psd_freq',data=freq,cmap=cmocean.cm.thermal,units='cpd',label='Power Spectra Density Frequency (cpd)'),exist_ok=True)
-        self.add_custom_variable(Variable(name='psd_u',data=psd_U,cmap=cmocean.cm.thermal,units='cm²/s²/cpd',label='Power Spectra Density U (cm²/s²/cpd)'),exist_ok=True)
-        self.add_custom_variable(Variable(name='psd_v',data=psd_V,cmap=cmocean.cm.thermal,units='cm²/s²/cpd',label='Power Spectra Density V (cm²/s²/cpd)'),exist_ok=True)
+        self.add_custom_variable(Variable(name='psd_freq',values=freq,cmap=cmocean.cm.thermal,units='cpd',label='Power Spectra Density Frequency (cpd)'),exist_ok=True)
+        self.add_custom_variable(Variable(name='psd_u',values=psd_U,cmap=cmocean.cm.thermal,units='cm²/s²/cpd',label='Power Spectra Density U (cm²/s²/cpd)'),exist_ok=True)
+        self.add_custom_variable(Variable(name='psd_v',values=psd_V,cmap=cmocean.cm.thermal,units='cm²/s²/cpd',label='Power Spectra Density V (cm²/s²/cpd)'),exist_ok=True)
 
         if w is None:
             return freq,psd_U,psd_V
         elif w is not None:
-            self.add_custom_variable(Variable(name='psd_w',data=psd_W,cmap=cmocean.cm.thermal,units='cm²/s²/cpd',label='Power Spectra Density W (cm²/s²/cpd)'),exist_ok=True)
+            self.add_custom_variable(Variable(name='psd_w',values=psd_W,cmap=cmocean.cm.thermal,units='cm²/s²/cpd',label='Power Spectra Density W (cm²/s²/cpd)'),exist_ok=True)
             return freq,psd_U,psd_V,psd_W
         
 
@@ -195,7 +195,7 @@ class Data:
 
     def slice_var(self,var:str,slice:slice) -> np.ndarray:
         """Slices data for a specific variable."""
-        return self[var].data[slice]
+        return self[var].values[slice]
 
 
     def _has_var(self, key) -> bool:
@@ -203,17 +203,17 @@ class Data:
         return key in asdict(self).keys() or key in self.custom_variables
     
 
-    def get_vars(self,have_data:bool|None=None) -> list:
+    def get_vars(self,have_values:bool|None=None) -> list:
         """Gets a list of all available variables."""
         vars = list(asdict(self).keys()) + list(self.custom_variables.keys())
         vars = [var for var in vars if var!='custom_variables']
-        # Skip checking if have_data is None
-        if have_data is None:
+        # Skip checking if have_values is None
+        if have_values is None:
             return vars
-        # Filter based on if the variable has data or not
-        if have_data:
+        # Filter based on if the variable has values or not
+        if have_values:
             vars = [var for var in vars if isinstance(self[var],Variable)]
-        elif not have_data:
+        elif not have_values:
             vars = [var for var in vars if self[var] is None]
         return vars
 
@@ -224,13 +224,13 @@ class Data:
             self_copy = self.copy()
             for var_name in self.get_vars():
                 if isinstance(self_copy[var_name],Variable):
-                    self_copy[var_name].data = self.slice_var(var=var_name,slice=key)
+                    self_copy[var_name].values = self.slice_var(var=var_name,slice=key)
             return self_copy
         elif isinstance(key,list):
             self_copy = self.copy()
             for var_name in self.get_vars():
                 if isinstance(self_copy[var_name],Variable):
-                    self_copy[var_name].data = self[var_name].data[key]
+                    self_copy[var_name].values = self[var_name].values[key]
             return self_copy
         elif self._has_var(key):
             return getattr(self, key, self.custom_variables.get(key))
@@ -288,8 +288,8 @@ class Data:
     def _format_datetime(self) -> None:
         """Format datetime data as numpy datetime64 objects."""
         if self.time is not None:
-            if self.time.data is not None:
-                self.time.data = self.time.data.astype('datetime64[ns]')
+            if self.time.values is not None:
+                self.time.values = self.time.values.astype('datetime64[ns]')
 
     def _init_variable(self, var: str, cmap, units, vmin, vmax) -> None:
         """
@@ -312,7 +312,7 @@ class Data:
             if not isinstance(self[var],Variable):
                 if self[var] is not None:    
                     self[var] = Variable(
-                        data=self[var],
+                        values=self[var],
                         name=var,
                         cmap=cmap,
                         units=units,
@@ -349,16 +349,16 @@ class Data:
         if vars:
             raise ValueError(
                 f"The following required variables are missing: {', '.join(vars)}. "
-                "Please ensure the Data object includes data for all listed variables."
+                "Please ensure the Data object includes values for all listed variables."
             )
         return True
 
 
     def date2num(self) -> list:
-        """Converts time data to numerical values."""
+        """Converts time values to numerical values."""
         if self.time is not None:
-            if self.time.data is not None:
-                return list(mdates.date2num(self.time.data))
+            if self.time.values is not None:
+                return list(mdates.date2num(self.time.values))
         else: raise ValueError('time variable not present')
 
 
@@ -389,12 +389,12 @@ class Data:
         if self.bounds is None:
             # Detect and calculate the lat bounds with padding
             if self.lat is not None:
-                lat_min, lat_max = calculate_pad(self.lat.data, pad=bounds_padding)
+                lat_min, lat_max = calculate_pad(self.lat.values, pad=bounds_padding)
             else:
                 lat_min, lat_max = None, None
             # Detect and calculate the lon bounds with padding
             if self.lon is not None:
-                lon_min, lon_max = calculate_pad(self.lon.data, pad=bounds_padding)
+                lon_min, lon_max = calculate_pad(self.lon.values, pad=bounds_padding)
             else:
                 lon_min, lon_max = None, None
             
@@ -402,7 +402,7 @@ class Data:
             # depth_top:positive depth example for surface: 0
             
             if self.depth is not None:
-                depth_top, depth_bottom = calculate_pad(self.depth.data)
+                depth_top, depth_bottom = calculate_pad(self.depth.values)
             else:
                 depth_top, depth_bottom = None,None
                 

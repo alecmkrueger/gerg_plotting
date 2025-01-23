@@ -12,15 +12,15 @@ from gerg_plotting.modules.utilities import to_numpy_array
 @define
 class Variable():
     """
-    A class representing a scientific variable with its data and visualization properties.
+    A class representing a scientific variable with its values and visualization properties.
 
-    This class handles data arrays along with their metadata and visualization settings,
-    providing methods for data access and label generation.
+    This class handles values arrays along with their metadata and visualization settings,
+    providing methods for values access and label generation.
 
     Parameters
     ----------
-    data : np.ndarray
-        The numerical data for the variable
+    values : np.ndarray
+        The numerical values for the variable
     name : str
         Name identifier for the variable
     cmap : Colormap, optional
@@ -36,8 +36,8 @@ class Variable():
 
     Attributes
     ----------
-    data : np.ndarray
-        Flat numpy array containing the variable data
+    values : np.ndarray
+        Flat numpy array containing the variable values
     name : str
         Variable name identifier
     cmap : Colormap
@@ -51,7 +51,7 @@ class Variable():
     label : str
         Display label for plots
     """
-    data:np.ndarray = field(converter=to_numpy_array,validator=is_flat_numpy_array)
+    values:np.ndarray = field(converter=to_numpy_array,validator=is_flat_numpy_array)
     name:str
     cmap:Colormap = field(default=None)
     units:str = field(default=None)  # Turn off units by passing/assigning to None
@@ -110,24 +110,24 @@ class Variable():
             return str(value)
                     
     def _repr_html_(self) -> str:
-        # Get all attributes except data
+        # Get all attributes except values
         attrs = self.get_attrs()
-        attrs.remove('data')
+        attrs.remove('values')
         
-        # Calculate width needed for data column
-        sample_data = [self._format_value(x) for x in self.data[:5]]
-        max_data_width = max(len(str(x)) for x in sample_data) if sample_data else 0
+        # Calculate width needed for values column
+        sample_values = [self._format_value(x) for x in self.values[:5]]
+        max_values_width = max(len(str(x)) for x in sample_values) if sample_values else 0
         # Add padding and constrain between min and max values
-        data_width = min(max(max_data_width * 8, 100), 200)  # Min 100px, Max 200px
+        values_width = min(max(max_values_width * 8, 100), 200)  # Min 100px, Max 200px
         
         html = f'<td style="padding:0 0px;vertical-align:top">'
-        html += f'<table style="table-layout:fixed;width:{data_width + 90}px"><tbody>'
+        html += f'<table style="table-layout:fixed;width:{values_width + 90}px"><tbody>'
         
         # Add subheaders
         html += f'''
         <tr>
             <th style="width:80px;padding:0;text-align:center;border-bottom:1px solid #ddd">Attribute</th>
-            <th style="width:{data_width}px;padding:0;text-align:center;border-bottom:1px solid #ddd">Value</th>
+            <th style="width:{values_width}px;padding:0;text-align:center;border-bottom:1px solid #ddd">Value</th>
         </tr>
         '''
         
@@ -137,22 +137,22 @@ class Variable():
             html += f'''
             <tr>
                 <td style="padding-right:10px;width:80px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><strong>{attr}</strong></td>
-                <td style="text-align:center;width:{data_width}px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{self._format_value(value)}</td>
+                <td style="text-align:center;width:{values_width}px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{self._format_value(value)}</td>
             </tr>
             '''
         
         html += f'''<tr><td colspan="2" style="text-align:center"><strong>Data</strong></td></tr>'''
         
-        # Add data values with indices
-        for i in range(min(5, len(self.data))):
+        # Add values values with indices
+        for i in range(min(5, len(self.values))):
             html += f'''
             <tr>
                 <td style="padding-right:10px;width:80px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><strong>{i}</strong></td>
-                <td style="text-align:left;width:{data_width}px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{self._format_value(self.data[i])}</td>
+                <td style="text-align:left;width:{values_width}px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{self._format_value(self.values[i])}</td>
             </tr>
             '''
         
-        html += f'<tr><td colspan="2">... Length: {len(self.data)}</td></tr>'
+        html += f'<tr><td colspan="2">... Length: {len(self.values)}</td></tr>'
         html += '</tbody></table></td>'
         
         return html
@@ -180,7 +180,7 @@ class Variable():
         """
         Calculate or update the minimum and maximum values for visualization.
 
-        Uses 1st and 99th percentiles of the data to set visualization bounds,
+        Uses 1st and 99th percentiles of the values to set visualization bounds,
         excluding time variables.
 
         Parameters
@@ -190,9 +190,9 @@ class Variable():
         """
         if self.name != 'time':  # do not calculate vmin and vmax for time
             if self.vmin is None or ignore_existing:
-                self.vmin = np.nanpercentile(self.data, 1)  # 1st percentile (lower 1%)
+                self.vmin = np.nanpercentile(self.values, 1)  # 1st percentile (lower 1%)
             if self.vmax is None or ignore_existing:
-                self.vmax = np.nanpercentile(self.data, 99)  # 99th percentile (upper 1%)
+                self.vmax = np.nanpercentile(self.values, 99)  # 99th percentile (upper 1%)
 
     def reset_label(self) -> None:
         """Reset the label to the variable name."""

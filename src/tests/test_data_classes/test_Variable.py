@@ -7,18 +7,18 @@ class TestVariable(unittest.TestCase):
 
     def setUp(self):
         """Set up test data for the tests."""
-        self.data = np.array([1.0, 2.0, 3.0, 4.0, 5.0])
+        self.values = np.array([1.0, 2.0, 3.0, 4.0, 5.0])
         self.variable_name = "temperature"
         self.units = "C"
-        self.variable = Variable(data=self.data, name=self.variable_name, units=self.units)
+        self.variable = Variable(values=self.values, name=self.variable_name, units=self.units)
 
     def test_initialization(self):
         """Test initialization of Variable class."""
-        self.assertTrue(np.array_equal(self.variable.data, self.data))
+        self.assertTrue(np.array_equal(self.variable.values, self.values))
         self.assertEqual(self.variable.name, self.variable_name)
         self.assertEqual(self.variable.units, self.units)
-        self.assertEqual(self.variable.vmin, np.nanpercentile(self.data, 1))
-        self.assertEqual(self.variable.vmax, np.nanpercentile(self.data, 99))
+        self.assertEqual(self.variable.vmin, np.nanpercentile(self.values, 1))
+        self.assertEqual(self.variable.vmax, np.nanpercentile(self.values, 99))
 
     def test_label_generation(self):
         """Test automatic generation of the label."""
@@ -39,7 +39,7 @@ class TestVariable(unittest.TestCase):
         self.assertIsNone(self.variable.label)
             
     def test_format_value(self):
-        """Test _format_value method with different data types."""
+        """Test _format_value method with different value types."""
         # Test float formatting
         self.assertEqual(self.variable._format_value(3.14159), "3.141590")
         
@@ -75,21 +75,21 @@ class TestVariable(unittest.TestCase):
         
         # Test that all attributes are represented
         for attr in self.variable.get_attrs():
-            if attr != 'data':  # Skip data as it's handled separately
+            if attr != 'values':  # Skip values as it's handled separately
                 self.assertIn(attr, html_output)
         
-        # Test data section exists
-        self.assertIn("Length: 5", html_output)  # Our test data has 5 elements
+        # Test values section exists
+        self.assertIn("Length: 5", html_output)  # Our test values has 5 elements
         
-        # Test sample data values are present
-        for i in range(min(5, len(self.data))):
-            self.assertIn(str(self.data[i]), html_output)
+        # Test sample values are present
+        for i in range(min(5, len(self.values))):
+            self.assertIn(str(self.values[i]), html_output)
 
 
     def test_getitem(self):
         """Test __getitem__ for accessing attributes."""
         self.assertEqual(self.variable["name"], self.variable_name)
-        self.assertTrue(np.array_equal(self.variable["data"], self.data))
+        self.assertTrue(np.array_equal(self.variable["values"], self.values))
         with self.assertRaises(KeyError):
             _ = self.variable["non_existent"]
 
@@ -104,7 +104,7 @@ class TestVariable(unittest.TestCase):
     def test_get_attrs(self):
         """Test retrieval of attribute names."""
         attrs = self.variable.get_attrs()
-        expected_attrs = ['data', 'name', 'cmap', 'units', 'vmin', 'vmax', 'label']
+        expected_attrs = ['values', 'name', 'cmap', 'units', 'vmin', 'vmax', 'label']
         self.assertCountEqual(attrs, expected_attrs)
 
     def test_repr(self):
@@ -112,9 +112,9 @@ class TestVariable(unittest.TestCase):
         representation = repr(self.variable)
         # Ensure the name is in the representation
         self.assertIn(self.variable_name, representation)
-        # Ensure the data is correctly represented as a numpy array
-        expected_data_repr = repr(self.data)  # Generate the expected array representation
-        self.assertIn(expected_data_repr, representation)
+        # Ensure the values is correctly represented as a numpy array
+        expected_values_repr = repr(self.values)  # Generate the expected array representation
+        self.assertIn(expected_values_repr, representation)
 
 
     def test_vmin_vmax_calculation(self):
@@ -122,6 +122,6 @@ class TestVariable(unittest.TestCase):
         self.variable.vmin = None
         self.variable.vmax = None
         self.variable.get_vmin_vmax()
-        self.assertEqual(self.variable.vmin, np.nanpercentile(self.data, 1))
-        self.assertEqual(self.variable.vmax, np.nanpercentile(self.data, 99))
+        self.assertEqual(self.variable.vmin, np.nanpercentile(self.values, 1))
+        self.assertEqual(self.variable.vmax, np.nanpercentile(self.values, 99))
 

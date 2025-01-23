@@ -89,7 +89,7 @@ class MapPlot(Plotter):
             if var == 'time':
                 color_var_values = np.array(self.data.date2num())
             else:
-                color_var_values = self.data[var].data.copy()
+                color_var_values = self.data[var].values.copy()
             color = color_var_values  # Color is determined by the variable data
             cmap = self.get_cmap(var)  # Get the appropriate colormap for the variable
         
@@ -127,7 +127,7 @@ class MapPlot(Plotter):
             Step size for data slicing
         """
         if quiver_density is not None:
-            step = round(len(self.data.u.data)/quiver_density)
+            step = round(len(self.data.u.values)/quiver_density)
         else:
             step = None
         return step
@@ -218,7 +218,7 @@ class MapPlot(Plotter):
         self.add_bathy(show_bathy, divider)
         
         # Plot scatter points on the map
-        self.sc = self.ax.scatter(self.data['lon'].data, self.data['lat'].data, linewidths=linewidths,
+        self.sc = self.ax.scatter(self.data['lon'].values, self.data['lat'].values, linewidths=linewidths,
                                   c=color, cmap=cmap, s=pointsize, transform=ccrs.PlateCarree(),vmin=self.data[var].vmin,vmax=self.data[var].vmax)
         # Add a colorbar for the scatter plot variable
         self.cbar_var = self.add_colorbar(self.sc, var, divider, total_cbars=(2 if show_bathy else 1))
@@ -264,9 +264,9 @@ class MapPlot(Plotter):
 
         step = self.get_quiver_step(quiver_density)
 
-        mappable = self.ax.quiver(self.data[x].data[::step], self.data[y].data[::step], 
-                                        self.data.u.data[::step], self.data.v.data[::step], 
-                                        self.data.speed.data[::step], cmap=cmap,
+        mappable = self.ax.quiver(self.data[x].values[::step], self.data[y].values[::step], 
+                                        self.data.u.values[::step], self.data.v.values[::step], 
+                                        self.data.speed.values[::step], cmap=cmap,
                                         pivot='tail', scale=quiver_scale, units='height')
         self.cbar_var = self.add_colorbar(mappable, 'speed', divider, total_cbars=(2 if show_bathy else 1))
         
