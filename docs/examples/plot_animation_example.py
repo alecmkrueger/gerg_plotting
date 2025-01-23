@@ -39,7 +39,7 @@ gif_filename = Path('example_plots/animation_example.gif')
 Animator().animate(plotting_function=make_hists,param_dict={'sample':samples,'color':colors},fps=12,gif_filename=gif_filename)
 
 # sphinx_gallery_start_ignore
-fig = make_hists(samples[-5],colors[-5])
+fig = make_hists(samples[45],colors[45])
 fig.savefig('../_static/animation_example_thumb.png',dpi=100)
 plt.close(fig)
 # sphinx_gallery_end_ignore
