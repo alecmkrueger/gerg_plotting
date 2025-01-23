@@ -61,4 +61,4 @@ plotter.fig.legend(handles=handles,bbox_to_anchor=(0.254, 0.46),framealpha=1,tit
 
 plotter.fig.tight_layout()
 
-plotter.fig.savefig('example_plots/coverage_plot_example.png',dpi=600)
+plotter.save('example_plots/coverage_plot_example.png',dpi=600)
