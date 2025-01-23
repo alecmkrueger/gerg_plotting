@@ -4,9 +4,6 @@ Simple Scatter Plot Example
 
 Example description
 
-.. image:: ../examples/example_plots/simple_scatter_plot_example.png
-    :alt: Pre-generated image for this example
-
 """
 from gerg_plotting.plotting_classes import ScatterPlot
 from gerg_plotting.tools import data_from_csv

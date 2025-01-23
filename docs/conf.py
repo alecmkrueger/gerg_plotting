@@ -14,11 +14,6 @@ author = 'Alec Krueger'
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-# extensions = [
-#     'matplotlib.sphinxext.plot_directive',
-#     'sphinx_gallery.gen_gallery',
-#     'autoapi.extension',
-# ]
 
 extensions = [
     'sphinx_gallery.gen_gallery',
@@ -77,7 +72,7 @@ autodoc_typehints = "signature"
 
 autoapi_member_order = 'alphabetical'
 
-# autoapi_keep_files = True
+autoapi_keep_files = False
 
 # Parse docstrings using the NumPy format
 napoleon_numpy_docstring = True

@@ -4,9 +4,6 @@ Map Subplots Example
 
 Example description
 
-.. image:: ../examples/example_plots/map_subplots_example.png
-    :alt: Pre-generated image for this example
-
 """
 from gerg_plotting.plotting_classes import MapPlot
 from gerg_plotting.data_classes import Bounds,Variable

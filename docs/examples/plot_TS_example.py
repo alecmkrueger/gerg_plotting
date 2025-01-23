@@ -4,9 +4,6 @@ TS Example
 
 Example description
 
-.. image:: ../examples/example_plots/TS_example.png
-    :alt: Pre-generated image for this example
-
 """
 from gerg_plotting.plotting_classes import ScatterPlot
 from gerg_plotting.tools import data_from_csv

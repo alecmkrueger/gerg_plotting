@@ -4,8 +4,6 @@ Data Object Example
 
 Example description
 
-.. image:: ../examples/example_plots/data_object_example.png
-    :alt: Pre-generated image for this example
 
 """
 from gerg_plotting.data_classes import Data, Variable

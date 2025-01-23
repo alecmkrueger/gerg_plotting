@@ -4,9 +4,6 @@ Simple Custom Variable Example
 
 Example description
 
-.. image:: ../examples/example_plots/simple_custom_variable_example.png
-    :alt: Pre-generated image for this example
-
 """
 from gerg_plotting.data_classes import Data,Variable
 from gerg_plotting.plotting_classes import Histogram

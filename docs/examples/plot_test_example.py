@@ -4,9 +4,6 @@ Test Example
 
 Test the sphinx-gallery build using only matplotlib
 
-.. image:: ../examples/example_plots/test_example.png
-    :alt: Pre-generated image for this example
-
 """
 
 import matplotlib.pyplot as plt

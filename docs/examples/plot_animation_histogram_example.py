@@ -4,9 +4,6 @@ Animation Histogram Example
 
 Example description
 
-.. image:: ../examples/example_plots/animation_histogram_example.gif
-    :alt: GIF of a normal distribution with increasing sample size
-
 """
 from gerg_plotting.data_classes import Data
 from gerg_plotting.plotting_classes import Histogram, Animator
