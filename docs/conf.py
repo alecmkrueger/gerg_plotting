@@ -16,6 +16,7 @@ author = 'Alec Krueger'
 
 
 extensions = [
+    "matplotlib.sphinxext.plot_directive",
     'sphinx_gallery.gen_gallery',
     'autoapi.extension',
 ]
@@ -25,16 +26,16 @@ templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store','sg_execution_times.rst']
 
 # -- Plot settings -----------------------------------------------------------
-from sphinx.builders.html import StandaloneHTMLBuilder
-StandaloneHTMLBuilder.supported_image_types = [
-    'image/svg+xml',
-    'image/gif',
-    'image/png',
-    'image/jpeg'
-]
-plot_include_source = True
-plot_html_show_source_link = True
-plot_formats = ['png','gif']
+# from sphinx.builders.html import StandaloneHTMLBuilder
+# StandaloneHTMLBuilder.supported_image_types = [
+#     'image/svg+xml',
+#     'image/gif',
+#     'image/png',
+#     'image/jpeg'
+# ]
+# plot_include_source = True
+# plot_html_show_source_link = True
+# plot_formats = ['png','gif']
 
 # -- Examples gallery settings ---------------------------------------------------------
 
