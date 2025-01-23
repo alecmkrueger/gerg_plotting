@@ -4,6 +4,9 @@ Animation Example
 
 Example description
 
+.. image:: ../examples/example_plots/animation_example.gif
+    :alt: GIF of a normal distribution with increasing sample size
+
 """
 from gerg_plotting.data_classes import Data
 from gerg_plotting.plotting_classes import Histogram, Animator
@@ -11,6 +14,8 @@ import cmocean
 import numpy as np
 import matplotlib.pyplot as plt
 from pathlib import Path
+
+# sphinx_gallery_thumbnail_path = '_static/animation_example_thumb.png'
 
 # Let's make some example data
 n_points = 10000
@@ -32,3 +37,9 @@ colors = [cmap((idx*2)+10) for idx in samples]
 
 gif_filename = Path('example_plots/animation_example.gif')
 Animator().animate(plotting_function=make_hists,param_dict={'sample':samples,'color':colors},fps=12,gif_filename=gif_filename)
+
+# sphinx_gallery_start_ignore
+fig = make_hists(samples[-5],colors[-5])
+fig.savefig('../_static/animation_example_thumb.png',dpi=100)
+plt.close(fig)
+# sphinx_gallery_end_ignore
