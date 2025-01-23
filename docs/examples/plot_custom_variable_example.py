@@ -1,5 +1,5 @@
 """
-Simple Custom Variable Example
+Custom Variable Example
 ===================================
 
 Example description
@@ -18,4 +18,4 @@ data.add_custom_variable(pH)
 # Test by plotting a histogram
 hist = Histogram(data)
 hist.plot('pH')
-hist.save('example_plots/simple_custom_variable_example.png')
+hist.save('example_plots/custom_variable_example.png')
