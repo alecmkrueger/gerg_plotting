@@ -5,6 +5,7 @@ import pyvista as pv
 
 from gerg_plotting.data_classes.data import Data
 from gerg_plotting.data_classes.bathy import Bathy
+from gerg_plotting.modules.calculations import get_center_of_mass
 
 
 @define
@@ -104,9 +105,14 @@ class Plotter3D:
         return pformat(asdict(self), width=1)
     
     def init_figure(self):
-        self.plotter = pv.Plotter(off_screen=True, window_size=self.figsize)
+        self.plotter = pv.Plotter(off_screen=False, window_size=self.figsize)
 
     def show(self,**kwargs):
+        self.plotter.set_scale(zscale=self.data.bounds.vertical_scalar)
+        # Set Focus last rigth before show
+        self.plotter.set_focus(get_center_of_mass(lon=self.data.lon.values,
+                                                lat=self.data.lat.values,
+                                                pressure=self.data.depth.values*self.data.bounds.vertical_scalar))
         self.plotter.show(**kwargs)
         
     def close(self):
