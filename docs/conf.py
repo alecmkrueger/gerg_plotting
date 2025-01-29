@@ -73,7 +73,7 @@ autodoc_typehints = "signature"
 
 autoapi_member_order = 'alphabetical'
 
-autoapi_keep_files = False
+autoapi_keep_files = True
 
 # Parse docstrings using the NumPy format
 napoleon_numpy_docstring = True

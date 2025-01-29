@@ -1,0 +1,379 @@
+{
+ "ScatterPlot": [
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "gerg_plotting.plotting_classes.scatter_plot",
+   "module_short": "gerg_plotting",
+   "name": "ScatterPlot"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "gerg_plotting.plotting_classes",
+   "module_short": "gerg_plotting",
+   "name": "ScatterPlot"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "gerg_plotting",
+   "module_short": "gerg_plotting",
+   "name": "ScatterPlot"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "gerg_plotting.plotting_classes.plotter",
+   "module_short": "gerg_plotting.plotting_classes.plotter",
+   "name": "Plotter"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "gerg_plotting.plotting_classes",
+   "module_short": "gerg_plotting.plotting_classes",
+   "name": "Plotter"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "gerg_plotting",
+   "module_short": "gerg_plotting",
+   "name": "Plotter"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting.plotting_classes",
+   "module_short": "gerg_plotting",
+   "name": "ScatterPlot"
+  }
+ ],
+ "data": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting.data_classes.data",
+   "module_short": "gerg_plotting",
+   "name": "Data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting.data_classes",
+   "module_short": "gerg_plotting",
+   "name": "Data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting",
+   "module_short": "gerg_plotting",
+   "name": "Data"
+  }
+ ],
+ "data_from_df": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting.tools",
+   "module_short": "gerg_plotting",
+   "name": "data_from_df"
+  }
+ ],
+ "df": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas.core.frame",
+   "module_short": "pandas.core.frame",
+   "name": "DataFrame"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas.core",
+   "module_short": "pandas.core",
+   "name": "DataFrame"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas",
+   "module_short": "pandas",
+   "name": "DataFrame"
+  }
+ ],
+ "df.groupby": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas.core.frame",
+   "module_short": "pandas.core.frame",
+   "name": "DataFrame.groupby"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas.core",
+   "module_short": "pandas.core",
+   "name": "DataFrame.groupby"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas",
+   "module_short": "pandas",
+   "name": "DataFrame.groupby"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas.core.generic",
+   "module_short": "pandas.core.generic",
+   "name": "NDFrame.groupby"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas.core",
+   "module_short": "pandas.core",
+   "name": "NDFrame.groupby"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas",
+   "module_short": "pandas",
+   "name": "NDFrame.groupby"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas.core.arraylike",
+   "module_short": "pandas.core.arraylike",
+   "name": "OpsMixin.groupby"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas.core",
+   "module_short": "pandas.core",
+   "name": "OpsMixin.groupby"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas",
+   "module_short": "pandas",
+   "name": "OpsMixin.groupby"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas.core.base",
+   "module_short": "pandas.core.base",
+   "name": "PandasObject.groupby"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas.core",
+   "module_short": "pandas.core",
+   "name": "PandasObject.groupby"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas",
+   "module_short": "pandas",
+   "name": "PandasObject.groupby"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas.core.indexing",
+   "module_short": "pandas.core.indexing",
+   "name": "IndexingMixin.groupby"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas.core",
+   "module_short": "pandas.core",
+   "name": "IndexingMixin.groupby"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas",
+   "module_short": "pandas",
+   "name": "IndexingMixin.groupby"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas.core.accessor",
+   "module_short": "pandas.core.accessor",
+   "name": "DirNamesMixin.groupby"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas.core",
+   "module_short": "pandas.core",
+   "name": "DirNamesMixin.groupby"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas",
+   "module_short": "pandas",
+   "name": "DirNamesMixin.groupby"
+  }
+ ],
+ "groups": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "list"
+  }
+ ],
+ "pd.read_csv": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas",
+   "module_short": "pandas",
+   "name": "read_csv"
+  }
+ ],
+ "scatter": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting.plotting_classes.scatter_plot",
+   "module_short": "gerg_plotting",
+   "name": "ScatterPlot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting.plotting_classes",
+   "module_short": "gerg_plotting",
+   "name": "ScatterPlot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting",
+   "module_short": "gerg_plotting",
+   "name": "ScatterPlot"
+  }
+ ],
+ "scatter.quiver1d": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting.plotting_classes.scatter_plot",
+   "module_short": "gerg_plotting",
+   "name": "ScatterPlot.quiver1d"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting.plotting_classes",
+   "module_short": "gerg_plotting",
+   "name": "ScatterPlot.quiver1d"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting",
+   "module_short": "gerg_plotting",
+   "name": "ScatterPlot.quiver1d"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting.plotting_classes.plotter",
+   "module_short": "gerg_plotting.plotting_classes.plotter",
+   "name": "Plotter.quiver1d"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting.plotting_classes",
+   "module_short": "gerg_plotting.plotting_classes",
+   "name": "Plotter.quiver1d"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting",
+   "module_short": "gerg_plotting",
+   "name": "Plotter.quiver1d"
+  }
+ ],
+ "scatter.save": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting.plotting_classes.scatter_plot",
+   "module_short": "gerg_plotting",
+   "name": "ScatterPlot.save"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting.plotting_classes",
+   "module_short": "gerg_plotting",
+   "name": "ScatterPlot.save"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting",
+   "module_short": "gerg_plotting",
+   "name": "ScatterPlot.save"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting.plotting_classes.plotter",
+   "module_short": "gerg_plotting.plotting_classes.plotter",
+   "name": "Plotter.save"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting.plotting_classes",
+   "module_short": "gerg_plotting.plotting_classes",
+   "name": "Plotter.save"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting",
+   "module_short": "gerg_plotting",
+   "name": "Plotter.save"
+  }
+ ]
+}

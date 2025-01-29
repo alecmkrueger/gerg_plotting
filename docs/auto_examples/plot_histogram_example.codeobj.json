@@ -1,0 +1,233 @@
+{
+ "Data": [
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "gerg_plotting.data_classes.data",
+   "module_short": "gerg_plotting",
+   "name": "Data"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "gerg_plotting.data_classes",
+   "module_short": "gerg_plotting",
+   "name": "Data"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "gerg_plotting",
+   "module_short": "gerg_plotting",
+   "name": "Data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting.data_classes",
+   "module_short": "gerg_plotting",
+   "name": "Data"
+  }
+ ],
+ "Histogram": [
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "gerg_plotting.plotting_classes.histogram",
+   "module_short": "gerg_plotting",
+   "name": "Histogram"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "gerg_plotting.plotting_classes",
+   "module_short": "gerg_plotting",
+   "name": "Histogram"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "gerg_plotting",
+   "module_short": "gerg_plotting",
+   "name": "Histogram"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "gerg_plotting.plotting_classes.plotter",
+   "module_short": "gerg_plotting.plotting_classes.plotter",
+   "name": "Plotter"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "gerg_plotting.plotting_classes",
+   "module_short": "gerg_plotting.plotting_classes",
+   "name": "Plotter"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "gerg_plotting",
+   "module_short": "gerg_plotting",
+   "name": "Plotter"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting.plotting_classes",
+   "module_short": "gerg_plotting",
+   "name": "Histogram"
+  }
+ ],
+ "data": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting.data_classes.data",
+   "module_short": "gerg_plotting",
+   "name": "Data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting.data_classes",
+   "module_short": "gerg_plotting",
+   "name": "Data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting",
+   "module_short": "gerg_plotting",
+   "name": "Data"
+  }
+ ],
+ "hist": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting.plotting_classes.histogram",
+   "module_short": "gerg_plotting",
+   "name": "Histogram"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting.plotting_classes",
+   "module_short": "gerg_plotting",
+   "name": "Histogram"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting",
+   "module_short": "gerg_plotting",
+   "name": "Histogram"
+  }
+ ],
+ "hist.plot": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting.plotting_classes.histogram",
+   "module_short": "gerg_plotting",
+   "name": "Histogram.plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting.plotting_classes",
+   "module_short": "gerg_plotting",
+   "name": "Histogram.plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting",
+   "module_short": "gerg_plotting",
+   "name": "Histogram.plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting.plotting_classes.plotter",
+   "module_short": "gerg_plotting.plotting_classes.plotter",
+   "name": "Plotter.plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting.plotting_classes",
+   "module_short": "gerg_plotting.plotting_classes",
+   "name": "Plotter.plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting",
+   "module_short": "gerg_plotting",
+   "name": "Plotter.plot"
+  }
+ ],
+ "hist.save": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting.plotting_classes.histogram",
+   "module_short": "gerg_plotting",
+   "name": "Histogram.save"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting.plotting_classes",
+   "module_short": "gerg_plotting",
+   "name": "Histogram.save"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting",
+   "module_short": "gerg_plotting",
+   "name": "Histogram.save"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting.plotting_classes.plotter",
+   "module_short": "gerg_plotting.plotting_classes.plotter",
+   "name": "Plotter.save"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting.plotting_classes",
+   "module_short": "gerg_plotting.plotting_classes",
+   "name": "Plotter.save"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting",
+   "module_short": "gerg_plotting",
+   "name": "Plotter.save"
+  }
+ ],
+ "np.random.normal": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "module.normal"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy.random",
+   "module_short": "numpy.random",
+   "name": "normal"
+  }
+ ]
+}

@@ -1,0 +1,203 @@
+{
+ "ScatterPlot": [
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "gerg_plotting.plotting_classes.scatter_plot",
+   "module_short": "gerg_plotting",
+   "name": "ScatterPlot"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "gerg_plotting.plotting_classes",
+   "module_short": "gerg_plotting",
+   "name": "ScatterPlot"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "gerg_plotting",
+   "module_short": "gerg_plotting",
+   "name": "ScatterPlot"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "gerg_plotting.plotting_classes.plotter",
+   "module_short": "gerg_plotting.plotting_classes.plotter",
+   "name": "Plotter"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "gerg_plotting.plotting_classes",
+   "module_short": "gerg_plotting.plotting_classes",
+   "name": "Plotter"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "gerg_plotting",
+   "module_short": "gerg_plotting",
+   "name": "Plotter"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting.plotting_classes",
+   "module_short": "gerg_plotting",
+   "name": "ScatterPlot"
+  }
+ ],
+ "data": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting.data_classes.data",
+   "module_short": "gerg_plotting",
+   "name": "Data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting.data_classes",
+   "module_short": "gerg_plotting",
+   "name": "Data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting",
+   "module_short": "gerg_plotting",
+   "name": "Data"
+  }
+ ],
+ "data_from_csv": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting.tools",
+   "module_short": "gerg_plotting",
+   "name": "data_from_csv"
+  }
+ ],
+ "scatter": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting.plotting_classes.scatter_plot",
+   "module_short": "gerg_plotting",
+   "name": "ScatterPlot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting.plotting_classes",
+   "module_short": "gerg_plotting",
+   "name": "ScatterPlot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting",
+   "module_short": "gerg_plotting",
+   "name": "ScatterPlot"
+  }
+ ],
+ "scatter.hovmoller": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting.plotting_classes.scatter_plot",
+   "module_short": "gerg_plotting",
+   "name": "ScatterPlot.hovmoller"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting.plotting_classes",
+   "module_short": "gerg_plotting",
+   "name": "ScatterPlot.hovmoller"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting",
+   "module_short": "gerg_plotting",
+   "name": "ScatterPlot.hovmoller"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting.plotting_classes.plotter",
+   "module_short": "gerg_plotting.plotting_classes.plotter",
+   "name": "Plotter.hovmoller"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting.plotting_classes",
+   "module_short": "gerg_plotting.plotting_classes",
+   "name": "Plotter.hovmoller"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting",
+   "module_short": "gerg_plotting",
+   "name": "Plotter.hovmoller"
+  }
+ ],
+ "scatter.save": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting.plotting_classes.scatter_plot",
+   "module_short": "gerg_plotting",
+   "name": "ScatterPlot.save"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting.plotting_classes",
+   "module_short": "gerg_plotting",
+   "name": "ScatterPlot.save"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting",
+   "module_short": "gerg_plotting",
+   "name": "ScatterPlot.save"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting.plotting_classes.plotter",
+   "module_short": "gerg_plotting.plotting_classes.plotter",
+   "name": "Plotter.save"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting.plotting_classes",
+   "module_short": "gerg_plotting.plotting_classes",
+   "name": "Plotter.save"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "gerg_plotting",
+   "module_short": "gerg_plotting",
+   "name": "Plotter.save"
+  }
+ ]
+}
