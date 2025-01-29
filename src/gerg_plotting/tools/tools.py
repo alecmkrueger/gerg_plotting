@@ -323,7 +323,7 @@ def data_from_csv(filename:str,mapped_variables:dict|None=None,**kwargs):
     return data
 
 
-def data_from_ds(ds: xr.Dataset, mapped_variables: dict | None = None, **kwargs):
+def data_from_ds(ds: xr.Dataset,interp_glider:bool=False, mapped_variables: dict | None = None, **kwargs):
     """
     Create Data object from xarray Dataset.
 
@@ -341,6 +341,8 @@ def data_from_ds(ds: xr.Dataset, mapped_variables: dict | None = None, **kwargs)
     Data
         New Data object containing the dataset variables
     """
+    if interp_glider:
+        ds = interp_glider_lat_lon(ds)
     mapped_variables = _get_var_mapping(ds.variables.keys(), mapped_variables)
     mapped_variables = {key: ds[value].values for key, value in mapped_variables.items() if value is not None}
     data = Data(**mapped_variables, **kwargs)
@@ -368,8 +370,6 @@ def data_from_netcdf(filename: str, mapped_variables: dict | None = None, interp
         New Data object containing the NetCDF variables
     """
     ds = xr.open_dataset(filename)
-    if interp_glider:
-        ds = interp_glider_lat_lon(ds)
-    data = data_from_ds(ds, mapped_variables=mapped_variables, **kwargs)
+    data = data_from_ds(ds, interp_glider=interp_glider, mapped_variables=mapped_variables, **kwargs)
     return data
 
