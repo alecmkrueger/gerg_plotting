@@ -5,6 +5,7 @@ from itertools import combinations
 import re
 
 from gerg_plotting.data_classes.data import Data
+from gerg_plotting.data_classes.variable import Variable
 
 
 def normalize_string(input_string: str) -> str:
@@ -230,10 +231,9 @@ def _get_var_mapping(column_names:list,provided_map:None|dict=None) -> dict:
 
     return mapped_variables
 
-
-def interp_glider_lat_lon(ds:xr.Dataset) -> xr.Dataset:
+def interp_glider_lat_lon(ds: xr.Dataset) -> xr.Dataset:
     """
-    Interpolate glider latitude and longitude data.
+    Interpolate all glider data variables that use m_time as their dimension.
 
     Parameters
     ----------
@@ -243,36 +243,72 @@ def interp_glider_lat_lon(ds:xr.Dataset) -> xr.Dataset:
     Returns
     -------
     xarray.Dataset
-        Dataset with interpolated lat/lon coordinates
+        Dataset with all m_time variables interpolated to time dimension
     """
     # Convert time and m_time to float64 for interpolation
     new_time_values = ds['time'].values.astype('datetime64[ns]').astype('float64')
     new_mtime_values = ds['m_time'].values.astype('datetime64[ns]').astype('float64')
 
-    # Create masks of non-NaN values for both latitude and longitude
-    valid_latitude = ~np.isnan(ds['latitude'])
-    valid_longitude = ~np.isnan(ds['longitude'])
+    # Create a new dataset to store interpolated values
+    new_ds = ds.copy()
 
-    # Interpolate latitude based on valid latitude and m_time values
-    ds['latitude'] = xr.DataArray(
-        np.interp(new_time_values, new_mtime_values[valid_latitude], ds['latitude'].values[valid_latitude]),
-        [('time', ds['time'].values)]
-    )
+    # Find all variables that have m_time as a dimension
+    mtime_vars = [var for var in ds.data_vars if 'm_time' in ds[var].dims]
 
-    # Interpolate longitude based on valid longitude and m_time values
-    ds['longitude'] = xr.DataArray(
-        np.interp(new_time_values, new_mtime_values[valid_longitude], ds['longitude'].values[valid_longitude]),
-        [('time', ds['time'].values)]
-    )
+    # Interpolate each variable
+    for var in mtime_vars:
+        valid_data = ~np.isnan(ds[var].values)
+        new_ds[var] = xr.DataArray(
+            np.interp(new_time_values, new_mtime_values[valid_data], ds[var].values[valid_data]),
+            [('time', ds['time'].values)]
+        )
 
-    ds = ds.drop_vars('m_time')
+    # Drop the m_time coordinate
+    new_ds = new_ds.drop_vars('m_time')
 
-    return ds
+    return new_ds
 
 
-def data_from_df(df:pd.DataFrame,mapped_variables:dict|None=None,**kwargs):
+def _process_custom_vars(vars_to_add: str | list[str], data_source) -> dict:
     """
-    Create Data object from DataFrame.
+    Process custom variables from data source into Variable objects.
+
+    Parameters
+    ----------
+    vars_to_add : str | list[str]
+        Variable name(s) to process from data source
+    data_source : pd.DataFrame | xr.Dataset
+        Source data containing the variables
+
+    Returns
+    -------
+    dict
+        Dictionary of processed Variable objects
+    """
+    if isinstance(vars_to_add, str):
+        vars_to_add = [vars_to_add]
+    
+    custom_vars = {}
+    for var in vars_to_add:
+        if isinstance(data_source, pd.DataFrame):
+            if var in data_source.columns:
+                custom_vars[normalize_string(var)] = Variable(
+                    values=data_source[var].values,
+                    name=normalize_string(var)
+                )
+        elif isinstance(data_source, xr.Dataset):
+            if var in data_source.variables:
+                custom_vars[normalize_string(var)] = Variable(
+                    values=data_source[var].values,
+                    name=normalize_string(var)
+                )
+    return custom_vars
+
+
+
+def data_from_df(df: pd.DataFrame, mapped_variables: dict | None = None, custom_vars: str | list[str] | None = None, **kwargs):
+    """
+    Create Data object from DataFrame with optional custom variables.
 
     Parameters
     ----------
@@ -280,6 +316,8 @@ def data_from_df(df:pd.DataFrame,mapped_variables:dict|None=None,**kwargs):
         Source DataFrame
     mapped_variables : dict, optional
         Custom variable mapping
+    custom_vars : str | list[str], optional
+        Additional variable name(s) to include from DataFrame
     ``**kwargs`` : dict
         Additional arguments for Data initialization
 
@@ -288,17 +326,21 @@ def data_from_df(df:pd.DataFrame,mapped_variables:dict|None=None,**kwargs):
     Data
         Initialized Data object
     """
-    # Get variable mapping
-    mapped_variables = _get_var_mapping(df.columns.tolist(),mapped_variables)
-
-    mapped_variables = {key:df[value] for key,value in mapped_variables.items() if value is not None}
-
-    data = Data(**mapped_variables,**kwargs)
-
+    mapped_variables = _get_var_mapping(df.columns.tolist(), mapped_variables)
+    mapped_variables = {key: df[value] for key, value in mapped_variables.items() if value is not None}
+    
+    data = Data(**mapped_variables, **kwargs)
+    
+    if custom_vars:
+        custom_variables = _process_custom_vars(custom_vars, df)
+        for var_name, var_obj in custom_variables.items():
+            data.add_custom_variable(var_obj, exist_ok=True)
+    
     return data
 
 
-def data_from_csv(filename:str,mapped_variables:dict|None=None,**kwargs):
+
+def data_from_csv(filename:str,mapped_variables:dict|None=None,custom_vars: str | list[str] | None = None,**kwargs):
     """
     Create Data object from CSV file.
 
@@ -308,6 +350,8 @@ def data_from_csv(filename:str,mapped_variables:dict|None=None,**kwargs):
         Path to CSV file
     mapped_variables : dict, optional
         Custom variable mapping
+    custom_vars : str | list[str], optional
+        Additional variable name(s) to include from DataFrame
     ``**kwargs``
         Additional arguments for Data initialization
 
@@ -318,23 +362,27 @@ def data_from_csv(filename:str,mapped_variables:dict|None=None,**kwargs):
     """
     df = pd.read_csv(filename)
 
-    data = data_from_df(df,mapped_variables=mapped_variables,**kwargs)
+    data = data_from_df(df,mapped_variables=mapped_variables,custom_vars=custom_vars,**kwargs)
 
     return data
 
 
-def data_from_ds(ds: xr.Dataset,interp_glider:bool=False, mapped_variables: dict | None = None, **kwargs):
+def data_from_ds(ds: xr.Dataset, interp_glider: bool = False, mapped_variables: dict | None = None, custom_vars: str | list[str] | None = None, **kwargs):
     """
-    Create Data object from xarray Dataset.
+    Create Data object from xarray Dataset with optional custom variables.
 
     Parameters
     ----------
     ds : xarray.Dataset
         Input dataset to convert
-    mapped_variables : dict or None, optional
+    interp_glider : bool, optional
+        Whether to interpolate glider positions
+    mapped_variables : dict, optional
         Dictionary mapping variable names to dataset variables
-    ``**kwargs``
-        Additional keyword arguments passed to Data constructor
+    custom_vars : str | list[str], optional
+        Additional variable name(s) to include from Dataset
+    ``**kwargs`` : dict
+        Additional arguments for Data initialization
 
     Returns
     -------
@@ -343,13 +391,21 @@ def data_from_ds(ds: xr.Dataset,interp_glider:bool=False, mapped_variables: dict
     """
     if interp_glider:
         ds = interp_glider_lat_lon(ds)
+    
     mapped_variables = _get_var_mapping(ds.variables.keys(), mapped_variables)
     mapped_variables = {key: ds[value].values for key, value in mapped_variables.items() if value is not None}
+    
     data = Data(**mapped_variables, **kwargs)
+    
+    if custom_vars:
+        custom_variables = _process_custom_vars(custom_vars, ds)
+        for var_name, var_obj in custom_variables.items():
+            data.add_custom_variable(var_obj, exist_ok=True)
+    
     return data
 
 
-def data_from_netcdf(filename: str, mapped_variables: dict | None = None, interp_glider: bool = False, **kwargs):
+def data_from_netcdf(filename: str, mapped_variables: dict | None = None, interp_glider: bool = False,custom_vars: str | list[str] | None = None, **kwargs):
     """
     Create Data object from NetCDF file.
 
@@ -361,6 +417,8 @@ def data_from_netcdf(filename: str, mapped_variables: dict | None = None, interp
         Dictionary mapping variable names to dataset variables  
     interp_glider : bool, optional
         Whether to interpolate glider lat/lon positions
+    custom_vars : str | list[str], optional
+        Additional variable name(s) to include from Dataset
     ``**kwargs``
         Additional keyword arguments passed to Data constructor
 
@@ -370,6 +428,6 @@ def data_from_netcdf(filename: str, mapped_variables: dict | None = None, interp
         New Data object containing the NetCDF variables
     """
     ds = xr.open_dataset(filename)
-    data = data_from_ds(ds, interp_glider=interp_glider, mapped_variables=mapped_variables, **kwargs)
+    data = data_from_ds(ds, interp_glider=interp_glider, mapped_variables=mapped_variables,custom_vars=custom_vars, **kwargs)
     return data
 

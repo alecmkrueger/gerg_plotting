@@ -161,11 +161,10 @@ class TestTools(unittest.TestCase):
         
         ds = xr.Dataset(
             {
-                'latitude': ('time', [25.0, np.nan, 26.0, np.nan, 27.0]),
-                'longitude': ('time', [-90.0, np.nan, -91.0, np.nan, -92.0]),
-                'm_time': ('time', m_times)
+                'latitude': ('m_time', [25.0, np.nan, 26.0, np.nan, 27.0]),
+                'longitude': ('m_time', [-90.0, np.nan, -91.0, np.nan, -92.0]),
             },
-            coords={'time': times}
+            coords={'time': times, 'm_time': m_times}
         )
         
         result = interp_glider_lat_lon(ds)
