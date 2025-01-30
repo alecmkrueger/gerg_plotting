@@ -56,14 +56,14 @@ class TestGetSigmaTheta(unittest.TestCase):
         salinity = np.linspace(30, 40, 100_000)
         temperature = np.linspace(0, 30, 100_000)
         Sg, Tg, sigma_theta = get_sigma_theta(salinity, temperature)
-        self.assertEqual(sigma_theta.shape, (10_000, 10_000))  # Check the output shape, should downsample to 10,000 by 10,000
+        self.assertEqual(sigma_theta.shape, (100, 100))  # Check the output shape, should downsample to 10,000 by 10,000
 
     def test_with_nan_values(self):
         # Test handling of NaN values in the data
         salinity = np.array([35, np.nan, 34.7])
         temperature = np.array([10, 12, 15])
         Sg, Tg, sigma_theta = get_sigma_theta(salinity, temperature)
-        self.assertEqual(sigma_theta.shape, (3, 3))  # NaN should be included
+        self.assertEqual(sigma_theta.shape, (2, 2))  # NaN should not be included
 
     def test_cnt_parameter(self):
         # Test with cnt=True

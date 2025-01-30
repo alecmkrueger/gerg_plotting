@@ -201,7 +201,7 @@ class TestData(unittest.TestCase):
         """Test getting all variables regardless of data status."""
         vars_list = self.data.get_vars()
         expected_vars = ['lat', 'lon', 'depth', 'time', 'temperature', 'salinity', 
-                        'density', 'u', 'v', 'w', 'speed', 'cdom', 'chlor', 'turbidity', 'bounds']
+                        'density', 'u', 'v', 'w', 'speed', 'cdom', 'chlor', 'turbidity', '_bounds','bounds_padding']
         self.assertEqual(set(vars_list), set(expected_vars))
 
     def test_get_vars_with_data(self):
@@ -214,7 +214,7 @@ class TestData(unittest.TestCase):
         """Test getting only variables that don't have data."""
         vars_without_data = self.data.get_vars(have_values=False)
         expected_vars = ['temperature', 'salinity', 'density', 'u', 'v', 
-                        'w', 'speed', 'cdom', 'chlor', 'turbidity', 'bounds']
+                        'w', 'speed', 'cdom', 'chlor', 'turbidity', '_bounds']
         self.assertEqual(set(vars_without_data), set(expected_vars))
 
     def test_repr_html(self):
