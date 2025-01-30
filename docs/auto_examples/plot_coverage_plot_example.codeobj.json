@@ -4,14 +4,14 @@
    "is_class": true,
    "is_explicit": false,
    "module": "gerg_plotting.plotting_classes.coverage_plot",
-   "module_short": "gerg_plotting",
+   "module_short": "gerg_plotting.plotting_classes.coverage_plot",
    "name": "CoveragePlot"
   },
   {
    "is_class": true,
    "is_explicit": false,
    "module": "gerg_plotting.plotting_classes",
-   "module_short": "gerg_plotting",
+   "module_short": "gerg_plotting.plotting_classes",
    "name": "CoveragePlot"
   },
   {
@@ -45,7 +45,7 @@
   {
    "is_class": false,
    "is_explicit": false,
-   "module": "gerg_plotting.plotting_classes",
+   "module": "gerg_plotting",
    "module_short": "gerg_plotting",
    "name": "CoveragePlot"
   }
@@ -95,8 +95,8 @@
   {
    "is_class": false,
    "is_explicit": false,
-   "module": "gerg_plotting.tools",
-   "module_short": "gerg_plotting.tools",
+   "module": "gerg_plotting.tools.tools",
+   "module_short": "gerg_plotting.tools.tools",
    "name": "custom_legend_handles"
   }
  ],
@@ -177,14 +177,14 @@
    "is_class": false,
    "is_explicit": false,
    "module": "gerg_plotting.plotting_classes.coverage_plot",
-   "module_short": "gerg_plotting",
+   "module_short": "gerg_plotting.plotting_classes.coverage_plot",
    "name": "CoveragePlot"
   },
   {
    "is_class": false,
    "is_explicit": false,
    "module": "gerg_plotting.plotting_classes",
-   "module_short": "gerg_plotting",
+   "module_short": "gerg_plotting.plotting_classes",
    "name": "CoveragePlot"
   },
   {
@@ -200,14 +200,14 @@
    "is_class": false,
    "is_explicit": false,
    "module": "gerg_plotting.plotting_classes.coverage_plot",
-   "module_short": "gerg_plotting",
+   "module_short": "gerg_plotting.plotting_classes.coverage_plot",
    "name": "CoveragePlot.add_coverage"
   },
   {
    "is_class": false,
    "is_explicit": false,
    "module": "gerg_plotting.plotting_classes",
-   "module_short": "gerg_plotting",
+   "module_short": "gerg_plotting.plotting_classes",
    "name": "CoveragePlot.add_coverage"
   },
   {
@@ -332,14 +332,14 @@
    "is_class": false,
    "is_explicit": false,
    "module": "gerg_plotting.plotting_classes.coverage_plot",
-   "module_short": "gerg_plotting",
+   "module_short": "gerg_plotting.plotting_classes.coverage_plot",
    "name": "CoveragePlot.plot"
   },
   {
    "is_class": false,
    "is_explicit": false,
    "module": "gerg_plotting.plotting_classes",
-   "module_short": "gerg_plotting",
+   "module_short": "gerg_plotting.plotting_classes",
    "name": "CoveragePlot.plot"
   },
   {
@@ -376,14 +376,14 @@
    "is_class": false,
    "is_explicit": false,
    "module": "gerg_plotting.plotting_classes.coverage_plot",
-   "module_short": "gerg_plotting",
+   "module_short": "gerg_plotting.plotting_classes.coverage_plot",
    "name": "CoveragePlot.save"
   },
   {
    "is_class": false,
    "is_explicit": false,
    "module": "gerg_plotting.plotting_classes",
-   "module_short": "gerg_plotting",
+   "module_short": "gerg_plotting.plotting_classes",
    "name": "CoveragePlot.save"
   },
   {

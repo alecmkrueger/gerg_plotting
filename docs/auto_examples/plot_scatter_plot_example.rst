@@ -23,7 +23,7 @@ Scatter Plot Example
 
 Example description
 
-.. GENERATED FROM PYTHON SOURCE LINES 8-20
+.. GENERATED FROM PYTHON SOURCE LINES 8-19
 
 
 
@@ -38,8 +38,7 @@ Example description
 
 .. code-block:: Python
 
-    from gerg_plotting.plotting_classes import ScatterPlot
-    from gerg_plotting.tools import data_from_csv
+    from gerg_plotting import ScatterPlot, data_from_csv
 
     # Let's read in the example data
     data = data_from_csv('example_data/sample_glider_data.csv')
@@ -54,7 +53,7 @@ Example description
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.212 seconds)
+   **Total running time of the script:** (0 minutes 0.189 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_scatter_plot_example.py:

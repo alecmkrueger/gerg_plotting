@@ -9,8 +9,7 @@ We also show how to include custom_vars into data with data_from_netcdf
 We also plot a hovmoller plot of m_pressure.
 
 """
-from gerg_plotting.tools import data_from_netcdf
-from gerg_plotting.plotting_classes import ScatterPlot
+from gerg_plotting import data_from_netcdf, ScatterPlot
 
 # Read in the data from a netcdf file
 data = data_from_netcdf("example_data/sample_glider_data.nc",

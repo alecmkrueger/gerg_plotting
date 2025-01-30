@@ -5,8 +5,7 @@ TS Example
 Example description
 
 """
-from gerg_plotting.plotting_classes import ScatterPlot
-from gerg_plotting.tools import data_from_csv
+from gerg_plotting import ScatterPlot, data_from_csv
 
 # Let's read in the example data
 data = data_from_csv('example_data/sample_glider_data.csv')

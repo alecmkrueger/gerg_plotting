@@ -38,8 +38,8 @@ Example description
 
 .. code-block:: Python
 
-    from gerg_plotting.plotting_classes import CoveragePlot
-    from gerg_plotting.tools import custom_legend_handles
+    from gerg_plotting import CoveragePlot
+    from gerg_plotting.tools.tools import custom_legend_handles
 
     import matplotlib.pyplot as plt
 
@@ -98,7 +98,7 @@ Example description
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.963 seconds)
+   **Total running time of the script:** (0 minutes 0.903 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_coverage_plot_example.py:

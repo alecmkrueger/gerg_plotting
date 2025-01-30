@@ -69,14 +69,14 @@ Some examples:
 
 .. only:: html
 
-  .. image:: /auto_examples/images/thumb/sphx_glr_plot_scatter_plot_example_thumb.png
+  .. image:: /auto_examples/images/thumb/sphx_glr_plot_histogram_example_thumb.png
     :alt:
 
-  :ref:`sphx_glr_auto_examples_plot_scatter_plot_example.py`
+  :ref:`sphx_glr_auto_examples_plot_histogram_example.py`
 
 .. raw:: html
 
-      <div class="sphx-glr-thumbnail-title">Scatter Plot Example</div>
+      <div class="sphx-glr-thumbnail-title">Histogram Example</div>
     </div>
 
 
@@ -86,14 +86,14 @@ Some examples:
 
 .. only:: html
 
-  .. image:: /auto_examples/images/thumb/sphx_glr_plot_histogram_example_thumb.png
+  .. image:: /auto_examples/images/thumb/sphx_glr_plot_scatter_plot_example_thumb.png
     :alt:
 
-  :ref:`sphx_glr_auto_examples_plot_histogram_example.py`
+  :ref:`sphx_glr_auto_examples_plot_scatter_plot_example.py`
 
 .. raw:: html
 
-      <div class="sphx-glr-thumbnail-title">Histogram Example</div>
+      <div class="sphx-glr-thumbnail-title">Scatter Plot Example</div>
     </div>
 
 
@@ -184,23 +184,6 @@ Some examples:
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="Example description">
-
-.. only:: html
-
-  .. image:: /auto_examples/images/thumb/sphx_glr_plot_animation_example_thumb.png
-    :alt:
-
-  :ref:`sphx_glr_auto_examples_plot_animation_example.py`
-
-.. raw:: html
-
-      <div class="sphx-glr-thumbnail-title">Animation Example</div>
-    </div>
-
-
-.. raw:: html
-
     <div class="sphx-glr-thumbcontainer" tooltip="This example shows some of the different ways to import the gerg_plotting package.">
 
 .. only:: html
@@ -213,6 +196,23 @@ Some examples:
 .. raw:: html
 
       <div class="sphx-glr-thumbnail-title">How to import gerg_plotting</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Example description">
+
+.. only:: html
+
+  .. image:: /auto_examples/images/thumb/sphx_glr_plot_animation_example_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_plot_animation_example.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Animation Example</div>
     </div>
 
 
@@ -297,15 +297,15 @@ Some examples:
    /auto_examples/plot_hovmoller_example
    /auto_examples/plot_data_from_netcdf_example
    /auto_examples/plot_tricontourf_example
-   /auto_examples/plot_scatter_plot_example
    /auto_examples/plot_histogram_example
+   /auto_examples/plot_scatter_plot_example
    /auto_examples/plot_TS_example
    /auto_examples/plot_quiver_2d_example
    /auto_examples/plot_custom_variable_example
    /auto_examples/plot_quiver_1d_example
    /auto_examples/plot_data_from_netcdf_with_custom_vars_example
-   /auto_examples/plot_animation_example
    /auto_examples/how_to_import
+   /auto_examples/plot_animation_example
    /auto_examples/plot_data_object_example
    /auto_examples/plot_map_subplots_example
    /auto_examples/plot_power_spectra_example

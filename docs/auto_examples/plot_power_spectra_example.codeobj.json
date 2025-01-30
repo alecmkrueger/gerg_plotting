@@ -4,14 +4,14 @@
    "is_class": true,
    "is_explicit": false,
    "module": "gerg_plotting.plotting_classes.animator",
-   "module_short": "gerg_plotting",
+   "module_short": "gerg_plotting.plotting_classes.animator",
    "name": "Animator"
   },
   {
    "is_class": true,
    "is_explicit": false,
    "module": "gerg_plotting.plotting_classes",
-   "module_short": "gerg_plotting",
+   "module_short": "gerg_plotting.plotting_classes",
    "name": "Animator"
   },
   {
@@ -34,14 +34,14 @@
    "is_class": true,
    "is_explicit": false,
    "module": "gerg_plotting.plotting_classes.scatter_plot",
-   "module_short": "gerg_plotting",
+   "module_short": "gerg_plotting.plotting_classes.scatter_plot",
    "name": "ScatterPlot"
   },
   {
    "is_class": true,
    "is_explicit": false,
    "module": "gerg_plotting.plotting_classes",
-   "module_short": "gerg_plotting",
+   "module_short": "gerg_plotting.plotting_classes",
    "name": "ScatterPlot"
   },
   {
@@ -75,7 +75,7 @@
   {
    "is_class": false,
    "is_explicit": false,
-   "module": "gerg_plotting.plotting_classes",
+   "module": "gerg_plotting",
    "module_short": "gerg_plotting",
    "name": "ScatterPlot"
   }
@@ -85,14 +85,14 @@
    "is_class": false,
    "is_explicit": false,
    "module": "gerg_plotting.data_classes.data",
-   "module_short": "gerg_plotting",
+   "module_short": "gerg_plotting.data_classes.data",
    "name": "Data"
   },
   {
    "is_class": false,
    "is_explicit": false,
    "module": "gerg_plotting.data_classes",
-   "module_short": "gerg_plotting",
+   "module_short": "gerg_plotting.data_classes",
    "name": "Data"
   },
   {
@@ -108,14 +108,14 @@
    "is_class": false,
    "is_explicit": false,
    "module": "gerg_plotting.data_classes.data",
-   "module_short": "gerg_plotting",
+   "module_short": "gerg_plotting.data_classes.data",
    "name": "Data.calcluate_PSD"
   },
   {
    "is_class": false,
    "is_explicit": false,
    "module": "gerg_plotting.data_classes",
-   "module_short": "gerg_plotting",
+   "module_short": "gerg_plotting.data_classes",
    "name": "Data.calcluate_PSD"
   },
   {
@@ -137,7 +137,7 @@
   {
    "is_class": false,
    "is_explicit": false,
-   "module": "gerg_plotting.tools",
+   "module": "gerg_plotting",
    "module_short": "gerg_plotting",
    "name": "data_from_df"
   }
@@ -382,14 +382,14 @@
    "is_class": false,
    "is_explicit": false,
    "module": "gerg_plotting.plotting_classes.scatter_plot",
-   "module_short": "gerg_plotting",
+   "module_short": "gerg_plotting.plotting_classes.scatter_plot",
    "name": "ScatterPlot"
   },
   {
    "is_class": false,
    "is_explicit": false,
    "module": "gerg_plotting.plotting_classes",
-   "module_short": "gerg_plotting",
+   "module_short": "gerg_plotting.plotting_classes",
    "name": "ScatterPlot"
   },
   {
@@ -581,14 +581,14 @@
    "is_class": false,
    "is_explicit": false,
    "module": "gerg_plotting.plotting_classes.scatter_plot",
-   "module_short": "gerg_plotting",
+   "module_short": "gerg_plotting.plotting_classes.scatter_plot",
    "name": "ScatterPlot.power_spectra_density"
   },
   {
    "is_class": false,
    "is_explicit": false,
    "module": "gerg_plotting.plotting_classes",
-   "module_short": "gerg_plotting",
+   "module_short": "gerg_plotting.plotting_classes",
    "name": "ScatterPlot.power_spectra_density"
   },
   {

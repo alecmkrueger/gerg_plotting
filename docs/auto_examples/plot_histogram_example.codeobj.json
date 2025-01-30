@@ -4,14 +4,14 @@
    "is_class": true,
    "is_explicit": false,
    "module": "gerg_plotting.data_classes.data",
-   "module_short": "gerg_plotting",
+   "module_short": "gerg_plotting.data_classes.data",
    "name": "Data"
   },
   {
    "is_class": true,
    "is_explicit": false,
    "module": "gerg_plotting.data_classes",
-   "module_short": "gerg_plotting",
+   "module_short": "gerg_plotting.data_classes",
    "name": "Data"
   },
   {
@@ -24,7 +24,7 @@
   {
    "is_class": false,
    "is_explicit": false,
-   "module": "gerg_plotting.data_classes",
+   "module": "gerg_plotting",
    "module_short": "gerg_plotting",
    "name": "Data"
   }
@@ -34,14 +34,14 @@
    "is_class": true,
    "is_explicit": false,
    "module": "gerg_plotting.plotting_classes.histogram",
-   "module_short": "gerg_plotting",
+   "module_short": "gerg_plotting.plotting_classes.histogram",
    "name": "Histogram"
   },
   {
    "is_class": true,
    "is_explicit": false,
    "module": "gerg_plotting.plotting_classes",
-   "module_short": "gerg_plotting",
+   "module_short": "gerg_plotting.plotting_classes",
    "name": "Histogram"
   },
   {
@@ -75,7 +75,7 @@
   {
    "is_class": false,
    "is_explicit": false,
-   "module": "gerg_plotting.plotting_classes",
+   "module": "gerg_plotting",
    "module_short": "gerg_plotting",
    "name": "Histogram"
   }
@@ -85,14 +85,14 @@
    "is_class": false,
    "is_explicit": false,
    "module": "gerg_plotting.data_classes.data",
-   "module_short": "gerg_plotting",
+   "module_short": "gerg_plotting.data_classes.data",
    "name": "Data"
   },
   {
    "is_class": false,
    "is_explicit": false,
    "module": "gerg_plotting.data_classes",
-   "module_short": "gerg_plotting",
+   "module_short": "gerg_plotting.data_classes",
    "name": "Data"
   },
   {
@@ -108,14 +108,14 @@
    "is_class": false,
    "is_explicit": false,
    "module": "gerg_plotting.plotting_classes.histogram",
-   "module_short": "gerg_plotting",
+   "module_short": "gerg_plotting.plotting_classes.histogram",
    "name": "Histogram"
   },
   {
    "is_class": false,
    "is_explicit": false,
    "module": "gerg_plotting.plotting_classes",
-   "module_short": "gerg_plotting",
+   "module_short": "gerg_plotting.plotting_classes",
    "name": "Histogram"
   },
   {
@@ -131,14 +131,14 @@
    "is_class": false,
    "is_explicit": false,
    "module": "gerg_plotting.plotting_classes.histogram",
-   "module_short": "gerg_plotting",
+   "module_short": "gerg_plotting.plotting_classes.histogram",
    "name": "Histogram.plot"
   },
   {
    "is_class": false,
    "is_explicit": false,
    "module": "gerg_plotting.plotting_classes",
-   "module_short": "gerg_plotting",
+   "module_short": "gerg_plotting.plotting_classes",
    "name": "Histogram.plot"
   },
   {
@@ -175,14 +175,14 @@
    "is_class": false,
    "is_explicit": false,
    "module": "gerg_plotting.plotting_classes.histogram",
-   "module_short": "gerg_plotting",
+   "module_short": "gerg_plotting.plotting_classes.histogram",
    "name": "Histogram.save"
   },
   {
    "is_class": false,
    "is_explicit": false,
    "module": "gerg_plotting.plotting_classes",
-   "module_short": "gerg_plotting",
+   "module_short": "gerg_plotting.plotting_classes",
    "name": "Histogram.save"
   },
   {

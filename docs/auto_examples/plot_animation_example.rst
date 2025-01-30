@@ -46,8 +46,8 @@ Example description
 
 .. code-block:: Python
 
-    from gerg_plotting.data_classes import Data
-    from gerg_plotting.plotting_classes import Histogram, Animator
+    from gerg_plotting import Data
+    from gerg_plotting import Histogram, Animator
     import cmocean
     import numpy as np
     import matplotlib.pyplot as plt
@@ -79,7 +79,7 @@ Example description
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 15.779 seconds)
+   **Total running time of the script:** (0 minutes 14.858 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_animation_example.py:

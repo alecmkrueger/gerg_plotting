@@ -24,7 +24,7 @@ Data From Netcdf Example
 How to use the data_from_netcdf function to load data from a netcdf file.
 We also plot a hovmoller plot of chlorophyll 
 
-.. GENERATED FROM PYTHON SOURCE LINES 9-21
+.. GENERATED FROM PYTHON SOURCE LINES 9-20
 
 
 
@@ -39,8 +39,7 @@ We also plot a hovmoller plot of chlorophyll
 
 .. code-block:: Python
 
-    from gerg_plotting.tools import data_from_netcdf
-    from gerg_plotting.plotting_classes import ScatterPlot
+    from gerg_plotting import data_from_netcdf, ScatterPlot
 
 
     data = data_from_netcdf("example_data/sample_glider_data.nc",
@@ -55,7 +54,7 @@ We also plot a hovmoller plot of chlorophyll
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 1.469 seconds)
+   **Total running time of the script:** (0 minutes 1.363 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_data_from_netcdf_example.py:

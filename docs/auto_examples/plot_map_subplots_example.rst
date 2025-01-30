@@ -23,7 +23,7 @@ Map Subplots Example
 
 Example description
 
-.. GENERATED FROM PYTHON SOURCE LINES 8-50
+.. GENERATED FROM PYTHON SOURCE LINES 8-48
 
 
 
@@ -38,9 +38,7 @@ Example description
 
 .. code-block:: Python
 
-    from gerg_plotting.plotting_classes import MapPlot
-    from gerg_plotting.data_classes import Bounds,Variable
-    from gerg_plotting.tools import data_from_df
+    from gerg_plotting import MapPlot, Bounds,Variable, data_from_df
     import matplotlib.pyplot as plt
     import cartopy.crs as ccrs
     import pandas as pd
@@ -84,7 +82,7 @@ Example description
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 3.007 seconds)
+   **Total running time of the script:** (0 minutes 2.742 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_map_subplots_example.py:

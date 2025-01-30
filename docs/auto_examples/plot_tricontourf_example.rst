@@ -23,7 +23,7 @@ Tricontourf Example
 
 Example description
 
-.. GENERATED FROM PYTHON SOURCE LINES 8-19
+.. GENERATED FROM PYTHON SOURCE LINES 8-18
 
 
 
@@ -38,8 +38,7 @@ Example description
 
 .. code-block:: Python
 
-    from gerg_plotting.plotting_classes import ScatterPlot
-    from gerg_plotting.tools import data_from_csv
+    from gerg_plotting import ScatterPlot, data_from_csv
 
     data = data_from_csv('example_data/sample_glider_data.csv')
 
@@ -53,7 +52,7 @@ Example description
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 5.552 seconds)
+   **Total running time of the script:** (0 minutes 4.875 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_tricontourf_example.py:

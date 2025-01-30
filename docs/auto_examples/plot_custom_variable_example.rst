@@ -23,7 +23,7 @@ Custom Variable Example
 
 Example description
 
-.. GENERATED FROM PYTHON SOURCE LINES 8-22
+.. GENERATED FROM PYTHON SOURCE LINES 8-21
 
 
 
@@ -38,8 +38,7 @@ Example description
 
 .. code-block:: Python
 
-    from gerg_plotting.data_classes import Data,Variable
-    from gerg_plotting.plotting_classes import Histogram
+    from gerg_plotting import Data,Variable,Histogram
     import numpy as np
 
     # Init Data object
@@ -56,7 +55,7 @@ Example description
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.046 seconds)
+   **Total running time of the script:** (0 minutes 0.044 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_custom_variable_example.py:

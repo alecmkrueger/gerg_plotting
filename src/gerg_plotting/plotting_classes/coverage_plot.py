@@ -14,7 +14,7 @@ from pprint import pformat
 import itertools
 
 from gerg_plotting.modules.utilities import extract_kwargs_with_aliases
-from gerg_plotting.tools import normalize_string,merge_dicts
+from gerg_plotting.tools.tools import normalize_string,merge_dicts
 
 
 

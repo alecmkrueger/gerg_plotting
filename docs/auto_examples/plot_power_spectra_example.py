@@ -5,8 +5,7 @@ Power Spectra Example
 Example description
 
 """
-from gerg_plotting.plotting_classes import ScatterPlot
-from gerg_plotting.tools import data_from_df
+from gerg_plotting import ScatterPlot, data_from_df
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np

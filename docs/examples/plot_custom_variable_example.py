@@ -5,8 +5,7 @@ Custom Variable Example
 Example description
 
 """
-from gerg_plotting.data_classes import Data,Variable
-from gerg_plotting.plotting_classes import Histogram
+from gerg_plotting import Data,Variable,Histogram
 import numpy as np
 
 # Init Data object

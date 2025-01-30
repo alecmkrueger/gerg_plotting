@@ -6,8 +6,7 @@ How to use the data_from_netcdf function to load data from a netcdf file.
 We also plot a hovmoller plot of chlorophyll 
 
 """
-from gerg_plotting.tools import data_from_netcdf
-from gerg_plotting.plotting_classes import ScatterPlot
+from gerg_plotting import data_from_netcdf, ScatterPlot
 
 
 data = data_from_netcdf("example_data/sample_glider_data.nc",

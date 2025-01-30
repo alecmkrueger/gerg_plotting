@@ -23,7 +23,7 @@ Power Spectra Example
 
 Example description
 
-.. GENERATED FROM PYTHON SOURCE LINES 8-79
+.. GENERATED FROM PYTHON SOURCE LINES 8-78
 
 
 
@@ -48,8 +48,7 @@ Example description
 
 .. code-block:: Python
 
-    from gerg_plotting.plotting_classes import ScatterPlot
-    from gerg_plotting.tools import data_from_df
+    from gerg_plotting import ScatterPlot, data_from_df
     import pandas as pd
     import matplotlib.pyplot as plt
     import numpy as np
@@ -123,7 +122,7 @@ Example description
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 10.726 seconds)
+   **Total running time of the script:** (0 minutes 10.323 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_power_spectra_example.py:

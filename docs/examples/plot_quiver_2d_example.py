@@ -5,8 +5,7 @@ Quiver 2D Example
 Example description
 
 """
-from gerg_plotting.plotting_classes import ScatterPlot
-from gerg_plotting.tools import data_from_csv
+from gerg_plotting import ScatterPlot, data_from_csv
 
 data = data_from_csv('example_data/sample_tabs_data.csv')
 

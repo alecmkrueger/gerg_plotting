@@ -23,7 +23,7 @@ Histogram Example
 
 Example description
 
-.. GENERATED FROM PYTHON SOURCE LINES 8-19
+.. GENERATED FROM PYTHON SOURCE LINES 8-18
 
 
 
@@ -38,8 +38,7 @@ Example description
 
 .. code-block:: Python
 
-    from gerg_plotting.plotting_classes import Histogram
-    from gerg_plotting.data_classes import Data
+    from gerg_plotting import Histogram, Data
     import numpy as np
 
     # Initalize the data object with some sample data
@@ -53,7 +52,7 @@ Example description
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.053 seconds)
+   **Total running time of the script:** (0 minutes 0.046 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_histogram_example.py:

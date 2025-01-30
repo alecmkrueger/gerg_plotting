@@ -27,7 +27,7 @@ We also show how to include custom_vars into data with data_from_netcdf
 
 We also plot a hovmoller plot of m_pressure.
 
-.. GENERATED FROM PYTHON SOURCE LINES 12-26
+.. GENERATED FROM PYTHON SOURCE LINES 12-25
 
 
 
@@ -42,8 +42,7 @@ We also plot a hovmoller plot of m_pressure.
 
 .. code-block:: Python
 
-    from gerg_plotting.tools import data_from_netcdf
-    from gerg_plotting.plotting_classes import ScatterPlot
+    from gerg_plotting import data_from_netcdf, ScatterPlot
 
     # Read in the data from a netcdf file
     data = data_from_netcdf("example_data/sample_glider_data.nc",
@@ -60,7 +59,7 @@ We also plot a hovmoller plot of m_pressure.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 1.437 seconds)
+   **Total running time of the script:** (0 minutes 1.375 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_data_from_netcdf_with_custom_vars_example.py:

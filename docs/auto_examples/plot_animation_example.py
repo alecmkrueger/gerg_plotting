@@ -8,8 +8,8 @@ Example description
     :alt: GIF of a normal distribution with increasing sample size
 
 """
-from gerg_plotting.data_classes import Data
-from gerg_plotting.plotting_classes import Histogram, Animator
+from gerg_plotting import Data
+from gerg_plotting import Histogram, Animator
 import cmocean
 import numpy as np
 import matplotlib.pyplot as plt

@@ -5,8 +5,7 @@ Histogram Example
 Example description
 
 """
-from gerg_plotting.plotting_classes import Histogram
-from gerg_plotting.data_classes import Data
+from gerg_plotting import Histogram, Data
 import numpy as np
 
 # Initalize the data object with some sample data

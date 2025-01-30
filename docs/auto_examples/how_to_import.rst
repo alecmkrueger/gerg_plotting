@@ -44,7 +44,7 @@ Method 1: Import just what you need
 Method 2: Import the whole package
 ------------------------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 23-29
+.. GENERATED FROM PYTHON SOURCE LINES 23-31
 
 .. code-block:: Python
 
@@ -54,71 +54,6 @@ Method 2: Import the whole package
     data = gp.Data(temperature=np.random.normal(28,size=1000))
     hist = gp.Histogram(data)  # Assign the histogram plotter to a variable
 
-
-.. GENERATED FROM PYTHON SOURCE LINES 30-32
-
-Method 3: Import the whole package then move to desired class or function
--------------------------------------------------------------------------
-
-.. GENERATED FROM PYTHON SOURCE LINES 32-38
-
-.. code-block:: Python
-
-    import gerg_plotting as gp
-
-    # Initalize the data object with some sample data
-    data = gp.data_classes.Data(temperature=np.random.normal(28,size=1000))
-    hist = gp.plotting_classes.Histogram(data)  # Assign the histogram plotter to a variable
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 39-41
-
-Method 4: Import what you need from specific submodules
---------------------------------------------------------
-
-.. GENERATED FROM PYTHON SOURCE LINES 41-48
-
-.. code-block:: Python
-
-    from gerg_plotting.plotting_classes import Histogram
-    from gerg_plotting.data_classes import Data
-
-    # Initalize the data object with some sample data
-    data = Data(temperature=np.random.normal(28,size=1000))
-    hist = Histogram(data)  # Assign the histogram plotter to a variable
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 49-51
-
-Method 5: Import whole submodules
-----------------------------------
-
-.. GENERATED FROM PYTHON SOURCE LINES 51-57
-
-.. code-block:: Python
-
-    from gerg_plotting import plotting_classes, data_classes
-
-    # Initalize the data object with some sample data
-    data = data_classes.Data(temperature=np.random.normal(28,size=1000))
-    hist = plotting_classes.Histogram(data)  # Assign the histogram plotter to a variable
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 58-60
-
-Method 6: Import whole submodules with short names
---------------------------------------------------
-
-.. GENERATED FROM PYTHON SOURCE LINES 60-68
-
-.. code-block:: Python
-
-    from gerg_plotting import plotting_classes as pc
-    from gerg_plotting import data_classes as dc
-
-    # Initalize the data object with some sample data
-    data = dc.Data(temperature=np.random.normal(28,size=1000))
-    hist = pc.Histogram(data)  # Assign the histogram plotter to a variable
 
 
 

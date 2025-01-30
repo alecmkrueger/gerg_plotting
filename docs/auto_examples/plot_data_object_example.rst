@@ -23,7 +23,7 @@ Data Object Example
 
 Example description
 
-.. GENERATED FROM PYTHON SOURCE LINES 9-68
+.. GENERATED FROM PYTHON SOURCE LINES 9-67
 
 
 
@@ -51,8 +51,7 @@ Example description
 
 .. code-block:: Python
 
-    from gerg_plotting.data_classes import Data, Variable
-    from gerg_plotting.tools import data_from_csv
+    from gerg_plotting import Data, Variable ,data_from_csv
     import pandas as pd
     import cmocean
 
@@ -114,7 +113,7 @@ Example description
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.224 seconds)
+   **Total running time of the script:** (0 minutes 0.215 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_data_object_example.py:

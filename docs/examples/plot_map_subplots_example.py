@@ -5,9 +5,7 @@ Map Subplots Example
 Example description
 
 """
-from gerg_plotting.plotting_classes import MapPlot
-from gerg_plotting.data_classes import Bounds,Variable
-from gerg_plotting.tools import data_from_df
+from gerg_plotting import MapPlot, Bounds,Variable, data_from_df
 import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 import pandas as pd

@@ -23,7 +23,7 @@ Quiver 1D Example
 
 Example description
 
-.. GENERATED FROM PYTHON SOURCE LINES 8-22
+.. GENERATED FROM PYTHON SOURCE LINES 8-21
 
 
 
@@ -38,8 +38,7 @@ Example description
 
 .. code-block:: Python
 
-    from gerg_plotting.plotting_classes import ScatterPlot
-    from gerg_plotting.tools import data_from_df
+    from gerg_plotting import ScatterPlot, data_from_df
     import pandas as pd
 
     # Let's read in the example data
@@ -56,7 +55,7 @@ Example description
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.315 seconds)
+   **Total running time of the script:** (0 minutes 0.298 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_quiver_1d_example.py:
