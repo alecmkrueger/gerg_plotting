@@ -38,9 +38,9 @@ class ScatterPlot3D(Plotter3D):
             color_label = None
             cmap = None
         # Add the mesh to the plotter
-        self.plotter.add_mesh(scatter_points, scalars=color_label, 
-                              cmap = cmap,
-                              render_points_as_spheres=True, point_size=10)
+        self.plotter.add_mesh(scatter_points, scalars=color_label, show_scalar_bar=False, cmap = cmap,render_points_as_spheres=True, point_size=10)
+        if color_label is not None:
+            self.add_colorbar(title=color_label, height=0.5, vertical=True, position_x=0.025, position_y=0.04,fmt="%.1f")
 
     def add_bathy(self):
         # Get bathymetry data
@@ -78,10 +78,12 @@ class ScatterPlot3D(Plotter3D):
         color_label = f'Depth ({self.data.bounds.vertical_units})'
         elevation[color_label] = elevation.points[:, 2]
         
-        sargs = dict(height=0.5, vertical=True, position_x=0.08, position_y=0.05,below_label='',fmt="%.1f",)
         annotations = {self.data.depth.values.min(): 'Glider/nMax/nDepth'}
-        self.plotter.add_mesh(elevation, scalars='Depth (m)', cmap=cmap, show_edges=False, lighting=True,
-                        below_color=land_color,clim=(0,filtered_df.z.max()),flip_scalars=False,scalar_bar_args=sargs,annotations=annotations)
+        self.plotter.add_mesh(elevation, scalars='Depth (m)',show_scalar_bar=False,cmap=cmap, show_edges=False,below_color=land_color,
+                              clim=(0,filtered_df.z.max()),flip_scalars=False, lighting=True,annotations=annotations)
+        
+        
+        self.add_colorbar(title='Depth (m)', width=0.5, vertical=False, below_label='', fmt="%.1f")
 
 
     def map(self, var: str | None = None) -> None:
