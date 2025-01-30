@@ -78,10 +78,26 @@ class Data:
     turbidity: Iterable|Variable|None = field(default=None)
 
     # Bounds
-    bounds:Bounds = field(default=None)
+    _bounds:Bounds = field(default=None)
+    bounds_padding = field(default=0)
     
     # Custom variables dictionary to hold dynamically added variables
     custom_variables: dict = field(factory=dict)
+    
+    
+    @property
+    def bounds(self) -> Bounds:
+        """
+        Get or set the bounds of the data.
+        """
+        if self._bounds is None:
+            self.detect_bounds(self.bounds_padding)
+            return self._bounds
+        return self._bounds
+    
+    @bounds.setter
+    def bounds(self, bounds: Bounds) -> None:
+        self._bounds = bounds
 
 
     def __attrs_post_init__(self) -> None:
@@ -385,36 +401,35 @@ class Data:
             Object containing the detected geographic and depth bounds
 
         '''
-        # If the user did not pass bounds
-        if self.bounds is None:
-            # Detect and calculate the lat bounds with padding
-            if self.lat is not None:
-                lat_min, lat_max = calculate_pad(self.lat.values, pad=bounds_padding)
-            else:
-                lat_min, lat_max = None, None
-            # Detect and calculate the lon bounds with padding
-            if self.lon is not None:
-                lon_min, lon_max = calculate_pad(self.lon.values, pad=bounds_padding)
-            else:
-                lon_min, lon_max = None, None
+
+        # Detect and calculate the lat bounds with padding
+        if self.lat is not None:
+            lat_min, lat_max = calculate_pad(self.lat.values, pad=bounds_padding)
+        else:
+            lat_min, lat_max = None, None
+        # Detect and calculate the lon bounds with padding
+        if self.lon is not None:
+            lon_min, lon_max = calculate_pad(self.lon.values, pad=bounds_padding)
+        else:
+            lon_min, lon_max = None, None
+        
+        # depth_bottom: positive depth example: 1000
+        # depth_top:positive depth example for surface: 0
+        
+        if self.depth is not None:
+            depth_top, depth_bottom = calculate_pad(self.depth.values)
+        else:
+            depth_top, depth_bottom = None,None
             
-            # depth_bottom: positive depth example: 1000
-            # depth_top:positive depth example for surface: 0
-            
-            if self.depth is not None:
-                depth_top, depth_bottom = calculate_pad(self.depth.values)
-            else:
-                depth_top, depth_bottom = None,None
-                
-            # Set the bounds
-            self.bounds = Bounds(
-                lat_min=lat_min,
-                lat_max=lat_max,
-                lon_min=lon_min,
-                lon_max=lon_max,
-                depth_bottom=depth_bottom,
-                depth_top=depth_top
-            )
+        # Set the bounds
+        self.bounds = Bounds(
+            lat_min=lat_min,
+            lat_max=lat_max,
+            lon_min=lon_min,
+            lon_max=lon_max,
+            depth_bottom=depth_bottom,
+            depth_top=depth_top
+        )
 
         return self.bounds
 
