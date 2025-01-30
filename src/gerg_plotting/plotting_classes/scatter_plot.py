@@ -167,8 +167,33 @@ class ScatterPlot(Plotter):
         self.ax.xaxis.set_major_formatter(formatter)  # Set date formatter for x-axis
         self.format_axes(xlabel=self.data.time.get_label(),ylabel=self.data.depth.get_label())
 
+    def _add_contours(self, contours_kwargs):
+        """
+        Add contours to plot.
+        """   
+        # Calculate sigma-theta contours
+        Sg, Tg, sigma_theta = get_sigma_theta(
+            salinity=self.data['salinity'].values,
+            temperature=self.data['temperature'].values,
+        )
+        
+        # Default contour settings
+        contour_defaults = {
+            'colors': 'grey',
+            'linestyles': 'dashed',
+            'zorder': 1,
+            'levels': np.arange(18, 40, 2)
+        }
+        
+        # Update defaults with any user-provided kwargs
+        if contours_kwargs:
+            contour_defaults.update(contours_kwargs)
+ 
+        cs = self.ax.contour(Sg, Tg, sigma_theta,**contour_defaults)
+        matplotlib.pyplot.clabel(cs, fontsize=10, inline=True, fmt='%.1f')  # Add contour labels
 
-    def TS(self, color_var=None, fig=None, ax=None, contours: bool = True) -> None:
+
+    def TS(self, color_var=None, fig=None, ax=None, contours: bool = True,**contours_kwargs) -> None:
         """
         Create temperature-salinity diagram.
 
@@ -183,16 +208,13 @@ class ScatterPlot(Plotter):
         contours : bool, optional
             Whether to show sigma-theta contours, default True
         """
+        
+
+        
         sc = self.scatter('salinity','temperature',color_var=color_var,fig=fig,ax=ax,zorder=3)  # zorder to put the scatter on top of contours
 
         if contours:
-            # Calculate sigma-theta contours
-            Sg, Tg, sigma_theta = get_sigma_theta(
-                salinity=self.data['salinity'].values,
-                temperature=self.data['temperature'].values
-            )
-            cs = self.ax.contour(Sg, Tg, sigma_theta, colors='grey', zorder=1, linestyles='dashed')
-            matplotlib.pyplot.clabel(cs, fontsize=10, inline=True, fmt='%.1f')  # Add contour labels
+            self._add_contours(contours_kwargs)
 
         self.format_axes(xlabel=self.data.salinity.get_label(),ylabel=self.data.temperature.get_label())
         self.ax.set_title('T-S Diagram', fontsize=14, fontweight='bold')  # Add title
