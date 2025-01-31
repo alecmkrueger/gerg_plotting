@@ -2,7 +2,7 @@
 Coverage Plot Example
 ===================================
 
-Example description
+How to create a coverage plot.
 
 
 """

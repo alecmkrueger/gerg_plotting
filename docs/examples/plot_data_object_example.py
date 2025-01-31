@@ -2,7 +2,7 @@
 Data Object Example
 ===================================
 
-Example description
+Examples of how to create a Data object and add variables to it.
 
 
 """

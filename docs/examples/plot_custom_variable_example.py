@@ -2,7 +2,7 @@
 Custom Variable Example
 ===================================
 
-Example description
+How to add a custom variable to a Data object and plot a histogram of it.
 
 """
 from gerg_plotting import Data,Variable,Histogram

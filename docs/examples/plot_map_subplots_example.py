@@ -11,7 +11,7 @@ import cartopy.crs as ccrs
 import pandas as pd
 
 # Define bounds
-bounds = Bounds(lat_min = 24,lat_max = 31,lon_min = -99,lon_max = -88,depth_top=-1,depth_bottom=500,vertical_scalar=1/1000,vertical_units='km')
+bounds = Bounds(lat_min = 24,lat_max = 31,lon_min = -99, lon_max = -88, depth_top=-1, depth_bottom=500, vertical_scalar=1/1000,vertical_units='km')
 # Let's read in the example data
 df = pd.read_csv('example_data/sample_glider_data.csv')
 # Select the top 5 meters of the data
@@ -44,4 +44,4 @@ plotter.ax.set_title('Bathymetry off, Coastlines off, Grid off, Coordinates off'
 plotter.fig.suptitle('Surface Layer Properties (0-5 Meters)',fontsize = 20)
 # If you want to show the plot
 # plotter.show()
-plotter.save('example_plots/map_subplots_example.png',dpi=500,bbox_inches='tight')
+# plotter.save('example_plots/map_subplots_example.png',dpi=500,bbox_inches='tight')

@@ -2,7 +2,7 @@
 Histogram Example
 ===================================
 
-Example description
+Example of a histogram plotter.
 
 """
 from gerg_plotting import Histogram, Data

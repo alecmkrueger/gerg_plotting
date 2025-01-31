@@ -2,7 +2,8 @@
 Animation Example
 ===================================
 
-Example description
+Example of how to make an animation.
+
 
 .. image:: ../examples/example_plots/animation_example.gif
     :alt: GIF of a normal distribution with increasing sample size
