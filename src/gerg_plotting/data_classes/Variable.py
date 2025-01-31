@@ -1,6 +1,5 @@
 from attrs import define,field,asdict
 from matplotlib.colors import Colormap
-from typing import Iterable
 import numpy as np
 from pprint import pformat
 from datetime import datetime
@@ -156,7 +155,6 @@ class Variable():
         html += '</tbody></table></td>'
         
         return html
-
 
 
     def __repr__(self) -> None:
