@@ -7,7 +7,7 @@ Example of a simple map plot.
 """
 from gerg_plotting import data_from_netcdf,MapPlot
 
-data = data_from_netcdf('C:/Users/alecmkrueger/Documents/GERG/GERG_GitHub/GERG-Glider/Code/Packages/gerg_plotting/docs/examples/example_data/sample_glider_data.nc',interp_glider=True)
+data = data_from_netcdf('example_data/sample_glider_data.nc',interp_glider=True)
 
 data.detect_bounds(bounds_padding=1.5)
 
