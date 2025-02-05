@@ -143,8 +143,7 @@ class MapPlot(Plotter):
         color, cmap = self.get_color_settings(var)
         
         if self.data.bounds is not None:
-            self.ax.set_extent([self.data.bounds.lon_min, self.data.bounds.lon_max,
-                                self.data.bounds.lat_min, self.data.bounds.lat_max])
+            self.ax.set_extent(self.map_extent)
         
         divider = make_axes_locatable(self.ax)
         return color, cmap, divider

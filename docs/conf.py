@@ -23,9 +23,6 @@ extensions = [
     "matplotlib.sphinxext.plot_directive",
     'sphinx_gallery.gen_gallery',
     'autoapi.extension',
-    'sphinx.ext.autodoc',
-    'sphinx.ext.napoleon',
-    'nbsphinx',
 ]
 
 # Execute the setup function during build
@@ -46,17 +43,6 @@ nbsphinx_execute = 'always'
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store','sg_execution_times.rst']
 
-# -- Plot settings -----------------------------------------------------------
-# from sphinx.builders.html import StandaloneHTMLBuilder
-# StandaloneHTMLBuilder.supported_image_types = [
-#     'image/svg+xml',
-#     'image/gif',
-#     'image/png',
-#     'image/jpeg'
-# ]
-# plot_include_source = True
-# plot_html_show_source_link = True
-# plot_formats = ['png','gif']
 
 # -- Examples gallery settings ---------------------------------------------------------
 
@@ -68,17 +54,10 @@ sphinx_gallery_conf = {
     'example_extensions': {'.py'}
 }
 
-# sphinx_gallery_conf = {
-#     'examples_dirs': 'examples',         # Directory with example scripts
-#     'gallery_dirs': 'auto_examples',    # Where the gallery output will go
-#     'image_scrapers': (),               # Disable plot generation during the build
-#     'reset_modules_order': 'after',     # Reset modules after script execution
-#     'plot_gallery': 'False'
-# }
-
 # -- AutoAPI settings -------------------------------------------------------
 autoapi_dirs = ['../src/gerg_plotting']
 autoapi_template_dir = '_templates'
+autoapi_output_dir = '_build/autoapi'
 
 autoapi_options = [
     "members",

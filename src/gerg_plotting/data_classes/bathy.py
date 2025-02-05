@@ -61,66 +61,103 @@ class Bathy:
         Label for the bathymetry data, default is 'Bathymetry'.
     """
     # Dims
-    lat: Iterable|Variable|None = field(default=None)
-    lon: Iterable|Variable|None = field(default=None)
-    depth: Iterable|Variable|None = field(default=None)
-    time: Iterable|Variable|None = field(default=None)
+    _lat: Iterable|Variable|None = field(default=None)
+    _lon: Iterable|Variable|None = field(default=None)
+    _depth: Iterable|Variable|None = field(default=None)
     
     bounds: Bounds = field(default=None)
     resolution_level: float | int | None = field(default=5)
     contour_levels: int = field(default=50)
     land_color: list = field(default=[231 / 255, 194 / 255, 139 / 255, 1])
     vmin: int | float = field(default=0)
-    cmap: Colormap = field(default=matplotlib.colormaps.get_cmap('Blues'))
+    _cmap: Colormap = field(default=matplotlib.colormaps.get_cmap('Blues'))
     cbar_show: bool = field(default=True)
     cbar: matplotlib.colorbar.Colorbar = field(default=None)
     cbar_nbins: int = field(default=5)
     cbar_kwargs: dict = field(default={})
-    center_of_mass: tuple = field(default=None)
-    label: str = field(default='Bathymetry')
+    _center_of_mass: tuple = field(default=None)
+    _label: str = field(default='Bathymetry')
     _zenodo_base_url: str = field(default="https://zenodo.org/record/14812425/files/")
     _seafloor_data_filename: str = field(default="seafloor_data.nc")
     _gom_srtm_filename: str = field(default="gom_srtm30_plus.txt")
     _data_dir: Path = field(default=Path(__file__).parent.parent.joinpath('seafloor_data'))
-
-    @property 
-    def depth(self):
-        """Property that handles depth initialization and scaling"""
-        if self._depth is None:
+    
+    
+    @property
+    def lat(self):
+        """Property to handle latitude values."""
+        if not hasattr(self, '_lat') or self._lat is None:
             self._get_bathy_data()
-        if self.bounds.vertical_scalar is not None:
+        return self._lat
+
+    @lat.setter
+    def lat(self, value):
+        self._lat = value
+
+    @property
+    def lon(self):
+        """Property to handle longitude values."""
+        if not hasattr(self, '_lon') or self._lon is None:
+            self._get_bathy_data()
+        return self._lon
+
+    @lon.setter
+    def lon(self, value):
+        self._lon = value
+    
+    @property
+    def depth(self):
+        """Property to handle scaled depth values."""
+        if not hasattr(self, '_depth') or self._depth is None:
+            self._get_bathy_data()
+        if self.bounds and self.bounds.vertical_scalar is not None:
             return self._depth * self.bounds.vertical_scalar
         return self._depth
 
-    @depth.setter
+
+    @depth.setter 
     def depth(self, value):
         self._depth = value
 
     @property
-    def center_of_mass(self):
-        """Property that calculates center of mass on demand"""
-        return get_center_of_mass(self.lon, self.lat, self.depth)
-
-    @property
     def cmap(self):
-        """Property that returns adjusted colormap"""
-        if self._cmap is None:
+        """Property to return adjusted colormap."""
+        if not hasattr(self, '_cmap'):
             self._cmap = matplotlib.colormaps.get_cmap('Blues')
-            # Crop lower 20% of colormap
-            self._cmap = cmocean.tools.crop_by_percent(self._cmap, 20, 'min')
-            # Set land color
-            self._cmap.set_under(self.land_color)
-        return self._cmap
+        adjusted_cmap = cmocean.tools.crop_by_percent(self._cmap, 20, 'min')
+        adjusted_cmap.set_under(self.land_color)
+        return adjusted_cmap
 
-    @cmap.setter 
+    @cmap.setter
     def cmap(self, value):
         self._cmap = value
+
+    @property
+    def center_of_mass(self):
+        """Property to compute and return center of mass."""
+        return get_center_of_mass(self.lon, self.lat, self.depth)
+    
+    @property
+    def label(self):
+        """Property to handle label with units."""
+        if not hasattr(self, '_label'):
+            self._label = 'Bathymetry'
+        return self._get_label()
+
+    @label.setter
+    def label(self, value):
+        self._label = value
 
     def _get_bathy_data(self):
         """Internal method to initialize bathymetry data"""
         self._ensure_data_files()
         self.get_bathy()
-        
+
+
+    def _get_bathy_data(self):
+        """Internal method to initialize bathymetry data"""
+        self._ensure_data_files()
+        self.get_bathy()
         
     def _ensure_data_files(self) -> None:
         """Check if required data files exist and download if missing."""
@@ -180,19 +217,11 @@ class Bathy:
         '''Pretty printing'''
         return pformat(asdict(self),width=1)
 
-    def get_label(self) -> str:
-        """
-        Get the label for the bathymetry data, including units if provided.
-
-        Returns
-        -------
-        str
-            Label for the bathymetry data.
-        """
-        # Update label with vertical units if they exist
-        if self.bounds.vertical_units != '':
-            self.label = f"Bathymetry ({self.bounds.vertical_units})"
-        return self.label
+    def _get_label(self) -> str:
+        """Internal method to format label with units."""
+        if self.bounds and self.bounds.vertical_units != '':
+            return f"{self._label} ({self.bounds.vertical_units})"
+        return self._label
 
     def adjust_cmap(self) -> None:
         """
@@ -275,9 +304,8 @@ class Bathy:
         """
         if self.cbar_show:
             # Get the label for the colorbar
-            label = self.get_label()
             # Create the colorbar using custom parameters
-            self.cbar = colorbar(fig, divider, mappable, label, nrows=nrows)
+            self.cbar = colorbar(fig, divider, mappable, self.label, nrows=nrows)
             # Adjust colorbar ticks and invert the y-axis
             self.cbar.ax.locator_params(nbins=self.cbar_nbins)
             self.cbar.ax.invert_yaxis()
