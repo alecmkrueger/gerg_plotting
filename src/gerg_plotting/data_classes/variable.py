@@ -50,18 +50,60 @@ class Variable():
     label : str
         Display label for plots
     """
-    values:np.ndarray = field(converter=to_numpy_array,validator=is_flat_numpy_array)
-    name:str
-    cmap:Colormap = field(default=None)
-    units:str = field(default=None)  # Turn off units by passing/assigning to None
-    vmin:float = field(default=None)
-    vmax:float = field(default=None)
-    label:str = field(default=None)  # Set label to be used on figure and axes, use if desired
+    values: np.ndarray = field(converter=to_numpy_array, validator=is_flat_numpy_array)
+    name: str
+    cmap: Colormap = field(default=None)
+    units: str = field(default=None)
+    _vmin: float = field(default=None)
+    _vmax: float = field(default=None)
+    _label: str = field(default=None)
+    
+    @property
+    def attrs(self) -> list:
+        """List of all attributes for the variable."""
+        return list(asdict(self).keys())
 
+    @property
+    def label(self) -> str:
+        """Formatted label including variable name and units if available."""
+        if self._label is None:
+            unit = f" ({self.units})" if self.units is not None else ''
+            name = self.name.replace('_',' ').title()
+            self._label = f"{name}{unit}"
+        return self._label
 
-    def __attrs_post_init__(self) -> None:
-        """Inittializes vmin and vmax if not set"""
-        self.get_vmin_vmax()
+    @label.setter
+    def label(self, value: str) -> None:
+        """Set custom label for the variable."""
+        self._label = value
+
+    @property
+    def vmin(self) -> float:
+        """Minimum value for visualization, using 1st percentile for numeric data."""
+        if self._vmin is None:
+            valid_types = np.typecodes['AllFloat'] + np.typecodes['AllInteger']
+            if self.values.dtype.kind in valid_types:
+                self._vmin = np.nanmin(self.values)
+        return self._vmin
+
+    @vmin.setter
+    def vmin(self, value: float) -> None:
+        """Set minimum value for visualization."""
+        self._vmin = value
+
+    @property
+    def vmax(self) -> float:
+        """Maximum value for visualization"""
+        if self._vmax is None:
+            valid_types = np.typecodes['AllFloat'] + np.typecodes['AllInteger']
+            if self.values.dtype.kind in valid_types:
+                self._vmax = np.nanmax(self.values)
+        return self._vmax
+
+    @vmax.setter
+    def vmax(self, value: float) -> None:
+        """Set maximum value for visualization."""
+        self._vmax = value
 
 
     def _has_var(self, key):
@@ -173,44 +215,3 @@ class Variable():
         """
         return list(asdict(self).keys())
     
-
-    def get_vmin_vmax(self,ignore_existing:bool=False) -> None:
-        """
-        Calculate or update the minimum and maximum values for visualization.
-
-        Uses 1st and 99th percentiles of the values to set visualization bounds,
-        excluding time variables.
-
-        Parameters
-        ----------
-        ignore_existing : bool, optional
-            If True, recalculate bounds even if they exist
-        """
-        if self.name != 'time':  # do not calculate vmin and vmax for time
-            if self.vmin is None or ignore_existing:
-                self.vmin = np.nanpercentile(self.values, 1)  # 1st percentile (lower 1%)
-            if self.vmax is None or ignore_existing:
-                self.vmax = np.nanpercentile(self.values, 99)  # 99th percentile (upper 1%)
-
-    def reset_label(self) -> None:
-        """Reset the label to the variable name."""
-        self.label = None
-
-    def get_label(self) -> str:
-        """
-        Generate a formatted label for the variable.
-
-        Returns
-        -------
-        str
-            Formatted label including variable name and units if available
-        """
-        if self.label is None:
-            # Define the units that are added to the label
-            # if the units are defined, we will use them, else it will be an empty string
-            unit = f" ({self.units})" if self.units is not None else ''
-            # Replace any underscores in the name with spaces then capitalize them
-            name = self.name.replace('_',' ').title()
-            # The label is created from the name of the variable with the units
-            self.label = f"{name}{unit}"
-        return self.label

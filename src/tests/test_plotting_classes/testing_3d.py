@@ -24,7 +24,7 @@
 
 
 # # Add that data to the mesh with the name "uniform dist"
-# glider_data[data.temperature.get_label()] = data.temperature.values
+# glider_data[data.temperature.label] = data.temperature.values
 
 
 # # Test Bathymetry Data
@@ -70,7 +70,7 @@
 #                  below_color=land_color,clim=(0,filtered_df.z.max()),flip_scalars=False,scalar_bar_args=sargs,annotations=annotations)
 
 # sargs = dict(height=0.5, vertical=True, position_x=0.85, position_y=0.05)
-# plotter.add_mesh(glider_data, scalars=data.temperature.get_label(), cmap=data.temperature.cmap, 
+# plotter.add_mesh(glider_data, scalars=data.temperature.label, cmap=data.temperature.cmap, 
 #                  show_edges=True, lighting=True,scalar_bar_args=sargs)
 
 

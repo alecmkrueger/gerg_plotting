@@ -22,19 +22,19 @@ class TestVariable(unittest.TestCase):
 
     def test_label_generation(self):
         """Test automatic generation of the label."""
-        label = self.variable.get_label()
+        label = self.variable.label
         self.assertEqual(label, f"{self.variable_name.capitalize()} ({self.units})")
 
     def test_label_custom(self):
         """Test custom label assignment."""
         custom_label = "Custom Label"
         self.variable.label = custom_label
-        self.assertEqual(self.variable.get_label(), custom_label)
+        self.assertEqual(self.variable.label, custom_label)
         
     def test_get_and_reset_label(self):
         """Test resetting the label to the default."""
-        self.variable.get_label()
-        self.assertEqual(self.variable.get_label(), f"{self.variable_name.capitalize()} ({self.units})")
+        self.variable.label
+        self.assertEqual(self.variable.label, f"{self.variable_name.capitalize()} ({self.units})")
         self.variable.reset_label()
         self.assertIsNone(self.variable.label)
             

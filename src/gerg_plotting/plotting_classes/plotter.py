@@ -13,6 +13,9 @@ import cartopy.crs as ccrs
 from gerg_plotting.data_classes.data import Data
 from gerg_plotting.modules.plotting import  colorbar
 
+
+   
+
 @define
 class Plotter:
     """
@@ -204,7 +207,7 @@ class Plotter:
         """
         if var is not None:
             # Get the label for the colorbar
-            cbar_label = self.data[var].get_label()
+            cbar_label = self.data[var].label
             if divider is not None:
                 # Create a colorbar using the custom 'colorbar' function with divider
                 self.cbar = colorbar(self.fig, divider, mappable, cbar_label, nrows=self.nrows, total_cbars=total_cbars)

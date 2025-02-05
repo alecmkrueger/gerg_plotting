@@ -66,7 +66,7 @@ class TestTools(unittest.TestCase):
         result = custom_legend_handles(labels, colors)
         
         self.assertEqual(len(result), 2)
-        self.assertEqual(result[0].get_label(), 'temp/1')
+        self.assertEqual(result[0].label, 'temp/1')
         self.assertEqual(result[0].get_facecolor(), (1.0, 0.0, 0.0, 1.0))  # red
 
         # Test with hatches

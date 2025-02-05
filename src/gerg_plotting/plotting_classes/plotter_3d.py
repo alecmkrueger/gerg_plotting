@@ -106,14 +106,22 @@ class Plotter3D:
     
     def init_figure(self):
         self.plotter = pv.Plotter(off_screen=False, window_size=self.figsize)
-
-    def show(self,**kwargs):
+        
+    def _pre_show(self):
         self.plotter.set_scale(zscale=self.data.bounds.vertical_scalar)
-        # Set Focus last rigth before show
+        # Set Focus last right before show
         self.plotter.set_focus(get_center_of_mass(lon=self.data.lon.values,
                                                 lat=self.data.lat.values,
                                                 pressure=self.data.depth.values*self.data.bounds.vertical_scalar))
+
+    def show(self,**kwargs):
+        self._pre_show()
         self.plotter.show(**kwargs)
+        
+    def export_html(self, filename):
+        self._pre_show()
+        self.plotter.export_html(filename)
+    
         
     def close(self):
         raise NotImplementedError

@@ -30,9 +30,9 @@ class TestBathy(unittest.TestCase):
 
     def test_get_label(self):
         """Test label generation with and without vertical units."""
-        self.assertEqual(self.bathy.get_label(), "Bathymetry (m)")
+        self.assertEqual(self.bathy.label, "Bathymetry (m)")
         self.bounds.vertical_units = "km"
-        self.assertEqual(self.bathy.get_label(), "Bathymetry (km)")
+        self.assertEqual(self.bathy.label, "Bathymetry (km)")
 
     def test_init_without_bounds(self):
         """Test that class init raises error when bounds not set."""

@@ -242,7 +242,7 @@ class Data:
                 if isinstance(self_copy[var_name],Variable):
                     self_copy[var_name].values = self.slice_var(var=var_name,slice=key)
             return self_copy
-        elif isinstance(key,list):
+        elif any([isinstance(key,type) for type in [list,np.ndarray]]):
             self_copy = self.copy()
             for var_name in self.get_vars():
                 if isinstance(self_copy[var_name],Variable):

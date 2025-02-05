@@ -80,7 +80,7 @@ class ScatterPlot(Plotter):
         else:
             sc = self.ax.scatter(self.data[x].values, self.data[y].values, **kwargs)
 
-        self.format_axes(xlabel=self.data[x].get_label(),ylabel=self.data[y].get_label(),invert_yaxis=invert_yaxis)
+        self.format_axes(xlabel=self.data[x].label,ylabel=self.data[y].label,invert_yaxis=invert_yaxis)
 
         return sc
     
@@ -134,7 +134,7 @@ class ScatterPlot(Plotter):
         else:
             sc = self.ax.scatter(self.data[x].values, self.data[y].values, self.data[z].values, **kwargs)
 
-        self.format_axes(xlabel=self.data[x].get_label(),ylabel=self.data[y].get_label(),zlabel=self.data[z].get_label(),invert_yaxis=invert_yaxis)
+        self.format_axes(xlabel=self.data[x].label,ylabel=self.data[y].label,zlabel=self.data[z].label,invert_yaxis=invert_yaxis)
 
         return sc   
   
@@ -165,7 +165,7 @@ class ScatterPlot(Plotter):
 
         self.ax.xaxis.set_major_locator(locator)  # Set date locator for x-axis
         self.ax.xaxis.set_major_formatter(formatter)  # Set date formatter for x-axis
-        self.format_axes(xlabel=self.data.time.get_label(),ylabel=self.data.depth.get_label())
+        self.format_axes(xlabel=self.data.time.label,ylabel=self.data.depth.label)
 
     def _add_contours(self, contours_kwargs):
         """
@@ -216,7 +216,7 @@ class ScatterPlot(Plotter):
         if contours:
             self._add_contours(contours_kwargs)
 
-        self.format_axes(xlabel=self.data.salinity.get_label(),ylabel=self.data.temperature.get_label())
+        self.format_axes(xlabel=self.data.salinity.label,ylabel=self.data.temperature.label)
         self.ax.set_title('T-S Diagram', fontsize=14, fontweight='bold')  # Add title
         self.ax.xaxis.set_major_locator(MaxNLocator(nbins=6))  # Set x-axis tick formatting
         self.ax.yaxis.set_major_locator(MaxNLocator(nbins=8))
@@ -315,7 +315,7 @@ class ScatterPlot(Plotter):
                                         pivot='tail', scale=quiver_scale, units='height')
         # Add the colorbar
         self.add_colorbar(mappable,'speed')
-        self.format_axes(xlabel=self.data[x].get_label(),ylabel=None)
+        self.format_axes(xlabel=self.data[x].label,ylabel=None)
         self.ax.get_yaxis().set_visible(False)
 
     def quiver2d(self,x:str,y:str,quiver_density:int=None,quiver_scale:float=None,fig=None,ax=None) -> None:
@@ -354,7 +354,7 @@ class ScatterPlot(Plotter):
                                         pivot='tail', scale=quiver_scale, units='height')
         # Add the colorbar
         self.add_colorbar(mappable,'speed')
-        self.format_axes(xlabel=self.data[x].get_label(),ylabel=self.data[y].get_label())
+        self.format_axes(xlabel=self.data[x].label,ylabel=self.data[y].label)
 
     def power_spectra_density(self,psd_freq=None,psd=None,
                               var_name:str=None, sampling_freq=None,segment_length=None,theta_rad=None,
@@ -402,8 +402,8 @@ class ScatterPlot(Plotter):
 
         self.init_figure(fig=fig,ax=ax)
         self.ax.plot(self.data.psd_freq.values, self.data[f'psd_{var_name}'].values, color='blue')
-        self.ax.set_xlabel(self.data.psd_freq.get_label())
-        self.ax.set_ylabel(self.data[f'psd_{var_name}'].get_label())
+        self.ax.set_xlabel(self.data.psd_freq.label)
+        self.ax.set_ylabel(self.data[f'psd_{var_name}'].label)
         self.ax.set_yscale("log")  # Log scale for PSD
         self.ax.set_xscale("log")  # Log scale for frequency
         self.ax.grid(True, which="both", linestyle="--", linewidth=0.5)
@@ -436,7 +436,7 @@ class ScatterPlot(Plotter):
         self.data.check_for_vars([x,y,z])
         self.init_figure(fig=fig,ax=ax)
         self.ax.tricontourf(self.data[x].values,self.data[y].values,self.data[z].values,cmap=self.data[z].cmap,levels=levels)
-        self.format_axes(xlabel=self.data[x].get_label(),ylabel=self.data[y].get_label())
+        self.format_axes(xlabel=self.data[x].label,ylabel=self.data[y].label)
 
 
 

@@ -11,4 +11,10 @@
 
 # plotter.map('temperature')
 
-# plotter.show()
+# temp_plotter = plotter.plotter.actors[list(plotter.plotter.actors.keys())[0]]
+
+# temp_plotter.mapper.lookup_table.plot()
+
+# # plotter.show()
+
+# # plotter.export_html('test.html')

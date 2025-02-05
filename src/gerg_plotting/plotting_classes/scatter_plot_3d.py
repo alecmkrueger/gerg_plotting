@@ -42,30 +42,33 @@ class ScatterPlot3D(Plotter3D):
         
         return np.array(points)
 
-    def scatter(self, x:str, y:str, z:str, var: str | None = None) -> None:
+    def scatter(self, x:str, y:str, z:str, var: str | None = None,show_var_cbar:bool=True) -> None:
         self.init_figure()
         # Ensure that the points data is in (n_points by 3) format
         points = self.make_points_3d(x, y, z)
         scatter_points = pv.PolyData(points)
         # Add color data if provided
         if var is not None:
-            color_label = self.data[var].get_label()
+            color_label = self.data[var].label
             scatter_points[color_label] = self.data[var].values
             cmap = self.data[var].cmap
+            var_clim = (self.data[var].vmin, self.data[var].vmax)
         else:
             color_label = None
             cmap = None
+            var_clim = None
             
         
         # Add the mesh to the plotter
         self.plotter.add_mesh(scatter_points, 
                               scalars=color_label, 
                               cmap=cmap, 
+                              clim=var_clim,
                               show_scalar_bar=False,  
                               render_points_as_spheres=self.scatter_scalar_bar_defaults['render_points_as_spheres'], 
                               point_size=self.scatter_scalar_bar_defaults['point_size'])
         
-        if color_label is not None:
+        if color_label is not None and show_var_cbar:
             self.add_colorbar(title=color_label,
                               vertical=self.scatter_scalar_bar_defaults['vertical'], 
                               height=self.scatter_scalar_bar_defaults['height'], 
@@ -74,7 +77,18 @@ class ScatterPlot3D(Plotter3D):
                               position_x=self.scatter_scalar_bar_defaults['position_x'], 
                               fmt=self.scatter_scalar_bar_defaults['fmt'])
 
-    def _add_bathy(self):
+    def _get_bathy_volume(self,struct:pv.StructuredGrid,bottom_z:float) -> None:
+        top = struct.points.copy()
+        bottom = struct.points.copy()
+        bottom[:, -1] = bottom_z
+
+        vol = pv.StructuredGrid()
+        vol.points = np.vstack((top, bottom))
+        vol.dimensions = [*struct.dimensions[0:2], 2]
+        
+        return vol
+
+    def _add_bathy(self,show_bathy_cbar:bool=True) -> None:
         # Get bathymetry data
         seafloor_data_path = Path(__file__).parent.parent.joinpath('seafloor_data/gom_srtm30_plus.txt')
         df = pd.read_csv(seafloor_data_path,sep='\t')
@@ -89,6 +103,14 @@ class ScatterPlot3D(Plotter3D):
             (df['lat'] >= self.data.bounds.lat_min) & 
             (df['lat'] <= self.data.bounds.lat_max)
         ]
+        
+        # Filter the elevation data to the bounds of the data
+        if self.data.bounds.depth_bottom is not None:
+            # Where depth is greater than the bounds depth bottom, set to depth bottom
+            filtered_df.loc[filtered_df['z'] >= self.data.bounds.depth_bottom, 'z'] = self.data.bounds.depth_bottom
+        if self.data.bounds.depth_top is not None:
+            # Where depth is less than the bounds depth top, set to depth top
+            filtered_df.loc[filtered_df['z'] <= self.data.bounds.depth_top, 'z'] = self.data.bounds.depth_top
 
         coords = filtered_df.values
 
@@ -101,6 +123,8 @@ class ScatterPlot3D(Plotter3D):
 
         # Apply an Elevation filter
         elevation = structured.elevation()
+        
+        # elevation = self._get_bathy_volume(elevation,self.data.bounds.depth_bottom)
 
         # Adjust the colormap
         cmap = cmocean.tools.crop_by_percent(matplotlib.colormaps.get_cmap('Blues'), 10, 'min')
@@ -110,19 +134,19 @@ class ScatterPlot3D(Plotter3D):
         color_label = f'Depth ({self.data.bounds.vertical_units})'
         elevation[color_label] = elevation.points[:, 2]
         
-        annotations = {self.data.depth.values.min(): 'Glider/nMax/nDepth'}
-        self.plotter.add_mesh(elevation, scalars='Depth (m)',show_scalar_bar=False,cmap=cmap, show_edges=False,below_color=land_color,
-                              clim=(0,filtered_df.z.max()),flip_scalars=False, lighting=True,annotations=annotations)
-        
-        
-        self.add_colorbar(title='Depth (m)', height=0.7,position_y=0.15, position_x = 0.90, vertical=True, below_label='', fmt="%0.1f")
+        self.plotter.add_mesh(elevation, scalars='Depth (m)', show_scalar_bar=False, cmap=cmap, show_edges=False,
+                              below_color=land_color, above_color=[0,0,0,0],
+                              clim=(0,filtered_df.z.max()), flip_scalars=False, lighting=True)
+                
+        if show_bathy_cbar:
+            self.add_colorbar(title='Depth (m)', height=0.7,position_y=0.15, position_x = 0.90, vertical=True, below_label='', above_label='', fmt="%0.1f")
 
 
-    def map(self, var: str | None = None) -> None:
+    def map(self, var: str | None = None, show_var_cbar:bool=True,show_bathy_cbar:bool=True) -> None:
         self.init_figure()
         x = 'lon'
         y = 'lat'
         z = 'depth'
-        self.scatter(x, y, z, var)
-        self._add_bathy()
+        self.scatter(x, y, z, var,show_var_cbar=show_var_cbar)
+        self._add_bathy(show_bathy_cbar=show_bathy_cbar)
         

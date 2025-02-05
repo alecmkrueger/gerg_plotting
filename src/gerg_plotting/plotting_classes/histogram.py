@@ -68,7 +68,7 @@ class Histogram(Plotter):
         # Set the y-axis label to 'Count'
         self.ax.set_ylabel('Count')
         # Set the x-axis label to the variable's label
-        self.ax.set_xlabel(self.data[var].get_label())
+        self.ax.set_xlabel(self.data[var].label)
 
     def plot2d(self, x: str, y: str, fig=None, ax=None, **kwargs) -> None:
         """
@@ -94,9 +94,9 @@ class Histogram(Plotter):
         # Plot a 2D histogram using the x and y data
         hist = self.ax.hist2d(self.data[x].values, self.data[y].values, range=range, **kwargs)
         # Set the x-axis label to the x variable's label
-        self.ax.set_xlabel(self.data[x].get_label())
+        self.ax.set_xlabel(self.data[x].label)
         # Set the y-axis label to the y variable's label
-        self.ax.set_ylabel(self.data[y].get_label())
+        self.ax.set_ylabel(self.data[y].label)
         # Add a colorbar to represent the count values
         cbar = plt.colorbar(hist[3], ax=self.ax, label='Count', orientation='horizontal')
 
@@ -133,8 +133,8 @@ class Histogram(Plotter):
         self.ax.zaxis.set_rotate_label(False)
         self.ax.set_zlabel('Count', rotation=90)
         # Set the x-axis label to the x variable's label
-        self.ax.set_xlabel(self.data[x].get_label())
+        self.ax.set_xlabel(self.data[x].label)
         # Set the y-axis label to the y variable's label
-        self.ax.set_ylabel(self.data[y].get_label())
+        self.ax.set_ylabel(self.data[y].label)
         # Set the initial viewing angle for the 3D plot
         self.ax.view_init(elev=30, azim=45)
