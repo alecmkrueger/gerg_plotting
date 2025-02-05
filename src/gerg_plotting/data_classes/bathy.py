@@ -8,6 +8,7 @@ import matplotlib.pyplot
 import matplotlib.colorbar
 from matplotlib.colors import Colormap
 import xarray as xr
+import requests
 from pathlib import Path
 import cmocean
 import copy
@@ -77,21 +78,71 @@ class Bathy:
     cbar_kwargs: dict = field(default={})
     center_of_mass: tuple = field(default=None)
     label: str = field(default='Bathymetry')
+    _zenodo_base_url: str = field(default="https://zenodo.org/record/14812425/files/")
+    _seafloor_data_filename: str = field(default="seafloor_data.nc")
+    _gom_srtm_filename: str = field(default="gom_srtm30_plus.txt")
+    _data_dir: Path = field(default=Path(__file__).parent.parent.joinpath('seafloor_data'))
 
-    def __attrs_post_init__(self) -> None:
-        """
-        Post-initialization method to process bathymetry data and adjust colormap.
-        """
-        # Load bathymetry data based on bounds
-        self.get_bathy()
-        # Scale depth values if a vertical scaler is provided
+    @property 
+    def depth(self):
+        """Property that handles depth initialization and scaling"""
+        if self._depth is None:
+            self._get_bathy_data()
         if self.bounds.vertical_scalar is not None:
-            self.depth = self.depth * self.bounds.vertical_scalar
-        # Compute the center of mass of the bathymetry data
-        self.center_of_mass = get_center_of_mass(self.lon, self.lat, self.depth)
-        # Adjust the colormap for visualization
-        self.adjust_cmap()
+            return self._depth * self.bounds.vertical_scalar
+        return self._depth
+
+    @depth.setter
+    def depth(self, value):
+        self._depth = value
+
+    @property
+    def center_of_mass(self):
+        """Property that calculates center of mass on demand"""
+        return get_center_of_mass(self.lon, self.lat, self.depth)
+
+    @property
+    def cmap(self):
+        """Property that returns adjusted colormap"""
+        if self._cmap is None:
+            self._cmap = matplotlib.colormaps.get_cmap('Blues')
+            # Crop lower 20% of colormap
+            self._cmap = cmocean.tools.crop_by_percent(self._cmap, 20, 'min')
+            # Set land color
+            self._cmap.set_under(self.land_color)
+        return self._cmap
+
+    @cmap.setter 
+    def cmap(self, value):
+        self._cmap = value
+
+    def _get_bathy_data(self):
+        """Internal method to initialize bathymetry data"""
+        self._ensure_data_files()
+        self.get_bathy()
         
+        
+    def _ensure_data_files(self) -> None:
+        """Check if required data files exist and download if missing."""
+        self._data_dir.mkdir(parents=True, exist_ok=True)
+        
+        files_to_check = [self._seafloor_data_filename, self._gom_srtm_filename]
+        
+        for filename in files_to_check:
+            file_path = self._data_dir / filename
+            if not file_path.exists():
+                print(f"Downloading {filename}")
+                self._download_file(filename, file_path)
+
+    def _download_file(self, filename: str, file_path: Path) -> None:
+        """Download a file from Zenodo."""
+        url = self._zenodo_base_url + filename
+        response = requests.get(url, stream=True)
+        response.raise_for_status()
+        
+        with open(file_path, 'wb') as f:
+            for chunk in response.iter_content(chunk_size=8192):
+                f.write(chunk)
 
     def copy(self):
         """Creates a deep copy of the instrument object."""

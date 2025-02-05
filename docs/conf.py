@@ -23,8 +23,25 @@ extensions = [
     "matplotlib.sphinxext.plot_directive",
     'sphinx_gallery.gen_gallery',
     'autoapi.extension',
+    'sphinx.ext.autodoc',
+    'sphinx.ext.napoleon',
+    'nbsphinx',
 ]
 
+# Execute the setup function during build
+def setup(app):
+    """Download all required data before building docs."""
+    from gerg_plotting.data_classes.bathy import Bathy
+    from gerg_plotting.download_example_data import download_example_data
+    
+    # Download seafloor data
+    bathy = Bathy(bounds=None)
+    # Download example data
+    download_example_data()
+    return app
+
+# Configure nbsphinx to execute notebooks during build
+nbsphinx_execute = 'always'
 
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store','sg_execution_times.rst']
