@@ -5,6 +5,7 @@ How to import gerg_plotting
 This example shows some of the different ways to import the gerg_plotting package.
 
 """
+
 # Method 1: Import just what you need
 # ------------------------------------
 
