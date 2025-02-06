@@ -1,8 +1,8 @@
 """
-Modify Plot Example
+Changing axes and figure visualization
 ===================================
 
-How to modify a plot after it has been created.
+How to modify a plot using fig and ax.
 
 """
 from gerg_plotting import ScatterPlot, data_from_csv

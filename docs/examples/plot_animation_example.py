@@ -9,6 +9,9 @@ Example of how to make an animation.
     :alt: GIF of a normal distribution with increasing sample size
 
 """
+# %%
+# Import packages
+# --------------------------
 from gerg_plotting import Data
 from gerg_plotting import Histogram, Animator
 import cmocean
@@ -18,7 +21,10 @@ from pathlib import Path
 
 # sphinx_gallery_thumbnail_path = '_static/animation_example_thumb.png'
 
+# %% 
 # Let's make some example data
+# --------------------------
+
 n_points = 10000
 data = Data(temperature=np.random.normal(28,size=n_points))
 

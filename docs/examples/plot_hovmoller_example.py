@@ -2,7 +2,7 @@
 Hovmoller Example
 ===================================
 
-Example description
+Example of a Hovmoller plot.
 
 """
 from gerg_plotting import ScatterPlot, data_from_csv

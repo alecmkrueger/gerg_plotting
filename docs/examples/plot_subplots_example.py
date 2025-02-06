@@ -1,8 +1,8 @@
 """
-Map Subplots Example
+Subplots Example
 ===================================
 
-Example description
+Example of how to create subplots.
 
 """
 from gerg_plotting import MapPlot, Bounds,Variable, data_from_df

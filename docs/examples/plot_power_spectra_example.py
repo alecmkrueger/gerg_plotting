@@ -2,7 +2,7 @@
 Power Spectra Example
 ===================================
 
-Example description
+Example of a power spectra plot.
 
 """
 from gerg_plotting import ScatterPlot, data_from_df

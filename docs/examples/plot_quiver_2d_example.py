@@ -2,7 +2,7 @@
 Quiver 2D Example
 ===================================
 
-Example description
+Example of a 2D quiver plot.
 
 """
 from gerg_plotting import ScatterPlot, data_from_csv

@@ -95,29 +95,29 @@ class TestData(unittest.TestCase):
 
     def test_slice_var(self):
         """Test variable slicing."""
-        result = self.data.slice_var('lat', slice(0, 2))
+        result = self.data._slice_var('lat', slice(0, 2))
         np.testing.assert_array_equal(result, self.test_data[0:2])
 
     def test_check_for_vars(self):
         """Test variable existence checking."""
-        self.assertTrue(self.data.check_for_vars(['lat', 'lon']))
+        self.assertTrue(self.data._check_for_vars(['lat', 'lon']))
         with self.assertRaises(KeyError):
-            self.data.check_for_vars(['nonexistent_var'])
+            self.data._check_for_vars(['nonexistent_var'])
     
     def test_check_for_vars_nonexistent_var(self):
         """Test variable existence checking for non-existent variables."""
         with self.assertRaises(KeyError):
-            self.data.check_for_vars(['lat', 'nonexistent_var'])
+            self.data._check_for_vars(['lat', 'nonexistent_var'])
 
     def test_check_for_vars_empty_list(self):
         """Test variable existence checking with an empty list."""
         with self.assertRaises(ValueError):
-            self.data.check_for_vars([])
+            self.data._check_for_vars([])
 
     def test_check_for_vars_missing_vars(self):
         """Test variable existence checking with missing variables."""
         with self.assertRaises(ValueError):
-            self.data.check_for_vars(['w'])
+            self.data._check_for_vars(['w'])
 
     def test_date2num(self):
         """Test datetime conversion to numerical values."""

@@ -141,10 +141,10 @@ class Data:
         """
         if self.speed is None:
             if include_w:
-                if self.check_for_vars(['u','v','w']):
+                if self._check_for_vars(['u','v','w']):
                     self.speed = np.sqrt(self.u.values**2 + self.v.values**2 + self.w.values**2)
                     self._init_variable(var='speed', cmap=cmocean.cm.speed, units="m/s", vmin=None, vmax=None)  
-            if self.check_for_vars(['u','v']):
+            if self._check_for_vars(['u','v']):
                 self.speed = np.sqrt(self.u.values**2 + self.v.values**2)
                 self._init_variable(var='speed', cmap=cmocean.cm.speed, units="m/s", vmin=None, vmax=None)
 
@@ -209,7 +209,7 @@ class Data:
         return self_copy
     
 
-    def slice_var(self,var:str,slice:slice) -> np.ndarray:
+    def _slice_var(self,var:str,slice:slice) -> np.ndarray:
         """Slices data for a specific variable."""
         return self[var].values[slice]
 
@@ -240,7 +240,7 @@ class Data:
             self_copy = self.copy()
             for var_name in self.get_vars():
                 if isinstance(self_copy[var_name],Variable):
-                    self_copy[var_name].values = self.slice_var(var=var_name,slice=key)
+                    self_copy[var_name].values = self._slice_var(var=var_name,slice=key)
             return self_copy
         elif any([isinstance(key,type) for type in [list,np.ndarray]]):
             self_copy = self.copy()
@@ -339,7 +339,7 @@ class Data:
             raise ValueError(f'{var} does not exist, try using the add_custom_variable method')
         
         
-    def check_for_vars(self,vars:list) -> bool:
+    def _check_for_vars(self,vars:list) -> bool:
         """
         Verify that all required variables exist in the dataset.
 

@@ -22,16 +22,9 @@ class ScatterPlot(Plotter):
     Inherits from Plotter class for basic plotting functionality. Provides methods
     for various scatter plot types including T-S diagrams, hovmoller plots, and
     velocity vector plots.
-
-    Parameters
-    ----------
-    markersize : int or float
-        Size of scatter plot markers, default is 10
     """
-    
-    markersize: int | float = field(default=10)
 
-    def scatter(self, x: str, y: str, color_var: str | None = None, invert_yaxis:bool=False, fig=None, ax=None, **kwargs) -> None:
+    def scatter(self, x: str, y: str, color_var: str | None = None, invert_yaxis:bool=False, fig=None, ax=None, **scattter_kwargs) -> None:
         """
         Create scatter plot of two variables with optional color mapping.
 
@@ -49,15 +42,15 @@ class ScatterPlot(Plotter):
             Figure to plot on
         ax : matplotlib.axes.Axes, optional
             Axes to plot on
-        ``**kwargs``
-            Additional arguments for scatter plot
+        ``**scattter_kwargs``
+            Additional arguments for scatter plot (see matplotlib.pyplot.scatter)
 
         Returns
         -------
         matplotlib.collections.PathCollection
             Scatter plot object
         """
-        self.data.check_for_vars([x,y,color_var])
+        self.data._check_for_vars([x,y,color_var])
         self.init_figure(fig, ax)  # Initialize figure and axes
 
         # If color_var is passed
@@ -72,19 +65,19 @@ class ScatterPlot(Plotter):
                 c=color_data,
                 cmap=self.get_cmap(color_var),
                 vmin = self.data[color_var].vmin,
-                vmax = self.data[color_var].vmax, **kwargs
+                vmax = self.data[color_var].vmax, **scattter_kwargs
             )
             self.add_colorbar(sc, var=color_var)  # Add colorbar
 
         # If color_var is not passed 
         else:
-            sc = self.ax.scatter(self.data[x].values, self.data[y].values, **kwargs)
+            sc = self.ax.scatter(self.data[x].values, self.data[y].values, **scattter_kwargs)
 
         self.format_axes(xlabel=self.data[x].label,ylabel=self.data[y].label,invert_yaxis=invert_yaxis)
 
         return sc
     
-    def scatter3d(self, x: str, y: str, z:str, color_var: str | None = None, invert_yaxis:bool=False, fig=None, ax=None, **kwargs) -> None:
+    def scatter3d(self, x: str, y: str, z:str, color_var: str | None = None, invert_yaxis:bool=False, fig=None, ax=None, **scattter_kwargs) -> None:
         """
         Create scatter plot of two variables with optional color mapping.
 
@@ -102,15 +95,15 @@ class ScatterPlot(Plotter):
             Figure to plot on
         ax : matplotlib.axes.Axes, optional
             Axes to plot on
-        ``**kwargs``
-            Additional arguments for scatter plot
+        ``**scattter_kwargs``
+            Additional arguments for scatter plot (see matplotlib.pyplot.scatter)
 
         Returns
         -------
         matplotlib.collections.PathCollection
             Scatter plot object
         """
-        self.data.check_for_vars([x,y,color_var])
+        self.data._check_for_vars([x,y,color_var])
         self.init_figure(fig, ax, three_d=True)  # Initialize figure and axes
 
         # If color_var is passed
@@ -126,20 +119,20 @@ class ScatterPlot(Plotter):
                 c=color_data,
                 cmap=self.get_cmap(color_var),
                 vmin = self.data[color_var].vmin,
-                vmax = self.data[color_var].vmax, **kwargs
+                vmax = self.data[color_var].vmax, **scattter_kwargs
             )
             self.add_colorbar(sc, var=color_var)  # Add colorbar
 
         # If color_var is not passed 
         else:
-            sc = self.ax.scatter(self.data[x].values, self.data[y].values, self.data[z].values, **kwargs)
+            sc = self.ax.scatter(self.data[x].values, self.data[y].values, self.data[z].values, **scattter_kwargs)
 
         self.format_axes(xlabel=self.data[x].label,ylabel=self.data[y].label,zlabel=self.data[z].label,invert_yaxis=invert_yaxis)
 
         return sc   
   
     
-    def hovmoller(self, var: str, fig=None, ax=None,**kwargs) -> None:
+    def hovmoller(self, var: str, fig=None, ax=None,**scattter_kwargs) -> None:
         """
         Create depth vs time plot colored by variable.
 
@@ -151,14 +144,14 @@ class ScatterPlot(Plotter):
             Figure to plot on
         ax : matplotlib.axes.Axes, optional
             Axes to plot on
-        ``**kwargs``
-            Additional arguments for scatter plot
+        ``**scattter_kwargs``
+            Additional arguments for scatter plot (see matplotlib.pyplot.scatter)
         """
         sc = self.scatter(x='time',
                           y='depth',
                           color_var=var,
                           invert_yaxis=True,
-                          ax=ax, fig=fig,**kwargs)
+                          ax=ax, fig=fig,**scattter_kwargs)
         
         locator = mdates.AutoDateLocator()
         formatter = mdates.AutoDateFormatter(locator)
@@ -167,7 +160,7 @@ class ScatterPlot(Plotter):
         self.ax.xaxis.set_major_formatter(formatter)  # Set date formatter for x-axis
         self.format_axes(xlabel=self.data.time.label,ylabel=self.data.depth.label)
 
-    def _add_contours(self, contours_kwargs):
+    def _add_contours(self, contour_kwargs):
         """
         Add contours to plot.
         """   
@@ -186,14 +179,14 @@ class ScatterPlot(Plotter):
         }
         
         # Update defaults with any user-provided kwargs
-        if contours_kwargs:
-            contour_defaults.update(contours_kwargs)
+        if contour_kwargs:
+            contour_defaults.update(contour_kwargs)
  
         cs = self.ax.contour(Sg, Tg, sigma_theta,**contour_defaults)
         matplotlib.pyplot.clabel(cs, fontsize=10, inline=True, fmt='%.1f')  # Add contour labels
 
 
-    def TS(self, color_var=None, fig=None, ax=None, contours: bool = True,**contours_kwargs) -> None:
+    def TS(self, color_var=None, fig=None, ax=None, contours: bool = True, scatter_kwargs=None, contour_kwargs=None) -> None:
         """
         Create temperature-salinity diagram.
 
@@ -207,19 +200,29 @@ class ScatterPlot(Plotter):
             Axes to plot on
         contours : bool, optional
             Whether to show sigma-theta contours, default True
+        scatter_kwargs : dict, optional
+            Additional arguments to pass to scatter plot (see matplotlib.pyplot.scatter)
+        contour_kwargs : dict, optional
+            Additional arguments to pass to contour plot (see matplotlib.pyplot.contour)
         """
+        # Initialize empty dicts if None provided
+        scatter_kwargs = scatter_kwargs or {}
+        contour_kwargs = contour_kwargs or {}
         
-
+        # Add zorder to scatter kwargs to ensure points appear above contours
+        scatter_kwargs['zorder'] = scatter_kwargs.get('zorder', 3)
         
-        sc = self.scatter('salinity','temperature',color_var=color_var,fig=fig,ax=ax,zorder=3)  # zorder to put the scatter on top of contours
+        sc = self.scatter('salinity', 'temperature', color_var=color_var, 
+                        fig=fig, ax=ax, **scatter_kwargs)
 
         if contours:
-            self._add_contours(contours_kwargs)
+            self._add_contours(contour_kwargs)
 
-        self.format_axes(xlabel=self.data.salinity.label,ylabel=self.data.temperature.label)
-        self.ax.set_title('T-S Diagram', fontsize=14, fontweight='bold')  # Add title
-        self.ax.xaxis.set_major_locator(MaxNLocator(nbins=6))  # Set x-axis tick formatting
+        self.format_axes(xlabel=self.data.salinity.label, ylabel=self.data.temperature.label)
+        self.ax.set_title('T-S Diagram', fontsize=14, fontweight='bold')
+        self.ax.xaxis.set_major_locator(MaxNLocator(nbins=6))
         self.ax.yaxis.set_major_locator(MaxNLocator(nbins=8))
+
 
         
     def get_density_color_data(self, color_var: str) -> np.ndarray:
@@ -299,7 +302,7 @@ class ScatterPlot(Plotter):
             Axes to plot on
         """
         self.data.calculate_speed()
-        self.data.check_for_vars([x,'u','v','speed'])
+        self.data._check_for_vars([x,'u','v','speed'])
         self.init_figure(fig=fig,ax=ax,figsize=(15,5))
         
         # Get the data slice step size using the quiver_density value
@@ -338,7 +341,7 @@ class ScatterPlot(Plotter):
             Axes to plot on
         """
         self.data.calculate_speed()
-        self.data.check_for_vars([x,y,'u','v','speed'])
+        self.data._check_for_vars([x,y,'u','v','speed'])
         self.init_figure(fig=fig,ax=ax)
 
         # Get the data slice step size using the quiver_density value
@@ -433,7 +436,7 @@ class ScatterPlot(Plotter):
             Number of contour levels
         """
         # Check if vars are present
-        self.data.check_for_vars([x,y,z])
+        self.data._check_for_vars([x,y,z])
         self.init_figure(fig=fig,ax=ax)
         self.ax.tricontourf(self.data[x].values,self.data[y].values,self.data[z].values,cmap=self.data[z].cmap,levels=levels)
         self.format_axes(xlabel=self.data[x].label,ylabel=self.data[y].label)

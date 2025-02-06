@@ -2,7 +2,7 @@
 Scatter Plot Example
 ===================================
 
-Example description
+Example scatter plot.
 
 """
 from gerg_plotting import ScatterPlot, data_from_csv
