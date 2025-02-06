@@ -7,7 +7,7 @@ readme = "README.md"
 packages = [{include = "gerg_plotting", from = "src"}]
 
 [tool.poetry.dependencies]
-python = ">=3.12
+python = ">=3.12"
 numpy = "^2.0.0"
 pandas = "^2.2.2"
 matplotlib = "^3.9.1"
