@@ -11,7 +11,7 @@ Example of how to make an animation.
 """
 # %%
 # Import packages
-# --------------------------
+# -----------------------------------------------------------------------
 from gerg_plotting import Data
 from gerg_plotting import Histogram, Animator
 import cmocean
@@ -23,7 +23,7 @@ from pathlib import Path
 
 # %% 
 # Let's make some example data
-# --------------------------
+# -----------------------------------------------------------------------
 
 n_points = 10000
 data = Data(temperature=np.random.normal(28,size=n_points))

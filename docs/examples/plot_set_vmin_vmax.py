@@ -7,7 +7,7 @@ This example shows how to set the vmin and vmax for a variable for a plot.
 
 # %%
 # Load the sample data
-# ----------------------------------
+# -----------------------------------------------------------------------
 from gerg_plotting import data_from_netcdf,ScatterPlot
 
 data = data_from_netcdf('example_data/sample_glider_data.nc'
@@ -20,7 +20,7 @@ plotter_data.show()
 
 # %%
 # Set the vmin and vmax for the salinty variable
-# ----------------------------------
+# -----------------------------------------------------------------------
 data.salinity.vmin = 35.5
 data.salinity.vmax = 37
 # Show the default unsliced data

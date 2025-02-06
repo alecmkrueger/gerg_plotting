@@ -27,7 +27,7 @@ extensions = [
 
 
 templates_path = ['_templates']
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store','sg_execution_times.rst']
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', 'sg_execution_times.rst', 'GALLERY_HEADER.rst']
 
 
 # -- Examples gallery settings ---------------------------------------------------------
@@ -66,4 +66,3 @@ napoleon_numpy_docstring = True
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
 html_theme = 'pydata_sphinx_theme'
-# html_static_path = ['_static']
