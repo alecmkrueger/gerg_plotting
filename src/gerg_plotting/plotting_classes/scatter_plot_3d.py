@@ -91,6 +91,9 @@ class ScatterPlot3D(Plotter3D):
     def _add_bathy(self,show_bathy_cbar:bool=True) -> None:
         # Get bathymetry data
         seafloor_data_path = Path(__file__).parent.parent.joinpath('seafloor_data/gom_srtm30_plus.txt')
+        if not seafloor_data_path.exists():
+            from gerg_plotting import Bathy
+            Bathy()._ensure_data_files()
         df = pd.read_csv(seafloor_data_path,sep='\t')
 
         # Flip z data

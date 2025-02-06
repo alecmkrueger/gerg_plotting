@@ -12,4 +12,4 @@ data = data_from_netcdf('example_data/sample_glider_data.nc',interp_glider=True,
 plotter = MapPlot(data)
 plotter.scatter('time',show_bathy=True,show_coastlines=False)
 
-# plotter.save('example_plots/map_simple.png')
+plotter.save('example_plots/map_simple.png')

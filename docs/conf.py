@@ -25,27 +25,12 @@ extensions = [
     'autoapi.extension',
 ]
 
-# Execute the setup function during build
-def setup(app):
-    """Download all required data before building docs."""
-    from gerg_plotting.data_classes.bathy import Bathy
-    from gerg_plotting.download_example_data import download_example_data
-    
-    # Download seafloor data
-    bathy = Bathy(bounds=None)
-    # Download example data
-    download_example_data()
-    return app
-
-# Configure nbsphinx to execute notebooks during build
-nbsphinx_execute = 'always'
 
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store','sg_execution_times.rst']
 
 
 # -- Examples gallery settings ---------------------------------------------------------
-
 sphinx_gallery_conf = {
     'examples_dirs': 'examples',
     'gallery_dirs': 'auto_examples',

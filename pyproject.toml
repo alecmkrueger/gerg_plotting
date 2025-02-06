@@ -1,13 +1,13 @@
 [tool.poetry]
 name = "gerg_plotting"
-version = "0.0.34"
+version = "0.0.35"
 description = ""
 authors = ["Alec Krueger <alecmkrueger@tamu.edu>"]
 readme = "README.md"
 packages = [{include = "gerg_plotting", from = "src"}]
 
 [tool.poetry.dependencies]
-python = ">=3.12,<3.14"
+python = ">=3.12
 numpy = "^2.0.0"
 pandas = "^2.2.2"
 matplotlib = "^3.9.1"
