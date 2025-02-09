@@ -25,7 +25,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-This project was created to streamline and standardize the process of generating plots at GERG.
+This project streamlines and standardizes the process of generating plots at GERG.
 
 
 
@@ -38,32 +38,23 @@ This project was created to streamline and standardize the process of generating
 <!-- GETTING STARTED -->
 ## Getting Started
 
+
 There are two ways to get started
-1. Create a fresh virtual environment using your favorite method and install the package
+1. Create a fresh virtual environment using your favorite method and install the package (recommended)
 2. Use an already established virtual environment and install the package
-
-
-
-### Dependencies
-I have provided a list of the dependencies and their versions below.
-
-List of dependencies:
-* python = 3.12
-* numpy = 2.0.0
-* pandas = 2.2.2
-* matplotlib = 3.9.1
-* xarray = 2024.6.0
-* attrs = 23.2.0
-* netcdf4 = 1.7.1.post1
-* cmocean = 4.0.3
-* scipy = 1.14.0
-* mayavi = 4.8.2
 
 
 ### Installation
 
-1. Activate your virtual environment
+1. Create and/or activate your virtual environment with python >=3.12
 1. Use pip to install ```pip install gerg_plotting```
+
+### View Example Code
+[Examples at Read The Docs](https://gerg-plotting.readthedocs.io/en/latest/auto_examples/index.html)
+
+### View Code Documentation 
+[API Reference at Read The Docs](https://gerg-plotting.readthedocs.io/en/latest/autoapi/index.html)
+
 
 
 <!-- CONTRIBUTING -->
@@ -95,7 +86,11 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 Alec Krueger - alecmkrueger@tamu.edu
 
-Project Link: [https://github.com/alecmkrueger/gerg_plotting](https://github.com/alecmkrueger/gerg_plotting)
+Repository: [https://github.com/alecmkrueger/gerg_plotting](https://github.com/alecmkrueger/gerg_plotting)
+
+PyPi: [https://pypi.org/project/gerg_plotting/](https://pypi.org/project/gerg_plotting/)
+
+Read The Docs: [https://gerg-plotting.readthedocs.io/en/latest/](https://gerg-plotting.readthedocs.io/en/latest/)
 
 
 
