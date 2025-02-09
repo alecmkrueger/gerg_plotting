@@ -4,7 +4,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/alecmkrueger/gerg_plotting">
-    <img src="https://github.com/alecmkrueger/gerg_plotting/blob/c953e2ea4a3e1ce4ec4fe4ef00ceaefde5728a99/.github/gerg_logo.svg" alt="Logo" width="500" height="272">
+    <img src="https://github.com/alecmkrueger/gerg_plotting/blob/c953e2ea4a3e1ce4ec4fe4ef00ceaefde5728a99/.github/gerg_logo.svg" alt="GERG Logo" width="500" height="272">
   </a>
 
 <h3 align="center">GERG Plotting</h3>
@@ -75,44 +75,6 @@ There are two ways to get started
 
 1. Activate your virtual environment
 1. Use pip to install ```pip install gerg_plotting```
-
-
-
-
-
-<!-- USAGE EXAMPLES -->
-## Usage
-
-Plot data at GERG using Python.
-
-Example: Create a set of maps showing data point temperature, salinity, depth, and time
-```sh
-from gerg_plotting import MapPlot,Bounds,data_from_csv
-import matplotlib.pyplot as plt
-import cartopy.crs as ccrs
-
-# Define bounds
-bounds = Bounds(lat_min = 24,lat_max = 31,lon_min = -99,lon_max = -88,depth_top=-1,depth_bottom=1000)
-# Let's read in the example data
-data = data_from_csv('example_data/sample_glider_data.csv')
-data.bounds = bounds
-
-# Init subplots
-fig,ax = plt.subplots(figsize=(10,15),nrows=4,subplot_kw={'projection': ccrs.PlateCarree()},layout='constrained')
-# Init MapPlot object
-plotter = MapPlot(data=data,grid_spacing=3)
-# # Generate Scatter plots on one figure
-plotter.scatter(fig=fig,ax=ax[0],var='temperature',show_bathy=True,pointsize=30)
-plotter.scatter(fig=fig,ax=ax[1],var='salinity',show_bathy=True,pointsize=30)
-plotter.scatter(fig=fig,ax=ax[2],var='depth',show_bathy=True,pointsize=30)
-plotter.scatter(fig=fig,ax=ax[3],var='time',show_bathy=True,pointsize=30)
-plt.show()
-fig.savefig('example_plots/map_example.png',dpi=500,bbox_inches='tight')
-```
-![png of maps](https://github.com/alecmkrueger/gerg_plotting/blob/main/src/gerg_plotting/examples/example_plots/map_example.png?raw=true)
-
-
-
 
 <!-- CONTRIBUTING -->
 ## Contributing
