@@ -14,4 +14,4 @@ data = Data(temperature=np.random.normal(28,size=1000))
 hist = Histogram(data)  # Assign the histogram plotter to a variable
 hist.plot(var='temperature')
 
-hist.save('example_plots/histogram_example.png')
+hist.save('example_plots/histogram_example.png',bbox_inches='tight')

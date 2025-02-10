@@ -193,6 +193,10 @@ def _get_var_mapping(column_names:list,provided_map:None|dict=None) -> dict:
     """
     Create variable mapping from DataFrame columns.
 
+    To add a new default variable:
+
+    Add the variable name to keys and add any synonyms or blocklists that may exist to their respective dictionaries
+
     Parameters
     ----------
     df : pandas.DataFrame
@@ -203,20 +207,22 @@ def _get_var_mapping(column_names:list,provided_map:None|dict=None) -> dict:
     dict
         Mapping of standard variable names to DataFrame columns
     """
-    keys = ['lat', 'lon', 'depth', 'time', 'temperature', 'salinity', 'density', 'u', 'v','w', 'speed','cdom','chlor','turbidity']
+    keys = ['lat', 'lon', 'depth', 'time', 'temperature', 'salinity', 'density', 'u', 'v','w', 'speed','cdom','chlor','turbidity','oxygen','buoyancy_frequency']
     values = column_names
     synonyms = {
         'depth': ['pressure', 'pres'],
         'temperature': ['temp', 'temperature_measure'],
         'salinity': ['salt', 'salinity_level'],
-        'density': ['density_metric', 'rho'],
+        'density': ['density_metric', 'rho','dens'],
         'u': ['eastward_velocity', 'u_component', 'u_current', 'current_u'],
         'v': ['northward_velocity', 'v_component', 'v_current', 'current_v'],
         'w': ['downward_velocity','upward_velocity','w_component', 'w_current', 'current_w'],
         's': ['combined_velocity','velocity','speed', 's_current', 'current_s'],
         'cdom': ['cdom_concentration','cdom_concentration_measure','sci_flbbcd_cdom_units'],
         'chlor': ['chlorophyll_concentration','chlorophyll_concentration_measure','sci_flbbcd_chlor_units'],
-        'turbidity': ['turbidity_measure','turbidity_units','turbidity','sci_flbbcd_bb_units'],
+        'turbidity': ['turb','turbidity_measure','turbidity_units','turbidity','sci_flbbcd_bb_units'],
+        'oxygen': ['oxy','oxygen'],
+        'buoyancy_frequency': ['buoyancy_frequency_measure','buoyancy_frequency','buoyancy_frequency_units'],
     }
     blocklist = {
         's': ['sound','pres'],

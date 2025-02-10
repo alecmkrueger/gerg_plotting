@@ -19,6 +19,6 @@ data.custom_variables['m_pressure'].label = 'Mission Pressure'
 # Plot the data
 scatter = ScatterPlot(data)
 scatter.hovmoller('m_pressure')
-scatter.save('example_plots/data_from_netcdf_with_custom_vars_example.png')
+scatter.save('example_plots/data_from_netcdf_with_custom_vars_example.png',bbox_inches='tight')
 
 

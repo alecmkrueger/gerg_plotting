@@ -1,6 +1,6 @@
 """
 Changing axes and figure visualization
-===================================
+==================================================
 
 How to modify a plot using fig and ax.
 
@@ -26,6 +26,6 @@ scatter.ax.set_facecolor('gray')
 # Let's change the title from "T-S Diagram" to something more descriptive
 scatter.ax.set_title('T-S Diagram with Depth',fontdict={'fontsize':14,'fontweight':'bold'})
 
-scatter.save('example_plots/modifying_plot.png')
+scatter.save('example_plots/modifying_plot.png',bbox_inches='tight')
 
 scatter.show()

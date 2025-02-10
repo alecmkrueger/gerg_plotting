@@ -14,4 +14,4 @@ scatter = ScatterPlot(data)
 
 scatter.hovmoller('temperature')
 
-scatter.save('example_plots/hovmoller_example.png',dpi=300)
+scatter.save('example_plots/hovmoller_example.png',dpi=300,bbox_inches='tight')

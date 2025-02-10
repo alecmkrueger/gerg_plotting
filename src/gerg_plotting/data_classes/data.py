@@ -76,6 +76,8 @@ class Data:
     cdom: Iterable|Variable|None = field(default=None)
     chlor: Iterable|Variable|None = field(default=None)
     turbidity: Iterable|Variable|None = field(default=None)
+    oxygen: Iterable|Variable|None = field(default=None)
+    buoyancy_frequency: Iterable|Variable|None = field(default=None)
 
     # Bounds
     _bounds:Bounds = field(default=None)
@@ -127,6 +129,8 @@ class Data:
         self._init_variable(var='cdom', cmap=cmocean.cm.matter, units="ppb", vmin=None, vmax=None)
         self._init_variable(var='chlor', cmap=cmocean.cm.algae, units="μg/L", vmin=None, vmax=None)
         self._init_variable(var='turbidity', cmap=cmocean.cm.turbid, units=None, vmin=None, vmax=None)
+        self._init_variable(var='oxygen', cmap=cmocean.cm.oxy, units='ml/L', vmin=0, vmax=12)
+        self._init_variable(var='buoyancy_frequency', cmap=cmocean.cm.balance, units=None, vmin=None, vmax=None)
 
 
     def calculate_speed(self,include_w:bool=False) -> None:

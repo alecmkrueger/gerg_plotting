@@ -14,6 +14,6 @@ data = data_from_netcdf("example_data/sample_glider_data.nc",
 
 scatter = ScatterPlot(data)
 scatter.hovmoller('chlor')
-scatter.save('example_plots/data_from_netcdf_example.png')
+scatter.save('example_plots/data_from_netcdf_example.png',bbox_inches='tight')
 
 

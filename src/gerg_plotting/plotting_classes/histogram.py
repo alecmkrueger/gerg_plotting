@@ -13,7 +13,7 @@ class Histogram(Plotter):
     Inherits from Plotter class for basic plotting functionality.
     """
 
-    def get_2d_range(self, x: str, y: str, **kwargs) -> tuple[list,dict]:
+    def _get_2d_range(self, x: str, y: str, **kwargs) -> tuple[list,dict]:
         """
         Calculate or retrieve the range for 2D histograms.
 
@@ -61,6 +61,8 @@ class Histogram(Plotter):
         ``**kwargs`` : dict
             Additional keyword arguments passed to matplotlib.pyplot.hist
         """
+        # Extract show_plot from kwargs and remove it from kwargs
+        show_plot = kwargs.pop('show_plot', True)
         # Initialize the figure and axis
         self.init_figure(fig, ax)
         # Plot a histogram of the selected variable data
@@ -69,6 +71,9 @@ class Histogram(Plotter):
         self.ax.set_ylabel('Count')
         # Set the x-axis label to the variable's label
         self.ax.set_xlabel(self.data[var].label)
+        # Show the plot if show_plot is True
+        if show_plot:
+            self.show()
 
     def plot2d(self, x: str, y: str, fig=None, ax=None, **kwargs) -> None:
         """
@@ -87,10 +92,12 @@ class Histogram(Plotter):
         ``**kwargs`` : dict
             Additional keyword arguments passed to matplotlib.pyplot.hist2d
         """
+        # Extract show_plot from kwargs and remove it from kwargs
+        show_plot = kwargs.pop('show_plot', True)
         # Initialize the figure and axis
         self.init_figure(fig, ax)
         # Get the range for the 2D histogram and update kwargs
-        range, kwargs = self.get_2d_range(x, y, **kwargs)
+        range, kwargs = self._get_2d_range(x, y, **kwargs)
         # Plot a 2D histogram using the x and y data
         hist = self.ax.hist2d(self.data[x].values, self.data[y].values, range=range, **kwargs)
         # Set the x-axis label to the x variable's label
@@ -99,6 +106,9 @@ class Histogram(Plotter):
         self.ax.set_ylabel(self.data[y].label)
         # Add a colorbar to represent the count values
         cbar = plt.colorbar(hist[3], ax=self.ax, label='Count', orientation='horizontal')
+        # Show the plot if show_plot is True
+        if show_plot:
+            self.show()
 
     def plot3d(self, x: str, y: str, fig=None, ax=None, **kwargs) -> None:
         """
@@ -117,12 +127,14 @@ class Histogram(Plotter):
         ``**kwargs`` : dict
             Additional keyword arguments passed to numpy.histogram2d
         """
+        # Extract show_plot from kwargs and remove it from kwargs
+        show_plot = kwargs.pop('show_plot', True)
         # Import the colormap from matplotlib
         from matplotlib import cm
         # Initialize the figure and axis for a 3D plot
         self.init_figure(fig, ax, three_d=True)
         # Get the range for the 2D histogram and update kwargs
-        range, kwargs = self.get_2d_range(x, y, **kwargs)
+        range, kwargs = self._get_2d_range(x, y, **kwargs)
         # Calculate a 2D histogram for the x and y data
         h, xedges, yedges = np.histogram2d(self.data[x].values, self.data[y].values, range=range, **kwargs)
         # Create a mesh grid using the edges of the histogram bins
@@ -138,3 +150,6 @@ class Histogram(Plotter):
         self.ax.set_ylabel(self.data[y].label)
         # Set the initial viewing angle for the 3D plot
         self.ax.view_init(elev=30, azim=45)
+        # Show the plot if show_plot is True
+        if show_plot:
+            self.show()

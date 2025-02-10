@@ -15,4 +15,4 @@ data = data[::50]
 
 scatter = ScatterPlot(data)
 scatter.scatter('time','temperature')
-scatter.save('example_plots/scatter_plot_example.png')
+scatter.save('example_plots/scatter_plot_example.png',bbox_inches='tight')

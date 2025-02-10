@@ -17,13 +17,14 @@ data = data_from_netcdf('example_data/sample_glider_data.nc'
 plotter_data = ScatterPlot(data)
 plotter_data.hovmoller('salinity')
 plotter_data.show()
-
+plotter_data.save('example_plots/set_vmin_vmax_default.png',bbox_inches='tight')
 # %%
 # Set the vmin and vmax for the salinty variable
 # -----------------------------------------------------------------------
-data.salinity.vmin = 35.5
-data.salinity.vmax = 37
+data.salinity.vmin = 34.5
+data.salinity.vmax = 37.1
 # Show the default unsliced data
 plotter_data = ScatterPlot(data)
 plotter_data.hovmoller('salinity')
 plotter_data.show()
+plotter_data.save('example_plots/set_vmin_vmax.png',bbox_inches='tight')

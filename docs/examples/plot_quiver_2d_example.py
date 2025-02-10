@@ -16,6 +16,6 @@ data.speed.units = 'cm/s'
 scatter = ScatterPlot(data)
 scatter.quiver2d(x='time',y='depth',quiver_scale=800)
 scatter.ax.invert_yaxis()
-scatter.save('example_plots/quiver_2d_example.png')
+scatter.save('example_plots/quiver_2d_example.png',bbox_inches='tight')
 # If you want to show the plot
 # scatter.show()

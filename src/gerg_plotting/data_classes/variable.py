@@ -79,11 +79,11 @@ class Variable():
 
     @property
     def vmin(self) -> float:
-        """Minimum value for visualization, using 1st percentile for numeric data."""
+        """Minimum value for visualization, using 2nd percentile for numeric data."""
         if self._vmin is None:
             valid_types = np.typecodes['AllFloat'] + np.typecodes['AllInteger']
             if self.values.dtype.kind in valid_types:
-                self._vmin = np.nanmin(self.values)
+                self._vmin = np.nanpercentile(self.values,2)
         return self._vmin
 
     @vmin.setter
@@ -93,11 +93,11 @@ class Variable():
 
     @property
     def vmax(self) -> float:
-        """Maximum value for visualization"""
+        """Maximum value for visualization. Using 98th percentile for numeric data."""
         if self._vmax is None:
             valid_types = np.typecodes['AllFloat'] + np.typecodes['AllInteger']
             if self.values.dtype.kind in valid_types:
-                self._vmax = np.nanmax(self.values)
+                self._vmax = np.nanpercentile(self.values,98)
         return self._vmax
 
     @vmax.setter

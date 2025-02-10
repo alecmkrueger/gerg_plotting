@@ -62,5 +62,5 @@ print("3. Added custom variable to existing data object")
 from gerg_plotting.plotting_classes.histogram import Histogram
 plot = Histogram(custom_data)
 plot.plot('temperature')
-plot.save('example_plots/data_object_example.png')
+plot.save('example_plots/data_object_example.png',bbox_inches='tight')
 print("Created example plot: simple_temperature_histogram.png")

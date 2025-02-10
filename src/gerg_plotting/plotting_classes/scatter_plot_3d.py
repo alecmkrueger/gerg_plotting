@@ -42,7 +42,7 @@ class ScatterPlot3D(Plotter3D):
         
         return np.array(points)
 
-    def scatter(self, x:str, y:str, z:str, var: str | None = None,show_var_cbar:bool=True) -> None:
+    def scatter(self, x:str, y:str, z:str, var: str | None = None,show_var_cbar:bool=True,show_plot:bool=False) -> None:
         self.init_figure()
         # Ensure that the points data is in (n_points by 3) format
         points = self.make_points_3d(x, y, z)
@@ -76,6 +76,8 @@ class ScatterPlot3D(Plotter3D):
                               position_y=self.scatter_scalar_bar_defaults['position_y'], 
                               position_x=self.scatter_scalar_bar_defaults['position_x'], 
                               fmt=self.scatter_scalar_bar_defaults['fmt'])
+        if show_plot:
+            self.show()
 
     def _get_bathy_volume(self,struct:pv.StructuredGrid,bottom_z:float) -> None:
         top = struct.points.copy()
@@ -145,11 +147,13 @@ class ScatterPlot3D(Plotter3D):
             self.add_colorbar(title='Depth (m)', height=0.7,position_y=0.15, position_x = 0.90, vertical=True, below_label='', above_label='', fmt="%0.1f")
 
 
-    def map(self, var: str | None = None, show_var_cbar:bool=True,show_bathy_cbar:bool=True) -> None:
+    def map(self, var: str | None = None, show_var_cbar:bool=True,show_bathy_cbar:bool=True,show_plot=False) -> None:
         self.init_figure()
         x = 'lon'
         y = 'lat'
         z = 'depth'
         self.scatter(x, y, z, var,show_var_cbar=show_var_cbar)
         self._add_bathy(show_bathy_cbar=show_bathy_cbar)
+        if show_plot:
+            self.show()
         
