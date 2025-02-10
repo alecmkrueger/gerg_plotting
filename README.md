@@ -4,7 +4,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/alecmkrueger/gerg_plotting">
-    <img src="https://raw.githubusercontent.com/alecmkrueger/project_images/9af2f8f58c93e183ac5473a4474619407aee08d3/gerg_logo.svg" alt="Logo" width="500" height="272">
+    <img src="https://github.com/alecmkrueger/gerg_plotting/blob/c953e2ea4a3e1ce4ec4fe4ef00ceaefde5728a99/.github/gerg_logo.svg" alt="GERG Logo" width="500" height="272">
   </a>
 
 <h3 align="center">GERG Plotting</h3>
@@ -22,38 +22,10 @@
 </div>
 
 
-
-<!-- TABLE OF CONTENTS -->
-<details>
-  <summary>Table of Contents</summary>
-  <ol>
-    <li>
-      <a href="#about-the-project">About The Project</a>
-      <ul>
-        <li><a href="#built-with">Built With</a></li>
-      </ul>
-    </li>
-    <li>
-      <a href="#getting-started">Getting Started</a>
-      <ul>
-        <li><a href="#dependencies">Dependencies</a></li>
-        <li><a href="#installation">Installation</a></li>
-      </ul>
-    </li>
-    <li><a href="#usage">Usage</a></li>
-    <li><a href="#contributing">Contributing</a></li>
-    <li><a href="#license">License</a></li>
-    <li><a href="#contact">Contact</a></li>
-    <li><a href="#acknowledgments">Acknowledgments</a></li>
-  </ol>
-</details>
-
-
-
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-This project was created to streamline and standardize the process of generating plots at GERG.
+This project streamlines and standardizes the process of generating plots at GERG.
 
 
 
@@ -66,65 +38,24 @@ This project was created to streamline and standardize the process of generating
 <!-- GETTING STARTED -->
 ## Getting Started
 
+
 There are two ways to get started
-1. Create a fresh virtual environment using your favorite method and install the package
+1. Create a fresh virtual environment using your favorite method and install the package (recommended)
 2. Use an already established virtual environment and install the package
-
-
-
-### Dependencies
-I have provided a list of the dependencies and their versions below.
-
-List of dependencies:
-* python = 3.12
-* numpy = 2.0.0
-* pandas = 2.2.2
-* matplotlib = 3.9.1
-* xarray = 2024.6.0
-* attrs = 23.2.0
-* netcdf4 = 1.7.1.post1
-* cmocean = 4.0.3
-* scipy = 1.14.0
-* mayavi = 4.8.2
 
 
 ### Installation
 
-1. Activate your virtual environment
+1. Create and/or activate your virtual environment with python >=3.12
 1. Use pip to install ```pip install gerg_plotting```
 
+### View Example Code
+[Examples at Read The Docs](https://gerg-plotting.readthedocs.io/en/latest/auto_examples/index.html)
+
+### View Code Documentation 
+[API Reference at Read The Docs](https://gerg-plotting.readthedocs.io/en/latest/autoapi/index.html)
 
 
-<!-- USAGE EXAMPLES -->
-## Usage
-
-Plot data at GERG using Python.
-
-Example: Create a set of maps showing data point temperature, salinity, depth, and time
-```sh
-from gerg_plotting import MapPlot,Bounds,data_from_csv
-import matplotlib.pyplot as plt
-import cartopy.crs as ccrs
-
-# Define bounds
-bounds = Bounds(lat_min = 24,lat_max = 31,lon_min = -99,lon_max = -88,depth_top=-1,depth_bottom=1000)
-# Let's read in the example data
-data = data_from_csv('example_data/sample_glider_data.csv')
-data.bounds = bounds
-
-# Init subplots
-fig,ax = plt.subplots(figsize=(10,15),nrows=4,subplot_kw={'projection': ccrs.PlateCarree()},layout='constrained')
-# Init MapPlot object
-plotter = MapPlot(data=data,grid_spacing=3)
-# # Generate Scatter plots on one figure
-plotter.scatter(fig=fig,ax=ax[0],var='temperature',show_bathy=True,pointsize=30)
-plotter.scatter(fig=fig,ax=ax[1],var='salinity',show_bathy=True,pointsize=30)
-plotter.scatter(fig=fig,ax=ax[2],var='depth',show_bathy=True,pointsize=30)
-plotter.scatter(fig=fig,ax=ax[3],var='time',show_bathy=True,pointsize=30)
-plt.show()
-fig.savefig('example_plots/map_example.png',dpi=500,bbox_inches='tight')
-```
-![png of maps](https://github.com/alecmkrueger/gerg_plotting/blob/main/src/gerg_plotting/examples/example_plots/map_example.png?raw=true)
 
 <!-- CONTRIBUTING -->
 ## Contributing
@@ -155,7 +86,11 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 Alec Krueger - alecmkrueger@tamu.edu
 
-Project Link: [https://github.com/alecmkrueger/gerg_plotting](https://github.com/alecmkrueger/gerg_plotting)
+Repository: [https://github.com/alecmkrueger/gerg_plotting](https://github.com/alecmkrueger/gerg_plotting)
+
+PyPi: [https://pypi.org/project/gerg_plotting/](https://pypi.org/project/gerg_plotting/)
+
+Read The Docs: [https://gerg-plotting.readthedocs.io/en/latest/](https://gerg-plotting.readthedocs.io/en/latest/)
 
 
 
