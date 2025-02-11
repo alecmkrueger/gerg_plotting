@@ -4,7 +4,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/alecmkrueger/gerg_plotting">
-    <img src="https://github.com/alecmkrueger/gerg_plotting/blob/c953e2ea4a3e1ce4ec4fe4ef00ceaefde5728a99/.github/gerg_logo.svg" alt="GERG Logo" width="500" height="272">
+    <img src="https://raw.githubusercontent.com/alecmkrueger/gerg_plotting/ac19c0862d5ea23eda682830283f9698073cae04/.github/gerg_logo.svg" alt="GERG Logo" width="500" height="272">
   </a>
 
 <h3 align="center">GERG Plotting</h3>
