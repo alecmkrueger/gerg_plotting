@@ -13,5 +13,4 @@ from .data_classes.variable import Variable
 from .data_classes.bounds import Bounds
 from .data_classes.data import Data
 from .tools.tools import data_from_df,data_from_csv,data_from_netcdf,data_from_ds,interp_glider_lat_lon
-from .tools.download_example_data import download_example_data
 import cmocean
