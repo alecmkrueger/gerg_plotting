@@ -237,18 +237,29 @@ class MapPlot(Plotter):
         """
         color, cmap, divider = self._set_up_map(fig=fig, ax=ax, var=var)
         
-
         # Add bathymetry if needed
         self._add_bathy(show_bathy, divider)
         
-        # Plot scatter points on the map
-        self.sc = self.ax.scatter(self.data['lon'].values, self.data['lat'].values, linewidths=linewidths,
-                                  c=color, cmap=cmap, s=pointsize, transform=ccrs.PlateCarree(),vmin=self.data[var].vmin,vmax=self.data[var].vmax)
-        # Add a colorbar for the scatter plot variable
-        self.cbar_var = self.add_colorbar(self.sc, var, divider, total_cbars=(2 if show_bathy else 1))
-
-        self._add_coasts(show_coastlines)  # Add coastlines
+        # Plot scatter points on the map with conditional vmin/vmax
+        scatter_kwargs = {
+            'linewidths': linewidths,
+            'c': color,
+            'cmap': cmap,
+            's': pointsize,
+            'transform': ccrs.PlateCarree()
+        }
         
+        if var is not None:
+            scatter_kwargs['vmin'] = self.data[var].vmin
+            scatter_kwargs['vmax'] = self.data[var].vmax
+        
+        self.sc = self.ax.scatter(self.data['lon'].values, self.data['lat'].values, **scatter_kwargs)
+        
+        # Add colorbar only if var is not None
+        if var is not None:
+            self.cbar_var = self.add_colorbar(self.sc, var, divider, total_cbars=(2 if show_bathy else 1))
+
+        self._add_coasts(show_coastlines)
         self._add_grid(grid=grid,show_coords=show_coords)
 
 
