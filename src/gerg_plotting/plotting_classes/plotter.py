@@ -16,8 +16,6 @@ from gerg_plotting.data_classes.data import Data
 from gerg_plotting.modules.plotting import  colorbar
 
 
-   
-
 @define
 class Plotter:
     """
