@@ -9,6 +9,8 @@ import matplotlib.dates as mdates
 from attrs import define, field, asdict
 from pprint import pformat
 import cartopy.crs as ccrs
+import numpy as np
+import pandas as pd
 
 from gerg_plotting.data_classes.data import Data
 from gerg_plotting.modules.plotting import  colorbar
@@ -164,9 +166,9 @@ class Plotter:
             self.ax.invert_yaxis()
         self.adjust_datetime_labels()
 
-    def get_cmap(self, color_var: str) -> Colormap:
+    def get_cmap(self, color_var: str) -> tuple[np.ndarray, Colormap]:
         """
-        Get colormap for specified variable.
+        Get colormap and numeric values for specified variable, handling both numeric and string values.
 
         Parameters
         ----------
@@ -175,15 +177,32 @@ class Plotter:
 
         Returns
         -------
-        matplotlib.colors.Colormap
-            Colormap for variable
+        tuple
+            (numeric_values, colormap) where numeric_values is the data converted to numbers 
+            and colormap is the matplotlib.colors.Colormap
         """
-        # Return the variable's assigned colormap, or the default 'viridis' if none exists
+        values = self.data[color_var].values
+        
+        if values.dtype.kind in ['U', 'S', 'O']:
+            unique_values = np.unique(values[~pd.isnull(values)])
+            n_categories = len(unique_values)
+            
+            # Create categorical colormap
+            colors = matplotlib.pyplot.cm.rainbow(np.linspace(0, 1, n_categories))
+            category_cmap = matplotlib.colors.ListedColormap(colors)
+            
+            # Store mapping and convert to numeric
+            self.data[color_var].category_mapping = {val: idx for idx, val in enumerate(unique_values)}
+            numeric_values = np.array([self.data[color_var].category_mapping[val] for val in values])
+            
+            return numeric_values, category_cmap
+        
+        # Handle numeric data
         if self.data[color_var].cmap is not None:
-            cmap = self.data[color_var].cmap
-        else:
-            cmap = matplotlib.pyplot.get_cmap('viridis')
-        return cmap
+            return values, self.data[color_var].cmap
+        return values, matplotlib.pyplot.get_cmap('viridis')
+
+
     
     def add_colorbar(self, mappable: matplotlib.axes.Axes, var: str | None, divider=None, total_cbars: int = 2) -> None:
         """
