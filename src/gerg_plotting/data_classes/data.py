@@ -99,7 +99,12 @@ class Data:
     
     @bounds.setter
     def bounds(self, bounds: Bounds) -> None:
-        self._bounds = bounds
+        if isinstance(bounds, Bounds):
+            self._bounds = bounds
+        elif isinstance(bounds, dict):
+            self._bounds = Bounds(**bounds)
+        else:
+            raise TypeError("bounds must be of type Bounds or dict")
 
 
     def __attrs_post_init__(self) -> None:
