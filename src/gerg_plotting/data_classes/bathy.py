@@ -168,8 +168,9 @@ class Bathy:
         for filename in files_to_check:
             file_path = self._data_dir / filename
             if not file_path.exists():
-                print(f"Downloading {filename}")
+                print(f"Downloading {filename} for future use. This may take a few minutes...")
                 self._download_file(filename, file_path)
+                print(f"{filename} downloaded successfully to {file_path}.")
 
     def _download_file(self, filename: str, file_path: Path) -> None:
         """Download a file from Zenodo."""
