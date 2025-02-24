@@ -47,6 +47,8 @@ Animator().animate(plotting_function=make_hists,param_dict={'sample':samples,'co
 
 # sphinx_gallery_start_ignore
 fig = make_hists(samples[45],colors[45])
-fig.savefig('../_static/animation_example_thumb.png',dpi=100)
+thumb_filename = Path('animation_example_thumb.png')
+thumb_fileloc = Path(__file__).parent.parent.joinpath('_static',thumb_filename)
+fig.savefig(thumb_fileloc,dpi=100)
 plt.close(fig)
 # sphinx_gallery_end_ignore

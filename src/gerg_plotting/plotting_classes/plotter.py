@@ -166,7 +166,7 @@ class Plotter:
 
     def get_cmap(self, color_var: str) -> tuple[np.ndarray, Colormap]:
         """
-        Get colormap and numeric values for specified variable, handling both numeric and string values.
+        Get colormap and numeric values for specified variable, handling datetime, numeric and string values.
 
         Parameters
         ----------
@@ -181,6 +181,12 @@ class Plotter:
         """
         values = self.data[color_var].values
         
+        # Handle datetime values
+        if np.issubdtype(values.dtype, np.datetime64):
+            numeric_values = mdates.date2num(values)
+            return numeric_values, matplotlib.pyplot.get_cmap('viridis')
+        
+        # Handle string/categorical values
         if values.dtype.kind in ['U', 'S', 'O']:
             unique_values = np.unique(values[~pd.isnull(values)])
             n_categories = len(unique_values)
@@ -198,7 +204,9 @@ class Plotter:
         # Handle numeric data
         if self.data[color_var].cmap is not None:
             return values, self.data[color_var].cmap
+        
         return values, matplotlib.pyplot.get_cmap('viridis')
+
 
 
     

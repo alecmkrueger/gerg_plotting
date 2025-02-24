@@ -112,35 +112,37 @@ class MapPlot(Plotter):
         if not isinstance(self.bathy, Bathy):
             self.bathy = Bathy(bounds=self.data.bounds)
             
-    def get_color_settings(self, var: str | None) -> tuple[str | np.ndarray, Colormap]:
-        """
-        Get color and colormap settings for specified variable.
+    # def get_color_settings(self, var: str | None) -> tuple[str | np.ndarray, Colormap]:
+    #     """
+    #     Get color and colormap settings for specified variable.
         
-        Parameters
-        ----------
-        var : str or None
-            Variable name for color mapping
+    #     Parameters
+    #     ----------
+    #     var : str or None
+    #         Variable name for color mapping
             
-        Returns
-        -------
-        tuple
-            (color, cmap) where color is str or ndarray and cmap is Colormap
-        """
-        if var is None:
-            return 'k', None
+    #     Returns
+    #     -------
+    #     tuple
+    #         (color, cmap) where color is str or ndarray and cmap is Colormap
+    #     """
+    #     if var is None:
+    #         return 'k', None
         
-        if var == 'time':
-            color = np.array(self.data.date2num())
-        else:
-            color = self.data[var].values.copy()
+    #     if var == 'time':
+    #         color = np.array(self.data.date2num())
+    #     else:
+    #         color = self.data[var].values.copy()
         
-        return color, self.get_cmap(var)
+
+
+    #     return color, self.get_cmap(var)
 
 
     def _set_up_map(self, fig=None, ax=None, var=None) -> tuple[str,Colormap,AxesDivider]:
         self.init_figure(fig=fig, ax=ax, geography=True)
         
-        color, cmap = self.get_color_settings(var)
+        color, cmap = self.get_cmap(var)
         
         if self.data.bounds is not None:
             self.ax.set_extent(self.map_extent)
