@@ -55,15 +55,12 @@ class ScatterPlot(Plotter):
 
         # If color_var is passed
         if color_var is not None:
-            if color_var == "time":
-                color_data = self.data.date2num()
-            else:
-                color_data = self.data[color_var].values
+            color_data, cmap = self.get_cmap(color_var)
             sc = self.ax.scatter(
                 self.data[x].values,
                 self.data[y].values,
                 c=color_data,
-                cmap=self.get_cmap(color_var),
+                cmap=cmap,
                 vmin = self.data[color_var].vmin,
                 vmax = self.data[color_var].vmax, **scattter_kwargs
             )
@@ -108,16 +105,13 @@ class ScatterPlot(Plotter):
 
         # If color_var is passed
         if color_var is not None:
-            if color_var == "time":
-                color_data = self.data.date2num()
-            else:
-                color_data = self.data[color_var].values
+            color_data, cmap = self.get_cmap(color_var)
             sc = self.ax.scatter(
                 self.data[x].values,
                 self.data[y].values,
                 self.data[z].values,
                 c=color_data,
-                cmap=self.get_cmap(color_var),
+                cmap=cmap,
                 vmin = self.data[color_var].vmin,
                 vmax = self.data[color_var].vmax, **scattter_kwargs
             )
