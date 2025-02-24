@@ -38,7 +38,7 @@ class ExtentArrowConfig(BaseConfig):
     """Configuration for extent arrows."""
     
     arrow_facecolor: str|tuple = 'black'
-    """Color of arrow fill. Use 'coverage_color' to match coverage color."""
+    """Color of arrow fill"""
     
     arrow_edgecolor: str|tuple = 'black'
     """Color of arrow edges."""
@@ -239,7 +239,10 @@ class Grid(Base):
     @config.setter
     def config(self, value: dict | GridConfig):
         if isinstance(value, dict):
-            self._config = GridConfig(**value)
+            # Filter out unexpected keys
+            expected_keys = set(CoverageConfig.__annotations__.keys())
+            filtered_kwargs = {k: v for k, v in value.items() if k in expected_keys}
+            self._config = GridConfig(**filtered_kwargs)
         else:
             self._config = value
 
@@ -322,7 +325,10 @@ class ExtentArrows(Base):
     @config.setter
     def config(self, value: dict | ExtentArrowConfig):
         if isinstance(value, dict):
-            self._config = ExtentArrowConfig(**value)
+            # Filter out unexpected keys
+            expected_keys = set(CoverageConfig.__annotations__.keys())
+            filtered_kwargs = {k: v for k, v in value.items() if k in expected_keys}
+            self._config = ExtentArrowConfig(**filtered_kwargs)
         else:
             self._config = value
 
@@ -420,44 +426,41 @@ class Coverage(Base):
     @config.setter
     def config(self, value: dict | CoverageConfig):
         if isinstance(value, dict):
-            self._config = CoverageConfig(**value)
+            # Filter out unexpected keys
+            expected_keys = set(CoverageConfig.__annotations__.keys())
+            
+            # Process keys by removing leading underscores to match expected keys
+            processed_kwargs = {}
+            for k, v in value.items():
+                if k in expected_keys:
+                    # Strip leading underscore and add to processed kwargs
+                    k = k.lstrip('_')
+                    # Regular expected key
+                    processed_kwargs[k] = v
+            self._config = CoverageConfig(**processed_kwargs)
         else:
-            self._config = value
+            if isinstance(value, CoverageConfig):
+                self._config = value
+            else:
+                raise ValueError("Invalid type for config. Expected CoverageConfig or dict.")
+
 
     def create(self, xrange, yrange, label, **kwargs):
         """Create a new coverage object with specified range and label."""
-        self._update_configs_from_kwargs(kwargs)
+        # self._update_configs_from_kwargs(kwargs)
         self._calculate_dimensions(xrange, yrange)
         self._create_body()
         self._create_outline()
         self._create_label(label, kwargs.get('label_position', None))
+        print(kwargs)
         self._create_arrows(kwargs)
         return self
-
-    def _update_configs_from_kwargs(self, kwargs):
-        """Update configurations from provided kwargs."""
-        body_defaults = {
-            'body_alpha': self.config.body_alpha,
-            'body_linewidth': self.config.body_linewidth,
-            'body_color': self.config.body_color,
-            'body_hatch': self.config.body_hatch,
-            'body_hatch_color': self.config.body_hatch_color,
-            'hatch_linewidth': self.config.hatch_linewidth,
-            'body_min_height': self.config.body_min_height
-        }
-        outline_defaults = {
-            'outline_edgecolor': self.config.outline_edgecolor,
-            'body_outline_alpha': self.config.outline_alpha,
-            'outline_linewidth': self.config.outline_linewidth
-        }
-        
-        # Extract and update configs
-        self.config = extract_kwargs_with_aliases(kwargs, {**body_defaults, **outline_defaults})
 
     def _calculate_dimensions(self, xrange, yrange):
         """Calculate coverage dimensions."""
         self.anchor_point = (xrange[0], yrange[0])
         self.width = xrange[1] - xrange[0]
+
         self.height = max(yrange[1] - yrange[0], self.config.body_min_height)
 
     def _create_body(self):
@@ -491,7 +494,8 @@ class Coverage(Base):
     def _create_arrows(self, kwargs):
         """Create extent arrows if enabled."""
         if self.config.show_arrows:
-            self.extent_arrows = ExtentArrows(**kwargs)
+            self.extent_arrows = ExtentArrows()
+            self.extent_arrows.config = kwargs
 
     
     def _add_label_background(self,text:Text):
@@ -503,8 +507,6 @@ class Coverage(Base):
         text : matplotlib.text.Text
             The text object to add background to.
         """
-        print(dict(facecolor=self.config.label_background_color,pad=self.config.label_background_pad,
-                           linewidth=self.config.label_background_linewidth,alpha=self.config.label_background_alpha))
         text.set_bbox(dict(facecolor=self.config.label_background_color,pad=self.config.label_background_pad,
                            linewidth=self.config.label_background_linewidth,alpha=self.config.label_background_alpha))
 
@@ -543,49 +545,17 @@ class CoveragePlot(Base):
     grid: Grid = field(init=False)
 
     _config: CoveragePlotConfig = field(factory=CoveragePlotConfig)
+    _default_config: CoveragePlotConfig = field(init=False)
     
     @property
     def config(self) -> CoveragePlotConfig:
         """Access and modify plot styling configuration."""
         return self._config
     
-    @config.setter
-    def config(self, value: dict | CoveragePlotConfig):
-        if isinstance(value, dict):
-            # Handle CoverageConfig attributes
-            coverage_attrs = {k: v for k, v in value.items() 
-                           if hasattr(CoverageConfig(), k)}
-            print(f"Setting coverage attributes: {coverage_attrs}")
-            if coverage_attrs:
-                for coverage in self.coverages:
-                    coverage.config = coverage_attrs
-
-            # Handle GridConfig attributes
-            grid_attrs = {k: v for k, v in value.items() 
-                        if hasattr(GridConfig(), k)}
-            print(f"Setting grid attributes: {grid_attrs}")
-            if grid_attrs:
-                self.grid.config = grid_attrs
-
-            # Handle ExtentArrowConfig attributes
-            arrow_attrs = {k: v for k, v in value.items()
-                         if hasattr(ExtentArrowConfig(), k)}
-            print(f"Setting arrow attributes: {arrow_attrs}")
-            if arrow_attrs:
-                for coverage in self.coverages:
-                    if coverage.extent_arrows:
-                        coverage.extent_arrows.config = arrow_attrs
-
-            # Handle remaining CoveragePlotConfig attributes
-            plot_attrs = {k: v for k, v in value.items() 
-                        if hasattr(CoveragePlotConfig(), k)}
-            print(f"Setting plot attributes: {plot_attrs}")
-            if plot_attrs:
-                self._config = CoveragePlotConfig(**plot_attrs)
-        else:
-            self._config = value
-
-
+    @property 
+    def default_config(self) -> CoveragePlotConfig:
+        """Default configuration settings."""
+        return self._default_config
 
     def __attrs_post_init__(self):
         """
@@ -594,6 +564,7 @@ class CoveragePlot(Base):
         :param colormap_name: Name of the matplotlib colormap to use.
         :param n_colors: Number of discrete colors to divide the colormap into.
         """
+        self._default_config = self._config
         if self.cmap is None:
             self.cmap = plt.get_cmap('tab10')
         elif isinstance(self.cmap,str):
@@ -630,11 +601,53 @@ class CoveragePlot(Base):
         # Separate kwargs
         config_kwargs = {k: v for k, v in kwargs.items() if k in config_attrs}
         remaining_kwargs = {k: v for k, v in kwargs.items() if k not in config_attrs}
-        
         return config_kwargs, remaining_kwargs
+    
+    def set_default_config(self, value: dict | CoveragePlotConfig):
+        """
+        Set new default configuration for all future coverages.
+        
+        Parameters
+        ----------
+        value : dict or CoveragePlotConfig
+            New default configuration values
+        """
+        if isinstance(value, dict):
+            # Handle CoverageConfig attributes
+            coverage_attrs = {k: v for k, v in value.items() 
+                           if hasattr(CoverageConfig(), k)}
+            if coverage_attrs:
+                for coverage in self.coverages:
+                    coverage.config = coverage_attrs
+
+            # Handle GridConfig attributes
+            grid_attrs = {k: v for k, v in value.items() 
+                        if hasattr(GridConfig(), k)}
+            if grid_attrs:
+                self.grid.config = grid_attrs
+
+            # Handle ExtentArrowConfig attributes
+            arrow_attrs = {k: v for k, v in value.items()
+                         if hasattr(ExtentArrowConfig(), k)}
+            if arrow_attrs:
+                for coverage in self.coverages:
+                    if coverage.extent_arrows:
+                        coverage.extent_arrows.config = arrow_attrs
+
+            # Handle CoveragePlotConfig attributes
+            plot_attrs = {k: v for k, v in value.items() 
+                        if hasattr(CoveragePlotConfig(), k)}
+            if plot_attrs:
+                self._default_config = CoveragePlotConfig(**plot_attrs)
+                self._config = self._default_config
+        else:
+            self._default_config = value
+            self._config = value
+
 
     def add_coverage(self, xrange, yrange, label=None, **kwargs):
-        """Add a new coverage area to the plot."""
+        print("*"*100)
+        """Add a new coverage area with optional custom configuration."""
         xrange = [xrange] if not isinstance(xrange, list) else xrange
         yrange = [yrange] if not isinstance(yrange, list) else yrange
 
@@ -649,19 +662,22 @@ class CoveragePlot(Base):
             xrange, yrange = self.handle_ranges(xrange=xrange, yrange=yrange)
             
             # Separate config kwargs from other kwargs
+            print(f"{kwargs=}")
             config_kwargs, other_kwargs = self._extract_config_kwargs(kwargs)
             
-            # Create new coverage with config
+            # Create new coverage starting with default config
             coverage = Coverage()
-            coverage.config = config_kwargs
-            coverage.config.body_color = config_kwargs.pop('body_color', self.coverage_color())
-            print(f"Coverage config: {coverage.config}")
+            coverage.config = self._default_config.to_dict()
+            print(f"{self._default_config.to_dict() = }")
+            # Override specific configs just for this coverage
+            if config_kwargs:
+                coverage.config = merge_dicts(coverage.config.to_dict(), config_kwargs)
+            # coverage.config.body_color = config_kwargs.pop('body_color', self.coverage_color())
+            print(f"{other_kwargs=}")
             coverage = coverage.create(xrange=xrange, yrange=yrange, label=label, **other_kwargs)
             
             self.coverages.append(coverage)
             return
-            
-        raise ValueError(f'xrange and yrange must both be the same length {xrange = }, {yrange = }')
 
 
     def save(self,filename,**kwargs):
