@@ -23,7 +23,7 @@ plotter = CoveragePlot(
 # SECTION 1: Global Configuration
 # ================================================================
 # Set global configuration options that apply to all coverages
-plotter.set_default_config({
+plotter.update_config(**{
     # CoveragePlotConfig options
     'horizontal_padding': 0.5,     # Padding on left and right of plot
     'vertical_padding': 0.5,       # Padding on top and bottom of plot
@@ -45,7 +45,7 @@ plotter.set_default_config({
     'label_fontsize': 11,          # Font size for labels
     'label_background_pad': 3,     # Padding around label background
     'label_background_linewidth': 1, # Width of label background border
-    'label_background_alpha': 0.7, # Transparency of label background
+    'label_background_alpha': 0.8, # Transparency of label background
     
     # Arrow options
     'arrow_tail_width': 0.06,      # Width of arrow tail
@@ -122,6 +122,7 @@ plotter.add_coverage(
     label_fontsize=12,                # Larger font
     label_background_alpha=1.0,       # Fully opaque background
     label_background_pad=5,           # Extra padding around text
+    label_font_color='white',         # White text
     body_min_height=0.5               # Minimum height for coverage area
 )
 

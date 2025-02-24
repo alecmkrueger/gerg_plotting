@@ -33,3 +33,10 @@ class BaseConfig:
     def get_attrs(self) -> set:
         """Get all configuration attributes."""
         return set(asdict(self).keys())
+    
+    def update(self,dict:dict) -> None:
+        """Update configuration settings."""
+        for k, v in dict.items():
+            # Direct attributes of this class
+            if hasattr(self, k):
+                setattr(self, k, v)
