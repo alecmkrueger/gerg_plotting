@@ -97,6 +97,9 @@ class CoverageConfig(BaseConfig):
     
     label_fontsize: float = 12
     """Font size for label."""
+
+    label_font_color: str|tuple = 'black'
+    """Color of label font."""
     
     label_background_pad: float = 2
     """Padding around label background."""
@@ -106,38 +109,62 @@ class CoverageConfig(BaseConfig):
     
     label_background_alpha: float = 1
     """Transparency of label background."""
-    
-    _label_background_color: float = 'body_color'
-    """Color of label background."""
-    
+
+    label_position: tuple = None
+    """Position of label in (x, y) format and in the units of the plot."""
+
     show_arrows: bool = True
     """Whether to show extent arrows."""
 
+    _label_background_color: str|tuple = 'body_color'
+    """Color of label background."""
 
     @property
     def label_background_color(self):
         """Get the label background color."""
         if self._label_background_color == 'body_color':
             return self.body_color
-        return self
+        return self._label_background_color
     
     @label_background_color.setter
     def label_background_color(self, value):
         """Set the label background color."""
         self._label_background_color = value
 
+
 @define
 class CoveragePlotConfig(BaseConfig):
-    """Configuration for overall coverage plot."""
+    """Main configuration class for coverage plotting."""
     
+    # Overall plot settings
     horizontal_padding: float = 0.25
-    """Padding on left and right of plot."""
-    
     vertical_padding: float = 0.75
-    """Padding on top and bottom of plot."""
-    
     coverage_color_default: str|tuple = None
-    """Default color for coverages if specified."""
+    
+    # Sub-configurations
+    grid: GridConfig = field(factory=GridConfig)
+    arrow: ExtentArrowConfig = field(factory=ExtentArrowConfig)
+    coverage: CoverageConfig = field(factory=CoverageConfig)
+    
+    def update(self, config_dict):
+        """Update config values from a flat dictionary by routing to appropriate sub-configs."""
+        for k, v in config_dict.items():
+            # Direct attributes of this class
+            if hasattr(self, k) and k not in ['grid', 'arrow', 'coverage']:
+                setattr(self, k, v)
+            # Grid config attributes
+            elif hasattr(self.grid, k):
+                setattr(self.grid, k, v)
+            # Arrow config attributes
+            elif hasattr(self.arrow, k):
+                setattr(self.arrow, k, v)
+            # Coverage config attributes
+            elif hasattr(self.coverage, k):
+                setattr(self.coverage, k, v)
+            # Unknown attribute
+            else:
+                raise AttributeError(f"No configuration setting found for: {k}")
+        return self
 
 
 @define
@@ -227,149 +254,66 @@ class Base:
 @define
 class Grid(Base):
     """A class for managing and drawing grid lines on a plot."""
-    xlabels:list
-    ylabels:list
-    _config: GridConfig = field(factory=GridConfig)
+    xlabels: list
+    ylabels: list
+    config: GridConfig = field(factory=GridConfig)
     
-    @property
-    def config(self) -> GridConfig:
-        """Access and modify grid styling configuration."""
-        return self._config
-    
-    @config.setter
-    def config(self, value: dict | GridConfig):
-        if isinstance(value, dict):
-            # Filter out unexpected keys
-            expected_keys = set(CoverageConfig.__annotations__.keys())
-            filtered_kwargs = {k: v for k, v in value.items() if k in expected_keys}
-            self._config = GridConfig(**filtered_kwargs)
-        else:
-            self._config = value
-
-    def add_hlines(self,ax:Axes,y_values,**kwargs):
-        """
-        Add horizontal lines to the plot.
-
-        Parameters
-        ----------
-        ax : matplotlib.axes.Axes
-            The axes to draw the lines on.
-        y_values : array-like
-            Y-coordinates where horizontal lines should be drawn.
-        ``**kwargs``
-            Additional keyword arguments passed to axhline.
-        """
-        zorder = kwargs.pop('zorder',self.config.grid_zorder)
+    def add_hlines(self, ax: Axes, y_values):
+        """Add horizontal lines to the plot using config settings."""
         for y_value in y_values:
-            ax.axhline(y_value,zorder=zorder,**kwargs)
+            ax.axhline(
+                y_value, 
+                zorder=self.config.grid_zorder,
+                linewidth=self.config.grid_linewidth,
+                linestyle=self.config.grid_linestyle,
+                color=self.config.grid_color
+            )
 
-    def add_vlines(self,ax:Axes,x_values,**kwargs):
-        """
-        Add vertical lines to the plot.
-
-        Parameters
-        ----------
-        ax : matplotlib.axes.Axes
-            The axes to draw the lines on.
-        x_values : array-like
-            X-coordinates where vertical lines should be drawn.
-        ``**kwargs``
-            Additional keyword arguments passed to axvline.
-        """
-        zorder = kwargs.pop('zorder',self.config.grid_zorder)
+    def add_vlines(self, ax: Axes, x_values):
+        """Add vertical lines to the plot using config settings."""
         for x_value in x_values:
-            ax.axvline(x_value,zorder=zorder,**kwargs)
+            ax.axvline(
+                x_value, 
+                zorder=self.config.grid_zorder,
+                linewidth=self.config.grid_linewidth,
+                linestyle=self.config.grid_linestyle,
+                color=self.config.grid_color
+            )
 
-    def add_grid(self,ax,**grid_kwargs):
-        """
-        Add complete grid to the plot with both horizontal and vertical lines.
-
-        Parameters
-        ----------
-        ax : matplotlib.axes.Axes
-            The axes to draw the grid on.
-        ``**grid_kwargs``
-            Additional keyword arguments for grid customization including:
-            - grid_linewidth: Width of grid lines
-            - grid_color: Color of grid lines
-            - grid_linestyle: Style of grid lines
-        """
-        defaults = {
-            'grid_linewidth': self.config.grid_linewidth,
-            'grid_color': self.config.grid_color,
-            'grid_linestyle': self.config.grid_linestyle
-        }
-
-        linewidth, color, linestyle  = extract_kwargs_with_aliases(grid_kwargs, defaults).values()
+    def add_grid(self, ax):
+        """Add complete grid to the plot with both horizontal and vertical lines."""
         n_hlines = len(self.ylabels)
         n_vlines = len(self.xlabels)
-        self.add_hlines(ax=ax,y_values=np.arange(-0.5,n_hlines+0.5,1),linewidth=linewidth,ls=linestyle,color=color)
-        self.add_vlines(ax=ax,x_values=np.arange(0,n_vlines+1,1),linewidth=linewidth,ls=linestyle,color=color)
+        self.add_hlines(ax=ax, y_values=np.arange(-0.5, n_hlines+0.5, 1))
+        self.add_vlines(ax=ax, x_values=np.arange(0, n_vlines+1, 1))
 
 @define
 class ExtentArrows(Base):
     """A class for managing and drawing arrows that indicate coverage extents."""
-    label_position:tuple = field(default=None)
+    label_position: tuple = field(default=None)
     left_arrow: FancyArrow = field(default=None)
     right_arrow: FancyArrow = field(default=None)
     top_arrow: FancyArrow = field(default=None)
     bottom_arrow: FancyArrow = field(default=None)
-
-    _config: ExtentArrowConfig = field(factory=ExtentArrowConfig)
+    config: ExtentArrowConfig = field(factory=ExtentArrowConfig)
     
-    @property
-    def config(self) -> ExtentArrowConfig:
-        """Access and modify arrow styling configuration."""
-        return self._config
-    
-    @config.setter
-    def config(self, value: dict | ExtentArrowConfig):
-        if isinstance(value, dict):
-            # Filter out unexpected keys
-            expected_keys = set(CoverageConfig.__annotations__.keys())
-            filtered_kwargs = {k: v for k, v in value.items() if k in expected_keys}
-            self._config = ExtentArrowConfig(**filtered_kwargs)
-        else:
-            self._config = value
-
-    def calculate_arrow_length(self,ax:Axes,rect,text_left,text_right):
-        """
-        Calculate the lengths needed for extent arrows.
-
-        Parameters
-        ----------
-        ax : matplotlib.axes.Axes
-            The axes containing the arrows.
-        rect : Rectangle
-            Rectangle object representing coverage area.
-        text_left : float
-            Left boundary of text.
-        text_right : float
-            Right boundary of text.
-
-        Returns
-        -------
-        tuple
-            (left_arrow_length, right_arrow_length)
-        """
+    def calculate_arrow_length(self, ax: Axes, rect, text_left, text_right):
+        """Calculate the lengths needed for extent arrows."""
         rect_bbox = ax.transData.inverted().transform(rect.get_window_extent())
-
         rect_left, rect_bottom = rect_bbox[0]
         rect_right, rect_top = rect_bbox[1]
-
         left_arrow_length = rect_left-text_left
         right_arrow_length = rect_right-text_right
-
-        return left_arrow_length,right_arrow_length
-
+        return left_arrow_length, right_arrow_length
 
     def add_range_arrows(self, ax: Axes, text: Text, rect: Rectangle):
-        """Add arrows indicating the range of coverage."""
-        
+        """Add arrows indicating the range of coverage using config settings."""
         if self.config.arrow_facecolor == 'coverage_color':
-            self.config.arrow_facecolor = rect.get_facecolor()
+            arrow_facecolor = rect.get_facecolor()
         elif self.config.arrow_facecolor == 'hatch_color':
-            self.config.arrow_facecolor = rect.get_edgecolor()
+            arrow_facecolor = rect.get_edgecolor()
+        else:
+            arrow_facecolor = self.config.arrow_facecolor
 
         text_bbox = ax.transData.inverted().transform(text.get_window_extent())
         text_left, text_bottom = text_bbox[0]
@@ -378,7 +322,7 @@ class ExtentArrows(Base):
 
         arrow_props = {
             'width': self.config.arrow_tail_width,
-            'facecolor': self.config.arrow_facecolor,
+            'facecolor': arrow_facecolor,
             'head_width': self.config.arrow_head_width,
             'length_includes_head': True,
             'zorder': self.config.arrow_zorder,
@@ -403,64 +347,31 @@ class ExtentArrows(Base):
         ax.add_artist(right_arrow)
 
 
-
 @define
 class Coverage(Base):
     """A class for creating and managing plots showing multiple coverage areas."""
-
     body: Rectangle = field(init=False)
     outline: Rectangle = field(init=False)
     label: Text = field(init=False)
-    extent_arrows: ExtentArrows = field(init=False)
+    extent_arrows: ExtentArrows = field(factory=ExtentArrows)
     anchor_point: tuple[float, float] = field(init=False)
     width: float = field(init=False)
     height: float = field(init=False)
-
-    _config: CoverageConfig = field(factory=CoverageConfig)
+    config: CoverageConfig = field(factory=CoverageConfig)
     
-    @property
-    def config(self) -> CoverageConfig:
-        """Access and modify coverage styling configuration."""
-        return self._config
-    
-    @config.setter
-    def config(self, value: dict | CoverageConfig):
-        if isinstance(value, dict):
-            # Filter out unexpected keys
-            expected_keys = set(CoverageConfig.__annotations__.keys())
-            
-            # Process keys by removing leading underscores to match expected keys
-            processed_kwargs = {}
-            for k, v in value.items():
-                if k in expected_keys:
-                    # Strip leading underscore and add to processed kwargs
-                    k = k.lstrip('_')
-                    # Regular expected key
-                    processed_kwargs[k] = v
-            self._config = CoverageConfig(**processed_kwargs)
-        else:
-            if isinstance(value, CoverageConfig):
-                self._config = value
-            else:
-                raise ValueError("Invalid type for config. Expected CoverageConfig or dict.")
-
-
-    def create(self, xrange, yrange, label, **kwargs):
+    def create(self, xrange, yrange, label):
         """Create a new coverage object with specified range and label."""
-        # self._update_configs_from_kwargs(kwargs)
         self._calculate_dimensions(xrange, yrange)
         self._create_body()
         self._create_outline()
-        self._create_label(label, kwargs.get('label_position', None))
-        print(kwargs)
-        self._create_arrows(kwargs)
+        self._create_label(label)
+        self._create_arrows()
         return self
 
     def _calculate_dimensions(self, xrange, yrange):
         """Calculate coverage dimensions."""
         self.anchor_point = (xrange[0], yrange[0])
         self.width = xrange[1] - xrange[0]
-
         self.height = max(yrange[1] - yrange[0], self.config.body_min_height)
 
     def _create_body(self):
@@ -482,52 +393,41 @@ class Coverage(Base):
             zorder=self.body.get_zorder()+0.1
         )
 
-    def _create_label(self, label, position=None):
+    def _create_label(self, label):
         """Create the coverage label."""
-        position = position or self.body.get_center()
+        position = self.config.label_position
+        if position is None:
+            position = self.body.get_center()
         self.label = Text(
             *position, text=label,
             fontsize=self.config.label_fontsize,
+            color=self.config.label_font_color,
             ha='center', va='center', zorder=5
         )
 
-    def _create_arrows(self, kwargs):
+    def _create_arrows(self):
         """Create extent arrows if enabled."""
         if self.config.show_arrows:
             self.extent_arrows = ExtentArrows()
-            self.extent_arrows.config = kwargs
+            # No need to manually transfer config settings - handled by CoveragePlot
 
-    
-    def _add_label_background(self,text:Text):
-        """
-        Add background to coverage label.
+    def _add_label_background(self, text: Text):
+        """Add background to coverage label."""
+        text.set_bbox(dict(
+            facecolor=self.config.label_background_color,
+            pad=self.config.label_background_pad,
+            linewidth=self.config.label_background_linewidth,
+            alpha=self.config.label_background_alpha
+        ))
 
-        Parameters
-        ----------
-        text : matplotlib.text.Text
-            The text object to add background to.
-        """
-        text.set_bbox(dict(facecolor=self.config.label_background_color,pad=self.config.label_background_pad,
-                           linewidth=self.config.label_background_linewidth,alpha=self.config.label_background_alpha))
-
-    def plot(self,ax:Axes,**kwargs):
-        """
-        Plot the coverage on given axes.
-
-        Parameters
-        ----------
-        ax : matplotlib.axes.Axes
-            The axes to plot on.
-        ``**kwargs``
-            Additional keyword arguments for plotting.
-        """
+    def plot(self, ax: Axes):
+        """Plot the coverage on given axes using config settings."""
         ax.add_artist(self.body)
         ax.add_artist(self.outline)
         ax.add_artist(self.label)
         self._add_label_background(self.label)
         if self.config.show_arrows:
-            self.extent_arrows.add_range_arrows(ax=ax,text=self.label,rect=self.body,**kwargs)
-
+            self.extent_arrows.add_range_arrows(ax=ax, text=self.label, rect=self.body)
 
 @define
 class CoveragePlot(Base):
@@ -544,39 +444,49 @@ class CoveragePlot(Base):
     coverages: list[Coverage] = field(factory=list)
     grid: Grid = field(init=False)
 
-    _config: CoveragePlotConfig = field(factory=CoveragePlotConfig)
-    _default_config: CoveragePlotConfig = field(init=False)
+    # Single unified config object
+    config: CoveragePlotConfig = field(factory=CoveragePlotConfig)
     
-    @property
-    def config(self) -> CoveragePlotConfig:
-        """Access and modify plot styling configuration."""
-        return self._config
-    
-    @property 
-    def default_config(self) -> CoveragePlotConfig:
-        """Default configuration settings."""
-        return self._default_config
-
     def __attrs_post_init__(self):
         """
         Initializes the ColorCycler and the coverages container
-
-        :param colormap_name: Name of the matplotlib colormap to use.
-        :param n_colors: Number of discrete colors to divide the colormap into.
         """
-        self._default_config = self._config
         if self.cmap is None:
             self.cmap = plt.get_cmap('tab10')
-        elif isinstance(self.cmap,str):
+        elif isinstance(self.cmap, str):
             self.cmap = plt.get_cmap(self.cmap)
-        elif isinstance(self.cmap,Colormap):
-            self.cmap = self.cmap
+        
         n_colors = self.cmap.N
         self.color_iterator = itertools.cycle(
             (self.cmap(i / (n_colors - 1)) for i in range(n_colors))
         )
 
-        self.grid = Grid(xlabels=self.xlabels,ylabels=self.ylabels)
+        # Initialize grid with its config from the hierarchical config
+        self.grid = Grid(xlabels=self.xlabels, ylabels=self.ylabels)
+        self.grid.config = self.config.grid
+
+    def update_config(self, **kwargs):
+        """
+        Update configuration settings across all components.
+        
+        Parameters
+        ----------
+        **kwargs
+            Configuration settings to update
+        """
+        # Update the main config which will route to appropriate sub-configs
+        self.config.update(kwargs)
+        
+        # Apply sub-configs to existing coverages
+        for coverage in self.coverages:
+            coverage.config = self.config.coverage
+            if coverage.extent_arrows:
+                coverage.extent_arrows.config = self.config.arrow
+                
+        # Update grid config
+        self.grid.config = self.config.grid
+        
+        return self
 
     def _extract_config_kwargs(self, kwargs: dict) -> tuple[dict, dict]:
         """
@@ -644,9 +554,7 @@ class CoveragePlot(Base):
             self._default_config = value
             self._config = value
 
-
-    def add_coverage(self, xrange, yrange, label=None, **kwargs):
-        print("*"*100)
+    def add_coverage(self, xrange, yrange, label=None, **config_override):
         """Add a new coverage area with optional custom configuration."""
         xrange = [xrange] if not isinstance(xrange, list) else xrange
         yrange = [yrange] if not isinstance(yrange, list) else yrange
@@ -661,21 +569,47 @@ class CoveragePlot(Base):
             # Convert string labels to numeric indices
             xrange, yrange = self.handle_ranges(xrange=xrange, yrange=yrange)
             
-            # Separate config kwargs from other kwargs
-            print(f"{kwargs=}")
-            config_kwargs, other_kwargs = self._extract_config_kwargs(kwargs)
-            
-            # Create new coverage starting with default config
+            # Create new coverage with default config from the hierarchical config
             coverage = Coverage()
-            coverage.config = self._default_config.to_dict()
-            print(f"{self._default_config.to_dict() = }")
-            # Override specific configs just for this coverage
-            if config_kwargs:
-                coverage.config = merge_dicts(coverage.config.to_dict(), config_kwargs)
-            # coverage.config.body_color = config_kwargs.pop('body_color', self.coverage_color())
-            print(f"{other_kwargs=}")
-            coverage = coverage.create(xrange=xrange, yrange=yrange, label=label, **other_kwargs)
+            coverage.config = self.config.coverage
             
+            # Apply local config overrides if any
+            if config_override:
+                # Create a copy of coverage config and update it
+                local_coverage_config = CoverageConfig()
+                local_coverage_config.update(config_override)
+                
+                # Filter config_override for coverage config keys
+                coverage_keys = set(local_coverage_config.to_dict().keys())
+                coverage_overrides = {k: v for k, v in config_override.items() 
+                                     if k in coverage_keys}
+                
+                # Apply overrides
+                for k, v in coverage_overrides.items():
+                    setattr(local_coverage_config, k, v)
+                
+                coverage.config = local_coverage_config
+            
+            coverage = coverage.create(xrange=xrange, yrange=yrange, label=label)
+            
+            # Configure extent arrows with arrow config
+            if coverage.extent_arrows:
+                if config_override:
+                    # Similar to coverage, apply any arrow-specific overrides
+                    arrow_keys = set(self.config.arrow.to_dict().keys())
+                    arrow_overrides = {k: v for k, v in config_override.items()
+                                     if k in arrow_keys}
+                    
+                    if arrow_overrides:
+                        local_arrow_config = ExtentArrowConfig(**self.config.arrow.to_dict())
+                        for k, v in arrow_overrides.items():
+                            setattr(local_arrow_config, k, v)
+                        coverage.extent_arrows.config = local_arrow_config
+                    else:
+                        coverage.extent_arrows.config = self.config.arrow
+                else:
+                    coverage.extent_arrows.config = self.config.arrow
+                    
             self.coverages.append(coverage)
             return
 
@@ -713,14 +647,7 @@ class CoveragePlot(Base):
         plt.show(**kwargs)
 
     def coverage_color(self):
-        """
-        Get the next color for a coverage area.
-
-        Returns
-        -------
-        tuple or str
-            RGBA color tuple or specified default color.
-        """
+        """Get the next color for a coverage area."""
         if self.config.coverage_color_default is None:
             return next(self.color_iterator)
         else:
@@ -804,27 +731,18 @@ class CoveragePlot(Base):
         self.ax.tick_params('both',length=0)
 
     def set_padding(self):
-        """
-        Set plot limits with padding.
-        """
+        """Set plot limits with padding."""
         xmin = 0 - self.config.horizontal_padding
-        xmax = len(self.xlabels)+self.config.horizontal_padding
+        xmax = len(self.xlabels) + self.config.horizontal_padding
 
         ymin = 0 - self.config.vertical_padding
-        ymax = len(self.ylabels)-1+self.config.vertical_padding
+        ymax = len(self.ylabels) - 1 + self.config.vertical_padding
 
-        self.ax.set_xlim(xmin,xmax)
-        self.ax.set_ylim(ymin,ymax)
+        self.ax.set_xlim(xmin, xmax)
+        self.ax.set_ylim(ymin, ymax)
 
-    def add_grid(self,show_grid:bool):
-        """
-        Add grid to the plot if requested.
-
-        Parameters
-        ----------
-        show_grid : bool
-            Whether to show the grid.
-        """
+    def add_grid(self, show_grid: bool):
+        """Add grid to the plot if requested."""
         if show_grid:
             self.grid.add_grid(ax=self.ax)
 
