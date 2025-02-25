@@ -1,5 +1,5 @@
 """
-A comprehensive example demonstrating all customization options for CoveragePlot.
+An example demonstrating some customization options for CoveragePlot.
 """
 
 import matplotlib.pyplot as plt
