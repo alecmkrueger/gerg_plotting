@@ -23,7 +23,7 @@ def run_example(file_path):
     os.chdir(original_dir)
     print(f"Completed: {file_path.name}")
 
-def main():
+def run_examples():
     examples_dir = Path("docs/examples")
     output_dir = Path("example_plots")
     
@@ -35,11 +35,18 @@ def main():
     
     print(f"Found {len(example_files)} example files")
     
-    # Run each example
-    for example_file in example_files:
-        run_example(example_file)
-        
-    print("\nAll examples completed. Check example_plots directory for outputs.")
+    try:
+        # Run each example
+        for example_file in example_files:
+            run_example(example_file)
+            
+        print("\nAll examples completed. Check example_plots directory for outputs.")
+        return True
+    except Exception as e:
+        print(f"Error running examples: {e}")
+        return False
 
 if __name__ == "__main__":
-    main()
+    success = run_examples()
+    sys.exit(0 if success else 1)
+
