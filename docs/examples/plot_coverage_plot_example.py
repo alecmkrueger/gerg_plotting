@@ -169,4 +169,3 @@ plotter.show()
 
 # Save to file
 plotter.save('example_plots/coverage_plot_example.png', dpi=300)
->>>>>>> Stashed changes
