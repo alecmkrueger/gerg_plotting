@@ -15,8 +15,12 @@ data.bounds.vertical_scalar = -0.001
 # Set the depth bounds to None so we can see all of the bathymetry
 data.bounds.depth_bottom = None
 data.bounds.depth_top = None
+# Init plotter
 plotter = ScatterPlot3D(data)
+# Plot map
 plotter.map('temperature',show_plot=True)
+# Save plot as png
 plotter.save('example_plots/map_3d.png')
+# Save plot as interactive html
 plotter.export_html('example_plots/map_3d.html')
 
