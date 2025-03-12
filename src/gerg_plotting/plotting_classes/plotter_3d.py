@@ -2,6 +2,7 @@ from attrs import define, asdict, field
 from pprint import pformat
 import numpy as np
 import pyvista as pv
+from pathlib import Path
 
 from gerg_plotting.data_classes.data import Data
 from gerg_plotting.data_classes.bathy import Bathy
@@ -127,7 +128,17 @@ class Plotter3D:
         raise NotImplementedError
 
     def save(self,filename,**kwargs):
-        raise NotImplementedError
+        filename_path = Path(filename)
+        file_type = filename_path.suffix
+        graphic_file_types = ['.svg','.eps','.ps','.pdf','.tex']
+        # screenshot_file_types = ['.png','.jpg','.bmp']
+        if file_type in graphic_file_types:
+            self.plotter.save_graphic(filename,**kwargs)
+        else:
+            try:
+                self.plotter.screenshot(filename,**kwargs)
+            except Exception as e:
+                raise Exception(f'File type {file_type} not supported or {e}')
 
     def convert_colormap(self, colormap, over_color=None, under_color=None) -> np.ndarray:
         """
