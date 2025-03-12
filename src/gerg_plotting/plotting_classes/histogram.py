@@ -46,7 +46,11 @@ class Histogram(Plotter):
         # Return the range and the modified kwargs (without 'range')
         return range, kwargs
 
+<<<<<<< Updated upstream
     def plot(self, var: str, fig=None, ax=None, **kwargs) -> None:
+=======
+    def plot(self, var: str, fig=None, ax=None, show_plot:bool=False, **kwargs) -> None:
+>>>>>>> Stashed changes
         """
         Plot a 1D histogram of the given variable.
 
@@ -75,7 +79,11 @@ class Histogram(Plotter):
         if show_plot:
             self.show()
 
+<<<<<<< Updated upstream
     def plot2d(self, x: str, y: str, fig=None, ax=None, **kwargs) -> None:
+=======
+    def plot2d(self, x: str, y: str, fig=None, ax=None, show_plot:bool=False, **kwargs) -> None:
+>>>>>>> Stashed changes
         """
         Plot a 2D histogram for the x and y variables.
 
@@ -110,7 +118,11 @@ class Histogram(Plotter):
         if show_plot:
             self.show()
 
+<<<<<<< Updated upstream
     def plot3d(self, x: str, y: str, fig=None, ax=None, **kwargs) -> None:
+=======
+    def plot3d(self, x: str, y: str, fig=None, ax=None, show_plot:bool=False, **kwargs) -> None:
+>>>>>>> Stashed changes
         """
         Plot a 3D surface plot based on a 2D histogram.
 
