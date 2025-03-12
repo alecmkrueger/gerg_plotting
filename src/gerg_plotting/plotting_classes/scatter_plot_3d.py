@@ -140,6 +140,7 @@ class ScatterPlot3D(Plotter3D):
         elevation[color_label] = elevation.points[:, 2]
         
         self.plotter.add_mesh(elevation, scalars='Depth (m)', show_scalar_bar=False, cmap=cmap, show_edges=False,
+                              opacity=1,
                               below_color=land_color, above_color=[0,0,0,0],
                               clim=(0,filtered_df.z.max()), flip_scalars=False, lighting=True)
                 

@@ -17,6 +17,8 @@ class Plotter3D:
     plotter: pv.Plotter = field(default=None)
     figsize: tuple = field(default=(1920, 1080))
 
+    off_screen: bool = field(default=False)  # For figure initialization
+
     def _has_var(self, key) -> bool:
         """
         Check for existence of attribute.
@@ -106,14 +108,17 @@ class Plotter3D:
         return pformat(asdict(self), width=1)
     
     def init_figure(self):
-        self.plotter = pv.Plotter(off_screen=False, window_size=self.figsize)
+        self.plotter = pv.Plotter(off_screen=self.off_screen, window_size=self.figsize)
+        self.plotter.camera.focal_point = (-999,-999,-999)
         
     def _pre_show(self):
         self.plotter.set_scale(zscale=self.data.bounds.vertical_scalar)
-        # Set Focus last right before show
-        self.plotter.set_focus(get_center_of_mass(lon=self.data.lon.values,
-                                                lat=self.data.lat.values,
-                                                pressure=self.data.depth.values*self.data.bounds.vertical_scalar))
+        # # Set Focus last right before show
+        # print(self.plotter.camera.focal_point)
+        if self.plotter.camera.focal_point == (-999,-999,-999):
+            self.plotter.set_focus(get_center_of_mass(lon=self.data.lon.values,
+                                                    lat=self.data.lat.values,
+                                                    pressure=self.data.depth.values*self.data.bounds.vertical_scalar))
 
     def show(self,**kwargs):
         self._pre_show()
@@ -175,6 +180,64 @@ class Plotter3D:
         return colormap_array
 
     def add_colorbar(self,**kwargs):
+        """Add colorbar to plot"""
         self.plotter.add_scalar_bar(**kwargs)
+
+    def zoom_camera(self, zoom):
+        """
+        Zoom the camera view.
+        
+        Parameters
+        ----------
+        zoom : float
+            Zoom factor. Values > 1 zoom in, values < 1 zoom out.
+        """
+        if self.plotter is None:
+            self.init_figure()
+        
+        self.plotter.camera.zoom(zoom)
+
+    # def set_camera(self, **kwargs):
+    #     """
+    #     Set camera properties.
+        
+    #     Parameters
+    #     ----------
+    #     **kwargs
+    #         Camera properties to set, which can include:
+    #         * azimuth (float): Azimuth angle in degrees.
+    #         * elevation (float): Elevation angle in degrees.
+    #         * focal_point (tuple): Focal point coordinates.
+    #         * position (tuple): Camera position coordinates.
+    #         * roll (float): Roll angle in degrees.
+    #         * view_angle (float): View angle in degrees.
+        
+    #     Raises
+    #     ------
+    #     Warning
+    #         If unknown camera properties are provided.
+    #     """
+    #     if self.plotter is None:
+    #         self.init_figure()
+        
+    #     # List of recognized camera properties
+    #     recognized_props = ['azimuth', 'elevation', 'distance', 'focal_point', 'position', 'roll', 'view_angle']
+        
+    #     # Track which kwargs were used
+    #     used_kwargs = set()
+        
+    #     # Direct property assignment for recognized properties
+    #     for prop in recognized_props:
+    #         if prop in kwargs:  
+    #             setattr(self.plotter.camera, prop, kwargs[prop])
+    #             used_kwargs.add(prop)
+        
+    #     # Check for unused kwargs
+    #     unused_kwargs = set(kwargs.keys()) - used_kwargs
+    #     if unused_kwargs:
+    #         import warnings
+    #         warnings.warn(f"Unrecognized camera properties: {', '.join(unused_kwargs)}. "
+    #                     f"Recognized properties are: {', '.join(recognized_props)}")
+
 
 
