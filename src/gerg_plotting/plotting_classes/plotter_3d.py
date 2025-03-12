@@ -125,7 +125,8 @@ class Plotter3D:
     
         
     def close(self):
-        raise NotImplementedError
+        self.plotter.close()
+
 
     def save(self,filename,**kwargs):
         filename_path = Path(filename)
