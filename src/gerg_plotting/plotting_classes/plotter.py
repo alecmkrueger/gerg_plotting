@@ -9,11 +9,11 @@ import matplotlib.dates as mdates
 from attrs import define, field, asdict
 from pprint import pformat
 import cartopy.crs as ccrs
-import numpy as np
-import pandas as pd
 
 from gerg_plotting.data_classes.data import Data
 from gerg_plotting.modules.plotting import  colorbar
+
+
 
 
 @define
@@ -43,7 +43,7 @@ class Plotter:
     cbar : matplotlib.colorbar.Colorbar
         Colorbar object for the plot
     """
-    
+
     data: Data = field(default=None)
     bounds_padding: float = field(default=0)
 
@@ -78,7 +78,7 @@ class Plotter:
         ValueError
             If both three_d and geography are True
         """
-        
+
         # Guard clause: Ensure three_d and geography are not both True
         if three_d and geography:
             raise ValueError("Cannot set both 'three_d' and 'geography' to True. Choose one.")
@@ -100,7 +100,7 @@ class Plotter:
             else:
                 # Standard 2D Matplotlib figure with no projection
                 self.fig, self.ax = matplotlib.pyplot.subplots(figsize=figsize)
-                
+
         elif fig is not None and ax is not None:
             # Use existing figure and axes
             self.fig = fig
@@ -108,11 +108,16 @@ class Plotter:
             self.nrows = len(self.fig.axes)  # Update the number of rows based on existing axes
 
             if three_d:
-                # If it's a 3D plot, re-initialize the axes as a 3D plot
-                index = [idx for idx, ax in enumerate(self.fig.axes) if ax is self.ax][0] + 1
-                self.ax.remove()  # Remove existing 2D axis
-                gs = self.ax.get_gridspec()  # Get grid specification
-                self.ax = fig.add_subplot(gs.nrows, gs.ncols, index, projection='3d')
+                # Check if the existing axis already has a 3D projection
+                if hasattr(self.ax, 'zaxis'):
+                    # Axis is already 3D, no need to recreate
+                    pass
+                else:
+                    # If it's a 3D plot but axis is 2D, re-initialize the axes as a 3D plot
+                    index = [idx for idx, ax in enumerate(self.fig.axes) if ax is self.ax][0] + 1
+                    self.ax.remove()  # Remove existing 2D axis
+                    gs = self.ax.get_gridspec()  # Get grid specification
+                    self.ax = fig.add_subplot(gs.nrows, gs.ncols, index, projection='3d')
 
     def adjust_datetime_labels(self, rotation=30):
         """
@@ -126,16 +131,16 @@ class Plotter:
         # Get tick labels
         labels = self.ax.get_xticklabels()
         renderer = self.ax.figure.canvas.get_renderer()
-        
+
         # Get bounding boxes for the labels
         bboxes = [label.get_window_extent(renderer) for label in labels if label.get_text()]
-        
+
         if len(bboxes) < 2:  # No need to check if fewer than two labels
             return
-        
+
         # Check for overlaps
         overlap = any(bboxes[i].overlaps(bboxes[i+1]) for i in range(len(bboxes) - 1))
-        
+
         if overlap:
             # Apply rotation if overlap is detected
             matplotlib.pyplot.setp(labels, rotation=rotation, ha='right')
@@ -164,9 +169,9 @@ class Plotter:
             self.ax.invert_yaxis()
         self.adjust_datetime_labels()
 
-    def get_cmap(self, color_var: str) -> tuple[np.ndarray, Colormap]:
+    def get_cmap(self, color_var: str) -> Colormap:
         """
-        Get colormap and numeric values for specified variable, handling both numeric and string values.
+        Get colormap for specified variable.
 
         Parameters
         ----------
@@ -175,34 +180,17 @@ class Plotter:
 
         Returns
         -------
-        tuple
-            (numeric_values, colormap) where numeric_values is the data converted to numbers 
-            and colormap is the matplotlib.colors.Colormap
+        matplotlib.colors.Colormap
+            Colormap for variable
         """
-        values = self.data[color_var].values
-        
-        if values.dtype.kind in ['U', 'S', 'O']:
-            unique_values = np.unique(values[~pd.isnull(values)])
-            n_categories = len(unique_values)
-            
-            # Create categorical colormap
-            colors = matplotlib.pyplot.cm.rainbow(np.linspace(0, 1, n_categories))
-            category_cmap = matplotlib.colors.ListedColormap(colors)
-            
-            # Store mapping and convert to numeric
-            self.data[color_var].category_mapping = {val: idx for idx, val in enumerate(unique_values)}
-            numeric_values = np.array([self.data[color_var].category_mapping[val] for val in values])
-            
-            return numeric_values, category_cmap
-        
-        # Handle numeric data
+        # Return the variable's assigned colormap, or the default 'viridis' if none exists
         if self.data[color_var].cmap is not None:
-            return values, self.data[color_var].cmap
-        return values, matplotlib.pyplot.get_cmap('viridis')
+            cmap = self.data[color_var].cmap
+        else:
+            cmap = matplotlib.pyplot.get_cmap('viridis')
+        return cmap
 
-
-    
-    def add_colorbar(self, mappable: matplotlib.axes.Axes, var: str | None, divider=None, total_cbars: int = 2) -> None:
+    def add_colorbar(self, mappable: matplotlib.axes.Axes, var: str | None, divider=None, total_cbars: int = 2, **color_bar_kwargs) -> None:
         """
         Add colorbar to plot.
 
@@ -227,10 +215,10 @@ class Plotter:
             cbar_label = self.data[var].label
             if divider is not None:
                 # Create a colorbar using the custom 'colorbar' function with divider
-                self.cbar = colorbar(self.fig, divider, mappable, cbar_label, nrows=self.nrows, total_cbars=total_cbars)
+                self.cbar = colorbar(self.fig, divider, mappable, cbar_label, nrows=self.nrows, total_cbars=total_cbars, **color_bar_kwargs)
             else:
                 # Create a standard colorbar
-                self.cbar = self.fig.colorbar(mappable, label=cbar_label)
+                self.cbar = self.fig.colorbar(mappable, label=cbar_label, **color_bar_kwargs)
 
             # Adjust the number of ticks on the colorbar
             self.cbar.ax.locator_params(nbins=self.cbar_nbins)
@@ -242,7 +230,7 @@ class Plotter:
                 self.cbar.ax.yaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
 
             return self.cbar
-        
+
     def save(self,filename,**kwargs):
         """
         Save figure to file.
@@ -263,13 +251,13 @@ class Plotter:
             self.fig.savefig(fname=filename,**kwargs)
         else:
             raise ValueError('No figure to save')
-        
+
     def show(self):
         '''
         Show all open figures
         '''
         matplotlib.pyplot.show()
-        
+
     def _has_var(self, key) -> bool:
         """
         Check if object has specified variable.
@@ -285,7 +273,7 @@ class Plotter:
             True if variable exists, False otherwise
         """
         return key in asdict(self).keys()
-    
+
     def get_vars(self) -> list:
         """
         Get list of all object variables.
@@ -318,7 +306,7 @@ class Plotter:
         """
         if self._has_var(key):
             return getattr(self, key)
-        raise KeyError(f"Variable '{key}' not found. Must be one of {self.get_vars()}")  
+        raise KeyError(f"Variable '{key}' not found. Must be one of {self.get_vars()}")
 
     def __setitem__(self, key, value) -> None:
         """

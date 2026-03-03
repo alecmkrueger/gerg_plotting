@@ -62,7 +62,7 @@ class Histogram(Plotter):
             Additional keyword arguments passed to matplotlib.pyplot.hist
         """
         # Extract show_plot from kwargs and remove it from kwargs
-        show_plot = kwargs.pop('show_plot', True)
+        show_plot = kwargs.pop('show_plot', False)
         # Initialize the figure and axis
         self.init_figure(fig, ax)
         # Plot a histogram of the selected variable data
@@ -93,7 +93,7 @@ class Histogram(Plotter):
             Additional keyword arguments passed to matplotlib.pyplot.hist2d
         """
         # Extract show_plot from kwargs and remove it from kwargs
-        show_plot = kwargs.pop('show_plot', True)
+        show_plot = kwargs.pop('show_plot', False)
         # Initialize the figure and axis
         self.init_figure(fig, ax)
         # Get the range for the 2D histogram and update kwargs
@@ -128,7 +128,7 @@ class Histogram(Plotter):
             Additional keyword arguments passed to numpy.histogram2d
         """
         # Extract show_plot from kwargs and remove it from kwargs
-        show_plot = kwargs.pop('show_plot', True)
+        show_plot = kwargs.pop('show_plot', False)
         # Import the colormap from matplotlib
         from matplotlib import cm
         # Initialize the figure and axis for a 3D plot

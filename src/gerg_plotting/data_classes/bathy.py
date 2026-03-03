@@ -147,6 +147,10 @@ class Bathy:
     @label.setter
     def label(self, value):
         self._label = value
+        
+    def __attrs_post_init__(self):
+        if self.bounds is None:
+            raise ValueError("Bathy must have bounds")
 
     def _get_bathy_data(self):
         """Internal method to initialize bathymetry data"""

@@ -64,15 +64,15 @@ class TestBathy(unittest.TestCase):
 
     def test_has_var(self):
         """Test variable existence checking."""
-        self.assertTrue(self.bathy._has_var('depth'))
+        self.assertTrue(self.bathy._has_var('_depth'))
         self.assertFalse(self.bathy._has_var('nonexistent_var'))
 
     def test_get_vars(self):
         """Test getting list of available variables."""
         vars_list = self.bathy.get_vars()
-        self.assertIn('lat', vars_list)
-        self.assertIn('lon', vars_list)
-        self.assertIn('depth', vars_list)
+        self.assertIn('_lat', vars_list)
+        self.assertIn('_lon', vars_list)
+        self.assertIn('_depth', vars_list)
 
     def test_copy(self):
         """Test deep copy functionality."""

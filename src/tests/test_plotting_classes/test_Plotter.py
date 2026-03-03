@@ -6,20 +6,25 @@ from matplotlib.colorbar import Colorbar
 from matplotlib.colors import Colormap
 from attrs import define,field
 
+import matplotlib
+matplotlib.use('Agg')  # Use the non-interactive
+
 from gerg_plotting.plotting_classes.plotter import Plotter
 
 @define
 class DummyVariable:
     """Dummy variable class with minimal attributes for testing."""
     cmap: Colormap = None
+    label: str = "Dummy Variable"
 
     def get_label(self):
-        return "Dummy Variable"
+        return self.label
 
 @define
 class DummyData:
     """Dummy Data class to simulate Plotter dependencies."""
     variables: dict = field(factory=dict)
+    label: str = "Dummy Data"
 
     def __getitem__(self, key):
         return self.variables[key]
@@ -27,8 +32,8 @@ class DummyData:
 class TestPlotter(unittest.TestCase):
     def setUp(self):
         # Create a DummyData instance with a dummy variable
-        dummy_var = DummyVariable(cmap=plt.get_cmap('viridis'))
-        dummy_time_var = DummyVariable(cmap=plt.get_cmap('viridis'))
+        dummy_var = DummyVariable(cmap=plt.get_cmap('viridis'),label='Dummy Variable')
+        dummy_time_var = DummyVariable(cmap=plt.get_cmap('viridis'), label='Dummy Time Variable')
         self.data = DummyData(variables={'test_var': dummy_var,'time':dummy_time_var})
         self.plotter = Plotter(data=self.data)
         # Fake the cbar attribute
@@ -98,7 +103,7 @@ class TestPlotter(unittest.TestCase):
         scatter = self.plotter.ax.scatter([1, 2, 3], [4, 5, 6], c=[0.1, 0.5, 0.9])
         cbar = self.plotter.add_colorbar(mappable=scatter, var='time')
         self.assertIsInstance(cbar, Colorbar)
-        self.assertEqual(cbar.ax.get_ylabel(), 'Dummy Variable')
+        self.assertEqual(cbar.ax.get_ylabel(), 'Dummy Time Variable')
 
     def test_format_axes(self):
         """Test formatting the axes."""

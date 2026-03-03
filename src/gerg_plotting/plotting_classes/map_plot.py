@@ -38,7 +38,7 @@ class MapPlot(Plotter):
     cbar_bathy : matplotlib.colorbar.Colorbar
         Colorbar for bathymetry
     """
-    
+
     bathy: Bathy = field(default=None)  # Bathymetry data object
     sc: matplotlib.collections.PathCollection = field(init=False)  # Scatter plot collection
     gl: cartopy.mpl.gridliner.Gridliner = field(init=False)  # Gridliner for controlling map gridlines
@@ -49,7 +49,7 @@ class MapPlot(Plotter):
     _quiver_density: int = field(default=None)  # Density of quiver plot
     _show_grid: bool = field(default=True)  # Whether to show gridlines on the map
     _show_coords: bool = field(default=True)  # Whether to show coordinates on the map
-    
+
 
     @property
     def quiver_step(self):
@@ -58,7 +58,7 @@ class MapPlot(Plotter):
             return round(len(self.data.u.values)/self._quiver_density)
         return None
 
-    @property 
+    @property
     def bathy_initialized(self):
         """Check if bathymetry is properly initialized"""
         return isinstance(self.bathy, Bathy)
@@ -70,7 +70,7 @@ class MapPlot(Plotter):
             return [
                 self.data.bounds.lon_min,
                 self.data.bounds.lon_max,
-                self.data.bounds.lat_min, 
+                self.data.bounds.lat_min,
                 self.data.bounds.lat_max
             ]
         return None
@@ -89,12 +89,12 @@ class MapPlot(Plotter):
         gl.ylocator = MultipleLocator(self.grid_spacing)
         return gl
 
-    @property 
+    @property
     def coordinate_labels(self):
         """Configure coordinate label formatting"""
         self.gl.top_labels = False
         self.gl.right_labels = False
-        
+
         if self._show_coords:
             self.gl.xformatter = LONGITUDE_FORMATTER
             self.gl.yformatter = LATITUDE_FORMATTER
@@ -111,16 +111,16 @@ class MapPlot(Plotter):
         """
         if not isinstance(self.bathy, Bathy):
             self.bathy = Bathy(bounds=self.data.bounds)
-            
+
     def get_color_settings(self, var: str | None) -> tuple[str | np.ndarray, Colormap]:
         """
         Get color and colormap settings for specified variable.
-        
+
         Parameters
         ----------
         var : str or None
             Variable name for color mapping
-            
+
         Returns
         -------
         tuple
@@ -128,23 +128,23 @@ class MapPlot(Plotter):
         """
         if var is None:
             return 'k', None
-        
+
         if var == 'time':
             color = np.array(self.data.date2num())
         else:
             color = self.data[var].values.copy()
-        
+
         return color, self.get_cmap(var)
 
 
     def _set_up_map(self, fig=None, ax=None, var=None) -> tuple[str,Colormap,AxesDivider]:
         self.init_figure(fig=fig, ax=ax, geography=True)
-        
+
         color, cmap = self.get_color_settings(var)
-        
+
         if self.data.bounds is not None:
             self.ax.set_extent(self.map_extent)
-        
+
         divider = make_axes_locatable(self.ax)
         return color, cmap, divider
 
@@ -185,7 +185,7 @@ class MapPlot(Plotter):
     def _add_grid(self, grid:bool, show_coords:bool=True) -> None:
         # Use gridlines property
         self.gl = self.gridlines
-        
+
         # Configure labels using coordinate_labels property
         self.coordinate_labels
 
@@ -209,7 +209,7 @@ class MapPlot(Plotter):
             self.cbar_bathy = self.bathy.add_colorbar(mappable=bathy_contourf, divider=divider,
                                                       fig=self.fig, nrows=self.nrows)
 
-    def scatter(self, var: str | None = None, show_bathy: bool = True, show_coastlines:bool=True, pointsize=3, 
+    def scatter(self, var: str | None = None, show_bathy: bool = True, show_coastlines:bool=True, pointsize=3,
                 linewidths=0, grid=True,show_coords=True, fig=None, ax=None) -> None:
         """
         Create scatter plot of points on map.
@@ -236,10 +236,10 @@ class MapPlot(Plotter):
             Axes to plot on
         """
         color, cmap, divider = self._set_up_map(fig=fig, ax=ax, var=var)
-        
+
         # Add bathymetry if needed
         self._add_bathy(show_bathy, divider)
-        
+
         # Plot scatter points on the map with conditional vmin/vmax
         scatter_kwargs = {
             'linewidths': linewidths,
@@ -248,13 +248,13 @@ class MapPlot(Plotter):
             's': pointsize,
             'transform': ccrs.PlateCarree()
         }
-        
+
         if var is not None:
             scatter_kwargs['vmin'] = self.data[var].vmin
             scatter_kwargs['vmax'] = self.data[var].vmax
-        
+
         self.sc = self.ax.scatter(self.data['lon'].values, self.data['lat'].values, **scatter_kwargs)
-        
+
         # Add colorbar only if var is not None
         if var is not None:
             self.cbar_var = self.add_colorbar(self.sc, var, divider, total_cbars=(2 if show_bathy else 1))
@@ -290,7 +290,7 @@ class MapPlot(Plotter):
         """
         # Set up the map
         _, cmap, divider = self._set_up_map(fig=fig, ax=ax, var='speed')
-        
+
         # Use bathy_initialized property
         if self.bathy_initialized:
             self._add_bathy(show_bathy, divider)
@@ -299,14 +299,15 @@ class MapPlot(Plotter):
         step = self.quiver_step
 
         mappable = self.ax.quiver(
-            self.data[x].values[::step], 
+            self.data[x].values[::step],
             self.data[y].values[::step],
-            self.data.u.values[::step], 
+            self.data.u.values[::step],
             self.data.v.values[::step],
-            self.data.speed.values[::step], 
+            self.data.speed.values[::step],
             cmap=cmap,
-            pivot='tail', 
-            scale=quiver_scale, 
+            pivot='tail',
+            scale=quiver_scale,
             units='height'
         )
-        
+
+

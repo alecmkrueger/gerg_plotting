@@ -57,7 +57,7 @@ class Variable():
     _vmin: float = field(default=None)
     _vmax: float = field(default=None)
     _label: str = field(default=None)
-    
+
     @property
     def attrs(self) -> list:
         """List of all attributes for the variable."""
@@ -121,14 +121,14 @@ class Variable():
             True if attribute exists
         """
         return key in asdict(self).keys()
-    
+
 
     def __getitem__(self, key):
         """Get an attribute by key."""
         if self._has_var(key):
             return getattr(self, key)
         raise KeyError(f"Attribute '{key}' not found")
-    
+
 
     def __setitem__(self, key, value) -> None:
         """Set an attribute by key."""
@@ -142,28 +142,31 @@ class Variable():
             return f"{value:.6f}"
         elif isinstance(value, np.datetime64):
             value = value.astype('M8[ms]').astype(datetime)
-            return f"{value:%y-%m-%d %H:%M:%S}"
+            if value is not None:
+                return f"{value:%y-%m-%d %H:%M:%S}"
+            else:
+                return "NaT"
         elif isinstance(value, datetime):
             return f"{value:%y-%m-%d %H:%M:%S}"
         elif isinstance(value,Colormap):
             return f"{value.name}"
         else:
             return str(value)
-                    
+
     def _repr_html_(self) -> str:
         # Get all attributes except values
         attrs = self.get_attrs()
         attrs.remove('values')
-        
+
         # Calculate width needed for values column
         sample_values = [self._format_value(x) for x in self.values[:5]]
         max_values_width = max(len(str(x)) for x in sample_values) if sample_values else 0
         # Add padding and constrain between min and max values
         values_width = min(max(max_values_width * 8, 100), 200)  # Min 100px, Max 200px
-        
+
         html = f'<td style="padding:0 0px;vertical-align:top">'
         html += f'<table style="table-layout:fixed;width:{values_width + 90}px"><tbody>'
-        
+
         # Add subheaders
         html += f'''
         <tr>
@@ -171,7 +174,7 @@ class Variable():
             <th style="width:{values_width}px;padding:0;text-align:center;border-bottom:1px solid #ddd">Value</th>
         </tr>
         '''
-        
+
         # Add attributes in two columns with dynamic width
         for attr in attrs:
             value = getattr(self, attr)
@@ -181,9 +184,9 @@ class Variable():
                 <td style="text-align:center;width:{values_width}px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{self._format_value(value)}</td>
             </tr>
             '''
-        
+
         html += f'''<tr><td colspan="2" style="text-align:center"><strong>Data</strong></td></tr>'''
-        
+
         # Add values values with indices
         for i in range(min(5, len(self.values))):
             html += f'''
@@ -192,10 +195,10 @@ class Variable():
                 <td style="text-align:left;width:{values_width}px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{self._format_value(self.values[i])}</td>
             </tr>
             '''
-        
+
         html += f'<tr><td colspan="2">... Length: {len(self.values)}</td></tr>'
         html += '</tbody></table></td>'
-        
+
         return html
 
 
@@ -214,4 +217,3 @@ class Variable():
             List of attribute names
         """
         return list(asdict(self).keys())
-    

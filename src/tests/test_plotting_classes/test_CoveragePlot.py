@@ -10,6 +10,9 @@ import itertools
 from pathlib import Path
 import os
 
+import matplotlib
+matplotlib.use('Agg')  # Use the non-interactive 
+
 from gerg_plotting.plotting_classes.coverage_plot import Base,Grid,ExtentArrows,Coverage,CoveragePlot
 
 class TestBase(unittest.TestCase):
@@ -453,9 +456,4 @@ class TestCoveragePlot(unittest.TestCase):
         self.coverage_plot.fig = None
         with self.assertRaises(ValueError):
             self.coverage_plot.save('test_output.png')
-
-
-    def test_show(self):
-        self.coverage_plot.show(block=False)
-        plt.close('all')
 

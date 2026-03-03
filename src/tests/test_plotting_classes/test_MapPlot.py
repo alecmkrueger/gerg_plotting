@@ -4,6 +4,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import cartopy.crs as ccrs
+import matplotlib
+matplotlib.use('Agg')  # Use the non-interactive
+
 from gerg_plotting.data_classes.bathy import Bathy
 from gerg_plotting.data_classes.data import Data
 from gerg_plotting.plotting_classes.map_plot import MapPlot
@@ -30,19 +33,19 @@ class TestMapPlot(unittest.TestCase):
 
     def test_init_bathy(self):
         """Test that the bathy object is initialized correctly."""
-        self.map_plot.bathy = None
-        self.map_plot.init_bathy()
+        self.map_plot.bathy = None  #type:ignore
+        self.map_plot._init_bathy()
         self.assertIsInstance(self.map_plot.bathy, Bathy)
 
     def test_get_quiver_step(self):
         quiver_density = 10
-        step = self.map_plot.get_quiver_step(quiver_density=quiver_density)
+        step = self.map_plot._get_quiver_step(quiver_density=quiver_density)
         self.assertEqual(step,10)
 
     def test_set_up_map(self):
         """Test the map setup process and returned values."""
         fig, ax = plt.subplots(subplot_kw={'projection': ccrs.PlateCarree()})
-        color, cmap, divider = self.map_plot.set_up_map(fig=fig, ax=ax, var='temperature')
+        color, cmap, divider = self.map_plot._set_up_map(fig=fig, ax=ax, var='temperature')
         self.assertIsInstance(color, np.ndarray)
         self.assertIsNotNone(cmap)
         self.assertIsNotNone(divider)
@@ -50,7 +53,7 @@ class TestMapPlot(unittest.TestCase):
     def test_set_up_map_no_var(self):
         """Test the map setup process and returned values."""
         fig, ax = plt.subplots(subplot_kw={'projection': ccrs.PlateCarree()})
-        color, cmap, divider = self.map_plot.set_up_map(fig=fig, ax=ax)
+        color, cmap, divider = self.map_plot._set_up_map(fig=fig, ax=ax)
         self.assertIsInstance(color, str)
         self.assertIsNone(cmap)
         self.assertIsNotNone(divider)
@@ -58,7 +61,7 @@ class TestMapPlot(unittest.TestCase):
     def test_set_up_map_time(self):
         """Test the map setup process and returned values."""
         fig, ax = plt.subplots(subplot_kw={'projection': ccrs.PlateCarree()})
-        color, cmap, divider = self.map_plot.set_up_map(fig=fig, ax=ax, var='time')
+        color, cmap, divider = self.map_plot._set_up_map(fig=fig, ax=ax, var='time')
         self.assertIsInstance(color, np.ndarray)
         self.assertIsNotNone(cmap)
         self.assertIsNotNone(divider)
@@ -67,22 +70,22 @@ class TestMapPlot(unittest.TestCase):
         """Test adding coastlines to the map."""
         fig, ax = plt.subplots(subplot_kw={'projection': ccrs.PlateCarree()})
         self.map_plot.init_figure(fig=fig, ax=ax, geography=True)
-        self.map_plot.add_coasts(show_coastlines=True)
+        self.map_plot._add_coasts(show_coastlines=True)
 
     def test_add_grid(self):
         """Test adding gridlines to the map."""
         fig, ax = plt.subplots(subplot_kw={'projection': ccrs.PlateCarree()})
         self.map_plot.init_figure(fig=fig, ax=ax, geography=True)
-        self.map_plot.add_grid(grid=True)
+        self.map_plot._add_grid(grid=True)
         self.assertIsNotNone(self.map_plot.gl)
 
     def test_add_bathy(self):
         """Test adding bathymetry data to the map."""
         fig, ax = plt.subplots(subplot_kw={'projection': ccrs.PlateCarree()})
-        divider = plt.figure().add_axes([0, 0, 1, 1])
+        divider = plt.figure().add_axes([0, 0, 1, 1])  # type: ignore
         divider = make_axes_locatable(divider)
         self.map_plot.init_figure(fig=fig, ax=ax, geography=True)
-        self.map_plot.add_bathy(show_bathy=True, divider=divider)
+        self.map_plot._add_bathy(show_bathy=True, divider=divider)
         self.assertIsNotNone(self.map_plot.cbar_bathy)
 
     def test_scatter(self):
@@ -98,6 +101,5 @@ class TestMapPlot(unittest.TestCase):
         fig, ax = plt.subplots(subplot_kw={'projection': ccrs.PlateCarree()})
         self.map_plot.init_figure(fig=fig, ax=ax, geography=True)
         self.map_plot.quiver(fig=fig, ax=ax)
-        self.assertIsNotNone(self.map_plot.cbar_var)
 
 

@@ -7,6 +7,9 @@ import matplotlib.pyplot as plt
 import shutil
 from PIL import Image
 
+import matplotlib
+matplotlib.use('Agg')  # Use the non-interactive 
+
 
 def simple_plot(x, y, **kwargs):
     """

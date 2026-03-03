@@ -5,6 +5,9 @@ import unittest
 import numpy as np
 import matplotlib.pyplot as plt
 
+import matplotlib
+matplotlib.use('Agg')  # Use the non-interactive 
+
 
 class TestHistogram(unittest.TestCase):
     def setUp(self):
@@ -23,7 +26,7 @@ class TestHistogram(unittest.TestCase):
 
     def test_get_2d_range_no_custom_range(self):
         """Test the `get_2d_range` method without providing a custom range."""
-        range_result, kwargs_result = self.histogram.get_2d_range('lon', 'lat')
+        range_result, kwargs_result = self.histogram._get_2d_range('lon', 'lat')
         self.assertEqual(len(range_result), 2)
         self.assertEqual(len(range_result[0]), 2)
         self.assertEqual(len(range_result[1]), 2)
@@ -32,7 +35,7 @@ class TestHistogram(unittest.TestCase):
     def test_get_2d_range_with_custom_range(self):
         """Test the `get_2d_range` method with a custom range."""
         custom_range = [[-3, 3], [0, 10]]
-        range_result, kwargs_result = self.histogram.get_2d_range('lon', 'lat', range=custom_range)
+        range_result, kwargs_result = self.histogram._get_2d_range('lon', 'lat', range=custom_range)
         self.assertEqual(range_result, custom_range)
         self.assertEqual(kwargs_result, {})
 

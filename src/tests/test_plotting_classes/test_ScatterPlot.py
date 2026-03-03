@@ -2,6 +2,8 @@ import unittest
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('Agg')  # Use the non-interactive 
 
 from gerg_plotting.data_classes.data import Data
 from gerg_plotting.data_classes.variable import Variable

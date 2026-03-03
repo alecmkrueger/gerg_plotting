@@ -17,8 +17,8 @@ class TestVariable(unittest.TestCase):
         self.assertTrue(np.array_equal(self.variable.values, self.values))
         self.assertEqual(self.variable.name, self.variable_name)
         self.assertEqual(self.variable.units, self.units)
-        self.assertEqual(self.variable.vmin, np.nanpercentile(self.values, 1))
-        self.assertEqual(self.variable.vmax, np.nanpercentile(self.values, 99))
+        self.assertEqual(self.variable.vmin, np.nanpercentile(self.values, 2))
+        self.assertEqual(self.variable.vmax, np.nanpercentile(self.values, 98))
 
     def test_label_generation(self):
         """Test automatic generation of the label."""
@@ -31,12 +31,10 @@ class TestVariable(unittest.TestCase):
         self.variable.label = custom_label
         self.assertEqual(self.variable.label, custom_label)
         
-    def test_get_and_reset_label(self):
+    def test_get_label(self):
         """Test resetting the label to the default."""
         self.variable.label
         self.assertEqual(self.variable.label, f"{self.variable_name.capitalize()} ({self.units})")
-        self.variable.reset_label()
-        self.assertIsNone(self.variable.label)
             
     def test_format_value(self):
         """Test _format_value method with different value types."""
@@ -104,7 +102,7 @@ class TestVariable(unittest.TestCase):
     def test_get_attrs(self):
         """Test retrieval of attribute names."""
         attrs = self.variable.get_attrs()
-        expected_attrs = ['values', 'name', 'cmap', 'units', 'vmin', 'vmax', 'label']
+        expected_attrs = ['values', 'name', 'cmap', 'units', '_vmin', '_vmax', '_label']
         self.assertCountEqual(attrs, expected_attrs)
 
     def test_repr(self):
@@ -115,13 +113,3 @@ class TestVariable(unittest.TestCase):
         # Ensure the values is correctly represented as a numpy array
         expected_values_repr = repr(self.values)  # Generate the expected array representation
         self.assertIn(expected_values_repr, representation)
-
-
-    def test_vmin_vmax_calculation(self):
-        """Test automatic calculation of vmin and vmax."""
-        self.variable.vmin = None
-        self.variable.vmax = None
-        self.variable.get_vmin_vmax()
-        self.assertEqual(self.variable.vmin, np.nanpercentile(self.values, 1))
-        self.assertEqual(self.variable.vmax, np.nanpercentile(self.values, 99))
-
