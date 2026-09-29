@@ -49,10 +49,21 @@ There are two ways to get started
 1. Create and/or activate your virtual environment with python >=3.12
 1. Use pip to install ```pip install gerg_plotting```
 
+### Development
+
+Install UV, then run the test suite with the project dependencies:
+
+```sh
+uv sync --group test
+uv run pytest
+```
+
+To install documentation dependencies as well, use `uv sync --group docs`.
+
 ### View Example Code
 [Examples at Read The Docs](https://gerg-plotting.readthedocs.io/en/latest/auto_examples/index.html)
 
-### View Code Documentation 
+### View Code Documentation
 [API Reference at Read The Docs](https://gerg-plotting.readthedocs.io/en/latest/autoapi/index.html)
 
 

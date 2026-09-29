@@ -1,143 +1,493 @@
-aiohappyeyeballs==2.6.1 ; python_version >= "3.12" and python_version < "4.0"
-aiohttp==3.13.3 ; python_version >= "3.12" and python_version < "4.0"
-aiosignal==1.4.0 ; python_version >= "3.12" and python_version < "4.0"
-anyio==4.12.1 ; python_version >= "3.12" and python_version < "4.0"
-appnope==0.1.4 ; python_version >= "3.12" and python_version < "4.0" and platform_system == "Darwin"
-argon2-cffi-bindings==25.1.0 ; python_version >= "3.12" and python_version < "4.0"
-argon2-cffi==25.1.0 ; python_version >= "3.12" and python_version < "4.0"
-arrow==1.4.0 ; python_version >= "3.12" and python_version < "4.0"
-asttokens==3.0.1 ; python_version >= "3.12" and python_version < "4.0"
-async-lru==2.2.0 ; python_version >= "3.12" and python_version < "4.0"
-attrs==23.2.0 ; python_version >= "3.12" and python_version < "4.0"
-babel==2.18.0 ; python_version >= "3.12" and python_version < "4.0"
-beautifulsoup4==4.14.3 ; python_version >= "3.12" and python_version < "4.0"
-bleach==6.3.0 ; python_version >= "3.12" and python_version < "4.0"
-cartopy==0.23.0 ; python_version >= "3.12" and python_version < "4.0"
-certifi==2026.2.25 ; python_version >= "3.12" and python_version < "4.0"
-cffi==2.0.0 ; python_version >= "3.12" and python_version < "4.0"
-cftime==1.6.5 ; python_version >= "3.12" and python_version < "4.0"
-charset-normalizer==3.4.4 ; python_version >= "3.12" and python_version < "4.0"
-cmocean==4.0.3 ; python_version >= "3.12" and python_version < "4.0"
-colorama==0.4.6 ; python_version >= "3.12" and python_version < "4.0" and sys_platform == "win32"
-comm==0.2.3 ; python_version >= "3.12" and python_version < "4.0"
-configobj==5.0.9 ; python_version >= "3.12" and python_version < "4.0"
-contourpy==1.3.3 ; python_version >= "3.12" and python_version < "4.0"
-cycler==0.12.1 ; python_version >= "3.12" and python_version < "4.0"
-debugpy==1.8.20 ; python_version >= "3.12" and python_version < "4.0"
-decorator==5.2.1 ; python_version >= "3.12" and python_version < "4.0"
-defusedxml==0.7.1 ; python_version >= "3.12" and python_version < "4.0"
-executing==2.2.1 ; python_version >= "3.12" and python_version < "4.0"
-fastjsonschema==2.21.2 ; python_version >= "3.12" and python_version < "4.0"
-fonttools==4.61.1 ; python_version >= "3.12" and python_version < "4.0"
-fqdn==1.5.1 ; python_version >= "3.12" and python_version < "4.0"
-frozenlist==1.8.0 ; python_version >= "3.12" and python_version < "4.0"
-gsw==3.6.21 ; python_version >= "3.12" and python_version < "4.0"
-h11==0.16.0 ; python_version >= "3.12" and python_version < "4.0"
-httpcore==1.0.9 ; python_version >= "3.12" and python_version < "4.0"
-httpx==0.28.1 ; python_version >= "3.12" and python_version < "4.0"
-idna==3.11 ; python_version >= "3.12" and python_version < "4.0"
-imageio==2.37.2 ; python_version >= "3.12" and python_version < "4.0"
-ipykernel==7.2.0 ; python_version >= "3.12" and python_version < "4.0"
-ipython-pygments-lexers==1.1.1 ; python_version >= "3.12" and python_version < "4.0"
-ipython==9.10.0 ; python_version >= "3.12" and python_version < "4.0"
-ipywidgets==8.1.8 ; python_version >= "3.12" and python_version < "4.0"
-isoduration==20.11.0 ; python_version >= "3.12" and python_version < "4.0"
-jedi==0.19.2 ; python_version >= "3.12" and python_version < "4.0"
-jinja2==3.1.6 ; python_version >= "3.12" and python_version < "4.0"
-json5==0.13.0 ; python_version >= "3.12" and python_version < "4.0"
-jsonpointer==3.0.0 ; python_version >= "3.12" and python_version < "4.0"
-jsonschema-specifications==2025.9.1 ; python_version >= "3.12" and python_version < "4.0"
-jsonschema==4.26.0 ; python_version >= "3.12" and python_version < "4.0"
-jupyter-client==8.8.0 ; python_version >= "3.12" and python_version < "4.0"
-jupyter-core==5.9.1 ; python_version >= "3.12" and python_version < "4.0"
-jupyter-events==0.12.0 ; python_version >= "3.12" and python_version < "4.0"
-jupyter-lsp==2.3.0 ; python_version >= "3.12" and python_version < "4.0"
-jupyter-server-proxy==4.4.0 ; python_version >= "3.12" and python_version < "4.0"
-jupyter-server-terminals==0.5.4 ; python_version >= "3.12" and python_version < "4.0"
-jupyter-server==2.17.0 ; python_version >= "3.12" and python_version < "4.0"
-jupyterlab-pygments==0.3.0 ; python_version >= "3.12" and python_version < "4.0"
-jupyterlab-server==2.28.0 ; python_version >= "3.12" and python_version < "4.0"
-jupyterlab-widgets==3.0.16 ; python_version >= "3.12" and python_version < "4.0"
-jupyterlab==4.5.5 ; python_version >= "3.12" and python_version < "4.0"
-kiwisolver==1.4.9 ; python_version >= "3.12" and python_version < "4.0"
-lark==1.3.1 ; python_version >= "3.12" and python_version < "4.0"
-markupsafe==3.0.3 ; python_version >= "3.12" and python_version < "4.0"
-matplotlib-inline==0.2.1 ; python_version >= "3.12" and python_version < "4.0"
-matplotlib==3.10.8 ; python_version >= "3.12" and python_version < "4.0"
-mistune==3.2.0 ; python_version >= "3.12" and python_version < "4.0"
-more-itertools==10.8.0 ; python_version >= "3.12" and python_version < "4.0"
-msgpack==1.1.2 ; python_version >= "3.12" and python_version < "4.0"
-multidict==6.7.1 ; python_version >= "3.12" and python_version < "4.0"
-nbclient==0.10.4 ; python_version >= "3.12" and python_version < "4.0"
-nbconvert==7.17.0 ; python_version >= "3.12" and python_version < "4.0"
-nbformat==5.10.4 ; python_version >= "3.12" and python_version < "4.0"
-nest-asyncio==1.6.0 ; python_version >= "3.12" and python_version < "4.0"
-netcdf4==1.7.4 ; python_version >= "3.12" and python_version < "4.0"
-notebook-shim==0.2.4 ; python_version >= "3.12" and python_version < "4.0"
-notebook==7.5.4 ; python_version >= "3.12" and python_version < "4.0"
-numpy==2.4.2 ; python_version >= "3.12" and python_version < "4.0"
-opencv-python==4.13.0.92 ; python_version >= "3.12" and python_version < "4.0"
-packaging==26.0 ; python_version >= "3.12" and python_version < "4.0"
-pandas==2.3.3 ; python_version >= "3.12" and python_version < "4.0"
-pandocfilters==1.5.1 ; python_version >= "3.12" and python_version < "4.0"
-parso==0.8.6 ; python_version >= "3.12" and python_version < "4.0"
-pexpect==4.9.0 ; python_version >= "3.12" and python_version < "4.0" and sys_platform != "win32" and sys_platform != "emscripten"
-pillow==12.1.1 ; python_version >= "3.12" and python_version < "4.0"
-platformdirs==4.9.2 ; python_version >= "3.12" and python_version < "4.0"
-pooch==1.9.0 ; python_version >= "3.12" and python_version < "4.0"
-prometheus-client==0.24.1 ; python_version >= "3.12" and python_version < "4.0"
-prompt-toolkit==3.0.52 ; python_version >= "3.12" and python_version < "4.0"
-propcache==0.4.1 ; python_version >= "3.12" and python_version < "4.0"
-psutil==7.2.2 ; python_version >= "3.12" and python_version < "4.0"
-ptyprocess==0.7.0 ; python_version >= "3.12" and python_version < "4.0" and (os_name != "nt" or sys_platform != "win32" and sys_platform != "emscripten")
-pure-eval==0.2.3 ; python_version >= "3.12" and python_version < "4.0"
-pycparser==3.0 ; python_version >= "3.12" and python_version < "4.0" and implementation_name != "PyPy"
-pygments==2.19.2 ; python_version >= "3.12" and python_version < "4.0"
-pyparsing==3.3.2 ; python_version >= "3.12" and python_version < "4.0"
-pyproj==3.7.2 ; python_version >= "3.12" and python_version < "4.0"
-pyshp==3.0.3 ; python_version >= "3.12" and python_version < "4.0"
-python-dateutil==2.9.0.post0 ; python_version >= "3.12" and python_version < "4.0"
-python-json-logger==4.0.0 ; python_version >= "3.12" and python_version < "4.0"
-pytz==2026.1.post1 ; python_version >= "3.12" and python_version < "4.0"
-pyvista==0.44.2 ; python_version >= "3.12" and python_version < "4.0"
-pywinpty==3.0.3 ; python_version >= "3.12" and python_version < "4.0" and os_name == "nt"
-pyyaml==6.0.3 ; python_version >= "3.12" and python_version < "4.0"
-pyzmq==27.1.0 ; python_version >= "3.12" and python_version < "4.0"
-referencing==0.37.0 ; python_version >= "3.12" and python_version < "4.0"
-requests==2.32.5 ; python_version >= "3.12" and python_version < "4.0"
-rfc3339-validator==0.1.4 ; python_version >= "3.12" and python_version < "4.0"
-rfc3986-validator==0.1.1 ; python_version >= "3.12" and python_version < "4.0"
-rfc3987-syntax==1.1.0 ; python_version >= "3.12" and python_version < "4.0"
-rpds-py==0.30.0 ; python_version >= "3.12" and python_version < "4.0"
-scipy==1.17.1 ; python_version >= "3.12" and python_version < "4.0"
-scooby==0.11.0 ; python_version >= "3.12" and python_version < "4.0"
-send2trash==2.1.0 ; python_version >= "3.12" and python_version < "4.0"
-setuptools==82.0.0 ; python_version >= "3.12" and python_version < "4.0"
-shapely==2.1.2 ; python_version >= "3.12" and python_version < "4.0"
-simpervisor==1.0.0 ; python_version >= "3.12" and python_version < "4.0"
-six==1.17.0 ; python_version >= "3.12" and python_version < "4.0"
-soupsieve==2.8.3 ; python_version >= "3.12" and python_version < "4.0"
-stack-data==0.6.3 ; python_version >= "3.12" and python_version < "4.0"
-terminado==0.18.1 ; python_version >= "3.12" and python_version < "4.0"
-tinycss2==1.4.0 ; python_version >= "3.12" and python_version < "4.0"
-tornado==6.5.4 ; python_version >= "3.12" and python_version < "4.0"
-traitlets==5.14.3 ; python_version >= "3.12" and python_version < "4.0"
-trame-client==3.11.3 ; python_version >= "3.12" and python_version < "4.0"
-trame-common==1.1.1 ; python_version >= "3.12" and python_version < "4.0"
-trame-server==3.10.0 ; python_version >= "3.12" and python_version < "4.0"
-trame-vtk==2.11.1 ; python_version >= "3.12" and python_version < "4.0"
-trame-vuetify==3.2.1 ; python_version >= "3.12" and python_version < "4.0"
-trame==3.12.0 ; python_version >= "3.12" and python_version < "4.0"
-typing-extensions==4.15.0 ; python_version >= "3.12" and python_version < "4.0"
-tzdata==2025.3 ; python_version >= "3.12" and python_version < "4.0"
-uri-template==1.3.0 ; python_version >= "3.12" and python_version < "4.0"
-urllib3==2.6.3 ; python_version >= "3.12" and python_version < "4.0"
-vtk==9.3.1 ; python_version >= "3.12" and python_version < "4.0"
-wcwidth==0.6.0 ; python_version >= "3.12" and python_version < "4.0"
-webcolors==25.10.0 ; python_version >= "3.12" and python_version < "4.0"
-webencodings==0.5.1 ; python_version >= "3.12" and python_version < "4.0"
-websocket-client==1.9.0 ; python_version >= "3.12" and python_version < "4.0"
-widgetsnbextension==4.0.15 ; python_version >= "3.12" and python_version < "4.0"
-wslink==2.5.3 ; python_version >= "3.12" and python_version < "4.0"
-xarray==2024.11.0 ; python_version >= "3.12" and python_version < "4.0"
-yarl==1.23.0 ; python_version >= "3.12" and python_version < "4.0"
+# This file was autogenerated by uv via the following command:
+#    uv export --no-dev --no-hashes --format requirements.txt --output-file requirements.txt
+-e .
+aiohappyeyeballs==2.7.1
+    # via aiohttp
+aiohttp==3.14.3
+    # via wslink
+aiosignal==1.4.0
+    # via aiohttp
+anyio==4.15.1
+    # via
+    #   httpx
+    #   jupyter-server
+appnope==1.0.0 ; sys_platform == 'darwin'
+    # via ipykernel
+argon2-cffi==25.1.0
+    # via jupyter-server
+argon2-cffi-bindings==26.1.0
+    # via argon2-cffi
+arrow==1.4.0
+    # via isoduration
+asttokens==3.0.2
+    # via stack-data
+async-lru==2.3.0
+    # via jupyterlab
+attrs==26.1.0
+    # via
+    #   aiohttp
+    #   cyclopts
+    #   gerg-plotting
+    #   jsonschema
+    #   referencing
+babel==2.18.0
+    # via jupyterlab-server
+beautifulsoup4==4.15.0
+    # via nbconvert
+bleach==6.4.0
+    # via nbconvert
+cartopy==0.26.0
+    # via gerg-plotting
+certifi==2026.7.22
+    # via
+    #   httpcore
+    #   httpx
+    #   netcdf4
+    #   pyproj
+    #   requests
+cffi==2.1.1
+    # via
+    #   argon2-cffi-bindings
+    #   pyzmq
+cftime==1.6.6
+    # via netcdf4
+charset-normalizer==3.5.1
+    # via requests
+cmocean==4.0.3
+    # via gerg-plotting
+colorama==0.4.6 ; sys_platform == 'win32'
+    # via ipython
+comm==0.2.3
+    # via
+    #   ipykernel
+    #   ipywidgets
+configobj==5.0.9
+    # via gerg-plotting
+contourpy==1.4.0
+    # via matplotlib
+cycler==0.12.1
+    # via matplotlib
+cyclopts==5.1.0
+    # via pyvista
+debugpy==1.8.22
+    # via ipykernel
+defusedxml==0.7.1
+    # via nbconvert
+docstring-parser==0.18.0
+    # via cyclopts
+executing==2.2.1
+    # via stack-data
+fastjsonschema==2.22.2
+    # via nbformat
+fonttools==4.66.1
+    # via matplotlib
+fqdn==1.6.0
+    # via jsonschema
+frozenlist==1.8.0
+    # via
+    #   aiohttp
+    #   aiosignal
+gsw==3.6.23
+    # via gerg-plotting
+h11==0.16.0
+    # via httpcore
+httpcore==1.0.9
+    # via httpx
+httpx==0.28.1
+    # via jupyterlab
+idna==3.20
+    # via
+    #   anyio
+    #   httpx
+    #   jsonschema
+    #   requests
+    #   yarl
+imageio==2.38.0
+    # via gerg-plotting
+ipykernel==7.4.0
+    # via jupyterlab
+ipython==9.17.1
+    # via
+    #   ipykernel
+    #   ipywidgets
+ipython-pygments-lexers==1.1.1
+    # via ipython
+ipywidgets==8.1.9
+    # via pyvista
+isoduration==20.11.0
+    # via jsonschema
+jedi==0.20.0
+    # via ipython
+jinja2==3.1.6
+    # via
+    #   jupyter-server
+    #   jupyterlab
+    #   jupyterlab-server
+    #   nbconvert
+json5==0.15.0
+    # via jupyterlab-server
+jsonpointer==3.1.1
+    # via jsonschema
+jsonschema==4.26.0
+    # via
+    #   jupyter-events
+    #   jupyterlab-server
+    #   nbformat
+jsonschema-specifications==2025.9.1
+    # via jsonschema
+jupyter-builder==1.2.3
+    # via
+    #   jupyterlab
+    #   notebook
+jupyter-client==8.10.0
+    # via
+    #   ipykernel
+    #   jupyter-server
+    #   nbclient
+jupyter-core==5.9.1
+    # via
+    #   ipykernel
+    #   jupyter-builder
+    #   jupyter-client
+    #   jupyter-server
+    #   jupyterlab
+    #   nbclient
+    #   nbconvert
+    #   nbformat
+jupyter-events==0.12.1
+    # via jupyter-server
+jupyter-lsp==2.3.1
+    # via jupyterlab
+jupyter-server==2.21.1
+    # via
+    #   jupyter-lsp
+    #   jupyterlab
+    #   jupyterlab-server
+    #   notebook
+    #   notebook-shim
+jupyter-server-terminals==0.5.4
+    # via jupyter-server
+jupyterlab==4.6.4
+    # via notebook
+jupyterlab-pygments==0.3.0
+    # via nbconvert
+jupyterlab-server==2.28.1
+    # via
+    #   jupyterlab
+    #   notebook
+jupyterlab-widgets==3.0.17
+    # via ipywidgets
+kiwisolver==1.5.1
+    # via matplotlib
+lark==1.3.1
+    # via rfc3987-syntax
+markdown-it-py==4.2.0
+    # via rich
+markupsafe==3.0.3
+    # via
+    #   jinja2
+    #   nbconvert
+matplotlib==3.11.2
+    # via
+    #   cartopy
+    #   cmocean
+    #   gerg-plotting
+    #   pyvista
+    #   vtk
+matplotlib-inline==0.2.2
+    # via
+    #   ipykernel
+    #   ipython
+mdurl==0.1.2
+    # via markdown-it-py
+mistune==3.3.4
+    # via nbconvert
+more-itertools==11.1.0
+    # via trame-server
+msgpack==1.2.3
+    # via wslink
+multidict==6.9.1
+    # via
+    #   aiohttp
+    #   yarl
+nbclient==0.11.0
+    # via nbconvert
+nbconvert==7.17.1
+    # via jupyter-server
+nbformat==5.11.1
+    # via
+    #   jupyter-server
+    #   nbclient
+    #   nbconvert
+nest-asyncio2==1.7.3
+    # via
+    #   ipykernel
+    #   pyvista
+netcdf4==1.7.4
+    # via gerg-plotting
+notebook==7.6.3
+    # via gerg-plotting
+notebook-shim==0.2.4
+    # via
+    #   jupyterlab
+    #   notebook
+numpy==2.5.3
+    # via
+    #   cartopy
+    #   cftime
+    #   cmocean
+    #   contourpy
+    #   gerg-plotting
+    #   gsw
+    #   imageio
+    #   matplotlib
+    #   netcdf4
+    #   opencv-python
+    #   pandas
+    #   pyvista
+    #   pyvista-validation
+    #   scipy
+    #   shapely
+    #   xarray
+opencv-python==5.0.0.93
+    # via gerg-plotting
+packaging==26.3
+    # via
+    #   cartopy
+    #   cmocean
+    #   ipykernel
+    #   jupyter-events
+    #   jupyter-server
+    #   jupyterlab
+    #   jupyterlab-server
+    #   matplotlib
+    #   nbconvert
+    #   pooch
+    #   trame-pyvista
+    #   xarray
+pandas==3.0.6
+    # via
+    #   gerg-plotting
+    #   xarray
+pandocfilters==1.5.1
+    # via nbconvert
+parso==0.8.7
+    # via jedi
+pexpect==4.9.0 ; sys_platform != 'emscripten' and sys_platform != 'win32'
+    # via ipython
+pillow==12.3.0
+    # via
+    #   imageio
+    #   matplotlib
+    #   pyvista
+platformdirs==4.12.2
+    # via
+    #   jupyter-core
+    #   pooch
+pooch==1.9.0
+    # via pyvista
+prometheus-client==0.26.0
+    # via jupyter-server
+prompt-toolkit==3.0.53
+    # via ipython
+propcache==0.5.4
+    # via
+    #   aiohttp
+    #   yarl
+psutil==7.2.2 ; sys_platform != 'cygwin' and sys_platform != 'emscripten'
+    # via ipython
+ptyprocess==0.7.0 ; os_name != 'nt' or (sys_platform != 'emscripten' and sys_platform != 'win32')
+    # via
+    #   pexpect
+    #   terminado
+pure-eval==0.2.4
+    # via stack-data
+pycparser==3.0 ; implementation_name != 'PyPy'
+    # via cffi
+pygments==2.21.0
+    # via
+    #   ipython
+    #   ipython-pygments-lexers
+    #   nbconvert
+    #   rich
+    #   rich-rst
+pyobjc-core==12.2.2 ; sys_platform == 'darwin'
+    # via pyobjc-framework-cocoa
+pyobjc-framework-cocoa==12.2.2 ; sys_platform == 'darwin'
+    # via pyvista
+pyparsing==3.3.3
+    # via matplotlib
+pyproj==3.8.0
+    # via cartopy
+pyshp==3.1.6
+    # via cartopy
+python-dateutil==2.9.0.post0
+    # via
+    #   arrow
+    #   jupyter-client
+    #   matplotlib
+    #   pandas
+python-json-logger==4.2.0
+    # via jupyter-events
+pyvista==0.49.0
+    # via
+    #   gerg-plotting
+    #   trame-pyvista
+pyvista-validation==0.2.2
+    # via pyvista
+pywinpty==3.0.5 ; os_name == 'nt'
+    # via
+    #   jupyter-server
+    #   jupyter-server-terminals
+    #   terminado
+pyyaml==6.0.3
+    # via
+    #   jupyter-events
+    #   trame
+pyzmq==27.2.0
+    # via
+    #   ipykernel
+    #   jupyter-client
+    #   jupyter-server
+referencing==0.37.0
+    # via
+    #   jsonschema
+    #   jsonschema-specifications
+    #   jupyter-events
+requests==2.34.2
+    # via
+    #   jupyterlab-server
+    #   pooch
+rfc3339-validator==0.1.4
+    # via
+    #   jsonschema
+    #   jupyter-events
+rfc3986-validator==0.1.1
+    # via
+    #   jsonschema
+    #   jupyter-events
+rfc3987-syntax==1.1.0
+    # via jsonschema
+rich==15.0.0
+    # via
+    #   cyclopts
+    #   rich-rst
+rich-rst==2.2.0
+    # via cyclopts
+rpds-py==2026.6.3
+    # via
+    #   jsonschema
+    #   referencing
+scipy==1.18.1
+    # via gerg-plotting
+scooby==0.12.0
+    # via pyvista
+send2trash==2.1.0
+    # via jupyter-server
+shapely==2.1.2
+    # via cartopy
+six==1.17.0
+    # via
+    #   python-dateutil
+    #   rfc3339-validator
+soupsieve==2.10
+    # via beautifulsoup4
+stack-data==0.6.3
+    # via ipython
+terminado==0.18.1
+    # via
+    #   jupyter-server
+    #   jupyter-server-terminals
+tinycss2==1.5.1
+    # via bleach
+tornado==6.5.10
+    # via
+    #   ipykernel
+    #   jupyter-client
+    #   jupyter-server
+    #   jupyterlab
+    #   notebook
+    #   terminado
+traitlets==5.16.1
+    # via
+    #   ipykernel
+    #   ipython
+    #   ipywidgets
+    #   jupyter-builder
+    #   jupyter-client
+    #   jupyter-core
+    #   jupyter-events
+    #   jupyter-server
+    #   jupyterlab
+    #   matplotlib-inline
+    #   nbclient
+    #   nbconvert
+    #   nbformat
+trame==3.13.2
+    # via
+    #   gerg-plotting
+    #   trame-pyvista
+trame-client==3.13.2
+    # via
+    #   trame
+    #   trame-pyvista
+    #   trame-vtk
+    #   trame-vuetify
+trame-common==1.2.4
+    # via
+    #   trame
+    #   trame-client
+    #   trame-pyvista
+    #   trame-server
+trame-pyvista==0.1.7
+    # via pyvista
+trame-server==3.12.5
+    # via
+    #   trame
+    #   trame-pyvista
+trame-vtk==2.11.16
+    # via
+    #   gerg-plotting
+    #   trame-pyvista
+trame-vuetify==3.2.5
+    # via trame-pyvista
+typing-extensions==4.16.0
+    # via
+    #   aiohttp
+    #   aiosignal
+    #   anyio
+    #   beautifulsoup4
+    #   jupyter-client
+    #   pyvista
+    #   pyvista-validation
+    #   referencing
+tzdata==2026.4
+    # via
+    #   arrow
+    #   pandas
+uri-template==1.3.0
+    # via jsonschema
+urllib3==2.8.0
+    # via requests
+vtk==9.7.1
+    # via pyvista
+wcwidth==0.9.1
+    # via prompt-toolkit
+webcolors==25.10.0
+    # via jsonschema
+webencodings==0.6.1
+    # via
+    #   bleach
+    #   tinycss2
+websocket-client==1.9.2
+    # via jupyter-server
+widgetsnbextension==4.0.16
+    # via ipywidgets
+wslink==2.5.7
+    # via
+    #   trame
+    #   trame-server
+xarray==2026.7.0
+    # via gerg-plotting
+yarl==1.25.1
+    # via aiohttp
